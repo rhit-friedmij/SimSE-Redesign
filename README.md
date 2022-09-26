@@ -1,5 +1,7 @@
 # SimSE Redesign
 
+## Original documentation
+
 Project Title: SimSE (Model Builder and Code Generator)
 
 Introduction: SimSE is an educational software engineering simulation environment whose goal is to bridge the gap between the large amount of conceptual software engineering knowledge given to students in lectures and the comparably small amount of this they actually get to put into practice in an associated "toy" software engineering project. SimSE allows students to practice a "virtual" software engineering process (or sub-process) in a fully graphical, interactive, and fun setting in which direct, graphical feedback enables them to learn the complex cause and effect relationships underlying the processes of software engineering.
