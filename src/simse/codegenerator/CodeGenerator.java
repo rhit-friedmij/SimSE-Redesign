@@ -349,7 +349,7 @@ public class CodeGenerator {
 			    .build();
 
 	    try {
-			javaFile.writeTo(System.out);
+			javaFile.writeTo(ssFile);
 	    } catch (IOException e) {
 	      JOptionPane.showMessageDialog(null, ("Error writing file "
 	          + ssFile.getPath() + ": " + e.toString()), "File IO Error",

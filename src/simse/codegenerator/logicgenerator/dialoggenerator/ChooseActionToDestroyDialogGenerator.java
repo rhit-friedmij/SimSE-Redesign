@@ -24,10 +24,22 @@ import simse.modelbuilder.rulebuilder.Rule;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-
 import java.util.Vector;
 
+import javax.lang.model.element.Modifier;
 import javax.swing.JOptionPane;
+
+import com.squareup.javapoet.ClassName;
+import com.squareup.javapoet.FieldSpec;
+import com.squareup.javapoet.MethodSpec;
+import com.squareup.javapoet.ParameterizedTypeName;
+import com.squareup.javapoet.TypeName;
+import com.squareup.javapoet.TypeSpec;
+import com.squareup.javapoet.WildcardTypeName;
+
+import javafx.application.Application;
+import javafx.scene.control.Dialog;
+import javafx.scene.layout.VBox;
 
 public class ChooseActionToDestroyDialogGenerator implements
     CodeGeneratorConstants {
@@ -42,6 +54,56 @@ public class ChooseActionToDestroyDialogGenerator implements
   }
 
   public void generate() {
+	  ClassName eventHandler = ClassName.get("javafx.event", "EventHandler");
+	  ClassName mouseEvent = ClassName.get("javafx.scene.input", "MouseEvent");
+	  ClassName vector = ClassName.get("java.util", "Vector");
+	  ClassName action = ClassName.get("simse.adts.actions", "Action");
+	  ClassName stateClass = ClassName.get("simse.state", "State");
+	  ClassName ruleExecClass = ClassName.get("simse.logic", "RuleExecutor");
+	  ClassName employeeClass = ClassName.get("simse.adts.objects", "Employee");
+	  ClassName stageClass = ClassName.get("javafx.stage", "Stage");
+	  ClassName checkboxClass = ClassName.get("javafx.scene.control", "CheckBox");
+	  ClassName buttonClass = ClassName.get("javafx.scene.control", "Button");
+	  TypeName mouseHandler = ParameterizedTypeName.get(eventHandler, mouseEvent);
+	  TypeName actionWildcard = WildcardTypeName.subtypeOf(action);
+	  TypeName actionsType = ParameterizedTypeName.get(vector, actionWildcard);
+	  TypeName checkboxType = ParameterizedTypeName.get(vector, checkboxClass);
+	  
+	  MethodSpec destroyConstructor = MethodSpec.constructorBuilder()
+			  .addModifiers(Modifier.PUBLIC)
+			  .addParameter(stageClass, "parent")
+			  .addParameter(actionsType, "acts")
+			  .addParameter(stateClass, "s")
+			  .addParameter(employeeClass, "e")
+			  .addParameter(ruleExecClass, "r")
+			  .addParameter(String.class, "mText")
+			  .addStatement("$N = acts", "actions")
+			  .addStatement("$N = s", "state")
+			  .addStatement("$N = r", "ruleExec")
+			  .addStatement("$N = parent", "gui")
+			  .addStatement("$N = e", "emp")
+			  .addStatement("$N = mText", "menuText")
+			  .addStatement("$N = new $T()", "checkBoxes", checkboxType)
+			  .addStatement("setTitle($S)", "Stop Action(s)")
+			  .addStatement("$T mainPane = new $T()", VBox.class, VBox.class)
+			  .addStatement("$T actionName = new $T()", String.class, String.class)
+			  .addStatement("$T tempAct = $N.elementAt(0)", action, "actions")
+			  .build();
+	  
+	  TypeSpec destroyDialog = TypeSpec.classBuilder("ChooseActionToDestroyDialog")
+  			.superclass(Dialog.class)
+  			.addSuperinterface(mouseHandler)
+  			.addField(actionsType, "actions", Modifier.PRIVATE)
+  			.addField(stateClass, "state", Modifier.PRIVATE)
+  			.addField(ruleExecClass, "ruleExec", Modifier.PRIVATE)
+  			.addField(employeeClass, "emp", Modifier.PRIVATE)
+  			.addField(String.class, "menuText", Modifier.PRIVATE)
+  			.addField(stageClass, "gui", Modifier.PRIVATE)
+  			.addField(checkboxType, "checkBoxes", Modifier.PRIVATE)
+  			.addField(buttonClass, "okButton", Modifier.PRIVATE)
+  			.addField(buttonClass, "cancelButton", Modifier.PRIVATE)
+  			.build();
+	  
     try {
       catddFile = new File(directory,
           ("simse\\logic\\dialogs\\ChooseActionToDestroyDialog.java"));
