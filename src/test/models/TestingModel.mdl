@@ -11,15 +11,13 @@ true
 <beginDefinedObjectTypes>
 <beginObjectType>
 1
-Thing
+Unobsessed
 <beginAttribute>
-Key
-3
-0
+Name
 1
 0
 1
-1
+0
 <endAttribute>
 <beginAttribute>
 Energy
@@ -49,15 +47,13 @@ Dancing
 <endObjectType>
 <beginObjectType>
 1
-Gomez
+Obsessed
 <beginAttribute>
-Key
-3
+Name
+1
 0
 1
 0
-2
-2
 <endAttribute>
 <beginAttribute>
 Energy
@@ -87,15 +83,13 @@ Dancing
 <endObjectType>
 <beginObjectType>
 2
-Rose
+Flower
 <beginAttribute>
-Key
-3
+Name
+1
 0
 1
 0
-3
-3
 <endAttribute>
 <beginAttribute>
 ResearchCompleted
@@ -122,15 +116,13 @@ PercentGrown
 <endObjectType>
 <beginObjectType>
 3
-Shears
+SharpTool
 <beginAttribute>
-Key
-3
+Name
+1
 0
 1
 0
-4
-4
 <endAttribute>
 <beginAttribute>
 Sharp
@@ -151,15 +143,13 @@ Bought
 <endObjectType>
 <beginObjectType>
 4
-KookyGardens
+Garden
 <beginAttribute>
-Key
-3
+Name
+1
 0
 1
 0
-5
-5
 <endAttribute>
 <beginAttribute>
 Budget
@@ -191,15 +181,13 @@ boundless
 <endObjectType>
 <beginObjectType>
 5
-Morticia
+Owner
 <beginAttribute>
-Key
-3
+Name
+1
 0
 1
 0
-6
-6
 <endAttribute>
 <beginAttribute>
 Mood
@@ -218,7 +206,7 @@ Welcome to The Addams Family Garden, Kooky Gardens! As a Valentine's gift for Mo
 <endStartingNarrative>
 <beginObject>
 1
-Thing
+Unobsessed
 <beginInstantiatedAttribute>
 Energy
 75
@@ -232,13 +220,13 @@ Dancing
 false
 <endInstantiatedAttribute>
 <beginInstantiatedAttribute>
-Key
-1
+Name
+Thing
 <endInstantiatedAttribute>
 <endObject>
 <beginObject>
 1
-Gomez
+Obsessed
 <beginInstantiatedAttribute>
 Energy
 100
@@ -252,13 +240,13 @@ Dancing
 false
 <endInstantiatedAttribute>
 <beginInstantiatedAttribute>
-Key
-2
+Name
+Gomez
 <endInstantiatedAttribute>
 <endObject>
 <beginObject>
 2
-Rose
+Flower
 <beginInstantiatedAttribute>
 ResearchCompleted
 0.0
@@ -268,13 +256,13 @@ PercentGrown
 0.0
 <endInstantiatedAttribute>
 <beginInstantiatedAttribute>
-Key
-3
+Name
+Rose
 <endInstantiatedAttribute>
 <endObject>
 <beginObject>
 3
-Shears
+SharpTool
 <beginInstantiatedAttribute>
 Sharp
 0
@@ -284,13 +272,13 @@ Bought
 false
 <endInstantiatedAttribute>
 <beginInstantiatedAttribute>
-Key
-4
+Name
+Shears
 <endInstantiatedAttribute>
 <endObject>
 <beginObject>
 4
-KookyGardens
+Garden
 <beginInstantiatedAttribute>
 Budget
 500
@@ -304,20 +292,20 @@ TimeSpent
 0
 <endInstantiatedAttribute>
 <beginInstantiatedAttribute>
-Key
-5
+Name
+KookyGardens
 <endInstantiatedAttribute>
 <endObject>
 <beginObject>
 5
-Morticia
+Owner
 <beginInstantiatedAttribute>
 Mood
 50
 <endInstantiatedAttribute>
 <beginInstantiatedAttribute>
-Key
-6
+Name
+Morticia
 <endInstantiatedAttribute>
 <endObject>
 <endCreatedObjects>
@@ -341,8 +329,8 @@ at least
 <>
 <endActionTypeParticipantQuantity>
 <beginSSObjTypeNames>
-Thing
-Gomez
+Unobsessed
+Obsessed
 <endSSObjTypeNames>
 <endActionTypeParticipant>
 <beginActionTypeParticipant>
@@ -355,7 +343,7 @@ at most
 <>
 <endActionTypeParticipantQuantity>
 <beginSSObjTypeNames>
-Rose
+Flower
 <endSSObjTypeNames>
 <endActionTypeParticipant>
 <beginActionTypeParticipant>
@@ -368,7 +356,7 @@ exactly
 <>
 <endActionTypeParticipantQuantity>
 <beginSSObjTypeNames>
-KookyGardens
+Garden
 <endSSObjTypeNames>
 <endActionTypeParticipant>
 <beginActionTypeTrigger>
@@ -382,9 +370,9 @@ false
 <beginActionTypeParticipantTrigger>
 Emp
 <beginActionTypeParticipantConstraint>
-Thing
+Unobsessed
 <beginActionTypeParticipantAttributeConstraint>
-Key
+Name
 <
 <>
 false
@@ -409,9 +397,9 @@ false
 <endActionTypeParticipantAttributeConstraint>
 <endActionTypeParticipantConstraint>
 <beginActionTypeParticipantConstraint>
-Gomez
+Obsessed
 <beginActionTypeParticipantAttributeConstraint>
-Key
+Name
 <
 <>
 false
@@ -439,9 +427,9 @@ false
 <beginActionTypeParticipantTrigger>
 Flower
 <beginActionTypeParticipantConstraint>
-Rose
+Flower
 <beginActionTypeParticipantAttributeConstraint>
-Key
+Name
 <
 <>
 false
@@ -463,9 +451,9 @@ false
 <beginActionTypeParticipantTrigger>
 Proj
 <beginActionTypeParticipantConstraint>
-KookyGardens
+Garden
 <beginActionTypeParticipantAttributeConstraint>
-Key
+Name
 <
 <>
 false
@@ -501,9 +489,9 @@ false
 <beginActionTypeParticipantDestroyer>
 Emp
 <beginActionTypeParticipantConstraint>
-Thing
+Unobsessed
 <beginActionTypeParticipantAttributeConstraint>
-Key
+Name
 <
 <>
 false
@@ -528,9 +516,9 @@ false
 <endActionTypeParticipantAttributeConstraint>
 <endActionTypeParticipantConstraint>
 <beginActionTypeParticipantConstraint>
-Gomez
+Obsessed
 <beginActionTypeParticipantAttributeConstraint>
-Key
+Name
 <
 <>
 false
@@ -558,9 +546,9 @@ false
 <beginActionTypeParticipantDestroyer>
 Flower
 <beginActionTypeParticipantConstraint>
-Rose
+Flower
 <beginActionTypeParticipantAttributeConstraint>
-Key
+Name
 <
 <>
 false
@@ -582,9 +570,9 @@ false
 <beginActionTypeParticipantDestroyer>
 Proj
 <beginActionTypeParticipantConstraint>
-KookyGardens
+Garden
 <beginActionTypeParticipantAttributeConstraint>
-Key
+Name
 <
 <>
 false
@@ -619,9 +607,9 @@ false
 <beginActionTypeParticipantDestroyer>
 Emp
 <beginActionTypeParticipantConstraint>
-Thing
+Unobsessed
 <beginActionTypeParticipantAttributeConstraint>
-Key
+Name
 <
 <>
 false
@@ -646,9 +634,9 @@ false
 <endActionTypeParticipantAttributeConstraint>
 <endActionTypeParticipantConstraint>
 <beginActionTypeParticipantConstraint>
-Gomez
+Obsessed
 <beginActionTypeParticipantAttributeConstraint>
-Key
+Name
 <
 <>
 false
@@ -676,9 +664,9 @@ false
 <beginActionTypeParticipantDestroyer>
 Flower
 <beginActionTypeParticipantConstraint>
-Rose
+Flower
 <beginActionTypeParticipantAttributeConstraint>
-Key
+Name
 <
 <>
 false
@@ -700,9 +688,9 @@ false
 <beginActionTypeParticipantDestroyer>
 Proj
 <beginActionTypeParticipantConstraint>
-KookyGardens
+Garden
 <beginActionTypeParticipantAttributeConstraint>
-Key
+Name
 <
 <>
 false
@@ -739,7 +727,7 @@ false
 true
 <endActionType>
 <beginActionType>
-SharpenShears
+SharpenTool
 false
 false
 <beginActionTypeAnnotation>
@@ -789,10 +777,10 @@ true
 Emp
 <beginParticipantTypeRuleEffect>
 1
-Thing
+Unobsessed
 None
 <beginParticipantAttributeRuleEffect>
-Key
+Name
 
 <endParticipantAttributeRuleEffect>
 <beginParticipantAttributeRuleEffect>
@@ -810,10 +798,10 @@ Dancing
 <endParticipantTypeRuleEffect>
 <beginParticipantTypeRuleEffect>
 1
-Gomez
+Obsessed
 None
 <beginParticipantAttributeRuleEffect>
-Key
+Name
 
 <endParticipantAttributeRuleEffect>
 <beginParticipantAttributeRuleEffect>
@@ -834,10 +822,10 @@ Dancing
 Flower
 <beginParticipantTypeRuleEffect>
 2
-Rose
+Flower
 None
 <beginParticipantAttributeRuleEffect>
-Key
+Name
 
 <endParticipantAttributeRuleEffect>
 <beginParticipantAttributeRuleEffect>
@@ -854,10 +842,10 @@ PercentGrown
 Proj
 <beginParticipantTypeRuleEffect>
 4
-KookyGardens
+Garden
 None
 <beginParticipantAttributeRuleEffect>
-Key
+Name
 
 <endParticipantAttributeRuleEffect>
 <beginParticipantAttributeRuleEffect>
@@ -878,33 +866,33 @@ TimeSpent
 <endRules>
 <beginGraphics>
 Employee
+Unobsessed
 Thing
-1
 
 
 Employee
+Obsessed
 Gomez
-2
 
 
 Artifact
+Flower
 Rose
-3
 
 
 Tool
+SharpTool
 Shears
-4
 
 
 Project
+Garden
 KookyGardens
-5
 
 
 Customer
+Owner
 Morticia
-6
 
 
 <endGraphics>
