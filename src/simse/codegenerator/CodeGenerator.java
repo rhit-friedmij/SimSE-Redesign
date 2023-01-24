@@ -16,12 +16,31 @@ import simse.modelbuilder.startstatebuilder.SimSEObject;
 import simse.modelbuilder.mapeditor.TileData;
 import simse.modelbuilder.mapeditor.UserData;
 
+import java.awt.Taskbar.State;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Hashtable;
+
+import javax.lang.model.element.Modifier;
 import javax.swing.JOptionPane;
+
+import com.squareup.javapoet.ArrayTypeName;
+import com.squareup.javapoet.ClassName;
+import com.squareup.javapoet.FieldSpec;
+import com.squareup.javapoet.JavaFile;
+import com.squareup.javapoet.MethodSpec;
+import com.squareup.javapoet.ParameterizedTypeName;
+import com.squareup.javapoet.TypeName;
+import com.squareup.javapoet.TypeSpec;
+
+import javafx.application.Application;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
+import javafx.stage.Stage;
+import javafx.scene.control.ButtonType;
 
 public class CodeGenerator {
 	public static boolean allowHireFire = false;
@@ -210,120 +229,127 @@ public class CodeGenerator {
 	    if (ssFile.exists()) {
 	      ssFile.delete(); // delete old version of file
 	    }
+    	ClassName branch = ClassName.get("simse.explanatorytool", "Branch");
+    	ClassName simSEGui = ClassName.get("simse.gui", "SimSEGUI");
+    	ClassName arrayList = ClassName.get("java.util", "ArrayList");
+    	ClassName multipleTimelinesBrowser = ClassName.get("simse.explanatorytool", "MultipleTimelinesBrowser");
+    	ClassName engineClass = ClassName.get("simse.engine", "Engine");
+    	ClassName stateClass = ClassName.get("simse.state", "State");
+    	ClassName logicClass = ClassName.get("simse.logic", "Logic");
+    	ClassName ruleCategories = ClassName.get("simse.util", "RuleCategories");
+    	TypeName listOfBranches = ParameterizedTypeName.get(arrayList, branch);
+    	TypeName listOfGuis = ParameterizedTypeName.get(arrayList, simSEGui);
+    	TypeName stringArray = ArrayTypeName.get(String.class);
+    	
+    	FieldSpec branches = FieldSpec.builder(listOfBranches, "branches")
+    		    .addModifiers(Modifier.PRIVATE, Modifier.STATIC)
+    		    .initializer("new $T()", listOfBranches)
+    		    .build();
+    	
+    	FieldSpec guis = FieldSpec.builder(listOfGuis, "guis")
+    		    .addModifiers(Modifier.PRIVATE, Modifier.STATIC)
+    		    .initializer("new $T()", listOfGuis)
+    		    .build();
+    	
+    	FieldSpec timelinesBrowser = FieldSpec.builder(multipleTimelinesBrowser, "timelinesBrowser")
+    		    .addModifiers(Modifier.PRIVATE, Modifier.STATIC)
+    		    .initializer("new $T()", multipleTimelinesBrowser)
+    		    .build();
+    	
+    	FieldSpec engineField = FieldSpec.builder(engineClass, "engine")
+    		    .addModifiers(Modifier.PRIVATE, Modifier.STATIC)
+    		    .build();
+    	
+    	MethodSpec startNewBranch = MethodSpec.methodBuilder("startNewBranch")
+    			.addModifiers(Modifier.PUBLIC, Modifier.STATIC)
+    			.returns(void.class)
+    			.addParameter(stateClass, "state")
+    			.addParameter(branch, "branch")
+    			.beginControlFlow("for (int i = 0; i < $N.size(); i++)", branches)
+    			.beginControlFlow("if (branch.getName().equals($N.get(i).getName()))", branches)
+    			.addStatement("$T alert = new $T($T.ERROR, $S, $T.OK)", Alert.class, Alert.class,
+    					AlertType.class, "Please choose a unique name for your new branch", ButtonType.class)
+    			.addStatement("alert.showAndWait()")
+    			.addStatement("return")
+    		    .endControlFlow()
+    		    .endControlFlow()
+    		    .addStatement("$T logic = new $T(state)", logicClass, logicClass)
+    		    .addStatement("$N = new $T(logic, state)", engineField, engineClass)
+    		    .addStatement("$T gui = new $T($N, state, logic, branch, $N)", simSEGui,
+    		    		simSEGui, engineField, timelinesBrowser)
+    		    .addStatement("state.getClock().setGUI(gui)")
+    		    .addStatement("gui.setX(0)")
+    		    .addStatement("gui.setY(0)")
+    		    .addStatement("gui.setWidth(1180))")
+    		    .addStatement("gui.setHeight(720)")
+    		    .addStatement("$T.initializeRuleCategories()", ruleCategories)
+    		    .addStatement("$N.giveGUI(gui)", engineField)
+    		    .addStatement("logic.getTriggerChecker().update(false, gui)")
+    		    .addStatement("$N.add(branch)", branches)
+    		    .addStatement("$N.add(gui)", guis)
+    		    .addStatement("$N.update()", timelinesBrowser)
+    			.build();
+    	
+    	MethodSpec getBranches = MethodSpec.methodBuilder("getBranches")
+    			.addModifiers(Modifier.PUBLIC, Modifier.STATIC)
+    			.returns(listOfBranches)
+    			.addStatement("returns $N", branches)
+    			.build();
+    			
+    	MethodSpec getNumOpenBranches = MethodSpec.methodBuilder("getNumOpenBranches")
+    			.addModifiers(Modifier.PUBLIC, Modifier.STATIC)
+    			.returns(int.class)
+    			.addStatement("$T numOpen = 0", int.class)
+    			.beginControlFlow("for ($T b : $N)", branch, branches)
+    			.beginControlFlow("if (!b.isClosed())")
+    			.addStatement("numOpen++")
+    			.endControlFlow()
+    			.endControlFlow()
+    			.addStatement("return numOpen")
+    			.build();
+    	
+    	MethodSpec getGUIs = MethodSpec.methodBuilder("getGUIs")
+    			.addModifiers(Modifier.PUBLIC, Modifier.STATIC)
+    			.returns(listOfGuis)
+    			.addStatement("returns $N", guis)
+    			.build();
+    	
+    	MethodSpec main = MethodSpec.methodBuilder("main")
+    			.addModifiers(Modifier.PUBLIC, Modifier.STATIC)
+    			.returns(void.class)
+    			.addParameter(stringArray, "args")
+    			.addStatement("launch(args)")
+    			.build();
+    	
+    	MethodSpec start = MethodSpec.methodBuilder("start")
+    			.addModifiers(Modifier.PUBLIC)
+    			.returns(void.class)
+    			.addParameter(Stage.class, "arg0")
+    			.addException(Exception.class)
+    			.addStatement("startNewBranch(new $T(), new $T(null, 0, 0, null, $S))",
+    					stateClass, branch, "")
+    			.build();
+    	
+    	TypeSpec simSE = TypeSpec.classBuilder("SimSE")
+    			.superclass(Application.class)
+    			.addModifiers(Modifier.PUBLIC)
+    			.addField(branches)
+    			.addField(guis)
+    			.addField(timelinesBrowser)
+    			.addField(engineField)
+    			.addMethod(startNewBranch)
+    			.addMethod(getBranches)
+    			.addMethod(getNumOpenBranches)
+    			.addMethod(getGUIs)
+    			.addMethod(main)
+    			.addMethod(start)
+    			.build();
+		
+		JavaFile javaFile = JavaFile.builder("simse", simSE)
+			    .build();
+
 	    try {
-	      FileWriter writer = new FileWriter(ssFile);
-	      writer
-	          .write("/* File generated by: simse.codegenerator.CodeGenerator */");
-	      writer.write(NEWLINE);
-	      writer.write("package simse;");
-	      writer.write(NEWLINE);
-	      writer.write("import simse.gui.*;");
-	      writer.write(NEWLINE);
-	      writer.write("import simse.state.*;");
-	      writer.write(NEWLINE);
-	      writer.write("import simse.logic.*;");
-	      writer.write(NEWLINE);
-	      writer.write("import simse.engine.*;");
-	      writer.write(NEWLINE);
-	      writer.write("import simse.explanatorytool.Branch;");
-	      writer.write(NEWLINE);
-	      writer.write("import simse.explanatorytool.MultipleTimelinesBrowser;");
-	      writer.write(NEWLINE);
-	      writer.write(NEWLINE);
-	      writer.write("import java.util.ArrayList;");
-	      writer.write(NEWLINE);
-	      writer.write("public class SimSE");
-	      writer.write(NEWLINE);
-	      writer.write(OPEN_BRACK);
-	      writer.write(NEWLINE);
-	      
-	      // member variables:
-	    	writer.write("private static ArrayList<Branch> branches = new ArrayList<Branch>();");
-	    	writer.write(NEWLINE);
-	    	writer.write("private static ArrayList<SimSEGUI> guis = new ArrayList<SimSEGUI>();");
-	    	writer.write(NEWLINE);
-	    	writer.write("private static MultipleTimelinesBrowser timelinesBrowser = new MultipleTimelinesBrowser();");
-	    	writer.write(NEWLINE);
-	      writer.write(NEWLINE);
-	      
-	      // startNewBranch method:
-	    	writer.write("public static void startNewBranch(State state, Branch branch) {");
-	    	writer.write(NEWLINE);
-	    	writer.write("Logic logic = new Logic(state);");
-	    	writer.write(NEWLINE);
-	    	writer.write("Engine engine = new Engine(logic, state);");
-	    	writer.write(NEWLINE);
-	    	writer.write("SimSEGUI gui = new SimSEGUI(engine, state, logic, branch, timelinesBrowser);");
-	    	writer.write(NEWLINE);
-	    	writer.write("state.getClock().setGUI(gui);");
-	    	writer.write(NEWLINE);
-	    	writer.write("gui.setBounds(0, 0, 1024, 744);");
-	    	writer.write(NEWLINE);
-	    	writer.write("engine.giveGUI(gui);");
-	    	writer.write(NEWLINE);
-	    	writer.write("logic.getTriggerChecker().update(false, gui);");
-	    	writer.write(NEWLINE);
-	  		writer.write("branches.add(branch);");
-	  		writer.write(NEWLINE);
-	  		writer.write("guis.add(gui);");
-	  		writer.write(NEWLINE);
-	  		writer.write("timelinesBrowser.update();");
-	    	writer.write(NEWLINE);
-	    	writer.write(CLOSED_BRACK);
-	    	writer.write(NEWLINE);
-	    	writer.write(NEWLINE);
-	    	
-	    	// "getBranches" method:
-	    	writer.write("public static ArrayList<Branch> getBranches() {");
-	    	writer.write(NEWLINE);
-	    	writer.write("return branches;");
-	    	writer.write(NEWLINE);
-	    	writer.write(CLOSED_BRACK);
-	    	writer.write(NEWLINE);
-	    	writer.write(NEWLINE);
-	    	
-	    	// "getNumOpenBranches" method:
-	    	writer.write("// returns total number of open branches");
-	    	writer.write(NEWLINE);
-	    	writer.write("public static int getNumOpenBranches() {");
-	    	writer.write(NEWLINE);
-	    	writer.write("int numOpen = 0;");
-	    	writer.write(NEWLINE);
-	    	writer.write("for (Branch b : branches) {");
-	    	writer.write(NEWLINE);
-	    	writer.write("if (!b.isClosed()) {");
-	    	writer.write(NEWLINE);
-	    	writer.write("numOpen++;");
-	    	writer.write(CLOSED_BRACK);
-	    	writer.write(NEWLINE);
-	    	writer.write(CLOSED_BRACK);
-	    	writer.write(NEWLINE);
-	    	writer.write("return numOpen;");
-	    	writer.write(NEWLINE);
-	    	writer.write(CLOSED_BRACK);
-	    	writer.write(NEWLINE);
-	    	writer.write(NEWLINE);
-	    	
-	    	// "getGUIs" method:
-	    	writer.write("public static ArrayList<SimSEGUI> getGUIs() {");
-	    	writer.write(NEWLINE);
-	    	writer.write("return guis;");
-	    	writer.write(NEWLINE);
-	    	writer.write(CLOSED_BRACK);
-	    	writer.write(NEWLINE);
-	    	writer.write(NEWLINE);
-	      
-	      // main method:
-	      writer.write("public static void main(String args[])");
-	      writer.write(NEWLINE);
-	      writer.write(OPEN_BRACK);
-	      writer.write(NEWLINE);
-	      writer.write("startNewBranch(new State(), new Branch(null, 0, 0, null, null));");
-	      writer.write(CLOSED_BRACK);
-	      writer.write(NEWLINE);
-	      
-	      writer.write(CLOSED_BRACK);
-	      writer.close();
+			javaFile.writeTo(System.out);
 	    } catch (IOException e) {
 	      JOptionPane.showMessageDialog(null, ("Error writing file "
 	          + ssFile.getPath() + ": " + e.toString()), "File IO Error",
