@@ -206,6 +206,26 @@ Welcome to The Addams Family Garden, Kooky Gardens! As a Valentine's gift for Mo
 <endStartingNarrative>
 <beginObject>
 1
+Obsessed
+<beginInstantiatedAttribute>
+Energy
+100
+<endInstantiatedAttribute>
+<beginInstantiatedAttribute>
+Mood
+0
+<endInstantiatedAttribute>
+<beginInstantiatedAttribute>
+Dancing
+false
+<endInstantiatedAttribute>
+<beginInstantiatedAttribute>
+Name
+Gomez
+<endInstantiatedAttribute>
+<endObject>
+<beginObject>
+1
 Unobsessed
 <beginInstantiatedAttribute>
 Energy
@@ -226,22 +246,22 @@ Thing
 <endObject>
 <beginObject>
 1
-Obsessed
+Unobsessed
+<beginInstantiatedAttribute>
+Name
+Wednesday
+<endInstantiatedAttribute>
 <beginInstantiatedAttribute>
 Energy
-100
+90
 <endInstantiatedAttribute>
 <beginInstantiatedAttribute>
 Mood
-0
+5
 <endInstantiatedAttribute>
 <beginInstantiatedAttribute>
 Dancing
 false
-<endInstantiatedAttribute>
-<beginInstantiatedAttribute>
-Name
-Gomez
 <endInstantiatedAttribute>
 <endObject>
 <beginObject>
@@ -364,7 +384,7 @@ ResearchTrig
 User-Initiated
 Start Research
 false
-I'm starting to research
+I'm starting research
 -1
 false
 <beginActionTypeParticipantTrigger>
@@ -785,11 +805,11 @@ Name
 <endParticipantAttributeRuleEffect>
 <beginParticipantAttributeRuleEffect>
 Energy
-thisThing-Employee:Energy - 2 
+thisUnobsessed-Employee:Energy - 2 
 <endParticipantAttributeRuleEffect>
 <beginParticipantAttributeRuleEffect>
 Mood
-thisThing-Employee:Mood + random:0,3 
+thisUnobsessed-Employee:Mood + random:0,3 
 <endParticipantAttributeRuleEffect>
 <beginParticipantAttributeRuleEffect>
 Dancing
@@ -806,11 +826,11 @@ Name
 <endParticipantAttributeRuleEffect>
 <beginParticipantAttributeRuleEffect>
 Energy
-thisGomez-Employee:Energy - 1 
+thisObsessed-Employee:Energy - 1 
 <endParticipantAttributeRuleEffect>
 <beginParticipantAttributeRuleEffect>
 Mood
-thisGomez-Employee:Mood + random:0,2 
+thisObsessed-Employee:Mood + random:0,2 
 <endParticipantAttributeRuleEffect>
 <beginParticipantAttributeRuleEffect>
 Dancing
@@ -830,7 +850,7 @@ Name
 <endParticipantAttributeRuleEffect>
 <beginParticipantAttributeRuleEffect>
 ResearchCompleted
-(numActive-Emp * 2) + thisRose-Artifact:ResearchCompleted 
+(numActive-Emp * 2) + thisFlower-Artifact:ResearchCompleted 
 <endParticipantAttributeRuleEffect>
 <beginParticipantAttributeRuleEffect>
 PercentGrown
@@ -866,13 +886,18 @@ TimeSpent
 <endRules>
 <beginGraphics>
 Employee
+Obsessed
+Gomez
+
+
+Employee
 Unobsessed
 Thing
 
 
 Employee
-Obsessed
-Gomez
+Unobsessed
+Wednesday
 
 
 Artifact
