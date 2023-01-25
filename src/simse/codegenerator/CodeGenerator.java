@@ -345,7 +345,7 @@ public class CodeGenerator {
     			.addMethod(start)
     			.build();
 		
-		JavaFile javaFile = JavaFile.builder("simse", simSE)
+		JavaFile javaFile = JavaFile.builder("SimSE", simSE)
 			    .build();
 
 	    try {
