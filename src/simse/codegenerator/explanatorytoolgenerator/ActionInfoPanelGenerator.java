@@ -24,6 +24,10 @@ import java.util.Vector;
 
 import javax.swing.JOptionPane;
 
+import com.squareup.javapoet.ClassName;
+import com.squareup.javapoet.MethodSpec;
+import com.squareup.javapoet.TypeSpec;
+
 public class ActionInfoPanelGenerator implements CodeGeneratorConstants {
   private File directory; // directory to save generated code into
   private DefinedActionTypes actTypes;
@@ -67,6 +71,46 @@ public class ActionInfoPanelGenerator implements CodeGeneratorConstants {
       writer
           .write("public class ActionInfoPanel extends JPanel implements ListSelectionListener {");
       writer.write(NEWLINE);
+      
+      ClassName pane = ClassName.get("javafx.scene.layout", "Pane");
+      ClassName eventHandler = ClassName.get("javafx.event", "EventHandler");
+      ClassName mouseEvent = ClassName.get("javafx.scene.input", "MouseEvent");
+      ClassName action = ClassName.get("simse.adts.actions", "Action");
+      ClassName vBox = ClassName.get("javafx.scene.layout", "VBox");
+      ClassName titledPane = ClassName.get("javafx.scene.control", "TitledPane");
+      ClassName textArea = ClassName.get("javafx.scene.control", "TextArea");
+      ClassName scrollPane = ClassName.get("javafx.scene.control", "ScrollPane");
+      ClassName scrollPanePolicy = ClassName.get("javafx.scene.control.ScrollPane", "ScrollPanePolicy");
+      ClassName pos = ClassName.get("javafx.geometry", "Pos");
+      
+      MethodSpec constructor = MethodSpec.constructorBuilder()
+    		  .addParameter(action, "action")
+    		  .addStatement("this.action = action")
+    		  .addStatement("$T mainPane = new $T()", vBox, vBox)
+    		  .addStatement("$T actionDescriptionPane = new $T()")
+    		  .addStatement("$T actionDescriptionTitlePane = new $T(\"ActionDescription: \", actionDescriptionPane)", titledPane, titledPane)
+    		  .addStatement("actionDescriptionArea = new $T()", textArea)
+    		  .addStatement("actionDescriptionArea.setWrapText(true)")
+    		  .addStatement("actionDescriptionArea.setPrefRowCount(1)")
+    		  .addStatement("actionDescriptionArea.setPrefColumnCount(50)")
+    		  .addStatement("actionDescriptionArea.setEditable(false)")
+    		  .addStatement("$T actionDescriptionScrollPane = new $T(actionDescriptionArea)", scrollPane, scrollPane)
+    		  .addStatement("actionDescriptionScrollPane.setVbarPolicy($T.AS_NEEDED)", scrollPanePolicy)
+    		  .addStatement("actionDescriptionScrollPane.setHbarPolicy($T.NEVER)", scrollPanePolicy)
+    		  .addStatement("initializeActionDescription()")
+    		  .addStatement("actionDescriptionPane.getChildren().add(actionDescriptionScrollPane)")
+    		  .addStatement("actionDescriptionPane.setAlignment($T.CENTER)", pos)
+    		  .addStatement("$T participantsPane = new $T()", vBox, vBox)
+    		  .addStatement("$T participantsTitlePane = new $T(\"Participants:\", participantsPane)", titledPane, titledPane)
+    		  .addStatement("table = createPartcipantsTable()")
+    		  .addStatement("table.setMinWidth(800)")
+    		  .build();
+      
+  	TypeSpec actionInfoPanel = TypeSpec.classBuilder("ActionInfoPanel")
+			.superclass(pane)
+			.addMethod(constructor)
+			.build();
+      
 
       // member variables:
       writer
