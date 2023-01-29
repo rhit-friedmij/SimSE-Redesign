@@ -14,6 +14,10 @@ import java.io.IOException;
 
 import javax.swing.JOptionPane;
 
+import com.squareup.javapoet.ClassName;
+import com.squareup.javapoet.CodeBlock;
+import com.squareup.javapoet.MethodSpec;
+
 public class CompositeGraphGenerator implements CodeGeneratorConstants {
   private File directory; // directory to save generated code into
   private ModelOptions options;
@@ -129,6 +133,9 @@ public class CompositeGraphGenerator implements CodeGeneratorConstants {
     	writer.write(NEWLINE);
       writer.write(NEWLINE);
 
+      
+      
+      
       // constructor:
       writer
           .write("public CompositeGraph(ObjectGraph objGraph, ActionGraph actGraph, Branch branch) {");
@@ -213,6 +220,38 @@ public class CompositeGraphGenerator implements CodeGeneratorConstants {
       writer.write(CLOSED_BRACK);
       writer.write(NEWLINE);
       writer.write(NEWLINE);
+      
+      ClassName chartRenderingInfo = ClassName.get("org.jfree.chart", "ChartRenderingInfo");
+      ClassName jFreeChart = ClassName.get("org.jfree.chart", "JFreeChart");
+      ClassName numberAxis = ClassName.get("org.jfree.chart.axis", "NumberAxis");
+      ClassName chartViewer = ClassName.get("org.jfree.chart.fx", "ChartViewer");
+      ClassName chartMouseEventFX = ClassName.get("org.jfree.chart.fx.interaction", "ChartMouseEventFX");
+      ClassName chartMouseListenerFX = ClassName.get("org.jfree.chart.fx.interaction", "ChartMouseListenerFX");
+      ClassName combinedDomainXYPlot = ClassName.get("org.jfree.chart.plot", "CombinedDomainXYPlot");
+      ClassName plotOrientation = ClassName.get("org.jfree.chart.plot", "PlotOrientation");
+      ClassName xyPlot = ClassName.get("org.jfree.chart.plot", "XYPlot");
+      ClassName textTitle = ClassName.get("org.jfree.chart.title", "TextTitle");
+      ClassName rectangleEdge = ClassName.get("org.jfree.chart.ui", "RectangleEdge");
+      ClassName actionEvent = ClassName.get("javafx.event", "ActionEvent");
+      ClassName eventHandler = ClassName.get("javafx.event", "EventHandler");
+      ClassName scene = ClassName.get("javafx.scene", "Scene");
+      ClassName menuItem = ClassName.get("javafx.scene.control", "MenuItem");
+      ClassName separatorMenuItem = ClassName.get("javafx.scene.control", "SeparatorMenuItem");
+      ClassName textInput = ClassName.get("javafx.scene.control", "TextInputDialog");
+      ClassName range = ClassName.get("javafx.scene.input", "MouseButton");
+      ClassName range = ClassName.get("javafx.scene.input", "MouseEvent");
+      ClassName range = ClassName.get("javafx.scene.paint", "Color");
+      ClassName range = ClassName.get("javafx.stage", "Stage");
+      ClassName range = ClassName.get("simse", "SimSE");
+      ClassName range = ClassName.get("simse.gui.util", "JavaFXHelpers");
+      ClassName range = ClassName.get("simse.state", "Clock");
+      ClassName range = ClassName.get("simse.state", "State");
+      ClassName range = ClassName.get("simse.state.logger", "Logger");
+     
+      
+      MethodSpec constructor = MethodSpec.constructorBuilder()
+    		  .addParameter(parameterSpec)
+      
 
       // "chartMouseClicked" method:
       writer.write("// responds to LEFT mouse clicks on the chart");
@@ -226,6 +265,8 @@ public class CompositeGraphGenerator implements CodeGeneratorConstants {
       writer.write(CLOSED_BRACK);
       writer.write(NEWLINE);
       writer.write(NEWLINE);
+      
+      CodeBlock
 
       // "chartMouseMoved" method:
       writer.write("public void chartMouseMoved(ChartMouseEvent event) {}");
@@ -321,59 +362,50 @@ public class CompositeGraphGenerator implements CodeGeneratorConstants {
     	
     	// "actionPerformed" methods:
     	writer.write("public void actionPerformed(ActionEvent e) {");
-    	writer.write(NEWLINE);
     	writer.write("if (e.getSource() == newBranchItem) {");
-    	writer.write(NEWLINE);
 			writer.write("String newBranchName = JOptionPane.showInputDialog(null, \"Please name this new game:\", \"Name New Game\", JOptionPane.QUESTION_MESSAGE);");
-			writer.write(NEWLINE);
 			writer.write("if (newBranchName != null) {");
-			writer.write(NEWLINE);
 			writer.write("State tempState = (State) objGraph.getLog().get(lastRightClickedX).clone();");
-			writer.write(NEWLINE);
 			writer.write("Logger tempLogger = new Logger(tempState, new ArrayList<State>(objGraph.getLog().subList(0, lastRightClickedX)));");
-			writer.write(NEWLINE);
 			writer.write("Clock tempClock = new Clock(tempLogger, lastRightClickedX);");
-			writer.write(NEWLINE);
 			writer.write("tempState.setClock(tempClock);");
-			writer.write(NEWLINE);
 			writer.write("tempState.setLogger(tempLogger);");
-			writer.write(NEWLINE);
 			writer.write("SimSE.startNewBranch(tempState, new Branch(newBranchName, lastRightClickedX, tempClock.getTime(), branch, null));");
-    	writer.write(NEWLINE);
-    	writer.write(CLOSED_BRACK);
-    	writer.write(NEWLINE);
-    	writer.write(CLOSED_BRACK);
-    	writer.write(NEWLINE);
-    	writer.write(CLOSED_BRACK);
-    	writer.write(NEWLINE);
-    	writer.write(NEWLINE);
       
+			
+			
       // "update" method:
-    	writer.write("public void update() {");
-    	writer.write(NEWLINE);
-    	writer.write("actGraph.update();");
-    	writer.write(NEWLINE);
-    	writer.write("objGraph.update();");
-    	writer.write(NEWLINE);
-    	writer.write(CLOSED_BRACK);
-    	writer.write(NEWLINE);
-    	writer.write(NEWLINE);
+//    	writer.write("public void update() {");
+//    	writer.write(NEWLINE);
+//    	writer.write("actGraph.update();");
+//    	writer.write(NEWLINE);
+//    	writer.write("objGraph.update();");
+//    	writer.write(NEWLINE);
+//    	writer.write(CLOSED_BRACK);
+//    	writer.write(NEWLINE);
+//    	writer.write(NEWLINE);
+    	
+	MethodSpec update = MethodSpec.methodBuilder("update")
+			.returns(void.class)
+			.addStatement(CodeBlock.builder().add("actGraph.update()").build())
+			.addStatement(CodeBlock.builder().add("objGraph.update()").build())
+			.build();
 
       // ExitListener class:
-      writer.write("public class ExitListener extends WindowAdapter {");
-      writer.write(NEWLINE);
-      writer.write("public void windowClosing(WindowEvent event) {");
-      writer.write(NEWLINE);
-      writer.write("setVisible(false);");
-      writer.write(NEWLINE);
-      writer.write("dispose();");
-      writer.write(NEWLINE);
-      writer.write(CLOSED_BRACK);
-      writer.write(NEWLINE);
-      writer.write(CLOSED_BRACK);
-      writer.write(NEWLINE);
-      writer.write(CLOSED_BRACK);
-      writer.close();
+//      writer.write("public class ExitListener extends WindowAdapter {");
+//      writer.write(NEWLINE);
+//      writer.write("public void windowClosing(WindowEvent event) {");
+//      writer.write(NEWLINE);
+//      writer.write("setVisible(false);");
+//      writer.write(NEWLINE);
+//      writer.write("dispose();");
+//      writer.write(NEWLINE);
+//      writer.write(CLOSED_BRACK);
+//      writer.write(NEWLINE);
+//      writer.write(CLOSED_BRACK);
+//      writer.write(NEWLINE);
+//      writer.write(CLOSED_BRACK);
+//      writer.close();
     } catch (IOException e) {
       JOptionPane.showMessageDialog(null, ("Error writing file "
           + compGraphFile.getPath() + ": " + e.toString()), "File IO Error",
