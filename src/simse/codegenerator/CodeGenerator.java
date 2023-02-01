@@ -64,6 +64,7 @@ public class CodeGenerator {
    * causes all of this component's sub-components to generate code
    */
   public void generate() {
+	  
     File codeGenDir = options.getCodeGenerationDestinationDirectory();
     if ((codeGenDir != null) && 
         ((!codeGenDir.exists()) || (!codeGenDir.isDirectory()))) {
