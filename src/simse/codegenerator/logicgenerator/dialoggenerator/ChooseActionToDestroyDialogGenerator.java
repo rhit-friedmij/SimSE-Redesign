@@ -67,7 +67,6 @@ public class ChooseActionToDestroyDialogGenerator implements
 	  ClassName stateClass = ClassName.get("simse.state", "State");
 	  ClassName ruleExecClass = ClassName.get("simse.logic", "RuleExecutor");
 	  ClassName employeeClass = ClassName.get("simse.adts.objects", "Employee");
-	  ClassName customerClass = ClassName.get("simse.adts.objects", "Customer");
 	  ClassName actionClass = ClassName.get("simse.adts.actions", "Action");
 	  ClassName stageClass = ClassName.get("javafx.stage", "Stage");
 	  ClassName checkboxClass = ClassName.get("javafx.scene.control", "CheckBox");
