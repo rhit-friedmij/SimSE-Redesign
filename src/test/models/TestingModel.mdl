@@ -1236,12 +1236,6 @@ Morticia.png
 <endGraphics>
 <beginMap>
 <beginSOPUsers>
-- Employee - Obsessed - Gomez
-true
-true
-7
-1
-
 - Employee - Unobsessed - Wednesday
 true
 true
@@ -1253,6 +1247,12 @@ true
 true
 4
 2
+
+- Employee - Obsessed - Gomez
+true
+true
+7
+1
 
 <endSOPUsers>
 605
