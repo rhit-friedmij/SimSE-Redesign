@@ -19,10 +19,16 @@ import java.util.Vector;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+
+import javax.lang.model.element.Modifier;
 import javax.swing.JOptionPane;
+
+import com.squareup.javapoet.ClassName;
+import com.squareup.javapoet.MethodSpec;
 
 public class EngineGenerator implements CodeGeneratorConstants {
   private File directory; // directory to generate into
+  private File engineFile; // file to generate
   private CreatedObjects createdObjs; // start state objects
   private StartingNarrativeDialogGenerator sndg;
 
@@ -38,11 +44,101 @@ public class EngineGenerator implements CodeGeneratorConstants {
     sndg.generate();
 
     // generate Engine:
-    File engineFile = new File(directory, ("simse\\engine\\Engine.java"));
-    if (engineFile.exists()) {
-      engineFile.delete(); // delete old version of file
+    ClassName timertask = ClassName.get("java.util", "TimerTask");
+    ClassName timeline = ClassName.get("javafx.animation", "Timeline");
+    ClassName keyframe = ClassName.get("javafx.animation", "KeyFrame");
+    ClassName actionevent = ClassName.get("javafx.event", "ActionEvent");
+    ClassName eventhandler = ClassName.get("javafx.event", "EventHandler");
+    ClassName duration = ClassName.get("javafx.util", "Duration");
+    ClassName acustomer = ClassName.get("simse.adts.objects", "ACustomer");
+    ClassName automatedtestingtool = ClassName.get("simse.adts.objects", "AutomatedTestingTool");
+    ClassName code = ClassName.get("simse.adts.objects", "Code");
+    ClassName designdocument = ClassName.get("simse.adts.objects", "DesignDocument");
+    ClassName designenvironment = ClassName.get("simse.adts.objects", "DesignEnvironment");
+    ClassName ide = ClassName.get("simse.adts.objects", "IDE");
+    ClassName requirementscapturetool = ClassName.get("simse.adts.objects", "RequirementsCaptureTool");
+    ClassName requirementsdocument = ClassName.get("simse.adts.objects", "RequirementsDocument");
+    ClassName seproject = ClassName.get("simse.adts.objects", "SEProject");
+    ClassName softwareengineer = ClassName.get("simse.adts.objects", "SoftwareEngineer");
+    ClassName systemtestplan = ClassName.get("simse.adts.objects", "SystemTestPlan");
+    ClassName simsegui = ClassName.get("simse.gui", "SimSEGUI");
+    ClassName logic = ClassName.get("simse.logic", "Logic");
+    ClassName state = ClassName.get("simse.state", "State");
+    
+    Vector<SimSEObject> objs = createdObjs.getAllObjects();
+    for (int i = 0; i < objs.size(); i++) {
+      StringBuffer strToWrite = new StringBuffer();
+      SimSEObject tempObj = objs.elementAt(i);
+      String objTypeName = CodeGeneratorUtils.getUpperCaseLeading(
+      		tempObj.getSimSEObjectType().getName());
+      strToWrite.append(objTypeName + " a" + i + " = new " + objTypeName
+          + "(");
+      Vector<Attribute> atts = 
+      	tempObj.getSimSEObjectType().getAllAttributes();
+      if (atts.size() == tempObj.getAllAttributes().size()) { // all 
+      																												// attributes
+      																											  // are 
+      																											  // instantiated
+        boolean validObj = true;
+        // go through all attributes:
+        for (int j = 0; j < atts.size(); j++) {
+          Attribute att = atts.elementAt(j);
+          InstantiatedAttribute instAtt = 
+          	tempObj.getAttribute(att.getName()); // get
+																									 // the
+																									 // corresponding
+																									 // instantiated
+																									 // attribute
+          if (instAtt == null) { // no corresponding instantiated attribute
+            validObj = false;
+            break;
+          }
+          if (instAtt.isInstantiated()) { // attribute has a value
+            if (instAtt.getAttribute().getType() == AttributeTypes.STRING) {
+              strToWrite.append("\"" + instAtt.getValue() + "\"");
+            } else { // boolean, int, or double
+              strToWrite.append(instAtt.getValue().toString());
+            }
+            if (j < (atts.size() - 1)) { // not on last element
+              strToWrite.append(", ");
+            }
+          } else { // attribute does not have a value -- invalidates entire
+										// object
+            validObj = false;
+            break;
+          }
+        }
+        if (validObj) { // if valid, finish writing:
+          writer.write(strToWrite + ");");
+          writer.write(NEWLINE);
+          writer.write("state.get"
+              + SimSEObjectTypeTypes.getText(tempObj.getSimSEObjectType()
+                  .getType()) + "StateRepository().get" + objTypeName
+              + "StateRepository().add(a" + i + ");");
+          writer.write(NEWLINE);
+        }
+      }
     }
+    
+    MethodSpec engineConstructor = MethodSpec.constructorBuilder()
+    		.addModifiers(Modifier.PUBLIC)
+    		.addStatement("numSteps = 0")
+    		.addStatement("logic = l")
+    		.addStatement("state = s")
+    		.addCode("$L", "\n")
+    		.addStatement("timer = new Timeline(new KeyFrame(Duration.millis(50), this))")
+    		.addStatement("timer.setCycleCount(Timeline.INDEFINITE)")
+    		.addStatement("timer.setDelay(Duration.millis(100))")
+    		.addStatement("timer.play()")
+    		.addCode("$L", "\n")
+    		.addStatement("//CodeBloc")
+    		.build();
+    
     try {
+    	engineFile = new File(directory, ("simse\\engine\\Engine.java"));
+        if (engineFile.exists()) {
+          engineFile.delete(); // delete old version of file
+        }
       FileWriter writer = new FileWriter(engineFile);
       writer
           .write("/* File generated by: simse.codegenerator.enginegenerator.EngineGenerator */");

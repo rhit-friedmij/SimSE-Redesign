@@ -7,9 +7,7 @@ package simse.codegenerator.enginegenerator;
 
 import simse.modelbuilder.startstatebuilder.CreatedObjects;
 
-import java.awt.Dialog;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 
 import javax.lang.model.element.Modifier;
@@ -129,18 +127,7 @@ implements CodeGeneratorConstants {
 			  snFile.delete(); // delete old version of file
 		  }
 		  System.out.println(javaFile.toString());
-		  javaFile.writeTo(snFile);
-	      
-//	      char[] startNarrChars = createdObjs.getStartingNarrative().
-//	      	replaceAll("\n", "\\\\n").replaceAll("\"", "\\\\\"").toCharArray();
-//	      for (int i = 0; i < startNarrChars.length; i++) {
-//	        if (startNarrChars[i] == '\n') {
-//	          writer.write("\" + \'\\n\' + \"");
-//	        } else {
-//	          writer.write(startNarrChars[i]);
-//	        }
-//	      }
-	      
+		  javaFile.writeTo(snFile);	      
 	  } catch (IOException e) {
 	      JOptionPane.showMessageDialog(null, ("Error writing file "
 	          + snFile.getPath() + ": " + e.toString()), "File IO Error",
