@@ -15,6 +15,7 @@ import simse.modelbuilder.startstatebuilder.CreatedObjects;
 import simse.modelbuilder.startstatebuilder.InstantiatedAttribute;
 import simse.modelbuilder.startstatebuilder.SimSEObject;
 
+import java.util.ArrayList;
 import java.util.Vector;
 import java.io.File;
 import java.io.IOException;
@@ -23,6 +24,7 @@ import javax.lang.model.element.Modifier;
 import javax.swing.JOptionPane;
 
 import com.squareup.javapoet.ClassName;
+import com.squareup.javapoet.CodeBlock;
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.ParameterizedTypeName;
@@ -53,29 +55,18 @@ public class EngineGenerator implements CodeGeneratorConstants {
 		ClassName actionEvent = ClassName.get("javafx.event", "ActionEvent");
 		ClassName eventHandler = ClassName.get("javafx.event", "EventHandler");
 		ClassName duration = ClassName.get("javafx.util", "Duration");
-		ClassName aCustomer = ClassName.get("simse.adts.objects", "ACustomer");
-		ClassName automatedTestingTool = ClassName.get("simse.adts.objects", "AutomatedTestingTool");
-		ClassName code = ClassName.get("simse.adts.objects", "Code");
-		ClassName designDocument = ClassName.get("simse.adts.objects", "DesignDocument");
-		ClassName designEnvironment = ClassName.get("simse.adts.objects", "DesignEnvironment");
-		ClassName ide = ClassName.get("simse.adts.objects", "IDE");
-		ClassName requirementsCaptureTool = ClassName.get("simse.adts.objects", "RequirementsCaptureTool");
-		ClassName requirementsDocument = ClassName.get("simse.adts.objects", "RequirementsDocument");
-		ClassName seProject = ClassName.get("simse.adts.objects", "SEProject");
-		ClassName softwareEngineer = ClassName.get("simse.adts.objects", "SoftwareEngineer");
-		ClassName systemTestPlan = ClassName.get("simse.adts.objects", "SystemTestPlan");
 		ClassName simseGui = ClassName.get("simse.gui", "SimSEGUI");
 		ClassName logic = ClassName.get("simse.logic", "Logic");
 		ClassName state = ClassName.get("simse.state", "State");
 		TypeName actionHandler = ParameterizedTypeName.get(eventHandler, actionEvent);
 
-		String objectsToWrite = "";
+		CodeBlock.Builder objsBuilder = CodeBlock.builder();
 		Vector<SimSEObject> objs = createdObjs.getAllObjects();
 		for (int i = 0; i < objs.size(); i++) {
 			StringBuffer strToWrite = new StringBuffer();
 			SimSEObject tempObj = objs.elementAt(i);
 			String objTypeName = CodeGeneratorUtils.getUpperCaseLeading(tempObj.getSimSEObjectType().getName());
-			strToWrite.append(objTypeName + " a" + i + " = new " + objTypeName + "(");
+			strToWrite.append("$T a" + i + " = new " + objTypeName + "(");
 			Vector<Attribute> atts = tempObj.getSimSEObjectType().getAllAttributes();
 			
 			// all attributes are instantiated
@@ -112,14 +103,18 @@ public class EngineGenerator implements CodeGeneratorConstants {
 				}
 				// if valid, finish writing:
 				if (validObj) { 
-					objectsToWrite += strToWrite + ");\nstate.get" + SimSEObjectTypeTypes.getText(tempObj.getSimSEObjectType().getType())
-							+ "StateRepository().get" + objTypeName + "StateRepository().add(a" + i + ");\n";
+					ClassName tempName = ClassName.get("simse.adts.objects", objTypeName);
+					objsBuilder.addStatement(strToWrite + ")", tempName);
+					objsBuilder.addStatement("state.get" + SimSEObjectTypeTypes.getText(tempObj.getSimSEObjectType().getType())
+							+ "StateRepository().get" + objTypeName + "StateRepository().add(a" + i + ")");
 				}
 			}
 		}
 
 		MethodSpec engineConstructor = MethodSpec.constructorBuilder()
 				.addModifiers(Modifier.PUBLIC)
+				.addParameter(logic, "l")
+				.addParameter(state, "s")
 				.addStatement("numSteps = 0")
 				.addStatement("logic = l")
 				.addStatement("state = s")
@@ -129,7 +124,7 @@ public class EngineGenerator implements CodeGeneratorConstants {
 				.addStatement("timer.setDelay($T.millis(100))", duration)
 				.addStatement("timer.play()")
 				.addCode("$L", "\n")
-				.addStatement(objectsToWrite)
+				.addCode(objsBuilder.build())
 				.build();
 		
 		MethodSpec giveGui = MethodSpec.methodBuilder("giveGUI")
