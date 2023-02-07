@@ -160,8 +160,11 @@ public class ChooseRoleToPlayDialogGenerator implements CodeGeneratorConstants {
 			  .addMethod(onlyOneRole)
 			  .build();
 	  
+
+	  ClassName actions = ClassName.get("simse.adts", "actions");
 	  JavaFile javaFile = JavaFile.builder("ChooseRoleToPlayDialog", roleDialog)
-			    .build();
+			  .addStaticImport(actions, "*")  
+			  .build();
 	  
 	  
     try {

@@ -314,8 +314,11 @@ public class EmployeeParticipantSelectionDialogGenerator implements
 	  			.addMethod(actionCancelled)
 	  			.build();
 		  
+
+	  ClassName actions = ClassName.get("simse.adts", "actions");
 	  JavaFile javaFile = JavaFile.builder("EmployeeParticipantSelectionDialog", employeeDialog)
-				    .build();
+				.addStaticImport(actions, "*")    
+			  .build();
 	  
     try {
       psdFile = new File(directory,

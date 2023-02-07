@@ -211,9 +211,11 @@ public class ChooseActionToJoinDialogGenerator implements
 			  .addMethod(handle)
 			  .addMethod(onlyOneChoice)
 			  .build();
-	  
+
+	  ClassName actions = ClassName.get("simse.adts", "actions");
 	  JavaFile javaFile = JavaFile.builder("ChooseActionToJoinDialog", joinDialog)
-			    .build();
+			  .addStaticImport(actions, "*")  
+			  .build();
 	  
     try {
       catjdFile = new File(directory,

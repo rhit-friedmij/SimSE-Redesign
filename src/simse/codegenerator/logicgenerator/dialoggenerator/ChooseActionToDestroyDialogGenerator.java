@@ -181,8 +181,10 @@ public class ChooseActionToDestroyDialogGenerator implements
   			.addMethod(handle)
   			.build();
 	  
+	  ClassName actions = ClassName.get("simse.adts", "actions");
 	  JavaFile javaFile = JavaFile.builder("ChooseActionToDestroyDialog", destroyDialog)
-			    .build();
+			    .addStaticImport(actions, "*")
+			  .build();
 	  
     try {
       catddFile = new File(directory,
