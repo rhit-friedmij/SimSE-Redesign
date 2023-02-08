@@ -6,10 +6,12 @@ import java.util.Vector;
 import simse.codegenerator.enginegenerator.EngineGenerator;
 import simse.codegenerator.enginegenerator.StartingNarrativeDialogGenerator;
 import simse.codegenerator.logicgenerator.LogicGenerator;
+import simse.codegenerator.logicgenerator.MiscUpdaterGenerator;
 import simse.modelbuilder.ModelOptions;
 import simse.modelbuilder.actionbuilder.ActionType;
+import simse.modelbuilder.actionbuilder.ActionTypeDestroyer;
 import simse.modelbuilder.actionbuilder.DefinedActionTypes;
-import simse.modelbuilder.objectbuilder.Attribute;
+import simse.modelbuilder.actionbuilder.TimedActionTypeDestroyer;
 import simse.modelbuilder.objectbuilder.DefinedObjectTypes;
 import simse.modelbuilder.objectbuilder.NonNumericalAttribute;
 import simse.modelbuilder.objectbuilder.SimSEObjectType;
@@ -29,7 +31,8 @@ public class TestGenerator {
 		setUp();
 //		startingNarrativeDialogTest();
 //		engineTest();
-		logicTest();
+//		logicTest();
+		miscUpdaterTest();
 	}
 	
 	public static void setUp() {
@@ -38,23 +41,35 @@ public class TestGenerator {
 		options.setCodeGenerationDestinationDirectory(directory);
 		NonNumericalAttribute name = new NonNumericalAttribute("name", 1, true, true, true);
 		InstantiatedAttribute ia1 = new InstantiatedAttribute(name, "Gomez");
+		NonNumericalAttribute dancing = new NonNumericalAttribute("dancing", 2, true, true, true);
+		InstantiatedAttribute ia2 = new InstantiatedAttribute(dancing, false);
 		Vector<InstantiatedAttribute> v1 = new Vector<>();
 		v1.add(ia1);
+		v1.add(ia2);
 		SimSEObjectType ot1 = new SimSEObjectType(1, "Obsessed");
 		ot1.addAttribute(name);
+		ot1.addAttribute(dancing);
 		cObjs.addObject(new SimSEObject(v1, ot1));
 		objTypes.addObjectType(ot1);
 		
-		InstantiatedAttribute ia2 = new InstantiatedAttribute(name, "Wednesday");
+		InstantiatedAttribute ia3 = new InstantiatedAttribute(name, "Wednesday");
 		Vector<InstantiatedAttribute> v2 = new Vector<>();
-		v2.add(ia2);
+		v2.add(ia3);
 		SimSEObjectType ot2 = new SimSEObjectType(1, "Unobsessed");
 		ot2.addAttribute(name);
 		cObjs.addObject(new SimSEObject(v2, ot2));
 		objTypes.addObjectType(ot2);
 		
 		ActionType at1 = new ActionType("Cultivate");
+		ActionType at2 = new ActionType("Research");
+		ActionType at3 = new ActionType("Dance");
+		ActionType at4 = new ActionType("Rain");
+		at3.addDestroyer(new TimedActionTypeDestroyer("AutoDest", at3));
+		at4.addDestroyer(new TimedActionTypeDestroyer("AutoDest", at4));
 		actTypes.addActionType(at1);
+		actTypes.addActionType(at2);
+		actTypes.addActionType(at3);
+		actTypes.addActionType(at4);
 	}
 	
 	public static void startingNarrativeDialogTest() {
@@ -70,5 +85,10 @@ public class TestGenerator {
 	public static void logicTest() {
 		LogicGenerator lGen = new LogicGenerator(options, objTypes, actTypes);
 		lGen.generate();
+	}
+	
+	public static void miscUpdaterTest() {
+		MiscUpdaterGenerator muGen = new MiscUpdaterGenerator(directory, actTypes);
+		muGen.generate();
 	}
 }
