@@ -32,6 +32,8 @@ import java.util.Vector;
 
 import javax.swing.JOptionPane;
 
+import com.squareup.javapoet.ClassName;
+
 public class DestroyerCheckerGenerator implements CodeGeneratorConstants {
   private File directory; // directory to save generated code into
   private DefinedActionTypes actTypes; 
@@ -41,15 +43,65 @@ public class DestroyerCheckerGenerator implements CodeGeneratorConstants {
   private Vector<ActionTypeDestroyer> prioritizedDestroyers;
   private Vector<ActionTypeDestroyer> allDestroyers;
 
-  public DestroyerCheckerGenerator(DefinedActionTypes actTypes, 
-  		File directory) {
+  public DestroyerCheckerGenerator(DefinedActionTypes actTypes, File directory) {
     this.actTypes = actTypes;
     this.directory = directory;
     initializeDestroyerLists();
   }
 
   public void generate() {
-    try {
+	  ClassName random = ClassName.get("java.util", "Random");
+	  ClassName vector = ClassName.get("java.util", "Vector");
+	  ClassName stage = ClassName.get("javafx.stage", "Stage");
+	  ClassName action = ClassName.get("simse.adts.actions", "Action");
+	  ClassName breakAction = ClassName.get("simse.adts.actions", "BreakAction");
+	  ClassName changePayRateAction = ClassName.get("simse.adts.actions", "ChangePayRateAction");
+	  ClassName correctCodeAction = ClassName.get("simse.adts.actions", "CorrectCodeAction");
+	  ClassName correctDesignAction = ClassName.get("simse.adts.actions", "CorrectDesignAction");
+	  ClassName correctRequirementsAction = ClassName.get("simse.adts.actions", "CorrectRequirementsAction");
+	  ClassName correctSystemTestPlanAction = ClassName.get("simse.adts.actions", "CorrectSystemTestPlanAction");
+	  ClassName createCodeAction = ClassName.get("simse.adts.actions", "CreateCodeAction");
+	  ClassName createDesignAction = ClassName.get("simse.adts.actions", "CreateDesignAction");
+	  ClassName createRequirementsAction = ClassName.get("simse.adts.actions", "CreateRequirementsAction");
+	  ClassName createSystemTestPlanAction = ClassName.get("simse.adts.actions", "CreateSystemTestPlanAction");
+	  ClassName fireAction = ClassName.get("simse.adts.actions", "FireAction");
+	  ClassName getSickAction = ClassName.get("simse.adts.actions", "GetSickAction");
+	  ClassName giveBonusAction = ClassName.get("simse.adts.actions", "GiveBonusAction");
+	  ClassName inspectCodeAction = ClassName.get("simse.adts.actions", "InspectCodeAction");
+	  ClassName integrateCodeAction = ClassName.get("simse.adts.actions", "IntegrateCodeAction");
+	  ClassName introduceNewRequirementsAction = ClassName.get("simse.adts.actions", "IntroduceNewRequirementsAction");
+	  ClassName purchaseToolAction = ClassName.get("simse.adts.actions", "PurchaseToolAction");
+	  ClassName quitAction = ClassName.get("simse.adts.actions", "QuitAction");
+	  ClassName reviewDesignAction = ClassName.get("simse.adts.actions", "ReviewDesignAction");
+	  ClassName reviewRequirementsAction = ClassName.get("simse.adts.actions", "ReviewRequirementsAction");
+	  ClassName reviewSystemTestPlanAction = ClassName.get("simse.adts.actions", "ReviewSystemTestPlanAction");
+	  ClassName suggestedDesignPhaseDurationAction = ClassName.get("simse.adts.actions", "SuggestedDesignPhaseDurationAction");
+	  ClassName suggestedImplIntegrationPhaseDurationAction = ClassName.get("simse.adts.actions", "SuggestedImplIntegrationPhaseDurationAction");
+	  ClassName suggestedRequirementsPhaseDurationAction = ClassName.get("simse.adts.actions", "SuggestedRequirementsPhaseDurationAction");
+	  ClassName suggestedTestingPhaseDurationAction = ClassName.get("simse.adts.actions", "SuggestedTestingPhaseDurationAction");
+	  ClassName systemTestAction = ClassName.get("simse.adts.actions", "SystemTestAction");
+	  ClassName artifact = ClassName.get("simse.adts.objects", "Artifact");
+	  ClassName automatedTestingTool = ClassName.get("simse.adts.objects", "AutomatedTestingTool");
+	  ClassName code = ClassName.get("simse.adts.objects", "Code");
+	  ClassName customer = ClassName.get("simse.adts.objects", "Customer");
+	  ClassName designDocument = ClassName.get("simse.adts.objects", "DesignDocument");
+	  ClassName designEnvironment = ClassName.get("simse.adts.objects", "DesignEnvironment");
+	  ClassName employee = ClassName.get("simse.adts.objects", "Employee");
+	  ClassName iDE = ClassName.get("simse.adts.objects", "IDE");
+	  ClassName project = ClassName.get("simse.adts.objects", "Project");
+	  ClassName requirementsCaptureTool = ClassName.get("simse.adts.objects", "RequirementsCaptureTool");
+	  ClassName requirementsDocument = ClassName.get("simse.adts.objects", "RequirementsDocument");
+	  ClassName sEProject = ClassName.get("simse.adts.objects", "SEProject");
+	  ClassName sSObject = ClassName.get("simse.adts.objects", "SSObject");
+	  ClassName softwareEngineer = ClassName.get("simse.adts.objects", "SoftwareEngineer");
+	  ClassName systemTestPlan = ClassName.get("simse.adts.objects", "SystemTestPlan");
+	  ClassName tool = ClassName.get("simse.adts.objects", "Tool");
+	  ClassName melloPanel = ClassName.get("simse.gui", "MelloPanel");
+	  ClassName state = ClassName.get("simse.state", "State");
+	  
+	  
+	  
+	  try {
       destFile = new File(directory, ("simse\\logic\\DestroyerChecker.java"));
       if (destFile.exists()) {
         destFile.delete(); // delete old version of file

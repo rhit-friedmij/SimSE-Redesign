@@ -41,16 +41,6 @@ public class MiscUpdaterGenerator implements CodeGeneratorConstants {
 
   public void generate() {
 	  ClassName vector = ClassName.get("java.util", "Vector");
-	  ClassName changePayRateAction = ClassName.get("simse.adts.actions", "ChangePayRateAction");
-	  ClassName fireAction = ClassName.get("simse.adts.actions", "FireAction");
-	  ClassName giveBonusAction = ClassName.get("simse.adts.actions", "GiveBonusAction");
-	  ClassName introduceNewRequirementsAction = ClassName.get("simse.adts.actions", "IntroduceNewRequirementsAction");
-	  ClassName purchaseToolAction = ClassName.get("simse.adts.actions", "PurchaseToolAction");
-	  ClassName quitAction = ClassName.get("simse.adts.actions", "QuitAction");
-	  ClassName suggestedDesignPhaseDurationAction = ClassName.get("simse.adts.actions", "SuggestedDesignPhaseDurationAction");
-	  ClassName suggestedImplIntegrationPhaseDurationAction = ClassName.get("simse.adts.actions", "SuggestedImplIntegrationPhaseDurationAction");
-	  ClassName suggestedRequirementsPhaseDurationAction = ClassName.get("simse.adts.actions", "SuggestedRequirementsPhaseDurationAction");
-	  ClassName suggestedTestingPhaseDurationAction = ClassName.get("simse.adts.actions", "SuggestedTestingPhaseDurationAction");
 	  ClassName employee = ClassName.get("simse.adts.objects", "Employee");
 	  ClassName action = ClassName.get("simse.adts.actions", "Action");
 	  ClassName state = ClassName.get("simse.state", "State");
