@@ -289,78 +289,68 @@ public class DestroyerCheckerGenerator implements CodeGeneratorConstants {
 				for (int j = 0; j < destroyers.size(); j++) {
 					ActionTypeParticipantDestroyer dest = destroyers.elementAt(j);
 					ActionTypeParticipant part = dest.getParticipant();
+					String objTypeType = SimSEObjectTypeTypes.getText(part.getSimSEObjectTypeType());
+					ClassName objTypeTypeName = ClassName.get("simse.adts.objects", objTypeType);
+					TypeName vectorOfObjTypeTypes = ParameterizedTypeName.get(vector, objTypeTypeName);
+					String partName = part.getName();
+					String partNameVar = partName.toLowerCase() + "s";
 					
-					writer.write("Vector<" + SimSEObjectTypeTypes.getText(part.getSimSEObjectTypeType()) + "> "
-							+ part.getName().toLowerCase() + "s = " + tempActName
-							+ ".getAll" + part.getName() + "s();");
-					writer.write(NEWLINE);
-					writer.write("for(int j=0; j<" + part.getName().toLowerCase() + "s.size(); j++)");
-					writer.write(NEWLINE);
-					writer.write(OPEN_BRACK);
-					writer.write(NEWLINE);
-					writer.write(SimSEObjectTypeTypes.getText(part.getSimSEObjectTypeType()) + " a = "
-							+ part.getName().toLowerCase() + "s.elementAt(j);");
-					writer.write(NEWLINE);
+					conditions.addStatement("$T " + partNameVar + " = " + tempActName
+							+ ".getAll" + partName + "s()", vectorOfObjTypeTypes);
+					conditions.beginControlFlow("for(int j=0; j<" + partNameVar + ".size(); j++)");
+					conditions.addStatement("$T a = " + partNameVar + ".elementAt(j)", objTypeTypeName);
+					
 					// go through all participant constraints:
 					Vector<ActionTypeParticipantConstraint> constraints = dest.getAllConstraints();
 					for (int k = 0; k < constraints.size(); k++) {
 						ActionTypeParticipantConstraint constraint = constraints.elementAt(k);
 						String objTypeName = constraint.getSimSEObjectType().getName();
-						if (k > 0) { // not on first element
-							writer.write("else ");
+						ClassName objTypeClassName = ClassName.get("simse.adts.objects", 
+								CodeGeneratorUtils.getUpperCaseLeading(objTypeName));
+						if (k == 0) { // on first element
+							conditions.beginControlFlow("if(a instanceof $T)", objTypeClassName);
 						}
-						writer.write(
-								"if(a instanceof " + CodeGeneratorUtils.getUpperCaseLeading(objTypeName) + ")");
-						writer.write(NEWLINE);
-						writer.write(OPEN_BRACK);
-						writer.write(NEWLINE);
+						conditions.nextControlFlow("else if(a instanceof $T)", objTypeClassName);
 						// go through all attribute constraints:
-						ActionTypeParticipantAttributeConstraint[] attConstraints = constraint
-								.getAllAttributeConstraints();
+						ActionTypeParticipantAttributeConstraint[] attConstraints = constraint.getAllAttributeConstraints();
 						int numAttConsts = 0;
+						String ifConditional = "";
+						Vector<ClassName> classes = new Vector<>();
 						for (int m = 0; m < attConstraints.length; m++) {
 							ActionTypeParticipantAttributeConstraint tempAttConst = attConstraints[m];
 							if (tempAttConst.isConstrained()) {
-								if (numAttConsts == 0) { // this is the first attribute that
-															// we've come across that's
-															// constrained
-									writer.write("if(");
+								if (numAttConsts == 0) { 
+									// this is the first attribute that we've come across that's constrained
+									ifConditional += "if(";
 								} else {
-									writer.write(" || ");
+									ifConditional += " || ";
 								}
-								writer.write("(!(((" + CodeGeneratorUtils.getUpperCaseLeading(objTypeName)
-										+ ")a).get" + tempAttConst.getAttribute().getName() + "()");
+								ifConditional += "(!((($T)a).get" + tempAttConst.getAttribute().getName() + "()";
+								classes.add(objTypeClassName);
 								if (tempAttConst.getAttribute().getType() == AttributeTypes.STRING) {
-									writer.write(".equals(" + "\"" + tempAttConst.getValue().toString() + "\")");
+									ifConditional += ".equals(" + "\"" + tempAttConst.getValue().toString() + "\")";
 								} else {
 									if (tempAttConst.getGuard().equals(AttributeGuard.EQUALS)) {
-										writer.write(" == ");
+										ifConditional += " == ";
 									} else {
-										writer.write(" " + tempAttConst.getGuard() + " ");
+										ifConditional += " " + tempAttConst.getGuard() + " ";
 									}
-									writer.write(tempAttConst.getValue().toString());
+									ifConditional += tempAttConst.getValue().toString();
 								}
-								writer.write("))");
+								ifConditional += "))";
 								numAttConsts++;
 							}
 						}
 						if (numAttConsts > 0) { // there is at least one constraint
-							writer.write(")");
-							writer.write(NEWLINE);
-							writer.write(OPEN_BRACK);
-							writer.write(NEWLINE);
-							writer.write("destroy = false;");
-							writer.write(NEWLINE);
-							writer.write("break;");
-							writer.write(NEWLINE);
-							writer.write(CLOSED_BRACK);
-							writer.write(NEWLINE);
+							ifConditional += ")";
+							conditions.beginControlFlow(ifConditional, classes);
+							conditions.addStatement("destroy = false");
+							conditions.addStatement("break");
+							conditions.endControlFlow();
 						}
-						writer.write(CLOSED_BRACK);
-						writer.write(NEWLINE);
+						conditions.endControlFlow();
 					}
-					writer.write(CLOSED_BRACK);
-					writer.write(NEWLINE);
+					conditions.endControlFlow();
 				}
 				writer.write("if(");
 				if (tempDest instanceof RandomActionTypeDestroyer) {
@@ -527,7 +517,7 @@ public class DestroyerCheckerGenerator implements CodeGeneratorConstants {
 				writer.write(NEWLINE);
 			}
 		}
-		return destroyerConditions;
+		return conditions;
 	}
 
 	/*
