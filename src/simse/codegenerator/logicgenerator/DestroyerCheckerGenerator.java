@@ -270,34 +270,29 @@ public class DestroyerCheckerGenerator implements CodeGeneratorConstants {
 						conditions.addStatement("d.setTitle($S)", "Game over!");
 						conditions.addStatement("d.setHeaderText(null)");
 						conditions.addStatement("d.showAndWait()");
-						conditions.endControlFlow();
+						conditions.endControlFlow(); // game ending if condition
 					}
 				}
 
-				conditions.endControlFlow(); //
+				conditions.endControlFlow(); // time to live condition
+				conditions.endControlFlow(); // update destroyers
 				conditions.endControlFlow(); // ActionType
-				writer.write(CLOSED_BRACK);
-				writer.write(NEWLINE);
-			} else { // random, user, or autonomous destroyer
-				if ((tempDest instanceof RandomActionTypeDestroyer)
-						|| (tempDest instanceof AutonomousActionTypeDestroyer)) {
-					writer.write("if(!updateUserDestsOnly)");
-					writer.write(NEWLINE);
-					writer.write(OPEN_BRACK);
-					writer.write(NEWLINE);
+			} else { 
+				// random, user, or autonomous destroyer
+				if ((tempDest instanceof RandomActionTypeDestroyer) || (tempDest instanceof AutonomousActionTypeDestroyer)) {
+					conditions.beginControlFlow("if(!updateUserDestsOnly)");
 				}
-				writer.write("boolean destroy = true;");
-				writer.write(NEWLINE);
+				conditions.addStatement("$T destroy = true", boolean.class);
 
 				Vector<ActionTypeParticipantDestroyer> destroyers = tempDest.getAllParticipantDestroyers();
 				// go through each participant destroyer:
 				for (int j = 0; j < destroyers.size(); j++) {
 					ActionTypeParticipantDestroyer dest = destroyers.elementAt(j);
 					ActionTypeParticipant part = dest.getParticipant();
-
+					
 					writer.write("Vector<" + SimSEObjectTypeTypes.getText(part.getSimSEObjectTypeType()) + "> "
-							+ part.getName().toLowerCase() + "s = " + tempAct.getName().toLowerCase()
-							+ "TempAct.getAll" + part.getName() + "s();");
+							+ part.getName().toLowerCase() + "s = " + tempActName
+							+ ".getAll" + part.getName() + "s();");
 					writer.write(NEWLINE);
 					writer.write("for(int j=0; j<" + part.getName().toLowerCase() + "s.size(); j++)");
 					writer.write(NEWLINE);
