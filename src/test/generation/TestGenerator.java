@@ -5,13 +5,16 @@ import java.util.Vector;
 
 import simse.codegenerator.enginegenerator.EngineGenerator;
 import simse.codegenerator.enginegenerator.StartingNarrativeDialogGenerator;
+import simse.codegenerator.logicgenerator.DestroyerCheckerGenerator;
 import simse.codegenerator.logicgenerator.LogicGenerator;
 import simse.codegenerator.logicgenerator.MiscUpdaterGenerator;
 import simse.modelbuilder.ModelOptions;
 import simse.modelbuilder.actionbuilder.ActionType;
 import simse.modelbuilder.actionbuilder.ActionTypeDestroyer;
 import simse.modelbuilder.actionbuilder.DefinedActionTypes;
+import simse.modelbuilder.actionbuilder.RandomActionTypeDestroyer;
 import simse.modelbuilder.actionbuilder.TimedActionTypeDestroyer;
+import simse.modelbuilder.actionbuilder.UserActionTypeDestroyer;
 import simse.modelbuilder.objectbuilder.DefinedObjectTypes;
 import simse.modelbuilder.objectbuilder.NonNumericalAttribute;
 import simse.modelbuilder.objectbuilder.SimSEObjectType;
@@ -32,7 +35,8 @@ public class TestGenerator {
 //		startingNarrativeDialogTest();
 //		engineTest();
 //		logicTest();
-		miscUpdaterTest();
+//		miscUpdaterTest();
+		destroyerCheckerTest();
 	}
 	
 	public static void setUp() {
@@ -64,8 +68,9 @@ public class TestGenerator {
 		ActionType at2 = new ActionType("Research");
 		ActionType at3 = new ActionType("Dance");
 		ActionType at4 = new ActionType("Rain");
+		at1.addDestroyer(new UserActionTypeDestroyer("CultivateDest", at1, "Stop Cultivating"));
 		at3.addDestroyer(new TimedActionTypeDestroyer("AutoDest", at3));
-		at4.addDestroyer(new TimedActionTypeDestroyer("AutoDest", at4));
+		at4.addDestroyer(new RandomActionTypeDestroyer("RandomDest", at4));
 		actTypes.addActionType(at1);
 		actTypes.addActionType(at2);
 		actTypes.addActionType(at3);
@@ -90,5 +95,10 @@ public class TestGenerator {
 	public static void miscUpdaterTest() {
 		MiscUpdaterGenerator muGen = new MiscUpdaterGenerator(directory, actTypes);
 		muGen.generate();
+	}
+	
+	public static void destroyerCheckerTest() {
+		DestroyerCheckerGenerator dGen = new DestroyerCheckerGenerator(actTypes, directory);
+		dGen.generate();
 	}
 }

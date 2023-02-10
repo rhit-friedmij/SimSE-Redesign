@@ -144,6 +144,10 @@ public class DestroyerCheckerGenerator implements CodeGeneratorConstants {
 		 TypeSpec destroyer = TypeSpec.classBuilder("DestroyerChecker")
 					.addModifiers(Modifier.PUBLIC)
 					.addField(state, "state", Modifier.PRIVATE)
+					.addField(ruleExecuter, "ruleExec", Modifier.PRIVATE)
+					.addField(trigCheck, "trigCheck", Modifier.PRIVATE)
+					.addField(random, "ranNumGen", Modifier.PRIVATE)
+					.addField(melloPanel, "mello", Modifier.PRIVATE)
 					.addMethod(destroyerConstructor)
 					.addMethod(update)
 					.build();
@@ -181,7 +185,8 @@ public class DestroyerCheckerGenerator implements CodeGeneratorConstants {
 			ActionTypeDestroyer tempDest = allDestroyers.elementAt(i);
 			ActionType tempAct = tempDest.getActionType();
 			String tempActName = tempAct.getName().toLowerCase() + "TempAct";
-			String actTypeName = CodeGeneratorUtils.getUpperCaseLeading(tempAct.getName()) + "Action";
+			String actType = CodeGeneratorUtils.getUpperCaseLeading(tempAct.getName());
+			String actTypeName = actType + "Action";
 	    	ClassName actName = ClassName.get("simse.adts.actions", actTypeName);
 	    	
 			conditions.beginControlFlow("if((tempAct instanceof " + actTypeName + ") && (state.getActionStateRepository().get"
@@ -217,7 +222,8 @@ public class DestroyerCheckerGenerator implements CodeGeneratorConstants {
 				conditions.addStatement("state.getActionStateRepository().get" + actTypeName 
 						+ "StateRepository().remove(" + tempActName + ")");
 				conditions.addStatement("trigCheck.update(true, gui)");
-				conditions.addStatement("$N(false, gui)", update);
+				conditions.addStatement("update(false, gui)");
+				conditions.addStatement("mello.completeTask($S)", actType);
 
 				// game-ending:
 				if (tempDest.isGameEndingDestroyer()) {
@@ -276,7 +282,7 @@ public class DestroyerCheckerGenerator implements CodeGeneratorConstants {
 
 				conditions.endControlFlow(); // time to live condition
 				conditions.endControlFlow(); // update destroyers
-				conditions.endControlFlow(); // ActionType
+				
 			} else { 
 				// random, user, or autonomous destroyer
 				if ((tempDest instanceof RandomActionTypeDestroyer) || (tempDest instanceof AutonomousActionTypeDestroyer)) {
@@ -348,9 +354,9 @@ public class DestroyerCheckerGenerator implements CodeGeneratorConstants {
 							conditions.addStatement("break");
 							conditions.endControlFlow();
 						}
-						conditions.endControlFlow();
+						conditions.endControlFlow(); // instance of object types
 					}
-					conditions.endControlFlow();
+					conditions.endControlFlow(); // for loop
 				}
 				if (tempDest instanceof RandomActionTypeDestroyer) {
 					conditions.beginControlFlow("if ((destroy) && ((ranNumGen.nextDouble() * 100.0) < \"\r\n" + 
@@ -375,9 +381,8 @@ public class DestroyerCheckerGenerator implements CodeGeneratorConstants {
 						ActionTypeDestroyer tempDest2 = allDestroyers.elementAt(k);
 						if ((tempDest2 instanceof UserActionTypeDestroyer) && (tempDest2 != tempDest) && (tempDest2
 								.getActionType().getName().equals(tempDest.getActionType().getName()))) {
-							writer.write("((Employee) c).removeMenuItem(\""
-									+ ((UserActionTypeDestroyer) tempDest2).getMenuText() + "\");");
-							writer.write(NEWLINE);
+							conditions.addStatement("(($T) c).removeMenuItem(\""
+									+ ((UserActionTypeDestroyer) tempDest2).getMenuText() + "\")", employee);
 						}
 					}
 
@@ -392,26 +397,20 @@ public class DestroyerCheckerGenerator implements CodeGeneratorConstants {
 					Vector<Rule> destRules = tempAct.getAllDestroyerRules();
 					for (int k = 0; k < destRules.size(); k++) {
 						Rule dRule = destRules.elementAt(k);
-						writer.write("ruleExec.update(gui, RuleExecutor.UPDATE_ONE, \"" + dRule.getName()
-								+ "\", tempAct);");
-						writer.write(NEWLINE);
+						conditions.addStatement("ruleExec.update(gui, $T.UPDATE_ONE, \"" + dRule.getName()
+								+ "\", tempAct)", ruleExecuter);
 					}
-					writer.write("state.getActionStateRepository().get"
-							+ CodeGeneratorUtils.getUpperCaseLeading(tempAct.getName())
-							+ "ActionStateRepository().remove(" + tempAct.getName().toLowerCase() + "TempAct);");
-					writer.write(NEWLINE);
-					writer.write("trigCheck.update(true, gui);");
-					writer.write(NEWLINE);
-					writer.write("update(false, gui);");
-					writer.write(NEWLINE);
+					conditions.addStatement("state.getActionStateRepository().get" + actTypeName 
+							+ "StateRepository().remove(" + tempActName + ")");
+					conditions.addStatement("trigCheck.update(true, gui)");
+					conditions.addStatement("update(false, gui)");
+					conditions.addStatement("mello.completeTask($S)", actType);
 
 					// game-ending:
 					if (tempDest.isGameEndingDestroyer()) {
-						writer.write("// stop game and give score:");
-						writer.write(NEWLINE);
-						writer.write(CodeGeneratorUtils.getUpperCaseLeading(tempAct.getName()) + "Action t111 = ("
-								+ CodeGeneratorUtils.getUpperCaseLeading(tempAct.getName()) + "Action)tempAct;");
-						writer.write(NEWLINE);
+						conditions.add("// stop game and give score:");
+						conditions.addStatement("$T t111 = (" + actTypeName + ")tempAct", actName);
+						
 						// find the scoring attribute:
 						ActionTypeParticipantDestroyer scoringPartDest = null;
 						ActionTypeParticipantConstraint scoringPartConst = null;
@@ -434,71 +433,53 @@ public class DestroyerCheckerGenerator implements CodeGeneratorConstants {
 								}
 							}
 						}
+						
+						String scoringPartConstObj = CodeGeneratorUtils
+								.getUpperCaseLeading(scoringPartConst.getSimSEObjectType().getName());
+						ClassName scoringPartConstObjName = ClassName.get("simse.adts.objects", scoringPartConstObj);
 						if ((scoringAttConst != null) && (scoringPartConst != null) && (scoringPartDest != null)) {
-							writer.write("if(t111.getAll" + scoringPartDest.getParticipant().getName()
+							conditions.beginControlFlow("if(t111.getAll" + scoringPartDest.getParticipant().getName() 
 									+ "s().size() > 0)");
-							writer.write(NEWLINE);
-							writer.write(OPEN_BRACK);
-							writer.write(NEWLINE);
-							writer.write(CodeGeneratorUtils
-									.getUpperCaseLeading(scoringPartConst.getSimSEObjectType().getName())
-									+ " t = ("
-									+ CodeGeneratorUtils.getUpperCaseLeading(
-											scoringPartConst.getSimSEObjectType().getName())
-									+ ")(t111.getAll" + scoringPartDest.getParticipant().getName()
-									+ "s().elementAt(0));");
-							writer.write(NEWLINE);
-							writer.write("if(t != null)");
-							writer.write(NEWLINE);
-							writer.write(OPEN_BRACK);
-							writer.write(NEWLINE);
+							conditions.addStatement("$T t = ($T)(t111.getAll" + scoringPartDest.getParticipant().getName()
+									+ "s().elementAt(0))", scoringPartConstObjName, scoringPartConstObjName);
+							
+							conditions.beginControlFlow("if(t != null)");
 							if (scoringAttConst.getAttribute().getType() == AttributeTypes.INTEGER) {
-								writer.write("int");
+								conditions.addStatement("$T v = t.get" + scoringAttConst.getAttribute().getName() + "()", int.class);
 							} else if (scoringAttConst.getAttribute().getType() == AttributeTypes.DOUBLE) {
-								writer.write("double");
+								conditions.addStatement("$T v = t.get" + scoringAttConst.getAttribute().getName() + "()", double.class);
 							} else if (scoringAttConst.getAttribute().getType() == AttributeTypes.STRING) {
-								writer.write("String");
+								conditions.addStatement("$T v = t.get" + scoringAttConst.getAttribute().getName() + "()", String.class);
 							} else if (scoringAttConst.getAttribute().getType() == AttributeTypes.BOOLEAN) {
-								writer.write("boolean");
+								conditions.addStatement("$T v = t.get" + scoringAttConst.getAttribute().getName() + "()", boolean.class);
 							}
-							writer.write(" v = t.get" + scoringAttConst.getAttribute().getName() + "();");
-							writer.write(NEWLINE);
-							writer.write("state.getClock().stop();");
-							writer.write(NEWLINE);
-							writer.write("state.setScore(v);");
-							writer.write(NEWLINE);
-							writer.write("((SimSEGUI)gui).update();");
-							writer.write(NEWLINE);
-							writer.write(
-									"JOptionPane.showMessageDialog(null, (\"Your score is \" + v), \"Game over!\", JOptionPane.INFORMATION_MESSAGE);");
-							writer.write(NEWLINE);
-							writer.write(CLOSED_BRACK);
-							writer.write(NEWLINE);
-							writer.write(CLOSED_BRACK);
-							writer.write(NEWLINE);
+							conditions.addStatement("state.getClock().stop()");
+							conditions.addStatement("state.setScore(v)");
+							conditions.addStatement("(($T)gui).update()", simseGui);
+							conditions.addStatement("$T d = new $T($T.INFORMATION)", alert, alert, alertType);
+							conditions.addStatement("d.setContentText(($S + v))", "Your score is ");
+							conditions.addStatement("d.setTitle($S)", "Game over!");
+							conditions.addStatement("d.setHeaderText(null)");
+							conditions.addStatement("d.showAndWait()");
+							conditions.endControlFlow(); // t != null
+							conditions.endControlFlow(); // game ending if condition
 						}
 					}
 
-					writer.write(CLOSED_BRACK);
-					writer.write(NEWLINE);
-					writer.write(CLOSED_BRACK);
-					writer.write(NEWLINE);
-				} else { // user destroyer
-					writer.write("((Employee)c).addMenuItem(\""
-							+ ((UserActionTypeDestroyer) (tempDest)).getMenuText() + "\");");
-					writer.write(NEWLINE);
-					writer.write(CLOSED_BRACK);
-					writer.write(NEWLINE);
-					writer.write(CLOSED_BRACK);
-					writer.write(NEWLINE);
-					writer.write(CLOSED_BRACK);
-					writer.write(NEWLINE);
+					conditions.endControlFlow(); // destroy condition
+					conditions.endControlFlow(); // update destroyers
+				} else { 
+					// user destroyer
+					conditions.addStatement("(($T)c).addMenuItem(\""
+							+ ((UserActionTypeDestroyer) (tempDest)).getMenuText() + "\")", employee);
+					conditions.endControlFlow(); // instance of employee
+					conditions.endControlFlow(); // for loop
+					conditions.endControlFlow(); // destroy condition
 				}
-				writer.write(CLOSED_BRACK);
-				writer.write(NEWLINE);
 			}
+			conditions.endControlFlow(); // ActionType
 		}
-		return dconditions;
+		return conditions;
 	}
 
 	/*
@@ -516,27 +497,26 @@ public class DestroyerCheckerGenerator implements CodeGeneratorConstants {
 			for (int j = 0; j < dests.size(); j++) {
 				ActionTypeDestroyer tempDest = dests.elementAt(j);
 				int priority = tempDest.getPriority();
-				if (priority == -1) { // destroyer is not prioritized
+				if (priority == -1) { 
+					// destroyer is not prioritized
 					nonPrioritizedDestroyers.addElement(tempDest);
-				} else { // priority >= 0
-					if (prioritizedDestroyers.size() == 0) { // no elements have been
-																// added yet to the
-																// prioritized destroyer list
+				} else { 
+					// priority >= 0
+					if (prioritizedDestroyers.size() == 0) { 
+						// no elements have been added yet to the prioritized destroyer list
 						prioritizedDestroyers.add(tempDest);
 					} else {
 						// find the correct position to insert the destroyer at:
 						for (int k = 0; k < prioritizedDestroyers.size(); k++) {
 							ActionTypeDestroyer tempA = prioritizedDestroyers.elementAt(k);
 							if (priority <= tempA.getPriority()) {
-								prioritizedDestroyers.insertElementAt(tempDest, k); // insert
-																					// the
-																					// destroyer
+								// insert the destroyer
+								prioritizedDestroyers.insertElementAt(tempDest, k); 
 								break;
-							} else if (k == (prioritizedDestroyers.size() - 1)) { // on the
-																					// last
-																					// element
-								prioritizedDestroyers.add(tempDest); // add the destroyer to the
-																		// end of the list
+							} else if (k == (prioritizedDestroyers.size() - 1)) { 
+								// on the last element
+								// add the destroyer to the end of the list
+								prioritizedDestroyers.add(tempDest); 
 								break;
 							}
 						}
