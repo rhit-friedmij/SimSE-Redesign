@@ -352,34 +352,23 @@ public class DestroyerCheckerGenerator implements CodeGeneratorConstants {
 					}
 					conditions.endControlFlow();
 				}
-				writer.write("if(");
 				if (tempDest instanceof RandomActionTypeDestroyer) {
-					writer.write("(destroy) && ((ranNumGen.nextDouble() * 100.0) < "
+					conditions.beginControlFlow("if ((destroy) && ((ranNumGen.nextDouble() * 100.0) < \"\r\n" + 
 							+ ((RandomActionTypeDestroyer) (tempDest)).getFrequency() + "))");
-				} else { // user, action or autonomous
-					writer.write("destroy)");
+				} else { 
+					// user, action or autonomous
+					conditions.beginControlFlow("if (destroy)");
 				}
-				writer.write(NEWLINE);
-				writer.write(OPEN_BRACK);
-				writer.write(NEWLINE);
-				writer.write("Vector<SSObject> b = tempAct.getAllParticipants();");
-				writer.write(NEWLINE);
-				writer.write("for(int j=0; j<b.size(); j++)");
-				writer.write(NEWLINE);
-				writer.write(OPEN_BRACK);
-				writer.write(NEWLINE);
-				writer.write("SSObject c = b.elementAt(j);");
-				writer.write(NEWLINE);
-				writer.write("if(c instanceof Employee)");
-				writer.write(NEWLINE);
-				writer.write(OPEN_BRACK);
-				writer.write(NEWLINE);
-				if ((tempDest instanceof AutonomousActionTypeDestroyer)
-						|| (tempDest instanceof RandomActionTypeDestroyer)) {
+				
+				conditions.addStatement("$T b = tempAct.getAllParticipants()", vectorOfObjects);
+				conditions.beginControlFlow("for (int j = 0 j < b.size() j++) {");
+				conditions.addStatement("$T c = b.elementAt(j)", ssObject);
+				conditions.beginControlFlow("if (c instanceof $T) {", employee);
+				if ((tempDest instanceof AutonomousActionTypeDestroyer) || (tempDest instanceof RandomActionTypeDestroyer)) {
+					
 					if ((tempDest.getDestroyerText() != null) && (tempDest.getDestroyerText().length() > 0)) {
-						writer.write("((Employee)c).setOverheadText(\"" + tempDest.getDestroyerText() + "\");");
+						conditions.addStatement("(($T)c).setOverheadText(\"" + tempDest.getDestroyerText() + "\")", employee);
 					}
-					writer.write(NEWLINE);
 
 					// For each user destroyer for this action, remove the menu item:
 					for (int k = 0; k < allDestroyers.size(); k++) {
@@ -392,20 +381,12 @@ public class DestroyerCheckerGenerator implements CodeGeneratorConstants {
 						}
 					}
 
-					writer.write(CLOSED_BRACK);
-					writer.write(NEWLINE);
-					writer.write("else if(c instanceof Customer)");
-					writer.write(NEWLINE);
-					writer.write(OPEN_BRACK);
-					writer.write(NEWLINE);
+					conditions.nextControlFlow("else if(c instanceof $T)", customer);
 					if ((tempDest.getDestroyerText() != null) && (tempDest.getDestroyerText().length() > 0)) {
-						writer.write("((Customer)c).setOverheadText(\"" + tempDest.getDestroyerText() + "\");");
+						conditions.addStatement("(($T)c).setOverheadText(\"" + tempDest.getDestroyerText() + "\")", customer);
 					}
-					writer.write(NEWLINE);
-					writer.write(CLOSED_BRACK);
-					writer.write(NEWLINE);
-					writer.write(CLOSED_BRACK);
-					writer.write(NEWLINE);
+					conditions.endControlFlow();
+					conditions.endControlFlow();
 
 					// execute all destroyer rules:
 					Vector<Rule> destRules = tempAct.getAllDestroyerRules();
@@ -517,7 +498,7 @@ public class DestroyerCheckerGenerator implements CodeGeneratorConstants {
 				writer.write(NEWLINE);
 			}
 		}
-		return conditions;
+		return dconditions;
 	}
 
 	/*
