@@ -37,14 +37,10 @@ public class TriggerCheckerGenerator implements CodeGeneratorConstants {
   private DefinedActionTypes actTypes; // holds all of the defined action types
   private FileWriter writer;
   private File trigFile;
-  private Vector<String> vectors; // for keeping track of which vectors are 
-  																// being used in generated code so that you 
-  															  // don't generate the same ones more than once
-  																// -- e.g., Vector programmers 
-  																// state.getEmployeeStateRepository().
-  																// getProgrammerStateRepository().getAll()
-  																// will be generated more than once if you
-  																// don't keep track of this.
+  // for keeping track of which vectors are being used in generated code so that you don't generate the same ones more 
+  // than once -- e.g., Vector programmers state.getEmployeeStateRepository(). getProgrammerStateRepository().getAll()
+  // will be generated more than once if you don't keep track of this.
+  private Vector<String> vectors; 
   private Vector<ActionTypeTrigger> nonPrioritizedTriggers;
   private Vector<ActionTypeTrigger> prioritizedTriggers;
 
@@ -160,14 +156,10 @@ public class TriggerCheckerGenerator implements CodeGeneratorConstants {
         for (int k = 0; k < constraints.size(); k++) {
           ActionTypeParticipantConstraint constraint = constraints.elementAt(k);
           String objTypeName = constraint.getSimSEObjectType().getName();
-          if (vectorContainsString(vectors, 
-          		(objTypeName.toLowerCase() + "s")) == false) { // this vector has
-          																									 // not been 
-          																									 // generated 
-          																									 // already
-            String uCaseObjTypeName = 
-            	CodeGeneratorUtils.getUpperCaseLeading(objTypeName);
-          	writer.write("Vector <" + uCaseObjTypeName + "> "
+          if (vectorContainsString(vectors, (objTypeName.toLowerCase() + "s")) == false) { 
+        	  // this vector has not been generated already
+        	  String uCaseObjTypeName = CodeGeneratorUtils.getUpperCaseLeading(objTypeName);
+          	  writer.write("Vector <" + uCaseObjTypeName + "> "
                 + objTypeName.toLowerCase()
                 + "s = state.get"
                 + CodeGeneratorUtils.getUpperCaseLeading(

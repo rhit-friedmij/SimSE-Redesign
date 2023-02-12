@@ -43,21 +43,16 @@ import javax.swing.JOptionPane;
 
 public class RuleExecutorGenerator implements CodeGeneratorConstants {
   private File directory; // directory to save generated code into
-  private DefinedActionTypes actTypes; // holds all of the defined action types
-                                       // from an ssa file
+  private DefinedActionTypes actTypes; // holds all of the defined action types from an ssa file
   private FileWriter writer;
   private File ruleExFile;
   private Vector<Rule> nonPrioritizedRules;
   private Vector<Rule> prioritizedRules;
-//  private Vector outerVariables; // for keeping track of which variables have
-//                                 // been generated
-  private Vector<String> warnings; // holds warning messages about any errors 
-  																 // that are run into during generation
+  private Vector<String> warnings; // holds warning messages about any errors that are run into during generation
 
   public RuleExecutorGenerator(DefinedActionTypes actTypes, File directory) {
     this.actTypes = actTypes;
     this.directory = directory;
-    // outerVariables = new Vector();
     warnings = new Vector<String>();
     initializeRuleLists();
   }
@@ -437,27 +432,7 @@ public class RuleExecutorGenerator implements CodeGeneratorConstants {
 	    		+ "ActionStateRepository().getAllActions();");
 	    writer.write(NEWLINE);
       if (rule instanceof EffectRule) { // EFFECT RULE
-        EffectRule effRule = (EffectRule) rule;
-//        if (vectorContainsString(outerVariables, (action.getName()
-//            .toLowerCase() + "Acts")) == false) // this variable has not been
-//                                                // generated yet
-//        {
-//          outerVariables
-//              .add(new String(action.getName().toLowerCase() + "Acts")); // add
-//                                                                         // the
-//                                                                         // variable
-//                                                                         // name
-//                                                                         // to
-//                                                                         // the
-//                                                                         // record-keeping
-//                                                                         // Vector
-//          writer.write("Vector " + action.getName().toLowerCase()
-//              + "Acts = state.getActionStateRepository().get"
-//              + getUpperCaseLeading(action.getName())
-//              + "ActionStateRepository().getAllActions();");
-//          writer.write(NEWLINE);
-//        }
-      	
+        EffectRule effRule = (EffectRule) rule;      	
       	
         writer.write("if((updateInstructions ==");
         if (rule.getTiming() == RuleTiming.CONTINUOUS) { // continuous rule
