@@ -25,7 +25,6 @@ import simse.modelbuilder.objectbuilder.SimSEObjectTypeTypes;
 import simse.modelbuilder.rulebuilder.Rule;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 
 import java.util.Vector;
@@ -45,6 +44,7 @@ public class TriggerCheckerGenerator implements CodeGeneratorConstants {
 	private File directory; // directory to save generated code into
 	private DefinedActionTypes actTypes; // holds all of the defined action types
 	private File trigFile;
+	
 	// for keeping track of which vectors are being used in generated code so that
 	// you don't generate the same ones more
 	// than once -- e.g., Vector programmers state.getEmployeeStateRepository().
