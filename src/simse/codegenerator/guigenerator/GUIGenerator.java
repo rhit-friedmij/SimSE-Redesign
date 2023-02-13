@@ -53,6 +53,12 @@ public class GUIGenerator implements CodeGeneratorConstants {
   private SimSEAboutDialogGenerator aboutDialogGen; // generates the About
                                                     // Dialog when you click the
                                                     // SimSE logo
+  
+  private TrackGenerator trackGen;
+  
+  private MelloGenerator melloGen;
+  
+  private PanelsGenerator panelsGen;
 
   public GUIGenerator(ModelOptions options, DefinedObjectTypes objTypes, 
       CreatedObjects objs, DefinedActionTypes acts, Hashtable<SimSEObject, 
@@ -92,6 +98,12 @@ public class GUIGenerator implements CodeGeneratorConstants {
         options.getCodeGenerationDestinationDirectory());
     aboutDialogGen = new SimSEAboutDialogGenerator(
         options.getCodeGenerationDestinationDirectory());
+    trackGen = new TrackGenerator(
+            options.getCodeGenerationDestinationDirectory());
+    melloGen = new MelloGenerator(
+    		options.getCodeGenerationDestinationDirectory());
+    panelsGen = new PanelsGenerator(
+    		options.getCodeGenerationDestinationDirectory());
   }
 
   /*
@@ -131,6 +143,9 @@ public class GUIGenerator implements CodeGeneratorConstants {
 	    glanceFramesGen.generate();
 	    glanceTblModGen.generate();
 	    aboutDialogGen.generate();
+	    trackGen.generate();
+	    melloGen.generate();
+	    panelsGen.generate();
 	    generateMainGUI();
 	    return true;
 	  }
