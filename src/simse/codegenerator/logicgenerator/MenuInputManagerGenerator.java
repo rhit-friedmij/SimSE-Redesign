@@ -62,6 +62,10 @@ public class MenuInputManagerGenerator implements CodeGeneratorConstants {
 	private Vector<UserActionTypeDestroyer> userDests = new Vector<UserActionTypeDestroyer>();
 	private Vector<UserActionTypeTrigger> userTrigs = new Vector<UserActionTypeTrigger>();
 	
+	private ClassName alert = ClassName.get("javafx.scene.control", "Alert");
+	private ClassName alertType = ClassName.get("javafx.scene.control.Alert", "AlertType");
+	private ClassName buttonBar = ClassName.get("javafx.scene.control", "ButtonBar");
+	private ClassName buttonData = ClassName.get("javafx.scene.control.ButtonBar", "ButtonData");
 	private ClassName buttonType = ClassName.get("javafx.scene.control", "ButtonType");
 	private ClassName customer = ClassName.get("simse.adts.objects", "Customer");
 	private ClassName employee = ClassName.get("simse.adts.objects", "Employee");
@@ -86,7 +90,6 @@ public class MenuInputManagerGenerator implements CodeGeneratorConstants {
 		ClassName project = ClassName.get("simse.adts.objects", "Project");
 		ClassName tool = ClassName.get("simse.adts.objects", "Tool");
 		ClassName melloPanel = ClassName.get("simse.gui", "MelloPanel");
-		ClassName chooseActionToDestroyDialog = ClassName.get("simse.logic.dialogs", "ChooseActionToDestroyDialog");
 		ClassName chooseActionToJoinDialog = ClassName.get("simse.logic.dialogs", "ChooseActionToJoinDialog");
 		ClassName participantSelectionDialogsDriver = ClassName.get("simse.logic.dialogs", "ParticipantSelectionDialogsDriver");
 		ClassName state = ClassName.get("simse.state", "State");
@@ -195,10 +198,6 @@ public class MenuInputManagerGenerator implements CodeGeneratorConstants {
 	}	
 	
 	private CodeBlock.Builder menuOptions() {
-		ClassName alert = ClassName.get("javafx.scene.control", "Alert");
-		ClassName alertType = ClassName.get("javafx.scene.control.Alert", "AlertType");
-		ClassName buttonBar = ClassName.get("javafx.scene.control", "ButtonBar");
-		ClassName buttonData = ClassName.get("javafx.scene.control.ButtonBar", "ButtonData");
 		ClassName displayedEmp = ClassName.get("simse.adts.objects", "DisplayedEmployee");
 		
 		CodeBlock.Builder conditions = CodeBlock.builder();
@@ -236,6 +235,7 @@ public class MenuInputManagerGenerator implements CodeGeneratorConstants {
 			conditions.addStatement("$T noButton = new $T($S, $T.$T.NO)", buttonType, buttonType, "No", buttonBar, buttonData);
 			conditions.addStatement("alert.getButtonTypes().setAll(okButton, noButton)");
 			conditions.addStatement("alert.showAndWait().ifPresent($L)", stopEverythingLambda());
+			conditions.endControlFlow();
 		}
 		return conditions;
 	}
@@ -272,6 +272,7 @@ public class MenuInputManagerGenerator implements CodeGeneratorConstants {
 	private MethodSpec stopEverythingLambda() {
 		ClassName obj = ClassName.get("simse.adts.objects", "SSObject");
 		TypeName vectorOfObjs = ParameterizedTypeName.get(vector, obj);
+		ClassName chooseActionToDestroyDialog = ClassName.get("simse.logic.dialogs", "ChooseActionToDestroyDialog");
 		
 		CodeBlock.Builder lambda = CodeBlock.builder();
 		
@@ -344,12 +345,9 @@ public class MenuInputManagerGenerator implements CodeGeneratorConstants {
 
 					// game-ending:
 					if (outerDest.isGameEndingDestroyer()) {
-						writer.write("// stop game and give score:");
-						writer.write(NEWLINE);
-						writer.write(CodeGeneratorUtils.getUpperCaseLeading(act.getName()) + "Action t111" + j
-								+ " = (" + CodeGeneratorUtils.getUpperCaseLeading(act.getName()) + "Action)b"
-								+ j + ";");
-						writer.write(NEWLINE);
+						lambda.add("// stop game and give score:\n");
+						lambda.addStatement("$T t111$L = ($T)b$L", actName, j, actName, j);
+						
 						// find the scoring attribute:
 						ActionTypeParticipantDestroyer scoringPartDest = null;
 						ActionTypeParticipantConstraint scoringPartConst = null;
@@ -373,107 +371,65 @@ public class MenuInputManagerGenerator implements CodeGeneratorConstants {
 								}
 							}
 						}
-						if ((scoringAttConst != null) && (scoringPartConst != null)
-								&& (scoringPartDest != null)) {
-							writer.write("if(t111" + j + ".getAll" + scoringPartDest.getParticipant().getName()
-									+ "s().size() > 0)");
-							writer.write(NEWLINE);
-							writer.write(OPEN_BRACK);
-							writer.write(NEWLINE);
-							writer.write(CodeGeneratorUtils
-									.getUpperCaseLeading(scoringPartConst.getSimSEObjectType().getName()) + " t"
-									+ j + " = ("
-									+ CodeGeneratorUtils.getUpperCaseLeading(
-											scoringPartConst.getSimSEObjectType().getName())
-									+ ")(t111" + j + ".getAll" + scoringPartDest.getParticipant().getName()
-									+ "s().elementAt(0));");
-							writer.write(NEWLINE);
-							writer.write("if(t" + j + " != null)");
-							writer.write(NEWLINE);
-							writer.write(OPEN_BRACK);
-							writer.write(NEWLINE);
+						
+						String scoringPartVarName = scoringPartDest.getParticipant().getName() + "s";
+						String scoringPartConstObj = CodeGeneratorUtils
+								.getUpperCaseLeading(scoringPartConst.getSimSEObjectType().getName());
+						ClassName scoringPartConstObjName = ClassName.get("simse.adts.objects", scoringPartConstObj);
+						if ((scoringAttConst != null) && (scoringPartConst != null) && (scoringPartDest != null)) {
+							lambda.beginControlFlow("if (t111$L.getAll" + scoringPartVarName + "().size() > 0)", j);
+							lambda.addStatement("$T t$L = ($T)(t111$L.getAll" + scoringPartVarName + "().elementAt(0))"
+									, scoringPartConstObjName, j, scoringPartConstObjName, j);
+							lambda.beginControlFlow("if (t$L != null)", j);
+							ClassName scoreType = null;
 							if (scoringAttConst.getAttribute().getType() == AttributeTypes.INTEGER) {
-								writer.write("int");
+								scoreType = ClassName.get(int.class);
 							} else if (scoringAttConst.getAttribute().getType() == AttributeTypes.DOUBLE) {
-								writer.write("double");
+								scoreType = ClassName.get(double.class);
 							} else if (scoringAttConst.getAttribute().getType() == AttributeTypes.STRING) {
-								writer.write("String");
+								scoreType = ClassName.get(String.class);
 							} else if (scoringAttConst.getAttribute().getType() == AttributeTypes.BOOLEAN) {
-								writer.write("boolean");
+								scoreType = ClassName.get(boolean.class);
 							}
-							writer.write(" v" + j + " = t" + j + ".get"
-									+ scoringAttConst.getAttribute().getName() + "();");
-							writer.write(NEWLINE);
-							writer.write("state.getClock().stop();");
-							writer.write(NEWLINE);
-							writer.write("state.setScore(v);");
-							writer.write(NEWLINE);
-							writer.write("((SimSEGUI)parent).update();");
-							writer.write(NEWLINE);
-							writer.write("JOptionPane.showMessageDialog(null, (\"Your score is \" + v" + j
-									+ "), \"Game over!\", JOptionPane.INFORMATION_MESSAGE);");
-							writer.write(NEWLINE);
-							writer.write(CLOSED_BRACK);
-							writer.write(NEWLINE);
-							writer.write(CLOSED_BRACK);
-							writer.write(NEWLINE);
+							lambda.addStatement("$T v$L = t$L.get" + scoringAttConst.getAttribute().getName() + "()", scoreType, j, j);
+							lambda.addStatement("state.getClock().stop()");
+							lambda.addStatement("state.setScore(v$L)", j);
+							lambda.addStatement("(($T)gui).update()", simseGui);
+							lambda.addStatement("$T d = new $T($T.INFORMATION)", alert, alert, alertType);
+							lambda.addStatement("d.setContentText(($S + v$L))", "Your score is ", j);
+							lambda.addStatement("d.setTitle($S)", "Game over!");
+							lambda.addStatement("d.setHeaderText(null)");
+							lambda.addStatement("d.showAndWait()");
+							lambda.endControlFlow();
+							lambda.endControlFlow(); // game ending if condition
 						}
 					}
-
-					writer.write(CLOSED_BRACK);
-					writer.write(NEWLINE);
-					writer.write(CLOSED_BRACK);
-					writer.write(NEWLINE);
+					lambda.endControlFlow();
+					lambda.endControlFlow();
 				}
 			}
-			writer.write(CLOSED_BRACK);
-			writer.write(NEWLINE);
-			writer.write(CLOSED_BRACK);
-			writer.write(NEWLINE);
-			writer.write("else if(a" + j + " > 1)");
-			writer.write(NEWLINE);
-			writer.write(OPEN_BRACK);
-			writer.write(NEWLINE);
-			writer.write("Vector<" + CodeGeneratorUtils.getUpperCaseLeading(act.getName()) + "Action> b" + j
-					+ " = new Vector<" + CodeGeneratorUtils.getUpperCaseLeading(act.getName()) + "Action>();");
-			writer.write(NEWLINE);
-			writer.write("for(int i=0; i<allActions" + j + ".size(); i++)");
-			writer.write(NEWLINE);
-			writer.write(OPEN_BRACK);
-			writer.write(NEWLINE);
-			writer.write(CodeGeneratorUtils.getUpperCaseLeading(act.getName()) + "Action c" + j + " = ("
-					+ CodeGeneratorUtils.getUpperCaseLeading(act.getName()) + "Action)allActions" + j
-					+ ".elementAt(i);");
-			writer.write(NEWLINE);
+			lambda.endControlFlow();
+			lambda.nextControlFlow("else if(a" + j + " > 1)");
+			lambda.addStatement("$T b$L = new $T();", vectorOfActTypes, j, vectorOfActTypes);
+			lambda.beginControlFlow("for (int i = 0; i < allActions" + j + ".size(); i++)");
+			lambda.addStatement("$T c$L = ($T)allActions$L.elementAt(i)", actName, j, actName, j);
+			
 			// go through all participants:
 			for (int k = 0; k < parts.size(); k++) {
 				ActionTypeParticipant tempPart = parts.elementAt(k);
 				if (tempPart.getSimSEObjectTypeType() == SimSEObjectTypeTypes.EMPLOYEE) {
-					writer.write("if((c" + j + ".getAll" + tempPart.getName() + "s().contains(emp)) && (!(b" + j
-							+ ".contains(c" + j + "))))");
-					writer.write(NEWLINE);
-					writer.write(OPEN_BRACK);
-					writer.write(NEWLINE);
-					writer.write("b" + j + ".add(c" + j + ");");
-					writer.write(NEWLINE);
-					writer.write(CLOSED_BRACK);
-					writer.write(NEWLINE);
+					lambda.beginControlFlow("if((c$L.getAll" + tempPart.getName() + "s().contains(emp)) && "
+							+ "(!(b$L.contains(c$L))))", j, j, j);
+					lambda.addStatement("b$L.add(c$L)", j, j);
+					lambda.endControlFlow();
 				}
 			}
-			writer.write(CLOSED_BRACK);
-			writer.write(NEWLINE);
-			writer.write("new ChooseActionToDestroyDialog(parent, b" + j + ", state, emp, ruleExec, s);");
-			writer.write(NEWLINE);
-			writer.write(CLOSED_BRACK);
-			writer.write(NEWLINE);
+			lambda.endControlFlow();
+			lambda.addStatement("new $T(parent, b$L, state, emp, ruleExec, s)", chooseActionToDestroyDialog, j);
+			lambda.endControlFlow();
 		}
-		writer.write(CLOSED_BRACK);
-		writer.write(NEWLINE);
-		writer.write(CLOSED_BRACK);
-		writer.write(NEWLINE);
-		writer.write(CLOSED_BRACK);
-		writer.write(NEWLINE);
-		
+		lambda.endControlFlow();
+		lambda.endControlFlow();		
 		
 		MethodSpec stopLambda = MethodSpec.methodBuilder("")
 				.addParameter(buttonType, "type")
@@ -492,154 +448,122 @@ public class MenuInputManagerGenerator implements CodeGeneratorConstants {
 		
 		// go through each trigger and generate code for it:
 		for (int i = 0; i < userTrigs.size(); i++) {
+			CodeBlock.Builder trigCode1 = CodeBlock.builder();
+			CodeBlock.Builder trigCode2 = CodeBlock.builder();
+			CodeBlock.Builder trigCode3 = CodeBlock.builder();
+			CodeBlock.Builder trigCode4 = CodeBlock.builder();
 			vectors.removeAllElements(); // clear vector
 			UserActionTypeTrigger outerTrig = (UserActionTypeTrigger) userTrigs.elementAt(i);
 			ActionType act = outerTrig.getActionType();
-			if (i > 0) { // not on first element
-				writer.write("else ");
+			String actType = CodeGeneratorUtils.getUpperCaseLeading(act.getName());
+			String actTypeName = actType + "Action";
+	    	ClassName actName = ClassName.get("simse.adts.actions", actTypeName);
+	    	TypeName vectorOfActTypes = ParameterizedTypeName.get(vector, actName);
+			if (i == 0) { 
+				// on first element
+				trigCode1.beginControlFlow("if (itemText.equals($S))", outerTrig.getMenuText());
+			} else {
+				trigCode1.nextControlFlow("else if (itemText.equals($S))", outerTrig.getMenuText());
 			}
-			writer.write("if(s.equals(\"" + outerTrig.getMenuText() + "\"))");
-			writer.write(NEWLINE);
-			writer.write(OPEN_BRACK);
-			writer.write(NEWLINE);
-
-			// game-ending triggers:
-			if (outerTrig.isGameEndingTrigger()) {
-				writer.write(
-						"int choice = JOptionPane.showConfirmDialog(null, (\"Are you sure you want to end the game?\"), \"Confirm Game Ending\", JOptionPane.YES_NO_OPTION);");
-				writer.write(NEWLINE);
-				writer.write("if(choice == JOptionPane.YES_OPTION)");
-				writer.write(NEWLINE);
-				writer.write(OPEN_BRACK);
-				writer.write(NEWLINE);
-			}
-
-			// triggers requiring confirmation:
-			if (outerTrig.requiresConfirmation() && !outerTrig.isGameEndingTrigger()) {
-				writer.write(
-						"int choice = JOptionPane.showConfirmDialog(null, (\"Are you sure?\"), \"Confirm Action\", JOptionPane.YES_NO_OPTION);");
-				writer.write(NEWLINE);
-				writer.write("if(choice == JOptionPane.YES_OPTION)");
-				writer.write(NEWLINE);
-				writer.write(OPEN_BRACK);
-				writer.write(NEWLINE);
-			}
+			
+			// Where the game-ending code should be placed
+			// Due to JavaPoet semantics, it is written out of order and reordered at the end
 
 			Vector<ActionTypeParticipantTrigger> triggers = outerTrig.getAllParticipantTriggers();
 			for (int j = 0; j < triggers.size(); j++) {
 				ActionTypeParticipantTrigger trig = triggers.elementAt(j);
 				String metaTypeName = SimSEObjectTypeTypes.getText(trig.getParticipant().getSimSEObjectTypeType());
-				writer.write("Vector<" + metaTypeName + "> " + trig.getParticipant().getName().toLowerCase() + "s"
-						+ j + " = new Vector<" + metaTypeName + ">();");
-				writer.write(NEWLINE);
+				int partMetaType = trig.getParticipant().getSimSEObjectTypeType();
+				String partName = trig.getParticipant().getName();
+				String partTypeVarName = partName.toLowerCase() + "s" + j;
+				
+				ClassName metaType = ClassName.get("simse.adts.objects", metaTypeName);
+				TypeName vectorOfMetaType = ParameterizedTypeName.get(vector, metaType);
+				
+				trigCode3.addStatement("$T " + partTypeVarName + " = new $T()", vectorOfMetaType, vectorOfMetaType);
 				Vector<ActionTypeParticipantConstraint> constraints = trig.getAllConstraints();
 				for (int k = 0; k < constraints.size(); k++) {
 					ActionTypeParticipantConstraint constraint = constraints.elementAt(k);
 					String objTypeName = constraint.getSimSEObjectType().getName();
-					if (vectorContainsString(vectors, (objTypeName.toLowerCase() + "s")) == false) { // this vector
-																										// has not
-																										// been
-																										// generated
-																										// already
-						writer.write("Vector<" + CodeGeneratorUtils.getUpperCaseLeading(objTypeName) + "> "
-								+ objTypeName.toLowerCase() + "s = state.get"
-								+ CodeGeneratorUtils.getUpperCaseLeading(
-										SimSEObjectTypeTypes.getText(constraint.getSimSEObjectType().getType()))
-								+ "StateRepository().get" + CodeGeneratorUtils.getUpperCaseLeading(objTypeName)
-								+ "StateRepository().getAll();");
-						vectors.add(objTypeName.toLowerCase() + "s"); // add it to the
-																		// list
-						writer.write(NEWLINE);
+					String objTypeVarName = objTypeName.toLowerCase() + "s";
+					String uCaseObjTypeName = CodeGeneratorUtils.getUpperCaseLeading(objTypeName);
+					ClassName objType = ClassName.get("simse.adts.objects", uCaseObjTypeName);
+					TypeName vectorOfObjTypes = ParameterizedTypeName.get(vector, objType);
+					int constraintMetaType = constraint.getSimSEObjectType().getType();
+					String constraintMetaTypeName = CodeGeneratorUtils.getUpperCaseLeading(
+							SimSEObjectTypeTypes.getText(constraintMetaType));
+					
+					if (vectorContainsString(vectors, objTypeVarName) == false) { 
+						// this vector has not been generated already
+						trigCode3.addStatement("$T $L = state.get$LStateRepository().get$LStateRepository().getAll()"
+								, vectorOfObjTypes, objTypeVarName, constraintMetaTypeName, uCaseObjTypeName);  
+						// add it to the list
+						vectors.add(objTypeVarName);
 					}
-					writer.write("for(int i=0; i<" + objTypeName.toLowerCase() + "s.size(); i++)");
-					writer.write(NEWLINE);
-					writer.write(OPEN_BRACK);
-					writer.write(NEWLINE);
-					writer.write(CodeGeneratorUtils.getUpperCaseLeading(objTypeName) + " a = "
-							+ objTypeName.toLowerCase() + "s.elementAt(i);");
-					writer.write(NEWLINE);
+					
+					trigCode3.beginControlFlow("for (int i = 0; i < $L.size(); i++)", objTypeVarName);
+					trigCode3.addStatement("$T a = $L.elementAt(i)", objType, objTypeVarName);
 
-					if (CodeGenerator.allowHireFire
-							&& constraint.getSimSEObjectType().getType() == SimSEObjectTypeTypes.EMPLOYEE) {
+					if (CodeGenerator.allowHireFire && constraintMetaType == SimSEObjectTypeTypes.EMPLOYEE) {
 						// if the action involves Employees, only add those that are hired
-						writer.write("if (!a.getHired())");
-						writer.write(NEWLINE);
-						writer.write("continue;");
-						writer.write(NEWLINE);
+						trigCode3.beginControlFlow("if (!a.getHired())");
+						trigCode3.addStatement("continue");
 					}
 
-					writer.write("boolean alreadyInAction = false;");
-					writer.write(NEWLINE);
-					if ((trig.getParticipant().getSimSEObjectTypeType() == SimSEObjectTypeTypes.EMPLOYEE)
-							|| (trig.getParticipant().getSimSEObjectTypeType() == SimSEObjectTypeTypes.ARTIFACT)) { 
+					trigCode3.addStatement("boolean alreadyInAction = false");
+					
+					if ((partMetaType == SimSEObjectTypeTypes.EMPLOYEE) || (partMetaType == SimSEObjectTypeTypes.ARTIFACT)) { 
 						// employees only be in one of these actions in this role at a time
-						writer.write("Vector<" + CodeGeneratorUtils.getUpperCaseLeading(act.getName())
-								+ "Action> allActions = state.getActionStateRepository().get"
-								+ CodeGeneratorUtils.getUpperCaseLeading(act.getName())
-								+ "ActionStateRepository().getAllActions(a);");
-						writer.write(NEWLINE);
-						writer.write("for(int j=0; j<allActions.size(); j++)");
-						writer.write(NEWLINE);
-						writer.write(OPEN_BRACK);
-						writer.write(NEWLINE);
-						writer.write(CodeGeneratorUtils.getUpperCaseLeading(act.getName())
-								+ "Action b = allActions.elementAt(j);");
-						writer.write(NEWLINE);
-						writer.write("if(b.getAll" + trig.getParticipant().getName() + "s().contains(a))");
-						writer.write(NEWLINE);
-						writer.write(OPEN_BRACK);
-						writer.write(NEWLINE);
-						writer.write("alreadyInAction = true;");
-						writer.write(NEWLINE);
-						writer.write("break;");
-						writer.write(NEWLINE);
-						writer.write(CLOSED_BRACK);
-						writer.write(NEWLINE);
-						writer.write(CLOSED_BRACK);
-						writer.write(NEWLINE);
+						trigCode3.addStatement("$T allActions = state.getActionStateRepository()"
+								+ ".get$LStateRepository().getAllActions(a)", vectorOfActTypes, actTypeName);
+						trigCode3.beginControlFlow("for (int j = 0; j < allActions.size(); j++)");
+						trigCode3.addStatement("$T b = allActions.elementAt(j)", actTypeName);
+						trigCode3.beginControlFlow("if(b.getAll" + partName + "s().contains(a))");
+						trigCode3.addStatement("alreadyInAction = true");
+						trigCode3.addStatement("break");
+						trigCode3.endControlFlow();
+						trigCode3.endControlFlow();
 					}
-					writer.write("if((alreadyInAction == false)");
-					ActionTypeParticipantAttributeConstraint[] attConstraints = constraint
-							.getAllAttributeConstraints();
+					
+					String ifCondition = "if((alreadyInAction == false) ";
+
+					ActionTypeParticipantAttributeConstraint[] attConstraints = constraint.getAllAttributeConstraints();
 					for (int m = 0; m < attConstraints.length; m++) {
 						ActionTypeParticipantAttributeConstraint attConst = attConstraints[m];
 						if (attConst.isConstrained()) {
-							writer.write(" && (a.get"
+							ifCondition += " && (a.get"
 									+ CodeGeneratorUtils.getUpperCaseLeading(attConst.getAttribute().getName())
-									+ "() ");
+									+ "() ";
 							if (attConst.getGuard().equals(AttributeGuard.EQUALS)) {
-								writer.write("== ");
+								ifCondition += "== ";
 							} else {
-								writer.write(attConst.getGuard() + " ");
+								ifCondition += attConst.getGuard() + " ";
 							}
 							if (attConst.getAttribute().getType() == AttributeTypes.STRING) {
-								writer.write("\"" + attConst.getValue().toString() + "\"");
+								ifCondition += "\"" + attConst.getValue().toString() + "\")";
 							} else {
-								writer.write(attConst.getValue().toString());
+								ifCondition += attConst.getValue().toString();
 							}
-							writer.write(")");
+							ifCondition += ")";
 						}
 					}
-					writer.write(")");
-					writer.write(NEWLINE);
-					writer.write(OPEN_BRACK);
-					writer.write(NEWLINE);
-					writer.write(trig.getParticipant().getName().toLowerCase() + "s" + j + ".add(a);");
-					writer.write(NEWLINE);
-					writer.write(CLOSED_BRACK);
-					writer.write(NEWLINE);
-					writer.write(CLOSED_BRACK);
-					writer.write(NEWLINE);
+					ifCondition += ")";
+					trigCode3.beginControlFlow(ifCondition);
+					trigCode3.addStatement(partTypeVarName + ".add(a)");
+					trigCode3.endControlFlow();
+					trigCode3.endControlFlow();
 				}
 			}
-			writer.write("if(");
+			
+			String condition = "if(";
 			for (int j = 0; j < triggers.size(); j++) {
 				ActionTypeParticipantTrigger trig = triggers.elementAt(j);
-				if (j > 0) { // not on first element
-					writer.write(" && ");
+				if (j > 0) { 
+					// not on first element
+					condition += " && ";
 				}
 				ActionTypeParticipant part = trig.getParticipant();
-				writer.write("(" + part.getName().toLowerCase() + "s" + j + ".size() ");
+				condition += "(" + part.getName().toLowerCase() + "s" + j + ".size() ";
 				if (part.getQuantity().isMinValBoundless() == false) {
 					writer.write(">= " + part.getQuantity().getMinVal() + ")");
 				} else { // min val boundless
@@ -680,12 +604,6 @@ public class MenuInputManagerGenerator implements CodeGeneratorConstants {
 			writer.write(NEWLINE);
 			writer.write(CLOSED_BRACK);
 			writer.write(NEWLINE);
-
-			if (outerTrig.isGameEndingTrigger() || outerTrig.requiresConfirmation()) {
-				// add extra closed brack
-				writer.write(CLOSED_BRACK);
-				writer.write(NEWLINE);
-			}
 
 			writer.write(CLOSED_BRACK);
 			writer.write(NEWLINE);
@@ -733,6 +651,46 @@ public class MenuInputManagerGenerator implements CodeGeneratorConstants {
 			writer.write(NEWLINE);
 			writer.write(CLOSED_BRACK);
 			writer.write(NEWLINE);
+			
+			MethodSpec wrappedCode = MethodSpec.methodBuilder("")
+					.addParameter(buttonType, "type")
+					.beginControlFlow("if (type == okButton)")
+					.addCode(trigCode3)
+					.endControlFlow()
+					.build();
+			
+			// game-ending triggers:
+			if (outerTrig.isGameEndingTrigger()) {
+				trigCode2.addStatement("$T a2 = new $T($T.$T.CONFIRMATION)", alert, alert, alert, alertType);
+				trigCode2.addStatement("a2.setTitle($S)", "Confirm Game Ending");
+				trigCode2.addStatement("a2.setContentText($S)", "Are you sure you want to end the game?");
+				trigCode2.addStatement("a2.setHeaderText(null)");
+				trigCode2.addStatement("$T okButton = new $T($S, $T.$T.YES)", buttonType, "Yes", buttonType, buttonBar, buttonData);
+				trigCode2.addStatement("$T noButton = new $T($S, $T.$T.NO)", buttonType, "No", buttonType, buttonBar, buttonData);
+				trigCode2.addStatement("a2.getButtonTypes().setAll(okButton, noButton)");
+				trigCode2.addStatement("a2.showAndWait().ifPresent($L)", wrappedCode);
+			}
+
+			// triggers requiring confirmation:
+			if (outerTrig.requiresConfirmation() && !outerTrig.isGameEndingTrigger()) {
+				trigCode2.addStatement("$T a2 = new $T($T.$T.CONFIRMATION)", alert, alert, alert, alertType);
+				trigCode2.addStatement("a2.setTitle($S)", "Confirm Action");
+				trigCode2.addStatement("a2.setContentText($S)", "Are you sure?");
+				trigCode2.addStatement("a2.setHeaderText(null)");
+				trigCode2.addStatement("$T okButton = new $T($S, $T.$T.YES)", buttonType, "Yes", buttonType, buttonBar, buttonData);
+				trigCode2.addStatement("$T noButton = new $T($S, $T.$T.NO)", buttonType, "No", buttonType, buttonBar, buttonData);
+				trigCode2.addStatement("a2.getButtonTypes().setAll(okButton, noButton)");
+				trigCode2.addStatement("a2.showAndWait().ifPresent($L)", wrappedCode);
+			}
+			
+			trigCode.add(trigCode1);
+			if (outerTrig.isGameEndingTrigger() || outerTrig.requiresConfirmation()) {
+				// add normal functionality wrapped in confirmation button
+				trigCode.add(trigCode2);
+			} else {
+				trigCode.add(trigCode3);
+			}
+			trigCode.add(trigCode4);
 		}
 		return trigCode;
 	}
