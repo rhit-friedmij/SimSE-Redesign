@@ -83,7 +83,7 @@ public class DestroyerCheckerGenerator implements CodeGeneratorConstants {
 		 MethodSpec update = MethodSpec.methodBuilder("update")
 					.addModifiers(Modifier.PUBLIC)
 					.returns(void.class)
-					.addParameter(boolean.class, "updateUserDestsOlnly")
+					.addParameter(boolean.class, "updateUserDestsOnly")
 					.addParameter(stage, "gui")
 					.addStatement("$T actions = state.getActionStateRepository().getAllActions()", vectorOfActions)
 					.beginControlFlow("for (int i = 0 i < actions.size() i++) {")
