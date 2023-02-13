@@ -8,13 +8,17 @@ import simse.codegenerator.enginegenerator.StartingNarrativeDialogGenerator;
 import simse.codegenerator.logicgenerator.DestroyerCheckerGenerator;
 import simse.codegenerator.logicgenerator.LogicGenerator;
 import simse.codegenerator.logicgenerator.MiscUpdaterGenerator;
+import simse.codegenerator.logicgenerator.TriggerCheckerGenerator;
 import simse.modelbuilder.ModelOptions;
 import simse.modelbuilder.actionbuilder.ActionType;
 import simse.modelbuilder.actionbuilder.ActionTypeDestroyer;
+import simse.modelbuilder.actionbuilder.AutonomousActionTypeTrigger;
 import simse.modelbuilder.actionbuilder.DefinedActionTypes;
 import simse.modelbuilder.actionbuilder.RandomActionTypeDestroyer;
+import simse.modelbuilder.actionbuilder.RandomActionTypeTrigger;
 import simse.modelbuilder.actionbuilder.TimedActionTypeDestroyer;
 import simse.modelbuilder.actionbuilder.UserActionTypeDestroyer;
+import simse.modelbuilder.actionbuilder.UserActionTypeTrigger;
 import simse.modelbuilder.objectbuilder.DefinedObjectTypes;
 import simse.modelbuilder.objectbuilder.NonNumericalAttribute;
 import simse.modelbuilder.objectbuilder.SimSEObjectType;
@@ -36,7 +40,8 @@ public class TestGenerator {
 //		engineTest();
 //		logicTest();
 //		miscUpdaterTest();
-		destroyerCheckerTest();
+//		destroyerCheckerTest();
+		triggerCheckerTest();
 	}
 	
 	public static void setUp() {
@@ -71,6 +76,9 @@ public class TestGenerator {
 		at1.addDestroyer(new UserActionTypeDestroyer("CultivateDest", at1, "Stop Cultivating"));
 		at3.addDestroyer(new TimedActionTypeDestroyer("AutoDest", at3));
 		at4.addDestroyer(new RandomActionTypeDestroyer("RandomDest", at4));
+		at1.addTrigger(new UserActionTypeTrigger("CultivateEffect", at1, "Start Cultivating", true));
+		at3.addTrigger(new AutonomousActionTypeTrigger("TrigA", at3));
+		at4.addTrigger(new RandomActionTypeTrigger("RandomTrig", at4));
 		actTypes.addActionType(at1);
 		actTypes.addActionType(at2);
 		actTypes.addActionType(at3);
@@ -100,5 +108,10 @@ public class TestGenerator {
 	public static void destroyerCheckerTest() {
 		DestroyerCheckerGenerator dGen = new DestroyerCheckerGenerator(actTypes, directory);
 		dGen.generate();
+	}
+	
+	public static void triggerCheckerTest() {
+		TriggerCheckerGenerator tGen = new TriggerCheckerGenerator(actTypes, directory);
+		tGen.generate();
 	}
 }

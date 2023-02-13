@@ -204,6 +204,7 @@ public class DestroyerCheckerGenerator implements CodeGeneratorConstants {
 							}
 						}
 					}
+					
 					String scoringPartConstObj = CodeGeneratorUtils
 							.getUpperCaseLeading(scoringPartConst.getSimSEObjectType().getName());
 					ClassName scoringPartConstObjName = ClassName.get("simse.adts.objects", scoringPartConstObj);
@@ -212,15 +213,17 @@ public class DestroyerCheckerGenerator implements CodeGeneratorConstants {
 								+ "s().size() > 0)");
 						conditions.addStatement("$T t = ($T)(t111.getAll" + scoringPartDest.getParticipant().getName()
 								+ "s().elementAt(0))", scoringPartConstObjName, scoringPartConstObjName);
+						ClassName scoreType = null;
 						if (scoringAttConst.getAttribute().getType() == AttributeTypes.INTEGER) {
-							conditions.addStatement("$T v = t.get" + scoringAttConst.getAttribute().getName() + "()", int.class);
+							scoreType = ClassName.get(int.class);
 						} else if (scoringAttConst.getAttribute().getType() == AttributeTypes.DOUBLE) {
-							conditions.addStatement("$T v = t.get" + scoringAttConst.getAttribute().getName() + "()", double.class);
+							scoreType = ClassName.get(double.class);
 						} else if (scoringAttConst.getAttribute().getType() == AttributeTypes.STRING) {
-							conditions.addStatement("$T v = t.get" + scoringAttConst.getAttribute().getName() + "()", String.class);
+							scoreType = ClassName.get(String.class);
 						} else if (scoringAttConst.getAttribute().getType() == AttributeTypes.BOOLEAN) {
-							conditions.addStatement("$T v = t.get" + scoringAttConst.getAttribute().getName() + "()", boolean.class);
+							scoreType = ClassName.get(boolean.class);
 						}
+						conditions.addStatement("$T v = t.get" + scoringAttConst.getAttribute().getName() + "()", scoreType);
 						conditions.addStatement("state.getClock().stop()");
 						conditions.addStatement("state.setScore(v)");
 						conditions.addStatement("(($T)gui).update()", simseGui);
@@ -266,7 +269,8 @@ public class DestroyerCheckerGenerator implements CodeGeneratorConstants {
 						String objTypeName = constraint.getSimSEObjectType().getName();
 						ClassName objTypeClassName = ClassName.get("simse.adts.objects", 
 								CodeGeneratorUtils.getUpperCaseLeading(objTypeName));
-						if (k == 0) { // on first element
+						if (k == 0) { 
+							// on first element
 							conditions.beginControlFlow("if(a instanceof $T)", objTypeClassName);
 						}
 						conditions.nextControlFlow("else if(a instanceof $T)", objTypeClassName);
