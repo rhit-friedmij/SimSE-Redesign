@@ -76,4 +76,13 @@ public abstract class Attribute implements Cloneable {
   public void setVisibleOnCompletion(boolean visEnd) {
     visibleOnCompletion = visEnd;
   }
+  
+  public boolean attributeEquals(Attribute a) {
+	  if (a.getName().equals(this.name) && a.getType() == this.type
+			  && a.isVisible() == this.visible && a.isKey() == this.key
+			  && a.isVisibleOnCompletion() == this.visibleOnCompletion) {
+		  return true;
+	  }
+	  return false;
+  }
 }
