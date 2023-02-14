@@ -146,7 +146,7 @@ public class TableModelGenerator implements CodeGeneratorConstants {
 			 .addMethod(setValue)
 			 .build();
 	 
-	 JavaFile file = JavaFile.builder("simse.gui.EmployeeTableModel", empTabMod)
+	 JavaFile file = JavaFile.builder("simse.gui", empTabMod)
 			 .build();
 	 
 	 try {
@@ -233,7 +233,7 @@ public class TableModelGenerator implements CodeGeneratorConstants {
 				 .addMethod(setValue)
 				 .build();
 		 
-		 JavaFile file = JavaFile.builder("simse.gui.ArtifactTableModel", artTabMod)
+		 JavaFile file = JavaFile.builder("simse.gui", artTabMod)
 				 .build();
 		 
 		 try {
@@ -319,7 +319,7 @@ public class TableModelGenerator implements CodeGeneratorConstants {
 				 .addMethod(setValue)
 				 .build();
 		 
-		 JavaFile file = JavaFile.builder("simse.gui.ToolTableModel", toolTabMod)
+		 JavaFile file = JavaFile.builder("simse.gui", toolTabMod)
 				 .build();
 		 
 		 try {
@@ -405,7 +405,7 @@ public class TableModelGenerator implements CodeGeneratorConstants {
 				 .addMethod(setValue)
 				 .build();
 		 
-		 JavaFile file = JavaFile.builder("simse.gui.CustomerTableModel", custTabMod)
+		 JavaFile file = JavaFile.builder("simse.gui", custTabMod)
 				 .build();
 		 
 		 try {
@@ -491,7 +491,7 @@ public class TableModelGenerator implements CodeGeneratorConstants {
 				 .addMethod(setValue)
 				 .build();
 		 
-		 JavaFile file = JavaFile.builder("simse.gui.ProjectTableModel", projTabMod)
+		 JavaFile file = JavaFile.builder("simse.gui", projTabMod)
 				 .build();
 		 
 		 try {

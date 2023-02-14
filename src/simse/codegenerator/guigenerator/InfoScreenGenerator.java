@@ -143,7 +143,7 @@ public class InfoScreenGenerator {
 	    		  .addMethod(handle)
 	    		  .build();
 	      
-	      JavaFile file = JavaFile.builder("simse.gui.ArtifactInfoScreen", ais)
+	      JavaFile file = JavaFile.builder("simse.gui", ais)
 					 .build();
 	      
 	      file.writeTo(writer);
@@ -306,7 +306,7 @@ public class InfoScreenGenerator {
 		    		  .addMethod(handle)
 		    		  .build();
 		      
-		      JavaFile file = JavaFile.builder("simse.gui.EmployeeInfoScreen", eis)
+		      JavaFile file = JavaFile.builder("simse.gui", eis)
 						 .build();
 		      
 		      file.writeTo(writer);

@@ -209,7 +209,7 @@ public class InformationPanelGenerator implements CodeGeneratorConstants {
 					.addMethod(getPanelType)
 					.build();
 			
-			JavaFile file = JavaFile.builder("simse.gui.InformationPanel", informationPanel)
+			JavaFile file = JavaFile.builder("simse.gui", informationPanel)
 					.build();
 			
 			file.writeTo(writer);

@@ -404,7 +404,7 @@ public class EmployeesPanelGenerator implements CodeGeneratorConstants {
     		  .addMethod(getPanelType)
     		  .build();
       
-      JavaFile file = JavaFile.builder("simse.gui.EmployeesPanel", actionPanel)
+      JavaFile file = JavaFile.builder("simse.gui", actionPanel)
     		  .build();
       
       file.writeTo(writer);
