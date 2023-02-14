@@ -3,7 +3,7 @@
  * class in the explanatory tool
  */
 
-package simse.codegenerator.explanatorytoolgenerator;
+package simse.codegenerator.utilgenerator;
 
 import simse.codegenerator.CodeGeneratorConstants;
 import simse.codegenerator.CodeGeneratorUtils;
@@ -25,6 +25,7 @@ import com.squareup.javapoet.ArrayTypeName;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.CodeBlock;
 import com.squareup.javapoet.FieldSpec;
+import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.TypeSpec;
@@ -40,14 +41,11 @@ public class RuleCategoriesGenerator implements CodeGeneratorConstants {
   }
 
   public void generate() {
-    File branchFile = new File(directory,
-        ("simse\\explanatorytool\\Branch.java"));
-    if (branchFile.exists()) {
-      branchFile.delete(); // delete old version of file
-    }
-    try {
-      FileWriter writer = new FileWriter(branchFile);
-      
+    File ruleCategoriesFile = new File(directory,
+        ("simse\\util\\RuleCategories.java"));
+    if (ruleCategoriesFile.exists()) {
+    	ruleCategoriesFile.delete(); // delete old version of file
+    } 
       ArrayTypeName stringArray = ArrayTypeName.of(String.class);
       ClassName hashTable = ClassName.get("java.util", "Hashtable");
       ClassName string = ClassName.get(String.class);
@@ -235,6 +233,7 @@ public class RuleCategoriesGenerator implements CodeGeneratorConstants {
         	
         }
       }
+      intRuleDescriptionBlock += "};\n";
       
       MethodSpec initializeIntRules = MethodSpec.methodBuilder("initializeRuleMapping")
     		  .addStatement("destRules = new $T<>()", hashTable)
@@ -264,6 +263,7 @@ public class RuleCategoriesGenerator implements CodeGeneratorConstants {
         	
         }
       }
+      trigRuleDescriptionBlock += "};\n";
       
       MethodSpec initializeTrigRules = MethodSpec.methodBuilder("initializeTrigRules")
     		  .addStatement("trigRules = new $T<>()", hashTable)
@@ -293,6 +293,7 @@ public class RuleCategoriesGenerator implements CodeGeneratorConstants {
         	
         }
       }
+      destRuleDescriptionBlock += "};\n";
       
       MethodSpec initializeDestRules = MethodSpec.methodBuilder("initializeDestRules")
     		  .addStatement("destRules = new $T<>()", hashTable)
@@ -350,6 +351,7 @@ public class RuleCategoriesGenerator implements CodeGeneratorConstants {
         	
         }
       }
+      backendRuleBlock += "};\n";
       
       MethodSpec initializeBackendRuleMapping = MethodSpec.methodBuilder("initializeRuleMapping")
     		  .addStatement("backendRuleMapping = new $T<>()", hashTable)
@@ -374,6 +376,7 @@ public class RuleCategoriesGenerator implements CodeGeneratorConstants {
         	
         }
       }
+      backendTrigRuleDescriptionBlock += "};\n";
       
       MethodSpec initializeBackendTrigRules = MethodSpec.methodBuilder("initializeRuleMapping")
     		  .addStatement("trigBackendRules = new $T<>()", hashTable)
@@ -398,6 +401,7 @@ public class RuleCategoriesGenerator implements CodeGeneratorConstants {
         	
         }
       }
+      backendDestRuleDescriptionBlock += "};\n";
       
       MethodSpec initializeBackendDestRules = MethodSpec.methodBuilder("initializeRuleMapping")
     		  .addStatement("destBackendRules = new $T<>()", hashTable)
@@ -444,11 +448,14 @@ public class RuleCategoriesGenerator implements CodeGeneratorConstants {
     		  .addMethod(getAllTrigRulesForAction)
     		  .addMethod(getAllDestRulesForAction)
     		  .build();
-     
-    } catch (IOException e) {
-      JOptionPane.showMessageDialog(null, ("Error writing file "
-          + branchFile.getPath() + ": " + e.toString()), "File IO Error",
-          JOptionPane.WARNING_MESSAGE);
-    }
+      
+      JavaFile javaFile = JavaFile.builder("simse.util", ruleCategories).build();
+      
+      try {
+		javaFile.writeTo(ruleCategoriesFile);
+	} catch (IOException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
   }
 }

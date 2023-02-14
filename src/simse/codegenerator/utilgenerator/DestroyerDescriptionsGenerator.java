@@ -3,7 +3,7 @@
  * DestroyerDescriptions class in the explanatory tool
  */
 
-package simse.codegenerator.explanatorytoolgenerator;
+package simse.codegenerator.utilgenerator;
 
 import simse.codegenerator.CodeGeneratorConstants;
 import simse.modelbuilder.actionbuilder.ActionType;
