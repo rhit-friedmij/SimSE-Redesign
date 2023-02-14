@@ -58,13 +58,21 @@ public class ChooseRoleToPlayDialogGenerator implements CodeGeneratorConstants {
 	  ClassName ruleExecClass = ClassName.get("simse.logic", "RuleExecutor");
 	  ClassName employeeClass = ClassName.get("simse.adts.objects", "Employee");
 	  ClassName actionClass = ClassName.get("simse.adts.actions", "Action");
+	  ClassName buttonClass = ClassName.get("javafx.scene.control", "Button");
+	  ClassName stageClass = ClassName.get("javafx.stage", "Stage");
+	  ClassName dialogClass = ClassName.get("javafx.scene.control", "Dialog");
+	  ClassName vBoxClass = ClassName.get("javafx.scene.layout", "VBox");
+	  ClassName labelClass = ClassName.get("javafx.scene.control", "Label");
+	  ClassName paneClass = ClassName.get("javafx.scene.layout", "Pane");
+	  ClassName point2DClass = ClassName.get("javafx.geometry", "Point2D");
+	  ClassName comboBoxClass = ClassName.get("javafx.scene.control", "ComboBox");
 	  ClassName stringClass = ClassName.get(String.class);
 	  TypeName mouseHandler = ParameterizedTypeName.get(eventHandler, mouseEvent);
 	  TypeName stringVector = ParameterizedTypeName.get(vector, stringClass);
 	  
 	  MethodSpec roleConstructor = MethodSpec.constructorBuilder()
 			  .addModifiers(Modifier.PUBLIC)
-			  .addParameter(Stage.class, "owner")
+			  .addParameter(stageClass, "owner")
 			  .addParameter(stringVector, "partNames")
 			  .addParameter(employeeClass, "e")
 			  .addParameter(actionClass, "act")
@@ -76,23 +84,23 @@ public class ChooseRoleToPlayDialogGenerator implements CodeGeneratorConstants {
 			  .addStatement("$N = menText", "menuText")
 			  .addStatement("4N = re", "ruleExec")
 			  .addStatement("setTitle($S)", "Choose Action Role")
-			  .addStatement("$T mainPane = new $T()", VBox.class, VBox.class)
-			  .addStatement("$T topPane = new $T()", Pane.class, Pane.class)
-			  .addStatement("topPane.getChildren().add(new $T($S))", Label.class, "Choose role to play:")
-			  .addStatement("$T middlePane = new $T()", Pane.class, Pane.class)
-			  .addStatement("$N = new $T(FXCollections.observableList(partNames))", "partNameList", ComboBox.class)
+			  .addStatement("$T mainPane = new $T()", vBoxClass, vBoxClass)
+			  .addStatement("$T topPane = new $T()", paneClass, paneClass)
+			  .addStatement("topPane.getChildren().add(new $T($S))", labelClass, "Choose role to play:")
+			  .addStatement("$T middlePane = new $T()", paneClass, paneClass)
+			  .addStatement("$N = new $T(FXCollections.observableList(partNames))", "partNameList", comboBoxClass)
 			  .addStatement("middlePane.getChildren().add(partNameList)")
-			  .addStatement("$T bottomPane = new $T()", Pane.class, Pane.class)
-			  .addStatement("$N = new Button($S)", "okButton", "OK")
+			  .addStatement("$T bottomPane = new $T()", paneClass, paneClass)
+			  .addStatement("$N = new $T($S)", "okButton", buttonClass, "OK")
 			  .addStatement("$N.addEventHandler($T.MOUSE_CLICKED, this)", "okButton", mouseEvent)
 			  .addStatement("bottomPane.getChildren().add($N)", "okButton")
-			  .addStatement("$N = new Button()", "cancelButton", "Cancel")
+			  .addStatement("$N = new $T($S)", "cancelButton", buttonClass, "Cancel")
 			  .addStatement("$N.addEventHandler($T.MOUSE_CLICKED, this)", "cancelButton", mouseEvent)
 			  .addStatement("bottomPane.getChildren().add($N)", "cancelButton")
 			  .addStatement("mainPane.getChildren().addAll(topPane, middlePane, bottomPane)")
-			  .addStatement("$T ownerLoc = new $T(owner.getX(), owner.getY())", Point2D.class, Point2D.class)
+			  .addStatement("$T ownerLoc = new $T(owner.getX(), owner.getY())", point2DClass, point2DClass)
 			  .addStatement("$T thisLoc = new $T((ownerLoc.getX() + (owner.getWidth() / 2)"
-			  		+ " - (this.getWidth() / 2))", Point2D.class, Point2D.class)
+			  		+ " - (this.getWidth() / 2))", point2DClass, point2DClass)
 			  .addStatement("(ownerLoc.getY() + (owner.getHeight() / 2) - (this.getHeight() / 2)))")
 			  .addStatement("this.setX(thisLoc.getX())")
 			  .addStatement("this.setY(thisLoc.getY())")
@@ -145,16 +153,16 @@ public class ChooseRoleToPlayDialogGenerator implements CodeGeneratorConstants {
 			  .build();
 	  
 	  TypeSpec roleDialog = TypeSpec.classBuilder("ChooseRoleToPlayDialog")
-			  .superclass(Dialog.class)
+			  .superclass(dialogClass)
 			  .addSuperinterface(mouseHandler)
-			  .addField(Stage.class, "gui", Modifier.PRIVATE)
+			  .addField(stageClass, "gui", Modifier.PRIVATE)
 			  .addField(employeeClass, "emp", Modifier.PRIVATE)
 			  .addField(actionClass, "action", Modifier.PRIVATE)
 			  .addField(String.class, "menuText", Modifier.PRIVATE)
 			  .addField(ruleExecClass, "ruleExec", Modifier.PRIVATE)
-			  .addField(ComboBox.class, "partNameList", Modifier.PRIVATE)
-			  .addField(Button.class, "okButton", Modifier.PRIVATE)
-			  .addField(Button.class, "cancelButton", Modifier.PRIVATE)
+			  .addField(comboBoxClass, "partNameList", Modifier.PRIVATE)
+			  .addField(buttonClass, "okButton", Modifier.PRIVATE)
+			  .addField(buttonClass, "cancelButton", Modifier.PRIVATE)
 			  .addMethod(roleConstructor)
 			  .addMethod(handle)
 			  .addMethod(onlyOneRole)

@@ -64,7 +64,7 @@ public class ActionInfoWindowGenerator implements CodeGeneratorConstants {
     			.addMethod(constructor)
     			.build();
     	
-    	JavaFile javaFile = JavaFile.builder("com.simse.explanatorytool", actionInfoWindow)
+    	JavaFile javaFile = JavaFile.builder("simse.explanatorytool", actionInfoWindow)
     		    .build();
 
     		try {

@@ -29,7 +29,7 @@ public class LogoPanelGenerator implements CodeGeneratorConstants {
     }
     try {
       FileWriter writer = new FileWriter(logoPanelFile);
-      FileReader reader = new FileReader("\\resources\\LogoPanel.txt");
+      FileReader reader = new FileReader("resources\\LogoPanel.txt");
       Scanner s = new Scanner(reader);
       
       while (s.hasNext()) {

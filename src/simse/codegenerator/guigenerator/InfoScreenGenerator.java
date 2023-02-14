@@ -221,7 +221,7 @@ public class InfoScreenGenerator {
 		    		  .addStatement("tempItem.setOnAction(menuItemEvent)")
 		    		  .addStatement("$N.getItems().add(tempItem)", "actions")
 		    		  .endControlFlow()
-		    		  .addStatement("$T imagePane = new $T()\", stackpane\", stackpane")
+		    		  .addStatement("$T imagePane = new $T()", stackpane, stackpane)
 		    		  .addStatement("imagePane.setMinSize(110, 110)")
 		    		  .addStatement("$T img = $T.createImageView(\"src/simse/gui/icons/\" + employee.getName() + \".gif\")", imageview, javafxhelpers)
 		    		  .beginControlFlow("if (img == null)")

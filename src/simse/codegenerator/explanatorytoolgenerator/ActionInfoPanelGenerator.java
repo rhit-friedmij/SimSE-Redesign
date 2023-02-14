@@ -367,7 +367,7 @@ public class ActionInfoPanelGenerator implements CodeGeneratorConstants {
     		  .addParameter(action, "action")
     		  .addStatement("this.action = action")
     		  .addStatement("$T mainPane = new $T()", vBox, vBox)
-    		  .addStatement("$T actionDescriptionPane = new $T()")
+    		  .addStatement("$T actionDescriptionPane = new $T()", pane, pane)
     		  .addStatement("$T actionDescriptionTitlePane = new $T(\"ActionDescription: \", actionDescriptionPane)", titledPane, titledPane)
     		  .addStatement("actionDescriptionArea = new $T()", textArea)
     		  .addStatement("actionDescriptionArea.setWrapText(true)")
@@ -554,7 +554,7 @@ public class ActionInfoPanelGenerator implements CodeGeneratorConstants {
     			.addMethod(handle)
     			.build();
       
-      JavaFile javaFile = JavaFile.builder("simse.explantorytool", actionInfoPanel)
+      JavaFile javaFile = JavaFile.builder("simse.explanatorytool", actionInfoPanel)
   		    .build();
 
     try {

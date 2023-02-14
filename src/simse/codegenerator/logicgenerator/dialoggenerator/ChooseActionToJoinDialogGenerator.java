@@ -72,6 +72,18 @@ public class ChooseActionToJoinDialogGenerator implements
 	  ClassName radioButton = ClassName.get("javafx.scene.control", "RadioButton");
 	  ClassName stringClass = ClassName.get("java.lang", "String");
 	  ClassName roleDialog = ClassName.get("simse.logic.dialogs", "ChooseRoleToPlayDialog");
+	  ClassName buttonClass = ClassName.get("javafx.scene.control", "Button");
+	  ClassName stageClass = ClassName.get("javafx.stage", "Stage");
+	  ClassName dialogClass = ClassName.get("javafx.scene.control", "Dialog");
+	  ClassName vBoxClass = ClassName.get("javafx.scene.layout", "VBox");
+	  ClassName labelClass = ClassName.get("javafx.scene.control", "Label");
+	  ClassName paneClass = ClassName.get("javafx.scene.layout", "Pane");
+	  ClassName gridPaneClass = ClassName.get("javafx.scene.layout", "GridPane");
+	  ClassName point2DClass = ClassName.get("javafx.geometry", "Point2D");
+	  ClassName alertClass = ClassName.get("javafx.scene.control", "Alert");
+	  ClassName alertTypeClass = ClassName.get("javafx.scene.control.Alert", "AlertType");
+	  ClassName toggleGroupClass = ClassName.get("javafx.scene.control", "ToggleGroup");
+	  ClassName radioButtonClass = ClassName.get("javafx.scene.control", "RadioButton");
 	  TypeName mouseHandler = ParameterizedTypeName.get(eventHandler, mouseEvent);
 	  TypeName actionsVector = ParameterizedTypeName.get(vector, actionClass);
 	  TypeName radioVector = ParameterizedTypeName.get(vector, radioButton);
@@ -94,7 +106,7 @@ public class ChooseActionToJoinDialogGenerator implements
       
       MethodSpec joinConstructor = MethodSpec.constructorBuilder()
 			  .addModifiers(Modifier.PUBLIC)
-			  .addParameter(Stage.class, "parent")
+			  .addParameter(stageClass, "parent")
 			  .addParameter(actionsVector, "acts")
 			  .addParameter(employeeClass, "e")
 			  .addParameter(stateClass, "s")
@@ -107,28 +119,28 @@ public class ChooseActionToJoinDialogGenerator implements
 			  .addStatement("$N = menText", "menuText")
 			  .addStatement("$N = re", "ruleExec")
 			  .addStatement("$N = new $T()", "radioButtons", radioVector)
-			  .addStatement("$N = new $T()", "radioButtonsGroup", ToggleGroup.class)
+			  .addStatement("$N = new $T()", "radioButtonsGroup", toggleGroupClass)
 			  .addStatement("setTitle($S)", "Join Action")
-			  .addStatement("$T mainPane = new $T()", VBox.class, VBox.class)
-			  .addStatement("$T topPane = new $T", Pane.class, Pane.class)
+			  .addStatement("$T mainPane = new $T()", vBoxClass, vBoxClass)
+			  .addStatement("$T topPane = new $T", paneClass, paneClass)
 			  .addStatement("$T actionName = new $T()", String.class, String.class)
 			  .addStatement("$T tempAct = $N.elementAt(0)", actionClass, "actions")
 			  .addCode(generateNames(userTrigActs))
 			  .addStatement("topPane.getChildren().add(new $T($S + actionName + $S))",
-					  Label.class, "Choose which ", " Action to join:")
-			  .addStatement("$T middlePane = new $T()", GridPane.class, GridPane.class)
+					  labelClass, "Choose which ", " Action to join:")
+			  .addStatement("$T middlePane = new $T()", gridPaneClass, gridPaneClass)
 			  .addCode(generateActionConstructor(userTrigActs))
-			  .addStatement("$T bottomPane = new $T()", Pane.class, Pane.class)
-			  .addStatement("$N = new $T($S)", "okButton", Button.class, "OK")
-			  .addStatement("$N.addEventHandler($T.MOUSE_CLICKED, this)", "okButton", MouseEvent.class)
+			  .addStatement("$T bottomPane = new $T()", paneClass, paneClass)
+			  .addStatement("$N = new $T($S)", "okButton", buttonClass, "OK")
+			  .addStatement("$N.addEventHandler($T.MOUSE_CLICKED, this)", "okButton", mouseEvent)
 			  .addStatement("bottomPane.getChildren.add($N)", "okButton")
-			  .addStatement("$N = new $T($S)", "cancelButton", Button.class, "Cancel")
-			  .addStatement("$N.addEventHandler($T.MOUSE_CLICKED, this)", "cancelButton", MouseEvent.class)
+			  .addStatement("$N = new $T($S)", "cancelButton", buttonClass, "Cancel")
+			  .addStatement("$N.addEventHandler($T.MOUSE_CLICKED, this)", "cancelButton", mouseEvent)
 			  .addStatement("bottomPane.getChildren.add($N)", "cancelButton")
 			  .addStatement("mainPane.getChildren.addAll(topPane, middlePane, bottomPane)")
-			  .addStatement("$T ownerLoc = new $T(parent.getX(), parent.getY()", Point2D.class, Point2D.class)
+			  .addStatement("$T ownerLoc = new $T(parent.getX(), parent.getY()", point2DClass, point2DClass)
 			  .addStatement("$T thisLoc = new $T((ownerLoc.getX() + (parent.getWidth() / 2) - (this.getWidth() / 2)),"
-			  		+ "(ownerLoc.getY() + (parent.getHeight() / 2) - (this.getHeight() / 2)))", Point2D.class, Point2D.class)
+			  		+ "(ownerLoc.getY() + (parent.getHeight() / 2) - (this.getHeight() / 2)))", point2DClass, point2DClass)
 			  .addStatement("this.setX(thisLoc.getX())")
 			  .addStatement("this.setY(thisLoc.getY())")
 			  .beginControlFlow("if ($N.size() == 1)", "radioButtons")
@@ -142,7 +154,7 @@ public class ChooseActionToJoinDialogGenerator implements
 	  MethodSpec handle = MethodSpec.methodBuilder("handle")
 			  .addModifiers(Modifier.PUBLIC)
 			  .returns(void.class)
-			  .addParameter(MouseEvent.class, "evt")
+			  .addParameter(mouseEvent, "evt")
 			  .addAnnotation(Override.class)
 			  .addStatement("$T source = evt.getSource()", Object.class)
 			  .beginControlFlow("if (source == cancelButton)")
@@ -150,20 +162,20 @@ public class ChooseActionToJoinDialogGenerator implements
 			  .nextControlFlow("else if (source == $N)", "okButton")
 			  .addStatement("$T anySelected = false", boolean.class)
 			  .beginControlFlow("for (int i = 0; i < $N.size(); i++)", "radioButtons")
-			  .addStatement("$T tempRButt = $N.elementAt(i)", RadioButton.class, "radioButtons")
+			  .addStatement("$T tempRButt = $N.elementAt(i)", radioButtonClass, "radioButtons")
 			  .beginControlFlow("if (tempRButt.isSelected()")
 			  .addStatement("anySelected = true")
 			  .addStatement("break")
 			  .endControlFlow()
 			  .endControlFlow()
 			  .beginControlFlow("if (!anySelected)")
-			  .addStatement("$T alert = new $T($T.WARNING, $S)", Alert.class, Alert.class,
-					  AlertType.class, "You must choose at least one action")
+			  .addStatement("$T alert = new $T($T.WARNING, $S)", alertClass, alertClass,
+					  alertTypeClass, "You must choose at least one action")
 			  .addStatement("alert.setTitle($S)", "Invalid Input")
 			  .addStatement("alert.show()")
 			  .nextControlFlow(" else ")
 			  .beginControlFlow("for(int i=0; i<$N.size(); i++)", "radioButtons")
-			  .addStatement("$T rButt = $N.elementAt(i)", RadioButton.class, "radioButtons")
+			  .addStatement("$T rButt = $N.elementAt(i)", radioButtonClass, "radioButtons")
 			  .beginControlFlow("if (rButt.isSelected()")
 			  .addStatement("$T tempAct = $N.elementAt(i)", actionClass, "actions")
 			  .addStatement("$T participantNames = new $T()", stringVector, stringVector)
@@ -181,9 +193,9 @@ public class ChooseActionToJoinDialogGenerator implements
 	  MethodSpec onlyOneChoice = MethodSpec.methodBuilder("onlyOneChoice")
 			  .addModifiers(Modifier.PRIVATE)
 			  .returns(void.class)
-			  .addParameter(Stage.class, "owner")
+			  .addParameter(stageClass, "owner")
 			  .beginControlFlow("for(int i=0; i<$N.size(); i++)", "radioButtons")
-			  .addStatement("$T rButt = $N.elementAt(i)", RadioButton.class, "radioButtons")
+			  .addStatement("$T rButt = $N.elementAt(i)", radioButtonClass, "radioButtons")
 			  .addStatement("$T tempAct = $N.elementAt(i)", actionClass, "actions")
 			  .addStatement("$T participantNames = new $T()", stringVector, stringVector)
 			  .addCode(generateActionOnlyOneChoice(userTrigActs))
@@ -195,16 +207,16 @@ public class ChooseActionToJoinDialogGenerator implements
 			  .build();
 	  
 	  TypeSpec joinDialog = TypeSpec.classBuilder("ChooseActionToJoinDialog")
-			  .superclass(Dialog.class)
+			  .superclass(dialogClass)
 			  .addSuperinterface(mouseHandler)
-			  .addField(Stage.class, "gui", Modifier.PRIVATE)
+			  .addField(stageClass, "gui", Modifier.PRIVATE)
 			  .addField(actionsVector, "actions", Modifier.PRIVATE)
 			  .addField(stateClass, "state", Modifier.PRIVATE)
 			  .addField(employeeClass, "emp", Modifier.PRIVATE)
 			  .addField(radioVector, "radioButtons", Modifier.PRIVATE)
-			  .addField(ToggleGroup.class, "radioButtonGroup", Modifier.PRIVATE)
-			  .addField(Button.class, "okButton", Modifier.PRIVATE)
-			  .addField(Button.class, "cancelButton", Modifier.PRIVATE)
+			  .addField(toggleGroupClass, "radioButtonGroup", Modifier.PRIVATE)
+			  .addField(buttonClass, "okButton", Modifier.PRIVATE)
+			  .addField(buttonClass, "cancelButton", Modifier.PRIVATE)
 			  .addField(String.class, "menuText", Modifier.PRIVATE)
 			  .addField(ruleExecClass, "ruleExec", Modifier.PRIVATE)
 			  .addMethod(joinConstructor)

@@ -265,7 +265,7 @@ public class CompositeGraphGenerator implements CodeGeneratorConstants {
 	
 
     
-    JavaFile javaFile = JavaFile.builder("simse.explantorytool", compositeGraph)
+    JavaFile javaFile = JavaFile.builder("simse.explanatorytool", compositeGraph)
 		    .build();
 	
     try {

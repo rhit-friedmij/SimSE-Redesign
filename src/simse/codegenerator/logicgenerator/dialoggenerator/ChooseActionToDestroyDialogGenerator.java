@@ -71,6 +71,14 @@ public class ChooseActionToDestroyDialogGenerator implements
 	  ClassName stageClass = ClassName.get("javafx.stage", "Stage");
 	  ClassName checkboxClass = ClassName.get("javafx.scene.control", "CheckBox");
 	  ClassName buttonClass = ClassName.get("javafx.scene.control", "Button");
+	  ClassName dialogClass = ClassName.get("javafx.scene.control", "Dialog");
+	  ClassName vBoxClass = ClassName.get("javafx.scene.layout", "VBox");
+	  ClassName labelClass = ClassName.get("javafx.scene.control", "Label");
+	  ClassName paneClass = ClassName.get("javafx.scene.layout", "Pane");
+	  ClassName gridPaneClass = ClassName.get("javafx.scene.layout", "GridPane");
+	  ClassName point2DClass = ClassName.get("javafx.geometry", "Point2D");
+	  ClassName alertClass = ClassName.get("javafx.scene.control", "Alert");
+	  ClassName alertTypeClass = ClassName.get("javafx.scene.control.Alert", "AlertType");
 	  TypeName mouseHandler = ParameterizedTypeName.get(eventHandler, mouseEvent);
 	  TypeName actionWildcard = WildcardTypeName.subtypeOf(actionClass);
 	  TypeName actionsType = ParameterizedTypeName.get(vector, actionWildcard);
@@ -107,15 +115,15 @@ public class ChooseActionToDestroyDialogGenerator implements
 			  .addStatement("$N = mText", "menuText")
 			  .addStatement("$N = new $T()", "checkBoxes", checkboxType)
 			  .addStatement("setTitle($S)", "Stop Action(s)")
-			  .addStatement("$T mainPane = new $T()", VBox.class, VBox.class)
+			  .addStatement("$T mainPane = new $T()", vBoxClass, vBoxClass)
 			  .addStatement("$T actionName = new $T()", String.class, String.class)
 			  .addStatement("$T tempAct = $N.elementAt(0)", actionClass, "actions")
 			  .addCode(generateNames(userDestActs))
 			  .addStatement("topPane.getChildren().add(new $T($S + actionName + $S))",
-					  Label.class, "Choose which ", " Action to stop:")
-			  .addStatement("$T middlePane = new $T()", GridPane.class, GridPane.class)
+					  labelClass, "Choose which ", " Action to stop:")
+			  .addStatement("$T middlePane = new $T()", gridPaneClass, gridPaneClass)
 			  .addCode(generateActionConstructor(userDestActs))
-			  .addStatement("$T bottomPane = new $T()", Pane.class, Pane.class)
+			  .addStatement("$T bottomPane = new $T()", paneClass, paneClass)
 			  .addStatement("$N = new $T($S)", "okButton", buttonClass, "OK")
 			  .addStatement("$N.addEventHandler($T.MOUSE_CLICKED, this)", "okButton", mouseEvent)
 			  .addStatement("bottomPane.getChildren().add($N)", "okButton")
@@ -123,9 +131,9 @@ public class ChooseActionToDestroyDialogGenerator implements
 			  .addStatement("$N.addEventHandler($T.MOUSE_CLICKED, this)", "cancelButton", mouseEvent)
 			  .addStatement("bottomPane.getChildren().add($N)", "cancelButton")
 			  .addStatement("mainPane.getChildren().addAll(topPane, middlePane, bottomPane)")
-			  .addStatement("$T ownerLoc = new $T(parent.getX(), parent.getY()", Point2D.class, Point2D.class)
+			  .addStatement("$T ownerLoc = new $T(parent.getX(), parent.getY()", point2DClass, point2DClass)
 			  .addStatement("$T thisLoc = new $T((ownerLoc.getX() + (parent.getWidth() / 2) - (this.getWidth() / 2)),"
-			  		+ "(ownerLoc.getY() + (parent.getHeight() / 2) - (this.getHeight() / 2)))", Point2D.class, Point2D.class)
+			  		+ "(ownerLoc.getY() + (parent.getHeight() / 2) - (this.getHeight() / 2)))", point2DClass, point2DClass)
 			  .addStatement("this.setX(thisLoc.getX())")
 			  .addStatement("this.setY(thisLoc.getY())")
 			  .addStatement("show()")
@@ -134,7 +142,7 @@ public class ChooseActionToDestroyDialogGenerator implements
 	  MethodSpec handle = MethodSpec.methodBuilder("handle")
 			  .addModifiers(Modifier.PUBLIC)
 			  .returns(void.class)
-			  .addParameter(MouseEvent.class, "evt")
+			  .addParameter(mouseEvent, "evt")
 			  .addAnnotation(Override.class)
 			  .addStatement("$T source = evt.getSource()", Object.class)
 			  .beginControlFlow("if (source == cancelButton)")
@@ -148,8 +156,8 @@ public class ChooseActionToDestroyDialogGenerator implements
 			  .endControlFlow()
 			  .endControlFlow()
 			  .beginControlFlow("if (numChecked == 0)")
-			  .addStatement("$T alert = new $T($T.WARNING, $S)", Alert.class, Alert.class,
-					  AlertType.class, "You must choose at least one action")
+			  .addStatement("$T alert = new $T($T.WARNING, $S)", alertClass, alertClass,
+					  alertTypeClass, "You must choose at least one action")
 			  .addStatement("alert.setTitle($S)", "Invalid Input")
 			  .addStatement("alert.show()")
 			  .nextControlFlow("else")
@@ -166,7 +174,7 @@ public class ChooseActionToDestroyDialogGenerator implements
 			  .build();
 	  
 	  TypeSpec destroyDialog = TypeSpec.classBuilder("ChooseActionToDestroyDialog")
-  			.superclass(Dialog.class)
+  			.superclass(dialogClass)
   			.addSuperinterface(mouseHandler)
   			.addField(actionsType, "actions", Modifier.PRIVATE)
   			.addField(stateClass, "state", Modifier.PRIVATE)

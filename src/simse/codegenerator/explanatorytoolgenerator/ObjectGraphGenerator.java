@@ -549,7 +549,7 @@ public class ObjectGraphGenerator implements CodeGeneratorConstants {
 
 
       
-      JavaFile javaFile = JavaFile.builder("simse.explantorytool", objectGraph)
+      JavaFile javaFile = JavaFile.builder("simse.explanatorytool", objectGraph)
   		    .build();
 
     try {

@@ -58,7 +58,7 @@ public class TableModelGenerator implements CodeGeneratorConstants {
 	    	tModFile.delete(); // delete old version of file
 	    }
 	    try {
-	      FileReader reader = new FileReader("\\resources\\TableModel.txt");
+	      FileReader reader = new FileReader("resources\\TableModel.txt");
 	      Scanner s = new Scanner(reader);
 	      FileWriter writer = new FileWriter(tModFile);
 	      

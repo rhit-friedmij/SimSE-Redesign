@@ -118,7 +118,7 @@ public class ADTGenerator implements CodeGeneratorConstants {
     	}
     }
     
-    Vector<Attribute> compareAttributes = null;
+    Vector<Attribute> compareAttributes = new Vector<>();
     if (employeeTypes.size() > 0) {
     	SimSEObjectType compareType = employeeTypes.get(0);
     	compareAttributes = compareType.getAllVisibleAttributes();
@@ -384,7 +384,7 @@ public class ADTGenerator implements CodeGeneratorConstants {
     	}
     }
     
-    compareAttributes = null;
+    compareAttributes = new Vector<>();
     if (customerTypes.size() > 0) {
     	SimSEObjectType compareType = customerTypes.get(0);
     	compareAttributes = compareType.getAllVisibleAttributes();
@@ -684,7 +684,7 @@ public class ADTGenerator implements CodeGeneratorConstants {
     	}
     }
     
-    Vector<Attribute> compareAttributes = null;
+    Vector<Attribute> compareAttributes = new Vector<>();
     if (objSpecificTypes.size() > 0) {
     	SimSEObjectType compareType = objSpecificTypes.get(0);
     	compareAttributes = compareType.getAllVisibleAttributes();
@@ -808,6 +808,7 @@ public class ADTGenerator implements CodeGeneratorConstants {
 
   private void generateObjectADT(SimSEObjectType objType, Vector<SimSEObjectType> objs) {
 	  String name =  CodeGeneratorUtils.getUpperCaseLeading(objType.getName());
+	  ClassName vectorClass = ClassName.get("java.util", "Vector");
 	  ClassName superClass = ClassName.get("simse.adts.objects",
 				SimSEObjectTypeTypes.getText(objType.getType()));
 	  ClassName thisClass = ClassName.get("simse.adts.objects", name);
@@ -828,7 +829,7 @@ public class ADTGenerator implements CodeGeneratorConstants {
     	}
     }
     
-    Vector<Attribute> compareAttributes = null;
+    Vector<Attribute> compareAttributes = new Vector<>();
     if (objSpecificTypes.size() > 0) {
     	SimSEObjectType compareType = objSpecificTypes.get(0);
     	compareAttributes = compareType.getAllVisibleAttributes();
@@ -974,14 +975,14 @@ public class ADTGenerator implements CodeGeneratorConstants {
 
           MethodSpec getMenu = MethodSpec.methodBuilder("getMenu")
         		  .addModifiers(Modifier.PUBLIC)
-        		  .returns(Vector.class)
-        		  .addStatement("$T v = new $T()", Vector.class, Vector.class)
+        		  .returns(vectorClass)
+        		  .addStatement("$T v = new $T()", vectorClass, vectorClass)
         		  .addStatement("v.addAll(super.getMenu())")
         		  .beginControlFlow("if (getHired())")
         		  .addStatement("v.add($S + get$L())", "Fire Employee - ", 
         				  CodeGeneratorUtils.getUpperCaseLeading(keyAtt.getName()))
         		  .nextControlFlow("else")
-        		  .addStatement("v = new $T()", Vector.class)
+        		  .addStatement("v = new $T()", vectorClass)
         		  .addStatement("v.add($S + get$L()", "Hire Employee - ", 
         				  CodeGeneratorUtils.getUpperCaseLeading(keyAtt.getName()))
         		  .endControlFlow()
@@ -1039,9 +1040,9 @@ public class ADTGenerator implements CodeGeneratorConstants {
 	  ClassName ssObjectClass = ClassName.get("simse.adts.objects", "SSObject");
 	  ClassName actionClass = ClassName.get("simse.adts.actions", "Action");
 	  ClassName thisClass = ClassName.get("simse.adts.actions", name);
-	  ClassName hashtable = ClassName.get(Hashtable.class);
-	  ClassName vector = ClassName.get(Vector.class);
-	  ClassName enumeration = ClassName.get(Enumeration.class);
+	  ClassName vector = ClassName.get("java.util", "Vector");
+	  ClassName hashtable = ClassName.get("java.util", "Hashtable");
+	  ClassName enumeration = ClassName.get("java.util", "Enumeration");
 	  ClassName booleanClass = ClassName.get(Boolean.class);
 	  TypeName ssObjectVector = ParameterizedTypeName.get(vector, ssObjectClass);
     File adtFile = new File(options.getCodeGenerationDestinationDirectory(), 
@@ -1157,7 +1158,7 @@ public class ADTGenerator implements CodeGeneratorConstants {
     		.addParameter(artifactStateRepoClass, "artifactRep")
     		.addParameter(customerStateRepoClass, "customerRep")
     		.addParameter(employeeStateRepoClass, "employeeRep")
-    		.addParameter(projectStateRepoClass," projectRep")
+    		.addParameter(projectStateRepoClass, "projectRep")
     		.addParameter(toolStateRepoClass, "toolRep")
     		.addCode(generateRefetchParticipants(participants))
     		.build();

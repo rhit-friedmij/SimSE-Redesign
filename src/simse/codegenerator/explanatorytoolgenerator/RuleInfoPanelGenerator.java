@@ -331,7 +331,7 @@ public class RuleInfoPanelGenerator implements CodeGeneratorConstants {
     		  .addStatement("name = ($T) intermediateRuleList.getSelectionModel().getSelectedItem()", string)
     		  .endControlFlow()
     		  .beginControlFlow("if (name != null)")
-    		  .addStatement("$T text = RuleCategories.getRuleMapping(name)", string, ruleCategories)
+    		  .addStatement("$T text = $T.getRuleMapping(name)", string, ruleCategories)
     		  .addStatement("descriptionArea.setText(text)")
     		  .addStatement("descriptionArea.positionCaret(0)")
     		  .endControlFlow()
@@ -355,7 +355,7 @@ public class RuleInfoPanelGenerator implements CodeGeneratorConstants {
       
  
       
-      JavaFile javaFile = JavaFile.builder("simse.explantorytool", actionInfoWindow)
+      JavaFile javaFile = JavaFile.builder("simse.explanatorytool", actionInfoWindow)
   		    .build();
 
     try {

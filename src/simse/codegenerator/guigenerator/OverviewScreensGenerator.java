@@ -43,7 +43,7 @@ public class OverviewScreensGenerator implements CodeGeneratorConstants {
 	      eosFile.delete(); // delete old version of file
 	    }
 	    try {
-	      FileReader reader = new FileReader("\\resources\\EmployeesOverviewScreen.txt");
+	      FileReader reader = new FileReader("resources\\EmployeesOverviewScreen.txt");
 	      Scanner s = new Scanner(reader);
 	      FileWriter writer = new FileWriter(eosFile);
 	      
@@ -66,7 +66,7 @@ public class OverviewScreensGenerator implements CodeGeneratorConstants {
 	      aosFile.delete(); // delete old version of file
 	    }
 	    try {
-	      FileReader reader = new FileReader("\\resources\\ArtifactsOverviewScreen.txt");
+	      FileReader reader = new FileReader("resources\\ArtifactsOverviewScreen.txt");
 	      Scanner s = new Scanner(reader);
 	      FileWriter writer = new FileWriter(aosFile);
 	      
@@ -89,7 +89,7 @@ public class OverviewScreensGenerator implements CodeGeneratorConstants {
 	      posFile.delete(); // delete old version of file
 	    }
 	    try {
-	      FileReader reader = new FileReader("\\resources\\ProjectOverviewScreen.txt");
+	      FileReader reader = new FileReader("resources\\ProjectOverviewScreen.txt");
 	      Scanner s = new Scanner(reader);
 	      FileWriter writer = new FileWriter(posFile);
 	      

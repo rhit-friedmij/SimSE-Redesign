@@ -75,11 +75,22 @@ public class EmployeeParticipantSelectionDialogGenerator implements
 	  ClassName actionClass = ClassName.get("simse.adts.actions", "Action");
 	  ClassName checkboxClass = ClassName.get("javafx.scene.control", "CheckBox");
 	  ClassName buttonClass = ClassName.get("javafx.scene.control", "Button");
-	  ClassName dialogClass = ClassName.get(Dialog.class);
+	  ClassName dialogClass = ClassName.get("javafx.scene.control", "Dialog");
 	  ClassName ssObjectClass = ClassName.get("simse.adts.objects", "SSObject");
 	  ClassName imageLoaderClass = ClassName.get("simse.gui", "ImageLoader");
 	  ClassName tabPanelClass = ClassName.get("simse.gui", "TabPanel");
 	  ClassName windowEvent = ClassName.get("javafx.stage", "WindowEvent");
+	  ClassName stageClass = ClassName.get("javafx.stage", "Stage");
+	  ClassName vBoxClass = ClassName.get("javafx.scene.layout", "VBox");
+	  ClassName hBoxClass = ClassName.get("javafx.scene.layout", "HBox");
+	  ClassName labelClass = ClassName.get("javafx.scene.control", "Label");
+	  ClassName separatorClass = ClassName.get("javafx.scene.control", "Separator");
+	  ClassName borderPaneClass = ClassName.get("javafx.scene.layout", "BorderPane");
+	  ClassName imageViewClass = ClassName.get("javafx.scene.image", "ImageView");
+	  ClassName point2DClass = ClassName.get("javafx.geometry", "Point2D");
+	  ClassName alertClass = ClassName.get("javafx.scene.control", "Alert");
+	  ClassName alertTypeClass = ClassName.get("javafx.scene.control.Alert", "AlertType");
+	  ClassName windowClass = ClassName.get("javafx.stage", "Window");
 	  TypeName mouseHandler = ParameterizedTypeName.get(eventHandler, mouseEvent);
 	  TypeName windowHandler = ParameterizedTypeName.get(eventHandler, windowEvent);
 	  TypeName dialogAction = ParameterizedTypeName.get(dialogClass, actionClass);
@@ -96,7 +107,7 @@ public class EmployeeParticipantSelectionDialogGenerator implements
     				  .addAnnotation(Override.class)
     				  .addModifiers(Modifier.PUBLIC)
     				  .returns(void.class)
-    				  .addParameter(WindowEvent.class, "evt")
+    				  .addParameter(windowEvent, "evt")
     				  .beginControlFlow("if (!$N)", "dialogAccepted")
     				  .addStatement("$N = true", "actionCancelled")
     				  .endControlFlow()
@@ -106,7 +117,7 @@ public class EmployeeParticipantSelectionDialogGenerator implements
 	  
 	  MethodSpec employeeConstructor = MethodSpec.constructorBuilder()
 			  .addModifiers(Modifier.PUBLIC)
-			  .addParameter(Stage.class, "owner")
+			  .addParameter(stageClass, "owner")
 			  .addParameter(String.class, "pName")
 			  .addParameter(ssObjectVector, "parts")
 			  .addParameter(actionClass, "act")
@@ -126,8 +137,8 @@ public class EmployeeParticipantSelectionDialogGenerator implements
 			  		"participants", "selectedEmp", "participants", "minNumParts")
 			  .addStatement("$N = new $T()", "checkBoxes", checkboxVector)
 			  .addStatement("setTitle($S)", "Participant Selection")
-			  .addStatement("$T mainPane = new $T()", VBox.class, VBox.class)
-			  .addStatement("$T topPane = new $T()", VBox.class, VBox.class)
+			  .addStatement("$T mainPane = new $T()", vBoxClass, vBoxClass)
+			  .addStatement("$T topPane = new $T()", vBoxClass, vBoxClass)
 			  .addStatement("$T title = $S", String.class, "Choose ")
 			  .beginControlFlow("if ($N != null) ", "selectedEmp")
 			  .addStatement("title = title.concat($S)", "other ")
@@ -142,53 +153,53 @@ public class EmployeeParticipantSelectionDialogGenerator implements
 			  .endControlFlow()
 			  .endControlFlow()
 			  .addStatement("title = title.concat($S)", "):")
-			  .addStatement("topPane.getChildren().add(new $T(title))", Label.class)
+			  .addStatement("topPane.getChildren().add(new $T(title))", labelClass)
 			  .addStatement("topPane.setMinWidth(400)")
-			  .addStatement("$T middlePane = new $T()", VBox.class, VBox.class)
+			  .addStatement("$T middlePane = new $T()", vBoxClass, vBoxClass)
 			  .beginControlFlow("for (int i = 0; i < $N.size(); i++) ", "participants")
 			  .addStatement("$T tempObj = $N.elementAt(i)", ssObjectClass, "participants")
 			  .addStatement("$T label = new $T()", String.class, String.class)
 			  .addCode(generateNames(objs))
-			  .addStatement("$T tempPane = new $T()", BorderPane.class, BorderPane.class)
+			  .addStatement("$T tempPane = new $T()", borderPaneClass, borderPaneClass)
 			  .addStatement("$T tempCheckBox = new $T(label)", checkboxClass, checkboxClass)
 			  .addStatement("tempPane.setLeft(tempCheckBoxes)")
 			  .addStatement("$N.add(tempCheckBox)", "checkBoxes")
-			  .addStatement("$T icon = $T.getImageFromURL($T.getImage(tempObj))", ImageView.class,
+			  .addStatement("$T icon = $T.getImageFromURL($T.getImage(tempObj))", imageViewClass,
 					  imageLoaderClass, tabPanelClass)
-			  .addStatement("tempPane.setRight(new $T($S, icon))", Label.class, "")
+			  .addStatement("tempPane.setRight(new $T($S, icon))", labelClass, "")
 			  .addStatement("middlePane.getChildren().add(tempPane)")
 			  .endControlFlow()
-			  .addStatement("$T checkPane = new $T()", HBox.class, HBox.class)
-			  .addStatement("$N = new $T($S)", "checkAllButton", Button.class, "Check All")
+			  .addStatement("$T checkPane = new $T()", hBoxClass, hBoxClass)
+			  .addStatement("$N = new $T($S)", "checkAllButton", buttonClass, "Check All")
 			  .addStatement("$N.addEventHandler($T.MOUSE_CLICKED, this)", "checkAllButton", mouseEvent)
 			  .addStatement("$N.setMinWidth(75)", "checkAllButton")
 			  .addStatement("checkPane.getChildren().add($N)", "checkAllButton")
-			  .addStatement("$N = new $T($S)", "clearAllButton", Button.class, "Clear All")
+			  .addStatement("$N = new $T($S)", "clearAllButton", buttonClass, "Clear All")
 			  .addStatement("$N.addEventHandler($T.MOUSE_CLICKED, this)", "clearAllButton", mouseEvent)
 			  .addStatement("$N.setMinWidth(75)", "clearAllButton")
 			  .addStatement("checkPane.getChildren().add($N)", "clearAllButton")
-			  .addStatement("$T bottomPane = new $T()", HBox.class, HBox.class)
-			  .addStatement("$N = new $T($S)", "okButton", Button.class, "OK")
+			  .addStatement("$T bottomPane = new $T()", hBoxClass, hBoxClass)
+			  .addStatement("$N = new $T($S)", "okButton", buttonClass, "OK")
 			  .addStatement("$N.addEventHandler($T.MOUSE_CLICKED, this)", "okButton", mouseEvent)
 			  .addStatement("$N.setMinWidth(75)", "okButton")
 			  .addStatement("bottomPane.getChildren().add($N)", "okButton")
-			  .addStatement("$N = new $T($S)", "cancelButton", Button.class, "Cancel")
+			  .addStatement("$N = new $T($S)", "cancelButton", buttonClass, "Cancel")
 			  .addStatement("$N.addEventHandler($T.MOUSE_CLICKED, this)", "cancelButton", mouseEvent)
 			  .addStatement("$N.setMinWidth(75)", "cancelButton")
 			  .addStatement("bottomPane.getChildren().add($N)", "cancelButton")
 			  .addStatement("mainPane.getChildren().addAll(topPane, middlePane)")
-			  .addStatement("$T separator1 = new $T()", Separator.class, Separator.class)
+			  .addStatement("$T separator1 = new $T()", separatorClass, separatorClass)
 			  .addStatement("separator1.setMaxSize(900, 5)")
 			  .addStatement("mainPane.getChildren().addAll(separator1, checkPane)")
-			  .addStatement("$T separator2 = new $T()", Separator.class, Separator.class)
+			  .addStatement("$T separator2 = new $T()", separatorClass, separatorClass)
 			  .addStatement("separator2.setMaxSize(900, 5)")
 			  .addStatement("mainPane.getChildren().addAll(separator2, bottomPane)")
 			  .addStatement("this.getDialogPane().getChildren().add(mainPane)")
 			  .addStatement("this.getDialogPane().setPrefSize(400, 400)")
 			  .addStatement("this.getDialogPane().getScene().getWindow().setOnCloseRequest(new ExitListener())")
-			  .addStatement("$T ownerLoc = new $T(owner.getX(), owner.getY())", Point2D.class, Point2D.class)
+			  .addStatement("$T ownerLoc = new $T(owner.getX(), owner.getY())", point2DClass, point2DClass)
 			  .addStatement("$T thisLoc = new $T((ownerLoc.getX() + (owner.getWidth() / 2) - (this.getWidth() / 2))",
-					  Point2D.class, Point2D.class)
+					  point2DClass, point2DClass)
 			  .addStatement("(ownerLoc.getY() + (owner.getHeight() / 2) - (this.getHeight() / 2)))")
 			  .addStatement("this.setX(thisLoc.getX())")
 			  .addStatement("this.setY(thisLoc.getY())")
@@ -210,9 +221,9 @@ public class EmployeeParticipantSelectionDialogGenerator implements
 			  .returns(void.class)
 			  .addParameter(boolean.class, "accepted")
 			  .addStatement("$N = accepted", "dialogAccepted")
-			  .addStatement("$T window = this.getDialogPane().getScene().getWindow()", Window.class)
+			  .addStatement("$T window = this.getDialogPane().getScene().getWindow()", windowClass)
 			  .addStatement("window.fireEvent(new $T(window, $T.WINDOW_CLOSEREQUEST))",
-					  WindowEvent.class, WindowEvent.class)
+					  windowEvent, windowEvent)
 			  .build();
 	  
 	  MethodSpec handle = MethodSpec.methodBuilder("handle")
@@ -233,14 +244,14 @@ public class EmployeeParticipantSelectionDialogGenerator implements
 			  .endControlFlow()
 			  .endControlFlow()
 			  .beginControlFlow("if (checkedBoxes.size() < $N) ", "minNumParts")
-			  .addStatement("$T alert = new $T($T.WARNING, $S)", Alert.class, Alert.class,
-					  AlertType.class, "You must choose at least one action")
+			  .addStatement("$T alert = new $T($T.WARNING, $S)", alertClass, alertClass,
+					  alertTypeClass, "You must choose at least one action")
 			  .addStatement("alert.setTitle($S)", "Invalid Input")
 			  .addStatement("alert.setHeaderText(null)")
 			  .addStatement("alert.showAndWait()")
 			  .nextControlFlow(" else if (checkedBoxes.size() > $N) ", "maxNumParts")
-			  .addStatement("$T alert = new $T($T.WARNING, $S + $T + $S)", Alert.class,
-					  Alert.class, AlertType.class, "You may only choose at most ",
+			  .addStatement("$T alert = new $T($T.WARNING, $S + $N + $S)", alertClass,
+					  alertClass, alertTypeClass, "You may only choose at most ",
 					  "maxNumParts", " participants")
 			  .addStatement("alert.setTitle($S)", "Invalid Input")
 			  .addStatement("alert.setHeaderText(null)")
@@ -252,7 +263,7 @@ public class EmployeeParticipantSelectionDialogGenerator implements
 			  .addStatement("$T objTypeName = cBoxText.substring(0(cBoxText"
 			  		+ ".indexOf('(') - 1))", String.class)
 			  .addStatement("$T keyValStr = cBoxText.substring(cBoxText"
-			  		+ ".indexOf('(') + 1), cBoxText.lastIndexOf(')'))")
+			  		+ ".indexOf('(') + 1), cBoxText.lastIndexOf(')'))", String.class)
 			  .addStatement("addParticipant(objTypeName, keyValStr);", String.class)
 			  .endControlFlow()
 			  .addStatement("closeDialog(true)")

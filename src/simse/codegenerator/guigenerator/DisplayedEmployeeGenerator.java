@@ -29,7 +29,7 @@ public class DisplayedEmployeeGenerator implements CodeGeneratorConstants {
     }
     try {
       FileWriter writer = new FileWriter(deFile);
-      FileReader reader = new FileReader("\\resources\\DisplayedEmployee.txt");
+      FileReader reader = new FileReader("resources\\DisplayedEmployee.txt");
       Scanner s = new Scanner(reader);
       
       while (s.hasNext()) {
