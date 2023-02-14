@@ -403,7 +403,7 @@ public class SimSEMapGenerator implements CodeGeneratorConstants {
     		  .addMethod(getSopUsers)
     		  .build();
       
-      JavaFile file = JavaFile.builder("simse.gui.SimSEMap", simSEMap)
+      JavaFile file = JavaFile.builder("simse.gui", simSEMap)
     		    .build();
       
       writer
