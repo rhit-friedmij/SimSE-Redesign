@@ -9,6 +9,7 @@ import simse.codegenerator.logicgenerator.DestroyerCheckerGenerator;
 import simse.codegenerator.logicgenerator.LogicGenerator;
 import simse.codegenerator.logicgenerator.MenuInputManagerGenerator;
 import simse.codegenerator.logicgenerator.MiscUpdaterGenerator;
+import simse.codegenerator.logicgenerator.RuleExecutorGenerator;
 import simse.codegenerator.logicgenerator.TriggerCheckerGenerator;
 import simse.modelbuilder.ModelOptions;
 import simse.modelbuilder.actionbuilder.ActionType;
@@ -43,7 +44,8 @@ public class TestGenerator {
 //		miscUpdaterTest();
 //		destroyerCheckerTest();
 //		triggerCheckerTest();
-		menuInputManagerTest();
+//		menuInputManagerTest();
+		ruleExecutorTest();
 	}
 	
 	public static void setUp() {
@@ -120,6 +122,11 @@ public class TestGenerator {
 	
 	public static void menuInputManagerTest() {
 		MenuInputManagerGenerator mimGen = new MenuInputManagerGenerator(options, actTypes, objTypes, directory);
+		mimGen.generate();
+	}
+	
+	public static void ruleExecutorTest() {
+		RuleExecutorGenerator mimGen = new RuleExecutorGenerator(actTypes, directory);
 		mimGen.generate();
 	}
 }

@@ -64,6 +64,7 @@ public class RuleExecutorGenerator implements CodeGeneratorConstants {
 	private ClassName action = ClassName.get("simse.adts.actions", "Action");
 	private ClassName alert = ClassName.get("javafx.scene.control", "Alert");
 	private ClassName alertType = ClassName.get("javafx.scene.control.Alert", "AlertType");
+	private ClassName customer = ClassName.get("simse.adts.objects", "Customer");
 	private ClassName employee = ClassName.get("simse.adts.objects", "Employee");
 	private ClassName simseGui = ClassName.get("simse.gui", "SimSEGUI");
 	private ClassName stage = ClassName.get("javafx.stage", "Stage");
@@ -88,7 +89,6 @@ public class RuleExecutorGenerator implements CodeGeneratorConstants {
 		ClassName trigCheck = ClassName.get("simse.logic", "TriggerChecker");
 		ClassName destCheck = ClassName.get("simse.logic", "DestroyerChecker");
 		
-		
 		MethodSpec ruleConstructer = MethodSpec.constructorBuilder()
 				.addModifiers(Modifier.PUBLIC)
 				.addParameter(state, "s")
@@ -97,10 +97,10 @@ public class RuleExecutorGenerator implements CodeGeneratorConstants {
 				.build();
 		
 		MethodSpec setTrigCheck = MethodSpec.methodBuilder("setTriggerChecker")
-			.addModifiers(Modifier.PUBLIC)
-			.addParameter(trigCheck, "t")
-			.addStatement("triggerChecker = t")
-			.build();
+				.addModifiers(Modifier.PUBLIC)
+				.addParameter(trigCheck, "t")
+				.addStatement("triggerChecker = t")
+				.build();
 		
 		MethodSpec setDestCheck = MethodSpec.methodBuilder("setDestroyerChecker")
 				.addModifiers(Modifier.PUBLIC)
@@ -157,7 +157,7 @@ public class RuleExecutorGenerator implements CodeGeneratorConstants {
 				.addMethod(setTrigCheck)
 				.addMethod(setDestCheck)
 				.addMethod(update)
-				.addMethods(genMethods)
+//				.addMethods(genMethods)
 				.addMethod(checkMin)
 				.build();
 
@@ -230,7 +230,7 @@ public class RuleExecutorGenerator implements CodeGeneratorConstants {
 		return methodBody;
 	}
 
-	private void generateRuleExecutorFunctionBody(Rule rule) throws IOException {
+	private void generateRuleExecutorFunctionBody(Rule rule) {
 		CodeBlock.Builder methodBody = CodeBlock.builder();
 		String ruleName = rule.getName();
 		String methodName = CodeGeneratorUtils.getLowerCaseLeading(ruleName);
@@ -259,7 +259,7 @@ public class RuleExecutorGenerator implements CodeGeneratorConstants {
 				// trigger/destroyer rule
 				ruleType = "UPDATE_ONE) && (ruleName.equals(\"" + ruleName + "\")))";
 			}
-			methodBody.addStatement("if ((updateInstructions == $L))", ruleType);
+			methodBody.beginControlFlow("if ((updateInstructions == $L))", ruleType);
 			methodBody.beginControlFlow("for (int i = 0; i < $L.size(); i++)", actTypeVar);  
 			methodBody.addStatement("$T $L = $L.elementAt(i)", actClass, oneActTypeVar, actTypeVar);
 			
@@ -552,14 +552,11 @@ public class RuleExecutorGenerator implements CodeGeneratorConstants {
 								}
 							}
 							if (tempActType.getName().equals(actType.getName())) {
-								writer.write(CLOSED_BRACK);
-								writer.write(NEWLINE);
+								methodBody.endControlFlow();
 							}
-							writer.write(CLOSED_BRACK);
-							writer.write(NEWLINE);
+							methodBody.endControlFlow();
 						}
-						writer.write(CLOSED_BRACK);
-						writer.write(NEWLINE);
+						methodBody.endControlFlow();
 					} else if (partTypeRuleEff.getOtherActionsEffect().getEffect()
 							.equals(OtherActionsEffect.ACTIVATE_DEACTIVATE_SPECIFIC_ACTIONS)) {
 
@@ -568,20 +565,17 @@ public class RuleExecutorGenerator implements CodeGeneratorConstants {
 								.getActionsToActivate();
 						for (int m = 0; m < actsToActivate.size(); m++) {
 							ActionType tempAct = actsToActivate.elementAt(m);
-							writer.write("Vector<" + CodeGeneratorUtils.getUpperCaseLeading(tempAct.getName())
+							methodBody.addStatement("Vector<" + CodeGeneratorUtils.getUpperCaseLeading(tempAct.getName())
 									+ "Action> " + tempAct.getName().toLowerCase()
 									+ "actionsActivate = state.getActionStateRepository().get"
 									+ CodeGeneratorUtils.getUpperCaseLeading(tempAct.getName())
 									+ "ActionStateRepository().getAllInactiveActions("
-									+ objType.toLowerCase() + ");");
-							writer.write(NEWLINE);
-							writer.write("for (int k = 0; k < " + tempAct.getName().toLowerCase()
-									+ "actionsActivate.size(); k++) {");
-							writer.write(NEWLINE);
-							writer.write(
+									+ objType.toLowerCase() + ")");
+							methodBody.beginControlFlow("for (int k = 0; k < " + tempAct.getName().toLowerCase()
+									+ "actionsActivate.size(); k++)");
+							methodBody.addStatement(
 									CodeGeneratorUtils.getUpperCaseLeading(tempAct.getName()) + "Action tempAct = "
-											+ tempAct.getName().toLowerCase() + "actionsActivate.elementAt(k);");
-							writer.write(NEWLINE);
+											+ tempAct.getName().toLowerCase() + "actionsActivate.elementAt(k)");
 
 							// go through all participants:
 							Vector<ActionTypeParticipant> allParts = tempAct.getAllParticipants();
@@ -589,13 +583,11 @@ public class RuleExecutorGenerator implements CodeGeneratorConstants {
 								ActionTypeParticipant tempPart = allParts.elementAt(n);
 								if (tempPart.getSimSEObjectTypeType() == partTypeRuleEff.getSimSEObjectType()
 										.getType()) {
-									writer.write("tempAct.set" + tempPart.getName() + "Active("
-											+ objType.toLowerCase() + ");");
-									writer.write(NEWLINE);
+									methodBody.addStatement("tempAct.set" + tempPart.getName() + "Active("
+											+ objType.toLowerCase() + ")");
 								}
 							}
-							writer.write(CLOSED_BRACK);
-							writer.write(NEWLINE);
+							methodBody.endControlFlow();
 						}
 
 						// actions to deactivate:
@@ -603,20 +595,17 @@ public class RuleExecutorGenerator implements CodeGeneratorConstants {
 								.getActionsToDeactivate();
 						for (int m = 0; m < actsToDeactivate.size(); m++) {
 							ActionType tempAct = actsToDeactivate.elementAt(m);
-							writer.write("Vector<" + CodeGeneratorUtils.getUpperCaseLeading(tempAct.getName())
+							methodBody.addStatement("Vector<" + CodeGeneratorUtils.getUpperCaseLeading(tempAct.getName())
 									+ "Action> " + tempAct.getName().toLowerCase()
 									+ "actionsDeactivate = state.getActionStateRepository().get"
 									+ CodeGeneratorUtils.getUpperCaseLeading(tempAct.getName())
 									+ "ActionStateRepository().getAllActiveActions("
-									+ objType.toLowerCase() + ");");
-							writer.write(NEWLINE);
-							writer.write("for (int k = 0; k < " + tempAct.getName().toLowerCase()
-									+ "actionsDeactivate.size(); k++) {");
-							writer.write(NEWLINE);
-							writer.write(
+									+ objType.toLowerCase() + ")");
+							methodBody.beginControlFlow("for (int k = 0; k < " + tempAct.getName().toLowerCase()
+									+ "actionsDeactivate.size(); k++)");
+							methodBody.addStatement(
 									CodeGeneratorUtils.getUpperCaseLeading(tempAct.getName()) + "Action tempAct = "
-											+ tempAct.getName().toLowerCase() + "actionsDeactivate.elementAt(k);");
-							writer.write(NEWLINE);
+											+ tempAct.getName().toLowerCase() + "actionsDeactivate.elementAt(k)");
 
 							// go through all participants:
 							Vector<ActionTypeParticipant> allParts = tempAct.getAllParticipants();
@@ -624,13 +613,11 @@ public class RuleExecutorGenerator implements CodeGeneratorConstants {
 								ActionTypeParticipant tempPart = allParts.elementAt(n);
 								if (tempPart.getSimSEObjectTypeType() == partTypeRuleEff.getSimSEObjectType()
 										.getType()) {
-									writer.write("tempAct.set" + tempPart.getName() + "Inactive("
-											+ objType.toLowerCase() + ");");
-									writer.write(NEWLINE);
+									methodBody.addStatement("tempAct.set" + tempPart.getName() + "Inactive("
+											+ objType.toLowerCase() + ")");
 								}
 							}
-							writer.write(CLOSED_BRACK);
-							writer.write(NEWLINE);
+							methodBody.endControlFlow();
 						}
 					}
 
@@ -642,8 +629,8 @@ public class RuleExecutorGenerator implements CodeGeneratorConstants {
 						if ((partAttRuleEff.getEffect().equals(null) == false)
 								&& (partAttRuleEff.getEffect().length() > 0)) {
 							if ((partAttRuleEff.getAttribute().getType() == AttributeTypes.INTEGER)
-									|| (partAttRuleEff.getAttribute().getType() == AttributeTypes.DOUBLE)) { // numerical
-																												// attributes
+									|| (partAttRuleEff.getAttribute().getType() == AttributeTypes.DOUBLE)) { 
+								// numerical attributes
 								/*
 								 * go through the effect once to collect all of the information you need:
 								 */
@@ -663,20 +650,14 @@ public class RuleExecutorGenerator implements CodeGeneratorConstants {
 											effect = effect.trim().substring(nextToken.length()).trim();
 										}
 										if (nextToken.startsWith("-")) {
-											nextToken = nextToken.substring(1); // remove the minus
-																				// sign for now
+											// remove the minus sign for now
+											nextToken = nextToken.substring(1); 
 										}
-										String activeInactiveToken = nextToken.substring(0, nextToken.indexOf('-')); // get
-																														// whether
-																														// it's
-																														// all,
-																														// allActive,
-																														// or
-																														// allInactive
+										// get whether it's all, allActive, or allInactive
+										String activeInactiveToken = nextToken.substring(0, nextToken.indexOf('-')); 
 										nextToken = nextToken.substring(activeInactiveToken.length() + 1).trim();
-										String partName = nextToken.substring(0, nextToken.indexOf('-')); // get the
-																											// participant
-																											// name
+										// get the participant name
+										String partName = nextToken.substring(0, nextToken.indexOf('-')); 
 										// check for validity of participant name:
 										if (actType.getParticipant(partName) == null) {
 											// invalid participant name
@@ -690,15 +671,14 @@ public class RuleExecutorGenerator implements CodeGeneratorConstants {
 													+ " attribute effect");
 										}
 										nextToken = nextToken.substring(partName.length() + 1).trim();
-										String ssObjType = nextToken.substring(0, nextToken.indexOf('-')); // get
-																											// the
-																											// SimSEObjectType
+										// get the SimSEObjectType
+										String ssObjType = nextToken.substring(0, nextToken.indexOf('-')); 
 										if (actType.getParticipant(partName) != null) {
 											// valid participant name
 											// check for validity of object type name:
 											if (actType.getParticipant(partName)
-													.getSimSEObjectType(ssObjType) == null) { // invalid
-																								// SimSEObjectType
+													.getSimSEObjectType(ssObjType) == null) { 
+												// invalid SimSEObjectType
 												warnings.add("Invalid object type: \"" + ssObjType
 														+ "\" in effect rule " + ruleName + " for "
 														+ partRuleEff.getParticipant().getName() + " "
@@ -726,7 +706,8 @@ public class RuleExecutorGenerator implements CodeGeneratorConstants {
 																partTypeRuleEff.getSimSEObjectType().getType())
 														+ " " + partAttRuleEff.getAttribute().getName()
 														+ " attribute effect");
-											} else { // valid attribute
+											} else { 
+												// valid attribute
 												// check for validity of attribute type:
 												if ((actType.getParticipant(partName).getSimSEObjectType(ssObjType)
 														.getAttribute(attName).getType() != AttributeTypes.INTEGER)
@@ -749,63 +730,41 @@ public class RuleExecutorGenerator implements CodeGeneratorConstants {
 										if (vectorContainsString(variables,
 												(activeInactiveToken + partName + ssObjType + attName)) == false) {
 											// this variable has not been generated yet
-											variables.add(new String(
-													activeInactiveToken + partName + ssObjType + attName)); // add
-																											// to
-																											// the
-																											// record-keeping
+											// add to the record-keeping
+											variables.add(new String(activeInactiveToken + partName + ssObjType + attName)); 
 											// Vector
-											writer.write("double " + activeInactiveToken + partName + ssObjType
-													+ attName + " = 0;");
-											writer.write(NEWLINE);
+											methodBody.addStatement("double " + activeInactiveToken + partName + ssObjType
+													+ attName + " = 0");
 											if (vectorContainsString(variables,
 													(activeInactiveToken + partName + "s")) == false) {
 												// this variable has not been generated yet
-												variables.add(new String(activeInactiveToken + partName + "s")); // add
-																													// the
-																													// variable
-																													// name
-																													// to
-																													// the
-																													// record-keeping
+												// add the variable name to the record-keeping
+												variables.add(new String(activeInactiveToken + partName + "s")); 
 												// Vector
-												writer.write("Vector " + activeInactiveToken + partName + "s = "
-														+ actType.getName().toLowerCase() + "Act.getAll");
+												String active = "";
 												if (activeInactiveToken.indexOf("Active") > 0) {
-													writer.write("Active");
+													active = "Active";
 												} else if (activeInactiveToken.indexOf("Inactive") > 0) {
-													writer.write("Inactive");
+													active = "Inactive";
 												}
-												writer.write(partName + "s();");
-												writer.write(NEWLINE);
+												methodBody.addStatement("Vector " + activeInactiveToken + partName + "s = "
+														+ actType.getName().toLowerCase() + "Act.getAll" + active + partName + "s()");
 											}
-											writer.write("for(int k=0; k<" + activeInactiveToken + partName
+											methodBody.beginControlFlow("for (int k = 0; k<" + activeInactiveToken + partName
 													+ "s.size(); k++)");
-											writer.write(NEWLINE);
-											writer.write(OPEN_BRACK);
-											writer.write(NEWLINE);
-											writer.write("Object " + partName.toLowerCase() + "3 = "
-													+ activeInactiveToken + partName + "s.elementAt(k);");
-											writer.write(NEWLINE);
-											writer.write("if(" + partName.toLowerCase() + "3 instanceof "
+											methodBody.addStatement("Object " + partName.toLowerCase() + "3 = "
+													+ activeInactiveToken + partName + "s.elementAt(k)");
+											methodBody.beginControlFlow("if(" + partName.toLowerCase() + "3 instanceof "
 													+ ssObjType + ")");
-											writer.write(NEWLINE);
-											writer.write(OPEN_BRACK);
-											writer.write(NEWLINE);
-											writer.write(activeInactiveToken + partName + ssObjType + attName
+											methodBody.addStatement(activeInactiveToken + partName + ssObjType + attName
 													+ " += (double)(((" + ssObjType + ")" + partName.toLowerCase()
 													+ "3).get" + CodeGeneratorUtils.getUpperCaseLeading(attName)
-													+ "());");
-											writer.write(NEWLINE);
-											writer.write(CLOSED_BRACK);
-											writer.write(NEWLINE);
-											writer.write(CLOSED_BRACK);
-											writer.write(NEWLINE);
+													+ "())");
+											methodBody.endControlFlow();
+											methodBody.endControlFlow();
 										}
-									}
-
-									// num actions or num participants:
-									else if (nextToken.startsWith("num") || nextToken.startsWith("-num")) {
+									} else if (nextToken.startsWith("num") || nextToken.startsWith("-num")) {
+										// num actions or num participants:
 										if (effect.trim().length() == nextToken.trim().length()) {
 											// on last token
 											effect = null;
@@ -813,16 +772,15 @@ public class RuleExecutorGenerator implements CodeGeneratorConstants {
 											effect = effect.trim().substring(nextToken.length()).trim();
 										}
 										if (nextToken.startsWith("-")) {
-											nextToken = nextToken.substring(1); // remove the minus
-																				// sign for now
+											// remove the minus sign for now
+											nextToken = nextToken.substring(1); 
 										}
 										String firstWord = nextToken.substring(0, nextToken.indexOf('-'));
 
-										if (firstWord.endsWith("This")) { // num actions this
-																			// participant
+										if (firstWord.endsWith("This")) { 
+											// num actions this participant
 											ActionTypeParticipant part = partRuleEff.getParticipant();
-											String actionName = nextToken.substring(nextToken.indexOf(':') + 1)
-													.trim();
+											String actionName = nextToken.substring(nextToken.indexOf(':') + 1).trim();
 											// check for validity of action name:
 											if ((!(actionName.equals("*")))
 													&& (actTypes.getActionType(actionName) == null)) {
@@ -848,60 +806,41 @@ public class RuleExecutorGenerator implements CodeGeneratorConstants {
 											} else { // action name
 												variableName.append(actionName);
 											}
-											if (vectorContainsString(variables, variableName.toString()) == false) { // variable
-																														// has
-																														// not
-																														// been
-																														// generated
-																														// yet
-												variables.add(variableName.toString()); // add the
-																						// variable
-																						// name to the
-																						// record-
-																						// keeping
-																						// vector
-												writer.write("double " + variableName
-														+ " = (double)(state.getActionStateRepository().");
-												if (actionName.equals("*") == false) { // not the wild
-																						// card
-																						// character
-																						// -- an actual
-																						// action name
-													writer.write("get"
+											if (vectorContainsString(variables, variableName.toString()) == false) { 
+												// variable has not been generated yet
+												// add the variable name to the record-keeping vector
+												variables.add(variableName.toString()); 
+												String repos = "";
+												if (actionName.equals("*") == false) { 
+													// not the wild card character -- an actual action name
+													repos = "get"
 															+ CodeGeneratorUtils.getUpperCaseLeading(actionName)
-															+ "ActionStateRepository().");
+															+ "ActionStateRepository().";
 												}
-												writer.write("getAll");
+												repos += "getAll";
 												if (variableName.indexOf("Active") >= 0) {
-													writer.write("Active");
+													repos += "Active";
 												} else if (variableName.indexOf("Inactive") >= 0) {
-													writer.write("Inactive");
+													repos += "Inactive";
 												}
-												writer.write(
-														"Actions(" + part.getName().toLowerCase() + "2).size());");
-												writer.write(NEWLINE);
+												repos += "Actions(" + part.getName().toLowerCase() + "2).size())";
+												methodBody.addStatement("double " + variableName
+														+ " = (double)(state.getActionStateRepository()." + repos);
 											}
-										}
-
-										else if (firstWord.indexOf("All") >= 0) { // num actions
-																					// other
-																					// participants
+										} else if (firstWord.indexOf("All") >= 0) { 
+											// num actions other participants
 											StringBuffer variableName = new StringBuffer("numActionsAll");
 											if (firstWord.indexOf("Active") >= 0) {
 												variableName.append("Active");
 											} else if (firstWord.indexOf("Inactive") >= 0) {
 												variableName.append("Inactive");
 											}
-											String tempStr = nextToken.substring(nextToken.indexOf('-') + 1); // take
-																												// off
-																												// the
-																												// first
-																												// word
+											// take off the first word
+											String tempStr = nextToken.substring(nextToken.indexOf('-') + 1); 
 											String partName = new String();
 											String objTypeName = new String();
-											if (tempStr.indexOf('-') >= 0) { // includes
-																				// SimSEObjectType and
-																				// meta type
+											if (tempStr.indexOf('-') >= 0) { 
+												// includes SimSEObjectType and meta type
 												// get the participant name:
 												partName = tempStr.substring(0, tempStr.indexOf('-'));
 												// check for validity of part name:
@@ -939,8 +878,8 @@ public class RuleExecutorGenerator implements CodeGeneratorConstants {
 													}
 												}
 												variableName.append(objTypeName);
-											} else { // does not include SimSEObjectType and meta
-														// type
+											} else { 
+												// does not include SimSEObjectType and meta type
 												// get the participant name:
 												partName = tempStr.substring(0, tempStr.indexOf(':'));
 												// check for validity of part name:
@@ -957,9 +896,8 @@ public class RuleExecutorGenerator implements CodeGeneratorConstants {
 												}
 												variableName.append(partName);
 											}
-											String actionName = nextToken.substring(
-													// get the action name:
-													nextToken.indexOf(':') + 1).trim();
+											// get the action name:
+											String actionName = nextToken.substring(nextToken.indexOf(':') + 1).trim();
 											// check for validity of action name:
 											if ((!(actionName.equals("*")))
 													&& (actTypes.getActionType(actionName) == null)) {
@@ -973,139 +911,106 @@ public class RuleExecutorGenerator implements CodeGeneratorConstants {
 														+ " " + partAttRuleEff.getAttribute().getName()
 														+ " attribute effect");
 											}
-											if (actionName.equals("*")) { // wildcard character --
-																			// any
-																			// action
+											if (actionName.equals("*")) { 
+												// wildcard character -- any action
 												variableName.append("A");
-											} else { // specific action name
+											} else { 
+												// specific action name
 												variableName.append(actionName);
 											}
-											if (vectorContainsString(variables, variableName.toString()) == false) { // variable
-																														// has
-																														// not
-																														// been
-																														// generated
-																														// yet
+											if (vectorContainsString(variables, variableName.toString()) == false) { 
+												// variable has not been generated yet
 												// add the variable name to the record-keeping vector:
 												variables.add(variableName.toString());
-												writer.write("double " + variableName + " = 0;");
-												writer.write(NEWLINE);
+												methodBody.addStatement("double " + variableName + " = 0");
 											}
 											StringBuffer variableName2 = new StringBuffer();
 											if ((variableName.indexOf("Active") >= 0)
 													|| (variableName.indexOf("Inactive") >= 0)) {
-												if (variableName.indexOf("Active") >= 0) { // active
+												if (variableName.indexOf("Active") >= 0) { 
+													// active
 													variableName2.append("allActive" + partName + "s");
 												} else if (variableName.indexOf("Inactive") >= 0) {
 													// inactive
 													variableName2.append("allInactive" + partName + "s");
 												}
 												if (vectorContainsString(variables,
-														variableName2.toString()) == false) { // variable has not
-																								// been
-																								// generated yet
-													variables.add(variableName2.toString()); // add the
-																								// variable
-																								// name to
-																								// the
-																								// record-
-																								// keeping
-																								// vector
-													writer.write("Vector " + variableName2 + " = "
-															+ actType.getName().toLowerCase() + "Act.getAll");
+														variableName2.toString()) == false) { 
+													// variable has not been generated yet
+													// add the variable name to the record-keeping vector
+													variables.add(variableName2.toString()); 
+													String active = "";
 													if (variableName2.indexOf("Active") >= 0) {
-														writer.write("Active");
+														active = "Active";
 													} else {
-														writer.write("Inactive");
+														active = "Inactive";
 													}
-													writer.write(partName + "s();");
-													writer.write(NEWLINE);
+													active += partName + "s()";
+													methodBody.addStatement("Vector " + variableName2 + " = "
+															+ actType.getName().toLowerCase() + "Act.getAll" + active);
 												}
 											} else {
 												variableName2.append(partName.toLowerCase() + "s");
 												if (vectorContainsString(variables,
-														variableName2.toString()) == false) { // variable has not
-																								// been
-																								// generated yet
+														variableName2.toString()) == false) { 
+													// variable has not been generated yet
 													variables.add(variableName2.toString());
-													writer.write("Vector " + variableName2 + " = "
+													methodBody.addStatement("Vector " + variableName2 + " = "
 															+ actType.getName().toLowerCase() + "Act.getAll"
-															+ partName + "s();");
-													writer.write(NEWLINE);
+															+ partName + "s()");
 												}
 											}
-											writer.write("for(int k=0; k<" + variableName2 + ".size(); k++)");
-											writer.write(NEWLINE);
-											writer.write(OPEN_BRACK);
-											writer.write(NEWLINE);
-											writer.write("Object " + partName.toLowerCase() + "3 = " + variableName2
-													+ ".elementAt(k);");
-											writer.write(NEWLINE);
+											methodBody.beginControlFlow("for(int k=0; k<" + variableName2 + ".size(); k++)");
+											methodBody.addStatement("Object " + partName.toLowerCase() + "3 = " + variableName2
+													+ ".elementAt(k)");
 											boolean objTypeNameSpecified = false;
-											if ((objTypeName.equals(null) == false) && (objTypeName.length() > 0)) { // an
-																														// object
-																														// type
-																														// name
-																														// was
-																														// specified
+											if ((objTypeName.equals(null) == false) && (objTypeName.length() > 0)) { 
+												// an object type name was specified
 												objTypeNameSpecified = true;
-												writer.write("if(" + partName.toLowerCase() + "3 instanceof "
+												methodBody.beginControlFlow("if(" + partName.toLowerCase() + "3 instanceof "
 														+ objTypeName + ")");
-												writer.write(NEWLINE);
-												writer.write(OPEN_BRACK);
 											}
-											writer.write("Vector ");
+											String vectorCreation = "Vector ";
 											String vectorName = new String();
-											if (actionName.equals("*")) { // wildcard
+											if (actionName.equals("*")) { 
+												// wildcard
 												vectorName = "actions";
-												writer.write(vectorName
-														+ " = state.getActionStateRepository().getAllActions();");
+												vectorCreation += vectorName
+														+ " = state.getActionStateRepository().getAllActions()";
 											} else { // action name specified
 												vectorName = (actionName.toLowerCase() + "Actions");
-												writer.write(vectorName + " = state.getActionStateRepository().get"
+												vectorCreation += vectorName + " = state.getActionStateRepository().get"
 														+ CodeGeneratorUtils.getUpperCaseLeading(actionName)
-														+ "ActionStateRepository().getAllActions();");
+														+ "ActionStateRepository().getAllActions()";
 											}
-											writer.write(NEWLINE);
-											writer.write("for(int m=0; m<" + vectorName + ".size(); m++)");
-											writer.write(NEWLINE);
-											writer.write(OPEN_BRACK);
-											writer.write(NEWLINE);
+											methodBody.addStatement(vectorCreation);
+											methodBody.beginControlFlow("for(int m=0; m<" + vectorName + ".size(); m++)");
+											String actionCond = "";
 											if (actionName.equals("*")) {
-												writer.write(
-														"simse.adts.actions.Action action = (simse.adts.actions.Action)"
-																+ vectorName + ".elementAt(m);");
-												writer.write(NEWLINE);
-												writer.write("if(action");
-											} else { // action name specified
-												writer.write(CodeGeneratorUtils.getUpperCaseLeading(actionName)
+												methodBody.addStatement("Action action = (Action)" + vectorName + ".elementAt(m)");
+												actionCond += "if(action";
+											} else { 
+												// action name specified
+												methodBody.addStatement(CodeGeneratorUtils.getUpperCaseLeading(actionName)
 														+ "Action " + actionName.toLowerCase() + "Action = ("
 														+ CodeGeneratorUtils.getUpperCaseLeading(actionName)
 														+ "Action)" + actionName.toLowerCase()
-														+ "Actions.elementAt(m);");
-												writer.write(NEWLINE);
-												writer.write("if(" + actionName.toLowerCase() + "Action");
+														+ "Actions.elementAt(m)");
+												actionCond += "if(" + actionName.toLowerCase() + "Action";
 											}
-											writer.write(".getAllParticipants().contains(" + partName.toLowerCase()
-													+ "3))");
-											writer.write(NEWLINE);
-											writer.write(OPEN_BRACK);
-											writer.write(NEWLINE);
-											writer.write(variableName + "++;");
-											writer.write(NEWLINE);
-											writer.write(CLOSED_BRACK);
-											writer.write(NEWLINE);
-											writer.write(CLOSED_BRACK);
-											writer.write(NEWLINE);
+											actionCond += ".getAllParticipants().contains(" + partName.toLowerCase() + "3))";
+											methodBody.beginControlFlow(actionCond);
+											methodBody.addStatement(variableName + "++;");
+											methodBody.endControlFlow();
+											methodBody.endControlFlow();
 											if (objTypeNameSpecified) {
-												writer.write(CLOSED_BRACK);
-												writer.write(NEWLINE);
+												methodBody.endControlFlow();
 											}
-											writer.write(CLOSED_BRACK);
-											writer.write(NEWLINE);
+											methodBody.endControlFlow();
 										}
 
-										else { // num participants
+										else { 
+											// num participants
 											StringBuffer variableName = new StringBuffer("num");
 											if (firstWord.indexOf("Active") >= 0) {
 												variableName.append("Active");
@@ -1113,16 +1018,11 @@ public class RuleExecutorGenerator implements CodeGeneratorConstants {
 												variableName.append("Inactive");
 											}
 											// take off the first word:
-											String tempStr = nextToken.substring(nextToken.indexOf('-') + 1); // take
-																												// off
-																												// the
-																												// first
-																												// word
+											String tempStr = nextToken.substring(nextToken.indexOf('-') + 1); 
 											String partName = new String();
 											String ssObjType = new String();
-											if (tempStr.indexOf('-') >= 0) { // contains
-																				// SimSEObjectType and
-																				// meta type
+											if (tempStr.indexOf('-') >= 0) { 
+												// contains SimSEObjectType and meta type
 												partName = tempStr.substring(0, tempStr.indexOf('-'));
 												// check for validity of participant name:
 												if (actType.getParticipant(partName) == null) {
@@ -1137,11 +1037,8 @@ public class RuleExecutorGenerator implements CodeGeneratorConstants {
 															+ " attribute effect");
 												}
 												variableName.append(partName);
-												String tempStr2 = tempStr.substring(tempStr.indexOf('-') + 1); // take
-																												// off
-																												// the
-																												// part
-																												// name
+												// take off the part name
+												String tempStr2 = tempStr.substring(tempStr.indexOf('-') + 1); 
 												ssObjType = tempStr2.substring(0, tempStr2.indexOf('-'));
 												if (actType.getParticipant(partName) != null) {
 													// valid participant name
@@ -1162,18 +1059,11 @@ public class RuleExecutorGenerator implements CodeGeneratorConstants {
 												}
 												variableName.append(ssObjType);
 												if (vectorContainsString(variables,
-														variableName.toString()) == false) { // variable has not
-																								// been
-																								// generated yet
-													variables.add(variableName.toString()); // add the
-																							// variable
-																							// name to
-																							// the
-																							// record-
-																							// keeping
-																							// vector
-													writer.write("double " + variableName + " = 0;");
-													writer.write(NEWLINE);
+														variableName.toString()) == false) { 
+													// variable has not been generated yet
+													// add the variable name to the record-keeping vector
+													variables.add(variableName.toString()); 
+													methodBody.addStatement("double " + variableName + " = 0");
 													String variableName2 = new String();
 													if (firstWord.indexOf("Active") >= 0) {
 														variableName2 = ("allActive" + partName + "s");
@@ -1195,37 +1085,28 @@ public class RuleExecutorGenerator implements CodeGeneratorConstants {
 														 * add it to the inner one:
 														 */
 														variables.add(variableName2);
-														writer.write("Vector " + variableName2 + " = "
-																+ actType.getName().toLowerCase() + "Act.getAll");
+														String active = "";
 														if (firstWord.indexOf("Active") >= 0) {
-															writer.write("Active");
+															active = "Active";
 														} else if (firstWord.indexOf("Inactive") >= 0) {
-															writer.write("Inactive");
+															active = "Inactive";
 														}
-														writer.write(partName + "s();");
-														writer.write(NEWLINE);
+														active += partName + "s()";
+														methodBody.addStatement("Vector " + variableName2 + " = "
+																+ actType.getName().toLowerCase() + "Act.getAll" + active);
 													}
-													writer.write(
+													methodBody.beginControlFlow(
 															"for(int k=0; k<" + variableName2 + ".size(); k++)");
-													writer.write(NEWLINE);
-													writer.write(OPEN_BRACK);
-													writer.write(NEWLINE);
-													writer.write("SSObject " + partName.toLowerCase()
-															+ "2 = (SSObject)" + variableName2 + ".elementAt(k);");
-													writer.write(NEWLINE);
-													writer.write("if(" + partName.toLowerCase() + "2 instanceof "
+													methodBody.addStatement("SSObject " + partName.toLowerCase()
+															+ "2 = (SSObject)" + variableName2 + ".elementAt(k)");
+													methodBody.beginControlFlow("if(" + partName.toLowerCase() + "2 instanceof "
 															+ ssObjType + ")");
-													writer.write(NEWLINE);
-													writer.write(OPEN_BRACK);
-													writer.write(NEWLINE);
-													writer.write(variableName + "++;");
-													writer.write(NEWLINE);
-													writer.write(CLOSED_BRACK);
-													writer.write(NEWLINE);
-													writer.write(CLOSED_BRACK);
-													writer.write(NEWLINE);
+													methodBody.addStatement(variableName + "++");
+													methodBody.endControlFlow();
+													methodBody.endControlFlow();
 												}
-											} else { // no SimSEObjectType and meta type specified
+											} else { 
+												// no SimSEObjectType and meta type specified
 												partName = tempStr;
 												// check for validity of participant name:
 												if (actType.getParticipant(partName) == null) {
@@ -1241,25 +1122,20 @@ public class RuleExecutorGenerator implements CodeGeneratorConstants {
 												}
 												variableName.append(partName);
 												if (vectorContainsString(variables,
-														variableName.toString()) == false) { // variable has not
-																								// been
-																								// generated yet
-													variables.add(variableName.toString()); // add the
-																							// variable
-																							// name to
-																							// the
-																							// record-
-																							// keeping
-																							// vector
-													writer.write("double " + variableName + " = (double)("
-															+ actType.getName().toLowerCase() + "Act.getAll");
+														variableName.toString()) == false) { 
+													// variable has not been generated yet
+													// add the variable name to the record-keeping vector
+													variables.add(variableName.toString()); 
+													
+													String active = "";
 													if (firstWord.indexOf("Active") >= 0) {
-														writer.write("Active");
+														active = "Active";
 													} else if (firstWord.indexOf("Inactive") >= 0) {
-														writer.write("Inactive");
+														active = "Inactive";
 													}
-													writer.write(partName + "s().size());");
-													writer.write(NEWLINE);
+													active += partName + "s().size())";
+													methodBody.addStatement("double " + variableName + " = (double)("
+															+ actType.getName().toLowerCase() + "Act.getAll" + active);
 												}
 											}
 										}
@@ -1268,22 +1144,19 @@ public class RuleExecutorGenerator implements CodeGeneratorConstants {
 										if (effect.trim().length() == nextToken.trim().length()) {
 											// on last token
 											effect = null;
-										} else { // not on last token
+										} else { 
+											// not on last token
 											effect = effect.trim().substring(nextToken.length()).trim();
 										}
 										if (nextToken.startsWith("-")) {
-											nextToken = nextToken.substring(1); // remove the minus
-																				// sign for now
+											// remove the minus sign for now
+											nextToken = nextToken.substring(1); 
 										}
-										String inputName = nextToken.substring(nextToken.indexOf('-') + 1); // get
-																											// the
-																											// input
-																											// name
+										// get the input name
+										String inputName = nextToken.substring(nextToken.indexOf('-') + 1); 
 										// check for validity of rule input name:
-										if (effRule.getRuleInput(inputName) == null) { // invalid
-																						// rule
-																						// input
-																						// name
+										if (effRule.getRuleInput(inputName) == null) { 
+											// invalid rule input name
 											warnings.add("Invalid rule input name: \"" + inputName
 													+ "\" in effect rule " + ruleName + " for "
 													+ partRuleEff.getParticipant().getName() + " "
@@ -1292,7 +1165,8 @@ public class RuleExecutorGenerator implements CodeGeneratorConstants {
 															.getText(partTypeRuleEff.getSimSEObjectType().getType())
 													+ " " + partAttRuleEff.getAttribute().getName()
 													+ " attribute effect");
-										} else { // valid rule input name
+										} else { 
+											// valid rule input name
 											// check for validity of rule input type:
 											if ((effRule.getRuleInput(inputName).getType()
 													.equals(InputType.INTEGER) == false)
@@ -1311,16 +1185,11 @@ public class RuleExecutorGenerator implements CodeGeneratorConstants {
 										}
 									}
 
-									else if (effect.trim().length() == nextToken.trim().length()) { // on last token
-										// System.out.println("effect = *" + effect + "*");
-										// System.out.println("nextToken right here after effect =
-										// *" + nextToken + "*");
+									else if (effect.trim().length() == nextToken.trim().length()) { 
+										// on last token
 										effect = null;
 									} else {
-										// System.out.println("effect was *" + effect + "*");
-										// System.out.println("nextToken is *" + nextToken + "*");
 										effect = effect.trim().substring(nextToken.length()).trim();
-										// System.out.println("effect is now *" + effect + "*");
 									}
 
 									if ((effect == null) || (effect.trim().length() == 0)) {
@@ -1338,7 +1207,6 @@ public class RuleExecutorGenerator implements CodeGeneratorConstants {
 								StringBuffer expression = new StringBuffer();
 								while (!finished) {
 									String nextToken = getNextToken(effect);
-									// System.out.println("nextToken = *" + nextToken + "*");
 
 									// attributes other participants:
 									if (nextToken.startsWith("all") || nextToken.startsWith("-all")) {
@@ -1347,8 +1215,7 @@ public class RuleExecutorGenerator implements CodeGeneratorConstants {
 										if (token.startsWith("-")) {
 											isNegative = true;
 											expression.append("(-1 * (");
-											token = token.substring(1); // remove the minus sign for
-																		// now
+											token = token.substring(1); // remove the minus sign for now
 										}
 										// get whether it's all, allActive, or allInactive:
 										String activeInactiveToken = token.substring(0, token.indexOf('-'));
@@ -1375,13 +1242,11 @@ public class RuleExecutorGenerator implements CodeGeneratorConstants {
 										if (token.startsWith("-")) {
 											isNegative = true;
 											expression.append("(-1 * (");
-											token = token.substring(1); // remove the minus sign for
-																		// now
+											token = token.substring(1); // remove the minus sign for now
 										}
 										String firstWord = token.substring(0, token.indexOf('-'));
 
-										if (firstWord.endsWith("This")) { // num actions this
-																			// participant
+										if (firstWord.endsWith("This")) { // num actions this participant
 											String actionName = token.substring(token.indexOf(':') + 1).trim();
 											StringBuffer variableName = new StringBuffer("num");
 											if (firstWord.indexOf("Active") >= 0) {
@@ -1390,8 +1255,7 @@ public class RuleExecutorGenerator implements CodeGeneratorConstants {
 												variableName.append("Inactive");
 											}
 											variableName.append("ActionsThisPart");
-											if (actionName.equals("*")) { // wild card character --
-																			// all actions
+											if (actionName.equals("*")) { // wild card character -- all actions
 												variableName.append("A");
 											} else { // action name
 												variableName.append(actionName);
@@ -1402,49 +1266,40 @@ public class RuleExecutorGenerator implements CodeGeneratorConstants {
 												expression.append("))");
 											}
 											expression.append(" ");
-										}
-
-										else if (firstWord.indexOf("All") >= 0) { // num actions
-																					// other
-																					// participants
+										} else if (firstWord.indexOf("All") >= 0) { 
+											// num actions other participants
 											StringBuffer variableName = new StringBuffer("numActionsAll");
 											if (firstWord.indexOf("Active") >= 0) {
 												variableName.append("Active");
 											} else if (firstWord.indexOf("Inactive") >= 0) {
 												variableName.append("Inactive");
 											}
-											String tempStr = token.substring(token.indexOf('-') + 1); // take off
-																										// the
-																										// first
-																										// word
+											// take off the first word
+											String tempStr = token.substring(token.indexOf('-') + 1); 
 											String partName = new String();
 											String objTypeName = new String();
-											if (tempStr.indexOf('-') >= 0) { // includes
-																				// SimSEObjectType and
-																				// meta type
+											if (tempStr.indexOf('-') >= 0) { 
+												// includes SimSEObjectType and meta type
 												// get the participant name:
 												partName = tempStr.substring(0, tempStr.indexOf('-'));
 												variableName.append(partName);
 												// take off the participant name:
 												tempStr = tempStr.substring(tempStr.indexOf('-') + 1);
-												objTypeName = tempStr.substring(0, tempStr.indexOf('-')); // get the
-																											// SimSEObjectType
-																											// name
+												// get the SimSEObjectType name
+												objTypeName = tempStr.substring(0, tempStr.indexOf('-')); 
 												variableName.append(objTypeName);
-											} else { // does not include SimSEObjectType and
-														// meta-type
-												// get the participant name:
+											} else { 
+												// does not include SimSEObjectType and meta-type get the participant name:
 												partName = tempStr.substring(0, tempStr.indexOf(':'));
 												variableName.append(partName);
 											}
-											String actionName = token.substring(token.indexOf(':') + 1).trim(); // get
-																												// the
-																												// action
-																												// name
-											if (actionName.equals("*")) { // wildcard character --
-																			// any action
+											// get the action name
+											String actionName = token.substring(token.indexOf(':') + 1).trim(); 
+											if (actionName.equals("*")) { 
+												// wildcard character -- any action
 												variableName.append("A");
-											} else { // specific action name
+											} else { 
+												// specific action name
 												variableName.append(actionName);
 											}
 											// append the variable name to the expression:
@@ -1453,24 +1308,20 @@ public class RuleExecutorGenerator implements CodeGeneratorConstants {
 												expression.append("))");
 											}
 											expression.append(" ");
-										}
-
-										else { // num participants
+										} else { 
+											// num participants
 											StringBuffer variableName = new StringBuffer("num");
 											if (firstWord.indexOf("Active") >= 0) {
 												variableName.append("Active");
 											} else if (firstWord.indexOf("Inactive") >= 0) {
 												variableName.append("Inactive");
 											}
-											String tempStr = token.substring(token.indexOf('-') + 1); // take off
-																										// the
-																										// first
-																										// word
+											// take off the first word
+											String tempStr = token.substring(token.indexOf('-') + 1); 
 											String partName = new String();
 											String ssObjType = new String();
-											if (tempStr.indexOf('-') >= 0) { // contains
-																				// SimSEObjectType and
-																				// meta type
+											if (tempStr.indexOf('-') >= 0) { 
+												// contains SimSEObjectType and meta type
 												partName = tempStr.substring(0, tempStr.indexOf('-'));
 												variableName.append(partName);
 												// take off the part name:
@@ -1584,9 +1435,8 @@ public class RuleExecutorGenerator implements CodeGeneratorConstants {
 										}
 										// get min & max vals:
 										try {
-											Integer minVal = new Integer(
-													token.substring((token.indexOf(':') + 1), token.indexOf(',')));
-											Integer maxVal = new Integer(token.substring(token.indexOf(',') + 1));
+											Integer minVal = Integer.getInteger(token.substring((token.indexOf(':') + 1), token.indexOf(',')));
+											Integer maxVal = Integer.getInteger(token.substring(token.indexOf(',') + 1));
 											// append to expression:
 											expression.append("((double)((ranNumGen.nextInt(" + maxVal + " - "
 													+ minVal + " + 1) + " + minVal + ")))");
@@ -1601,17 +1451,16 @@ public class RuleExecutorGenerator implements CodeGeneratorConstants {
 													"Malformed Effect Rule Expression",
 													JOptionPane.WARNING_MESSAGE);
 										}
-									}
-
-									// other token:
-									else {
+									} else {
+										// other token:
 										expression.append(nextToken + " ");
 									}
 
 									if (effect.trim().length() == nextToken.trim().length()) {
 										// on last token
 										effect = null;
-									} else { // not on last token
+									} else { 
+										// not on last token
 										effect = effect.trim().substring(nextToken.length());
 									}
 
@@ -1626,12 +1475,12 @@ public class RuleExecutorGenerator implements CodeGeneratorConstants {
 								} else if (partAttRuleEff.getAttribute().getType() == AttributeTypes.DOUBLE) {
 									attType = "double";
 								}
-								writer.write(objType.toLowerCase() + ".set"
+								methodBody.addStatement(objType.toLowerCase() + ".set"
 										+ CodeGeneratorUtils
 												.getUpperCaseLeading(partAttRuleEff.getAttribute().getName())
-										+ "((" + attType + ")(" + expression.toString().trim() + "));");
-								writer.write(NEWLINE);
-							} else { // string or boolean attribute
+										+ "((" + attType + ")(" + expression.toString().trim() + "))");
+							} else { 
+								// string or boolean attribute
 								String effect = partAttRuleEff.getEffect();
 								String nextToken = getNextToken(effect);
 
@@ -1640,9 +1489,8 @@ public class RuleExecutorGenerator implements CodeGeneratorConstants {
 									// get the attribute name:
 									String attName = nextToken.substring(nextToken.indexOf(':') + 1);
 									// check for validity of attribute name:
-									if (partTypeRuleEff.getSimSEObjectType().getAttribute(attName) == null) { // invalid
-																												// attribute
-																												// name
+									if (partTypeRuleEff.getSimSEObjectType().getAttribute(attName) == null) { 
+										// invalid attribute name
 										warnings.add("Invalid attribute name: \"" + attName + "\" in effect rule "
 												+ ruleName + " for "
 												+ partRuleEff.getParticipant().getName() + " "
@@ -1651,12 +1499,12 @@ public class RuleExecutorGenerator implements CodeGeneratorConstants {
 														partTypeRuleEff.getSimSEObjectType().getType())
 												+ " " + partAttRuleEff.getAttribute().getName()
 												+ " attribute effect");
-									} else { // valid attribute name
+									} else { 
+										// valid attribute name
 										// check for validity of attribute type:
 										if (partTypeRuleEff.getSimSEObjectType().getAttribute(attName)
-												.getType() != partAttRuleEff.getAttribute().getType()) { // invalid
-																											// attribute
-																											// type
+												.getType() != partAttRuleEff.getAttribute().getType()) { 
+											// invalid attribute type
 											warnings.add("Invalid attribute type ("
 													+ AttributeTypes.getText(partTypeRuleEff.getSimSEObjectType()
 															.getAttribute(attName).getType())
@@ -1669,11 +1517,10 @@ public class RuleExecutorGenerator implements CodeGeneratorConstants {
 													+ " attribute effect");
 										}
 									}
-									writer.write(objType.toLowerCase()
+									methodBody.addStatement(objType.toLowerCase()
 											+ ".set" + partAttRuleEff.getAttribute().getName() + "("
 											+ objType.toLowerCase() + ".get"
-											+ attName + "());");
-									writer.write(NEWLINE);
+											+ attName + "())");
 								}
 
 								// rule input:
@@ -1681,9 +1528,8 @@ public class RuleExecutorGenerator implements CodeGeneratorConstants {
 									// get the input name:
 									String inputName = nextToken.substring(nextToken.indexOf('-') + 1);
 									// check for validity of rule input name:
-									if (effRule.getRuleInput(inputName) == null) { // invalid
-																					// rule
-																					// input name
+									if (effRule.getRuleInput(inputName) == null) { 
+										// invalid rule input name
 										warnings.add("Invalid rule input name: \"" + inputName
 												+ "\" in effect rule " + ruleName + " for "
 												+ partRuleEff.getParticipant().getName() + " "
@@ -1692,13 +1538,14 @@ public class RuleExecutorGenerator implements CodeGeneratorConstants {
 														partTypeRuleEff.getSimSEObjectType().getType())
 												+ " " + partAttRuleEff.getAttribute().getName()
 												+ " attribute effect");
-									} else { // valid rule input name
+									} else { 
+										// valid rule input name
 										// check for validity of rule input type:
-										if (partAttRuleEff.getAttribute().getType() == AttributeTypes.STRING) { // string
-																												// attribute
+										if (partAttRuleEff.getAttribute().getType() == AttributeTypes.STRING) { 
+											// string attribute
 											if (effRule.getRuleInput(inputName).getType()
-													.equals(InputType.STRING) == false) { // type doesn't match
-																							// (invalid)
+													.equals(InputType.STRING) == false) { 
+												// type doesn't match (invalid)
 												warnings.add("Invalid rule input type (non-String): \"" + inputName
 														+ "\" in effect rule " + ruleName + " for "
 														+ partRuleEff.getParticipant().getName() + " "
@@ -1709,11 +1556,11 @@ public class RuleExecutorGenerator implements CodeGeneratorConstants {
 														+ " attribute effect");
 											}
 										} else if (partAttRuleEff.getAttribute()
-												.getType() == AttributeTypes.BOOLEAN) { // boolean
-																						// attribute
+												.getType() == AttributeTypes.BOOLEAN) { 
+											// boolean attribute
 											if (effRule.getRuleInput(inputName).getType()
-													.equals(InputType.BOOLEAN) == false) { // type doesn't match
-																							// -- invalid
+													.equals(InputType.BOOLEAN) == false) { 
+												// type doesn't match -- invalid
 												warnings.add("Invalid rule input type (non-Boolean): \"" + inputName
 														+ "\" in effect rule " + ruleName + " for "
 														+ partRuleEff.getParticipant().getName() + " "
@@ -1726,16 +1573,14 @@ public class RuleExecutorGenerator implements CodeGeneratorConstants {
 										}
 
 										// write the expression:
-										writer.write(objType.toLowerCase()
+										methodBody.addStatement(objType.toLowerCase()
 												+ ".set" + partAttRuleEff.getAttribute().getName() + "(input"
-												+ inputName + ");");
-										writer.write(NEWLINE);
+												+ inputName + ")");
 									}
-								}
-
-								// literal string:
-								else if (nextToken.startsWith("\"")) {
-									if (partAttRuleEff.getAttribute().getType() != AttributeTypes.STRING) { // invalid
+								} else if (nextToken.startsWith("\"")) {
+									// literal string:
+									if (partAttRuleEff.getAttribute().getType() != AttributeTypes.STRING) { 
+										// invalid
 										warnings.add("Invalid expression (wrong type) in effect rule "
 												+ ruleName + " for "
 												+ partRuleEff.getParticipant().getName() + " "
@@ -1746,14 +1591,11 @@ public class RuleExecutorGenerator implements CodeGeneratorConstants {
 												+ " attribute effect");
 									}
 									// write the expression:
-									writer.write(objType.toLowerCase()
+									methodBody.addStatement(objType.toLowerCase()
 											+ ".set" + partAttRuleEff.getAttribute().getName() + "(" + effect.trim()
-											+ ");");
-									writer.write(NEWLINE);
-								}
-
-								// boolean val:
-								else if (nextToken.startsWith("true")) {
+											+ ")");
+								} else if (nextToken.startsWith("true")) {
+									// boolean val:
 									if (partAttRuleEff.getAttribute().getType() != AttributeTypes.BOOLEAN) { // invalid
 										warnings.add("Invalid expression (wrong type) in effect rule "
 												+ ruleName + " for "
@@ -1765,11 +1607,11 @@ public class RuleExecutorGenerator implements CodeGeneratorConstants {
 												+ " attribute effect");
 									}
 									// write the expression:
-									writer.write(objType.toLowerCase()
-											+ ".set" + partAttRuleEff.getAttribute().getName() + "(true);");
-									writer.write(NEWLINE);
+									methodBody.addStatement(objType.toLowerCase()
+											+ ".set" + partAttRuleEff.getAttribute().getName() + "(true)");
 								} else if (nextToken.startsWith("false")) {
-									if (partAttRuleEff.getAttribute().getType() != AttributeTypes.BOOLEAN) { // invalid
+									if (partAttRuleEff.getAttribute().getType() != AttributeTypes.BOOLEAN) { 
+										// invalid
 										warnings.add("Invalid expression (wrong type) in effect rule "
 												+ ruleName + " for "
 												+ partRuleEff.getParticipant().getName() + " "
@@ -1780,120 +1622,72 @@ public class RuleExecutorGenerator implements CodeGeneratorConstants {
 												+ " attribute effect");
 									}
 									// write the expression:
-									writer.write(objType.toLowerCase()
-											+ ".set" + partAttRuleEff.getAttribute().getName() + "(false);");
-									writer.write(NEWLINE);
+									methodBody.addStatement(objType.toLowerCase()
+											+ ".set" + partAttRuleEff.getAttribute().getName() + "(false)");
 								}
 							}
 						}
 					}
-					writer.write(CLOSED_BRACK);
-					writer.write(NEWLINE);
+					methodBody.endControlFlow();
 				}
-				writer.write(CLOSED_BRACK);
-				writer.write(NEWLINE);
+				methodBody.endControlFlow();
 			}
-//        writer.write("triggerChecker.update(false, gui);");
-//        writer.write(NEWLINE);
-//        writer.write("destroyerChecker.update(false, gui);");
-//        writer.write(NEWLINE);
-			writer.write(CLOSED_BRACK);
-			writer.write(NEWLINE);
 			if (rInputs.size() > 0) {
-				writer.write(CLOSED_BRACK);
-				writer.write(NEWLINE);
+				methodBody.endControlFlow();
+			}
+			if (!minCondition.equals("if ()")) {
+				methodBody.endControlFlow();
 			}
 			if ((rule.getTiming() == RuleTiming.TRIGGER) || (rule.getTiming() == RuleTiming.DESTROYER)) {
-				writer.write(CLOSED_BRACK);
-				writer.write(NEWLINE);
+				methodBody.endControlFlow();
 			}
-			writer.write(CLOSED_BRACK);
-			writer.write(NEWLINE);
-			writer.write(CLOSED_BRACK);
-			writer.write(NEWLINE);
-			writer.write(CLOSED_BRACK);
-			writer.write(NEWLINE);
-		}
-
-		else if (rule instanceof CreateObjectsRule) { // CREATE OBJECTS RULE
+			methodBody.endControlFlow();
+			methodBody.endControlFlow();
+			methodBody.endControlFlow();
+		} else if (rule instanceof CreateObjectsRule) { 
+			// CREATE OBJECTS RULE
 			CreateObjectsRule coRule = (CreateObjectsRule) rule;
-//        if (vectorContainsString(outerVariables, (action.getName()
-//            .toLowerCase() + "Acts")) == false) // this variable has not been
-//                                                // generated yet
-//        {
-//          outerVariables
-//              .add(new String(action.getName().toLowerCase() + "Acts")); // add
-//                                                                         // the
-//                                                                         // variable
-//                                                                         // name
-//                                                                         // to
-//                                                                         // the
-//                                                                         // record-keeping
-//                                                                         // Vector
-//          writer.write("Vector " + action.getName().toLowerCase()
-//              + "Acts = state.getActionStateRepository().get"
-//              + getUpperCaseLeading(action.getName())
-//              + "ActionStateRepository().getAllActions();");
-//          writer.write(NEWLINE);
-//        }
-			writer.write("if((updateInstructions ==");
-			if (rule.getTiming() == RuleTiming.CONTINUOUS) { // continuous rule
-				writer.write("UPDATE_ALL_CONTINUOUS))");
-			} else if ((rule.getTiming() == RuleTiming.TRIGGER) || (rule.getTiming() == RuleTiming.DESTROYER)) { // trigger/destroyer
-																													// rule
-				writer.write("UPDATE_ONE) && (ruleName.equals(\"" + ruleName + "\")))");
+			String ruleCond = "if((updateInstructions ==";
+			if (rule.getTiming() == RuleTiming.CONTINUOUS) { 
+				// continuous rule
+				ruleCond += "UPDATE_ALL_CONTINUOUS))";
+			} else if ((rule.getTiming() == RuleTiming.TRIGGER) || (rule.getTiming() == RuleTiming.DESTROYER)) { 
+				// trigger/destroyer rule
+				ruleCond += "UPDATE_ONE) && (ruleName.equals(\"" + ruleName + "\")))";
 			}
-			writer.write(NEWLINE);
-			writer.write(OPEN_BRACK);
-			writer.write(NEWLINE);
-			writer.write(NEWLINE);
-			writer.write("for(int i=0; i<" + actType.getName().toLowerCase() + "Acts.size(); i++)");
-			writer.write(NEWLINE);
-			writer.write(OPEN_BRACK);
-			writer.write(NEWLINE);
-			writer.write(CodeGeneratorUtils.getUpperCaseLeading(actType.getName()) + "Action "
+			methodBody.beginControlFlow(ruleCond);
+			methodBody.beginControlFlow("for(int i=0; i<" + actType.getName().toLowerCase() + "Acts.size(); i++)");
+			methodBody.beginControlFlow(CodeGeneratorUtils.getUpperCaseLeading(actType.getName()) + "Action "
 					+ actType.getName().toLowerCase() + "Act = ("
 					+ CodeGeneratorUtils.getUpperCaseLeading(actType.getName()) + "Action)"
-					+ actType.getName().toLowerCase() + "Acts.elementAt(i);");
-			writer.write(NEWLINE);
+					+ actType.getName().toLowerCase() + "Acts.elementAt(i)");
 			if ((rule.getTiming() == RuleTiming.TRIGGER) || (rule.getTiming() == RuleTiming.DESTROYER)) {
-				writer.write("if(" + actType.getName().toLowerCase() + "Act == action)");
-				writer.write(NEWLINE);
-				writer.write(OPEN_BRACK);
-				writer.write(NEWLINE);
+				methodBody.beginControlFlow("if(" + actType.getName().toLowerCase() + "Act == action)");
 			}
 			// code to make sure it has the min num of participants:
-			writer.write("if(");
+			String minCondition = "if (";
 			Vector<ActionTypeParticipant> parts = actType.getAllParticipants();
 			for (int i = 0; i < parts.size(); i++) {
 				ActionTypeParticipant part = parts.elementAt(i);
-				if (i > 0) { // not on first element
-					writer.write(" && ");
+				if (i > 0) { 
+					// not on first element
+					minCondition += " && ";
 				}
-				writer.write(
-						"(" + actType.getName().toLowerCase() + "Act.getAll" + part.getName() + "s().size() >= ");
-				if (part.getQuantity().isMinValBoundless()) { // min val boundless
-					writer.write("0");
-				} else { // has min val
-					writer.write(part.getQuantity().getMinVal().toString());
+				minCondition += "(" + oneActTypeVar + ".getAll" + part.getName() + "s().size() >= ";
+				if (part.getQuantity().isMinValBoundless()) { 
+					// min val boundless
+					minCondition += "0";
+				} else { 
+					// has min val
+					minCondition += part.getQuantity().getMinVal().toString();
 				}
-				writer.write(")");
+				minCondition += ")";
 			}
-			writer.write(")");
-			writer.write(NEWLINE);
-			writer.write(OPEN_BRACK);
-			writer.write(NEWLINE);
+			minCondition += ")";
+			if (!minCondition.equals("if ()")) {
+				methodBody.beginControlFlow(minCondition);
+			}
 
-			/*
-			 * The following lines were causing a bug, and I don't know why they are there,
-			 * so I'm commenting them out 5/17/06
-			 */
-//        writer.write("if((" + action.getName().toLowerCase()
-//            + "Act.getTimeElapsed() == 0) || ("
-//            + action.getName().toLowerCase() + "Act.getTimeElapsed() == 1))");
-//        writer.write(NEWLINE);
-//        writer.write(OPEN_BRACK);
-//        writer.write(NEWLINE);
 			// go through all of the objects to create:
 			Vector<SimSEObject> objsToCreate = coRule.getAllSimSEObjects();
 			for (int i = 0; i < objsToCreate.size(); i++) {
@@ -1905,8 +1699,8 @@ public class RuleExecutorGenerator implements CodeGeneratorConstants {
 				boolean createObj = true;
 				// go through all instantiated attributes:
 				Vector<InstantiatedAttribute> instAtts = obj.getAllAttributes();
-				if (instAtts.size() >= obj.getSimSEObjectType().getAllAttributes().size()) { // all attributes are
-																								// instantiated
+				if (instAtts.size() >= obj.getSimSEObjectType().getAllAttributes().size()) { 
+					// all attributes are instantiated
 					for (int j = 0; j < instAtts.size(); j++) {
 						InstantiatedAttribute att = instAtts.elementAt(j);
 						if (att.isInstantiated() == false) { // not instantiated
@@ -1916,7 +1710,8 @@ public class RuleExecutorGenerator implements CodeGeneratorConstants {
 									+ " created in the " + coRule.getName() + " Create Objects Rule");
 							createObj = false;
 							break;
-						} else { // instantiated
+						} else { 
+							// instantiated
 							if (att.getAttribute().getType() == AttributeTypes.STRING) {
 								// string attribute
 								lineToCreateObj.append("\"");
@@ -1926,12 +1721,14 @@ public class RuleExecutorGenerator implements CodeGeneratorConstants {
 								// string attribute
 								lineToCreateObj.append("\"");
 							}
-							if (j < (instAtts.size() - 1)) { // not on last iteration
+							if (j < (instAtts.size() - 1)) { 
+								// not on last iteration
 								lineToCreateObj.append(", ");
 							}
 						}
 					}
-				} else { // not all atts are instantiated
+				} else { 
+					// not all atts are instantiated
 					warnings.add("Not all attributes have been assigned starting values for the "
 							+ obj.getSimSEObjectType().getName() + " "
 							+ SimSEObjectTypeTypes.getText(obj.getSimSEObjectType().getType()) + " created in the "
@@ -1939,118 +1736,68 @@ public class RuleExecutorGenerator implements CodeGeneratorConstants {
 					createObj = false;
 				}
 				if (createObj) {
-					lineToCreateObj.append(");");
-					writer.write(lineToCreateObj.toString());
-					writer.write(NEWLINE);
-					writer.write("state.get" + SimSEObjectTypeTypes.getText(obj.getSimSEObjectType().getType())
+					lineToCreateObj.append(")");
+					methodBody.addStatement(lineToCreateObj.toString());
+					methodBody.addStatement("state.get" + SimSEObjectTypeTypes.getText(obj.getSimSEObjectType().getType())
 							+ "StateRepository().get"
 							+ CodeGeneratorUtils.getUpperCaseLeading(obj.getSimSEObjectType().getName())
 							+ "StateRepository().add(" + obj.getSimSEObjectType().getName().toLowerCase() + i
-							+ ");");
-					writer.write(NEWLINE);
+							+ ")");
 				}
 			}
-			writer.write("((SimSEGUI) gui).forceGUIUpdate();");
-			writer.write(NEWLINE);
-//				writer.write("triggerChecker.update(false, gui);");
-//				writer.write(NEWLINE);
-//				writer.write("destroyerChecker.update(false, gui);");
-			writer.write(NEWLINE);
-//        writer.write(CLOSED_BRACK);
-//        writer.write(NEWLINE);
+			methodBody.addStatement("(($T) gui).forceGUIUpdate()", simseGui);
+			if (!minCondition.equals("if ()")) {
+				methodBody.beginControlFlow(minCondition);
+			}
 			if ((rule.getTiming() == RuleTiming.TRIGGER) || (rule.getTiming() == RuleTiming.DESTROYER)) {
-				writer.write(CLOSED_BRACK);
-				writer.write(NEWLINE);
+				methodBody.endControlFlow();
 			}
-			writer.write(CLOSED_BRACK);
-			writer.write(NEWLINE);
-			writer.write(CLOSED_BRACK);
-			writer.write(NEWLINE);
-			writer.write(CLOSED_BRACK);
-			writer.write(NEWLINE);
-			writer.write(CLOSED_BRACK);
-			writer.write(NEWLINE);
-		}
-
-		else if (rule instanceof DestroyObjectsRule) { // DESTROY OBJECTS RULE
+			methodBody.endControlFlow();
+			methodBody.endControlFlow();
+			methodBody.endControlFlow();
+		} else if (rule instanceof DestroyObjectsRule) { 
+			// DESTROY OBJECTS RULE
 			DestroyObjectsRule doRule = (DestroyObjectsRule) rule;
-//        if (vectorContainsString(outerVariables, (action.getName()
-//            .toLowerCase() + "Acts")) == false) // this variable has not been
-//                                                // generated yet
-//        {
-//          outerVariables
-//              .add(new String(action.getName().toLowerCase() + "Acts")); // add
-//                                                                         // the
-//                                                                         // variable
-//                                                                         // name
-//                                                                         // to
-//                                                                         // the
-//                                                                         // record-keeping
-//                                                                         // Vector
-//          writer.write("Vector " + action.getName().toLowerCase()
-//              + "Acts = state.getActionStateRepository().get"
-//              + getUpperCaseLeading(action.getName())
-//              + "ActionStateRepository().getAllActions();");
-//          writer.write(NEWLINE);
-//        }
-			writer.write("if((updateInstructions ==");
-			if (rule.getTiming() == RuleTiming.CONTINUOUS) { // continuous rule
-				writer.write("UPDATE_ALL_CONTINUOUS))");
-			} else if ((rule.getTiming() == RuleTiming.TRIGGER) || (rule.getTiming() == RuleTiming.DESTROYER)) { // trigger
-																													// or
-																													// destroyer
-																													// rule
-				writer.write("UPDATE_ONE) && (ruleName.equals(\"" + ruleName + "\")))");
+			String ruleCond = "if((updateInstructions ==";
+			if (rule.getTiming() == RuleTiming.CONTINUOUS) { 
+				// continuous rule
+				ruleCond += "UPDATE_ALL_CONTINUOUS))";
+			} else if ((rule.getTiming() == RuleTiming.TRIGGER) || (rule.getTiming() == RuleTiming.DESTROYER)) { 
+				// trigger/destroyer rule
+				ruleCond += "UPDATE_ONE) && (ruleName.equals(\"" + ruleName + "\")))";
 			}
-			writer.write(NEWLINE);
-			writer.write(OPEN_BRACK);
-			writer.write(NEWLINE);
-			writer.write("for(int i=0; i<" + actType.getName().toLowerCase() + "Acts.size(); i++)");
-			writer.write(NEWLINE);
-			writer.write(OPEN_BRACK);
-			writer.write(NEWLINE);
-			writer.write(CodeGeneratorUtils.getUpperCaseLeading(actType.getName()) + "Action "
+			methodBody.beginControlFlow(ruleCond);
+			methodBody.beginControlFlow("for(int i=0; i<" + actType.getName().toLowerCase() + "Acts.size(); i++)");
+			methodBody.addStatement(CodeGeneratorUtils.getUpperCaseLeading(actType.getName()) + "Action "
 					+ actType.getName().toLowerCase() + "Act = ("
 					+ CodeGeneratorUtils.getUpperCaseLeading(actType.getName()) + "Action)"
-					+ actType.getName().toLowerCase() + "Acts.elementAt(i);");
-			writer.write(NEWLINE);
+					+ actType.getName().toLowerCase() + "Acts.elementAt(i)");
 			if ((rule.getTiming() == RuleTiming.TRIGGER) || (rule.getTiming() == RuleTiming.DESTROYER)) {
-				writer.write("if(" + actType.getName().toLowerCase() + "Act == action)");
-				writer.write(NEWLINE);
-				writer.write(OPEN_BRACK);
-				writer.write(NEWLINE);
+				methodBody.beginControlFlow("if(" + actType.getName().toLowerCase() + "Act == action)");
 			}
 			// code to make sure it has the min num of participants:
-			writer.write("if(");
+			String minCondition = "if (";
 			Vector<ActionTypeParticipant> parts = actType.getAllParticipants();
 			for (int i = 0; i < parts.size(); i++) {
 				ActionTypeParticipant part = parts.elementAt(i);
-				if (i > 0) { // not on first element
-					writer.write(" && ");
+				if (i > 0) { 
+					// not on first element
+					minCondition += " && ";
 				}
-				writer.write(
-						"(" + actType.getName().toLowerCase() + "Act.getAll" + part.getName() + "s().size() >= ");
-				if (part.getQuantity().isMinValBoundless()) { // min val boundless
-					writer.write("0");
-				} else { // has min val
-					writer.write(part.getQuantity().getMinVal().toString());
+				minCondition += "(" + oneActTypeVar + ".getAll" + part.getName() + "s().size() >= ";
+				if (part.getQuantity().isMinValBoundless()) { 
+					// min val boundless
+					minCondition += "0";
+				} else { 
+					// has min val
+					minCondition += part.getQuantity().getMinVal().toString();
 				}
-				writer.write(")");
+				minCondition += ")";
 			}
-			writer.write(")");
-			writer.write(NEWLINE);
-			writer.write(OPEN_BRACK);
-			writer.write(NEWLINE);
-			/*
-			 * The following lines were causing a bug, and I don't know why they are there,
-			 * so I'm commenting them out 5/17/06
-			 */
-//        writer.write("if((" + action.getName().toLowerCase()
-//            + "Act.getTimeElapsed() == 0) || ("
-//            + action.getName().toLowerCase() + "Act.getTimeElapsed() == 1))");
-//        writer.write(NEWLINE);
-//        writer.write(OPEN_BRACK);
-//        writer.write(NEWLINE);
+			minCondition += ")";
+			if (!minCondition.equals("if ()")) {
+				methodBody.beginControlFlow(minCondition);
+			}
 
 			// go through each participant condition:
 			Vector<DestroyObjectsRuleParticipantCondition> partConditions = doRule.getAllParticipantConditions();
@@ -2058,119 +1805,94 @@ public class RuleExecutorGenerator implements CodeGeneratorConstants {
 				DestroyObjectsRuleParticipantCondition cond = partConditions.elementAt(j);
 				ActionTypeParticipant part = cond.getParticipant();
 
-				writer.write("Vector " + part.getName().toLowerCase() + "s = (("
+				methodBody.addStatement("Vector " + part.getName().toLowerCase() + "s = (("
 						+ CodeGeneratorUtils.getUpperCaseLeading(actType.getName()) + "Action)"
-						+ actType.getName().toLowerCase() + "Act).getAll" + part.getName() + "s();");
-				writer.write(NEWLINE);
-				writer.write("for(int j=0; j<" + part.getName().toLowerCase() + "s.size(); j++)");
-				writer.write(NEWLINE);
-				writer.write(OPEN_BRACK);
-				writer.write(NEWLINE);
-				writer.write(SimSEObjectTypeTypes.getText(part.getSimSEObjectTypeType()) + " a = ("
+						+ actType.getName().toLowerCase() + "Act).getAll" + part.getName() + "s()");
+				methodBody.beginControlFlow("for(int j=0; j<" + part.getName().toLowerCase() + "s.size(); j++)");
+				methodBody.addStatement(SimSEObjectTypeTypes.getText(part.getSimSEObjectTypeType()) + " a = ("
 						+ SimSEObjectTypeTypes.getText(part.getSimSEObjectTypeType()) + ")"
-						+ part.getName().toLowerCase() + "s.elementAt(j);");
-				writer.write(NEWLINE);
+						+ part.getName().toLowerCase() + "s.elementAt(j)");
 				// go through all participant constraints:
 				Vector<ActionTypeParticipantConstraint> constraints = cond.getAllConstraints();
 				for (int k = 0; k < constraints.size(); k++) {
 					ActionTypeParticipantConstraint constraint = constraints.elementAt(k);
 					String objTypeName = constraint.getSimSEObjectType().getName();
-					if (k > 0) { // not on first element
-						writer.write("else ");
+					if (k == 0) { 
+						// on first element
+						methodBody.beginControlFlow("if (a instanceof " + CodeGeneratorUtils.getUpperCaseLeading(objTypeName) + ")");
+					} else {
+						methodBody.nextControlFlow("if (a instanceof " + CodeGeneratorUtils.getUpperCaseLeading(objTypeName) + ")");
 					}
-					writer.write("if(a instanceof " + CodeGeneratorUtils.getUpperCaseLeading(objTypeName) + ")");
-					writer.write(NEWLINE);
-					writer.write(OPEN_BRACK);
-					writer.write(NEWLINE);
 					// go through all attribute constraints:
-					ActionTypeParticipantAttributeConstraint[] attConstraints = constraint
-							.getAllAttributeConstraints();
+					ActionTypeParticipantAttributeConstraint[] attConstraints = constraint.getAllAttributeConstraints();
 					int numAttConsts = 0;
+					String ifCond = "";
 					for (int m = 0; m < attConstraints.length; m++) {
 						ActionTypeParticipantAttributeConstraint tempAttConst = attConstraints[m];
 						if (tempAttConst.isConstrained()) {
-							if (numAttConsts == 0) { // this is the first attribute that
-														// we've come across that's constrained
-								writer.write("if(");
+							if (numAttConsts == 0) { 
+								// this is the first attribute that we've come across that's constrained
+								ifCond += "if (";
 							} else {
-								writer.write(" && ");
+								ifCond += " && ";
 							}
-							writer.write("(((" + CodeGeneratorUtils.getUpperCaseLeading(objTypeName) + ")a).get"
+							ifCond += "(((" + CodeGeneratorUtils.getUpperCaseLeading(objTypeName) + ")a).get"
 									+ CodeGeneratorUtils.getUpperCaseLeading(tempAttConst.getAttribute().getName())
-									+ "()");
+									+ "()";
 							if (tempAttConst.getAttribute().getType() == AttributeTypes.STRING) {
-								writer.write(".equals(" + "\"" + tempAttConst.getValue().toString() + "\")");
+								ifCond += ".equals(" + "\"" + tempAttConst.getValue().toString() + "\")";
 							} else {
 								if (tempAttConst.getGuard().equals(AttributeGuard.EQUALS)) {
-									writer.write(" == ");
+									ifCond += " == ";
 								} else {
-									writer.write(" " + tempAttConst.getGuard() + " ");
+									ifCond += " " + tempAttConst.getGuard() + " ";
 								}
-								writer.write(tempAttConst.getValue().toString());
+								ifCond += tempAttConst.getValue().toString();
 							}
-							writer.write(")");
+							ifCond += ")";
 							numAttConsts++;
 						}
 					}
-					if (numAttConsts > 0) { // there is at least one constraint
-						writer.write(")");
-						writer.write(NEWLINE);
-						writer.write(OPEN_BRACK);
-						writer.write(NEWLINE);
-						writer.write("state.get"
+					if (numAttConsts > 0) { 
+						// there is at least one constraint
+						ifCond += ")";
+						methodBody.beginControlFlow(ifCond);
+						methodBody.addStatement("state.get"
 								+ SimSEObjectTypeTypes.getText(constraint.getSimSEObjectType().getType())
 								+ "StateRepository().get"
 								+ CodeGeneratorUtils.getUpperCaseLeading(constraint.getSimSEObjectType().getName())
 								+ "StateRepository().remove(("
 								+ CodeGeneratorUtils.getUpperCaseLeading(constraint.getSimSEObjectType().getName())
-								+ ")a);");
-						writer.write(NEWLINE);
-						writer.write("state.getActionStateRepository().removeFromAllActions(a);");
-						writer.write(NEWLINE);
-						writer.write("checkAllMins(gui);");
-						writer.write(NEWLINE);
-						writer.write(CLOSED_BRACK);
-						writer.write(NEWLINE);
-					} else { // no constraints -- destroy object
-						writer.write("state.get"
+								+ ")a)");
+						methodBody.addStatement("state.getActionStateRepository().removeFromAllActions(a)");
+						methodBody.addStatement("checkAllMins(gui)");
+						methodBody.endControlFlow();
+					} else { 
+						// no constraints -- destroy object
+						methodBody.addStatement("state.get"
 								+ SimSEObjectTypeTypes.getText(constraint.getSimSEObjectType().getType())
 								+ "StateRepository().get"
 								+ CodeGeneratorUtils.getUpperCaseLeading(constraint.getSimSEObjectType().getName())
 								+ "StateRepository().remove(("
 								+ CodeGeneratorUtils.getUpperCaseLeading(constraint.getSimSEObjectType().getName())
-								+ ")a);");
-						writer.write(NEWLINE);
-						writer.write("state.getActionStateRepository().removeFromAllActions(a);");
-						writer.write(NEWLINE);
-						writer.write("checkAllMins(gui);");
-						writer.write(NEWLINE);
+								+ ")a)");
+						methodBody.addStatement("state.getActionStateRepository().removeFromAllActions(a)");
+						methodBody.addStatement("checkAllMins(gui)");
 					}
-					writer.write("((SimSEGUI) gui).forceGUIUpdate();");
-					writer.write(NEWLINE);
-//    				writer.write("triggerChecker.update(false, gui);");
-//    				writer.write(NEWLINE);
-//    				writer.write("destroyerChecker.update(false, gui);");
-					writer.write(NEWLINE);
-					writer.write(CLOSED_BRACK);
-					writer.write(NEWLINE);
+					methodBody.addStatement("(($T) gui).forceGUIUpdate()", simseGui);
+					methodBody.endControlFlow();
 				}
-				writer.write(CLOSED_BRACK);
-				writer.write(NEWLINE);
+				methodBody.endControlFlow();
 			}
-//        writer.write(CLOSED_BRACK);
-//        writer.write(NEWLINE);
+			if (!minCondition.equals("if ()")) {
+				methodBody.beginControlFlow(minCondition);
+			}
 			if ((rule.getTiming() == RuleTiming.TRIGGER) || (rule.getTiming() == RuleTiming.DESTROYER)) {
-				writer.write(CLOSED_BRACK);
-				writer.write(NEWLINE);
+				methodBody.endControlFlow();
 			}
-			writer.write(CLOSED_BRACK);
-			writer.write(NEWLINE);
-			writer.write(CLOSED_BRACK);
-			writer.write(NEWLINE);
-			writer.write(CLOSED_BRACK);
-			writer.write(NEWLINE);
-			writer.write(CLOSED_BRACK);
-			writer.write(NEWLINE);
+			methodBody.endControlFlow();
+			methodBody.endControlFlow();
+			methodBody.endControlFlow();
 		}
 		
 		MethodSpec method = MethodSpec.methodBuilder(methodName)
@@ -2186,49 +1908,59 @@ public class RuleExecutorGenerator implements CodeGeneratorConstants {
 	}
 	
 	private CodeBlock.Builder minConditions() {
+		ClassName ssObject = ClassName.get("simse.adts.objects", "SSObject");
+		TypeName vectorOfObjs = ParameterizedTypeName.get(vector, ssObject);
+		
 		CodeBlock.Builder conditions = CodeBlock.builder();
 		
 		// checkAllMins method:
 		Vector<ActionType> actions = actTypes.getAllActionTypes();
 		// go through all action types:
 		for (int i = 0; i < actions.size(); i++) {
-			ActionType act = actions.elementAt(i);
-			if (i > 0) { // not on first element
-				writer.write("else ");
+			ActionType actType = actions.elementAt(i);
+			String actTypeName = actType.getName();
+			String uCaseActionName = CodeGeneratorUtils.getUpperCaseLeading(actType.getName()) + "Action";
+			String actTypeVar = actTypeName.toLowerCase() + "Acts";
+			String oneActTypeVar = actTypeName.toLowerCase() + "Act";
+			
+			ClassName actClass = ClassName.get("simse.adts.actions", uCaseActionName);
+			TypeName vectorOfActTypes = ParameterizedTypeName.get(vector, actClass);
+			if (i == 0) { 
+				// on first element
+				conditions.beginControlFlow("if (act instanceof $T)", actClass);
+			} else {
+				conditions.nextControlFlow("else if (act instanceof $T)", actClass);
 			}
-			writer.write("if(act instanceof " + CodeGeneratorUtils.getUpperCaseLeading(act.getName()) + "Action)");
-			writer.write(NEWLINE);
-			writer.write(OPEN_BRACK);
-			writer.write(NEWLINE);
-			writer.write(CodeGeneratorUtils.getUpperCaseLeading(act.getName()) + "Action b = ("
-					+ CodeGeneratorUtils.getUpperCaseLeading(act.getName()) + "Action)act;");
-			writer.write(NEWLINE);
-			writer.write("if(");
+			
+			conditions.addStatement("$T b = ($T) act", actClass, actClass);
+			
+			String ifCond = "if (";
 			// go through all participants:
-			Vector<ActionTypeParticipant> parts = act.getAllParticipants();
+			Vector<ActionTypeParticipant> parts = actType.getAllParticipants();
 			for (int j = 0; j < parts.size(); j++) {
-				if (j > 0) { // not on first element
-					writer.write(" || ");
+				if (j > 0) { 
+					// not on first element
+					ifCond += " || ";
 				}
 				ActionTypeParticipant part = parts.elementAt(j);
-				writer.write("(b.getAll" + part.getName() + "s().size() < ");
-				if (part.getQuantity().isMinValBoundless()) { // min val boundless
-					writer.write("-999999");
-				} else { // min val has a value
-					writer.write("" + part.getQuantity().getMinVal().intValue());
+				ifCond += "(b.getAll" + part.getName() + "s().size() < ";
+				if (part.getQuantity().isMinValBoundless()) { 
+					// min val boundless
+					ifCond += "-999999";
+				} else { 
+					// min val has a value
+					ifCond += "" + part.getQuantity().getMinVal().intValue();
 				}
-				writer.write(")");
+				ifCond += ")";
 			}
-			writer.write(")");
-			writer.write(NEWLINE);
-			writer.write(OPEN_BRACK);
-			writer.write(NEWLINE);
+			ifCond += ")";
+			conditions.beginControlFlow(ifCond);
 
 			// get the destroyer text from the highest priority destroyer:
 			String destText = new String();
-			if (act.getAllDestroyers().size() > 0) { // has at least one destroyer
-				ActionTypeDestroyer highestPriDest = (ActionTypeDestroyer) act.getAllDestroyers().elementAt(0);
-				Vector<ActionTypeDestroyer> allDests = act.getAllDestroyers();
+			if (actType.getAllDestroyers().size() > 0) { // has at least one destroyer
+				ActionTypeDestroyer highestPriDest = (ActionTypeDestroyer) actType.getAllDestroyers().elementAt(0);
+				Vector<ActionTypeDestroyer> allDests = actType.getAllDestroyers();
 				for (int j = 0; j < allDests.size(); j++) {
 					ActionTypeDestroyer tempDest = allDests.elementAt(j);
 					if (tempDest.getPriority() > highestPriDest.getPriority()) {
@@ -2236,53 +1968,33 @@ public class RuleExecutorGenerator implements CodeGeneratorConstants {
 					}
 				}
 				destText = highestPriDest.getDestroyerText();
-				if ((destText != null) && (destText.length() > 0)) { // has destroyer
-																		// text
-					writer.write("Vector<SSObject> c = b.getAllParticipants();");
-					writer.write(NEWLINE);
-					writer.write("for(int j=0; j<c.size(); j++)");
-					writer.write(NEWLINE);
-					writer.write(OPEN_BRACK);
-					writer.write(NEWLINE);
-					writer.write("SSObject d = c.elementAt(j);");
-					writer.write(NEWLINE);
-					writer.write("if(d instanceof Employee)");
-					writer.write(NEWLINE);
-					writer.write(OPEN_BRACK);
-					writer.write(NEWLINE);
-					writer.write("((Employee)d).setOverheadText(\"" + destText + "\");");
-					writer.write(NEWLINE);
-					writer.write(CLOSED_BRACK);
-					writer.write(NEWLINE);
-					writer.write("else if(d instanceof Customer)");
-					writer.write(NEWLINE);
-					writer.write(OPEN_BRACK);
-					writer.write(NEWLINE);
-					writer.write("((Customer)d).setOverheadText(\"" + destText + "\");");
-					writer.write(NEWLINE);
-					writer.write(CLOSED_BRACK);
-					writer.write(NEWLINE);
-					writer.write(CLOSED_BRACK);
-					writer.write(NEWLINE);
+				if ((destText != null) && (destText.length() > 0)) { 
+					// has destroyer text
+					conditions.addStatement("$T c = b.getAllParticipants()", vectorOfObjs);
+					conditions.beginControlFlow("for (int j = 0; j < c.size(); j++) {");
+					conditions.addStatement("$T d = c.elementAt(j)", ssObject);
+					conditions.beginControlFlow("if (d instanceof $T) {", employee);
+					conditions.addStatement("(($T) d).setOverheadText($S)", employee, destText);
+					conditions.nextControlFlow("else if (d instanceof $T)", customer);
+					conditions.addStatement("(($T) d).setOverheadText($S)", customer, destText);
+					conditions.endControlFlow();
+					conditions.endControlFlow();
 				}
 			}
 
 			// get any destroyer rules:
-			Vector<Rule> destRules = act.getAllDestroyerRules();
+			Vector<Rule> destRules = actType.getAllDestroyerRules();
 			for (int j = 0; j < destRules.size(); j++) {
 				Rule r = destRules.elementAt(j);
-				writer.write("update(parent, UPDATE_ONE, \"" + r.getName() + "\", b);");
-				writer.write(NEWLINE);
+				conditions.addStatement("update(parent, UPDATE_ONE, \"" + r.getName() + "\", b)");
 			}
-			writer.write("state.getActionStateRepository().get"
-					+ CodeGeneratorUtils.getUpperCaseLeading(act.getName()) + "ActionStateRepository().remove(b);");
-			writer.write(NEWLINE);
+			conditions.addStatement("state.getActionStateRepository().get$LStateRepository().remove(b)", uCaseActionName);
 
 			// game-ending?:
 			// get the highest priority destroyer:
-			if (act.getAllDestroyers().size() > 0) { // has at least one destroyer
-				ActionTypeDestroyer highestPriDest = act.getAllDestroyers().elementAt(0);
-				Vector<ActionTypeDestroyer> allDests = act.getAllDestroyers();
+			if (actType.getAllDestroyers().size() > 0) { // has at least one destroyer
+				ActionTypeDestroyer highestPriDest = actType.getAllDestroyers().elementAt(0);
+				Vector<ActionTypeDestroyer> allDests = actType.getAllDestroyers();
 				for (int j = 0; j < allDests.size(); j++) {
 					ActionTypeDestroyer tempDest = allDests.elementAt(j);
 					if (tempDest.getPriority() > highestPriDest.getPriority()) {
@@ -2291,11 +2003,9 @@ public class RuleExecutorGenerator implements CodeGeneratorConstants {
 				}
 
 				if (highestPriDest.isGameEndingDestroyer()) {
-					writer.write("// stop game and give score:");
-					writer.write(NEWLINE);
-					writer.write(CodeGeneratorUtils.getUpperCaseLeading(act.getName()) + "Action t111 = ("
-							+ CodeGeneratorUtils.getUpperCaseLeading(act.getName()) + "Action)b;");
-					writer.write(NEWLINE);
+					conditions.add("// stop game and give score:\n");
+					conditions.addStatement("$T t111 = ($T)b", actClass, actClass);
+					
 					// find the scoring attribute:
 					ActionTypeParticipantDestroyer scoringPartDest = null;
 					ActionTypeParticipantConstraint scoringPartConst = null;
@@ -2318,56 +2028,42 @@ public class RuleExecutorGenerator implements CodeGeneratorConstants {
 							}
 						}
 					}
+					String scoringPartVarName = scoringPartDest.getParticipant().getName() + "s";
+					String scoringPartConstObj = CodeGeneratorUtils
+							.getUpperCaseLeading(scoringPartConst.getSimSEObjectType().getName());
+					ClassName scoringPartConstObjName = ClassName.get("simse.adts.objects", scoringPartConstObj);
 					if ((scoringAttConst != null) && (scoringPartConst != null) && (scoringPartDest != null)) {
-						writer.write(
-								"if(t111.getAll" + scoringPartDest.getParticipant().getName() + "s().size() > 0)");
-						writer.write(NEWLINE);
-						writer.write(OPEN_BRACK);
-						writer.write(NEWLINE);
-						writer.write(CodeGeneratorUtils
-								.getUpperCaseLeading(scoringPartConst.getSimSEObjectType().getName())
-								+ " t = ("
-								+ CodeGeneratorUtils.getUpperCaseLeading(
-										scoringPartConst.getSimSEObjectType().getName())
-								+ ")(t111.getAll" + scoringPartDest.getParticipant().getName()
-								+ "s().elementAt(0));");
-						writer.write(NEWLINE);
-						writer.write("if(t != null)");
-						writer.write(NEWLINE);
-						writer.write(OPEN_BRACK);
-						writer.write(NEWLINE);
+						conditions.beginControlFlow("if (t111.getAll" + scoringPartVarName + "().size() > 0)");
+						conditions.addStatement("$T t = ($T)(t111.getAll" + scoringPartVarName + "().elementAt(0))"
+								, scoringPartConstObjName, scoringPartConstObjName);
+						conditions.beginControlFlow("if (t != null)");
+						
+						ClassName scoreType = null;
 						if (scoringAttConst.getAttribute().getType() == AttributeTypes.INTEGER) {
-							writer.write("int");
+							scoreType = ClassName.get(int.class);
 						} else if (scoringAttConst.getAttribute().getType() == AttributeTypes.DOUBLE) {
-							writer.write("double");
+							scoreType = ClassName.get(double.class);
 						} else if (scoringAttConst.getAttribute().getType() == AttributeTypes.STRING) {
-							writer.write("String");
+							scoreType = ClassName.get(String.class);
 						} else if (scoringAttConst.getAttribute().getType() == AttributeTypes.BOOLEAN) {
-							writer.write("boolean");
+							scoreType = ClassName.get(boolean.class);
 						}
-						writer.write(" v = t.get" + scoringAttConst.getAttribute().getName() + "();");
-						writer.write(NEWLINE);
-						writer.write("state.getClock().stop();");
-						writer.write(NEWLINE);
-						writer.write("state.setScore(v);");
-						writer.write(NEWLINE);
-						writer.write("((SimSEGUI)parent).update();");
-						writer.write(NEWLINE);
-						writer.write(
-								"JOptionPane.showMessageDialog(null, (\"Your score is \" + v), \"Game over!\", JOptionPane.INFORMATION_MESSAGE);");
-						writer.write(NEWLINE);
-						writer.write(CLOSED_BRACK);
-						writer.write(NEWLINE);
-						writer.write(CLOSED_BRACK);
-						writer.write(NEWLINE);
+						conditions.addStatement("$T v = t.get" + scoringAttConst.getAttribute().getName() + "()", scoreType);
+						conditions.addStatement("state.getClock().stop()");
+						conditions.addStatement("state.setScore(v)");
+						conditions.addStatement("(($T)parent).update()", simseGui);
+						conditions.addStatement("$T d = new $T($T.INFORMATION)", alert, alert, alertType);
+						conditions.addStatement("d.setContentText(($S + v))", "Your score is ");
+						conditions.addStatement("d.setTitle($S)", "Game over!");
+						conditions.addStatement("d.setHeaderText(null)");
+						conditions.addStatement("d.showAndWait()");
+						conditions.endControlFlow();
+						conditions.endControlFlow(); // game ending if condition
 					}
 				}
 			}
-
-			writer.write(CLOSED_BRACK);
-			writer.write(NEWLINE);
-			writer.write(CLOSED_BRACK);
-			writer.write(NEWLINE);
+			conditions.endControlFlow();
+			conditions.endControlFlow();
 		}
 		
 		return conditions;
