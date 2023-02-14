@@ -35,8 +35,8 @@ public class GUIGenerator implements CodeGeneratorConstants {
   private ClockPanelGenerator clockPanelGen; // generates the clock panel
   private TabPanelGenerator tabPanelGen; // generates the tab panel
   private LogoPanelGenerator logoPanelGen; // generates the logo panel
-  private AttributePanelGenerator attPanelGen; // generates the attribute panel
-  private ActionPanelGenerator actPanelGen; // generates the action panel
+  private InformationPanelGenerator attPanelGen; // generates the attribute panel
+  private EmployeesPanelGenerator actPanelGen; // generates the action panel
   private PopupListenerGenerator popupListGen; // generates the PopupListener
                                                // class
   private DisplayedEmployeeGenerator dispEmpGen; // generates the
@@ -44,11 +44,11 @@ public class GUIGenerator implements CodeGeneratorConstants {
   private MapDataGenerator mapDataGen; // generates the MapData class
   private SimSEMapGenerator ssmGen; // generates the SimSEMap class
   private WorldGenerator worldGen; // generates the world
-  private AtAGlanceFramesGenerator glanceFramesGen; // generates the At-A-Glance
+  private OverviewScreensGenerator glanceFramesGen; // generates the At-A-Glance
                                                     // frames for each object
                                                     // meta-type
-  private AtAGlanceTableModelGenerator glanceTblModGen; // generates the
-                                                        // At-A-Glance tables
+  private TableModelGenerator tblModGen; // generates the
+                                                        // tables
                                                         // for each object type
   private SimSEAboutDialogGenerator aboutDialogGen; // generates the About
                                                     // Dialog when you click the
@@ -59,6 +59,10 @@ public class GUIGenerator implements CodeGeneratorConstants {
   private MelloGenerator melloGen;
   
   private PanelsGenerator panelsGen;
+  
+  private InfoScreenGenerator infoGen;
+  
+  private ObjectGraphPanesGenerator objGraphGen;
 
   public GUIGenerator(ModelOptions options, DefinedObjectTypes objTypes, 
       CreatedObjects objs, DefinedActionTypes acts, Hashtable<SimSEObject, 
@@ -78,9 +82,9 @@ public class GUIGenerator implements CodeGeneratorConstants {
         options.getCodeGenerationDestinationDirectory());
     logoPanelGen = new LogoPanelGenerator(
         options.getCodeGenerationDestinationDirectory());
-    attPanelGen = new AttributePanelGenerator(objTypes, 
+    attPanelGen = new InformationPanelGenerator(objTypes, 
         options.getCodeGenerationDestinationDirectory());
-    actPanelGen = new ActionPanelGenerator(objTypes, acts, 
+    actPanelGen = new EmployeesPanelGenerator(objTypes, acts, 
         options.getCodeGenerationDestinationDirectory());
     popupListGen = new PopupListenerGenerator(
         options.getCodeGenerationDestinationDirectory());
@@ -92,9 +96,9 @@ public class GUIGenerator implements CodeGeneratorConstants {
         options.getCodeGenerationDestinationDirectory());
     worldGen = new WorldGenerator(
         options.getCodeGenerationDestinationDirectory());
-    glanceFramesGen = new AtAGlanceFramesGenerator(objTypes, 
+    glanceFramesGen = new OverviewScreensGenerator(objTypes, 
         options.getCodeGenerationDestinationDirectory());
-    glanceTblModGen = new AtAGlanceTableModelGenerator(objTypes, 
+    tblModGen = new TableModelGenerator(objTypes, 
         options.getCodeGenerationDestinationDirectory());
     aboutDialogGen = new SimSEAboutDialogGenerator(
         options.getCodeGenerationDestinationDirectory());
@@ -103,6 +107,10 @@ public class GUIGenerator implements CodeGeneratorConstants {
     melloGen = new MelloGenerator(
     		options.getCodeGenerationDestinationDirectory());
     panelsGen = new PanelsGenerator(
+    		options.getCodeGenerationDestinationDirectory());
+    infoGen = new InfoScreenGenerator(objTypes,
+    		options.getCodeGenerationDestinationDirectory());
+    objGraphGen = new ObjectGraphPanesGenerator(objs, objTypes, 
     		options.getCodeGenerationDestinationDirectory());
   }
 
@@ -141,11 +149,13 @@ public class GUIGenerator implements CodeGeneratorConstants {
 	    ssmGen.generate();
 	    worldGen.generate();
 	    glanceFramesGen.generate();
-	    glanceTblModGen.generate();
+	    tblModGen.generate();
 	    aboutDialogGen.generate();
 	    trackGen.generate();
 	    melloGen.generate();
 	    panelsGen.generate();
+	    infoGen.generate();
+	    objGraphGen.generate();
 	    generateMainGUI();
 	    return true;
 	  }
