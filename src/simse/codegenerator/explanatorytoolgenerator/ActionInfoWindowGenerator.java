@@ -68,33 +68,5 @@ public class ActionInfoWindowGenerator implements CodeGeneratorConstants {
     	JavaFile javaFile = JavaFile.builder("simse.explanatorytool", actionInfoWindow)
     		    .build();
 
-	public void generate() {
-		// TODO Auto-generated method stub
-	    File actionInfoWindowFile = new File(dir,
-	            ("simse\\explanatorytool\\ActionInfoWindow.java"));
-
-	        if (actionInfoWindowFile.exists()) {
-	        	actionInfoWindowFile.delete(); // delete old version of file
-	        }
-
-		try {
-
-		FileReader reader = new FileReader("C:\\Users\\localmgr\\git\\simse-redesign\\simse-redesign\\res\\static\\explanatorytool\\ActionInfoWindow.txt");
-		FileWriter writer = new FileWriter(actionInfoWindowFile);
-
-		String fileContents = "";
-		int index;
-
-		while ((index = reader.read()) != -1) {
-			fileContents += (char)index;
-		}
-		writer.write(fileContents);
-
-		reader.close();
-		writer.close();
-
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
+  }
  }
