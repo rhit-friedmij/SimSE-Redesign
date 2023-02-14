@@ -23,6 +23,9 @@ import java.util.Vector;
 
 import javax.swing.JOptionPane;
 
+import com.squareup.javapoet.CodeBlock;
+import com.squareup.javapoet.TypeSpec;
+
 public class TriggerDescriptionsGenerator implements CodeGeneratorConstants {
   private File directory; // directory to save generated code into
   private DefinedActionTypes actTypes;
@@ -50,27 +53,39 @@ public class TriggerDescriptionsGenerator implements CodeGeneratorConstants {
       writer.write("public class TriggerDescriptions {");
       writer.write(NEWLINE);
 
+      String actionsString = "";
+      
       // go through all actions:
       Vector<ActionType> actions = actTypes.getAllActionTypes();
       for (ActionType act : actions) {
         if (act.isVisibleInExplanatoryTool()) {
           Vector<ActionTypeTrigger> triggers = act.getAllTriggers();
           for (ActionTypeTrigger trigger : triggers) {
-            writer.write("static final String " + act.getName().toUpperCase()
-                + "_" + trigger.getName().toUpperCase() + " = ");
-            writer.write(NEWLINE);
-            writer.write("\"This action occurs ");
+//            writer.write("static final String " + act.getName().toUpperCase()
+//                + "_" + trigger.getName().toUpperCase() + " = ");
+            actionsString += "static final String " + act.getName().toUpperCase()
+                    + "_" + trigger.getName().toUpperCase() + " = ";
+            
+//            writer.write(NEWLINE);
+            actionsString += "\n";
+//            writer.write("\"This action occurs ");
+            actionsString += "\"This action occurs ";
             if (trigger instanceof RandomActionTypeTrigger) {
-              writer.write(((RandomActionTypeTrigger) trigger).getFrequency()
-                  + "% of the time ");
+//              writer.write(((RandomActionTypeTrigger) trigger).getFrequency()
+//                  + "% of the time ");
+              actionsString += ((RandomActionTypeTrigger) trigger).getFrequency()
+                      + "% of the time ";
             } else if (trigger instanceof UserActionTypeTrigger) {
               writer
                   .write("when the user chooses the menu item \\\""
                       + ((UserActionTypeTrigger) trigger).getMenuText()
                       + "\\\" and ");
+              actionsString += "when the user chooses the menu item \\\""
+                      + ((UserActionTypeTrigger) trigger).getMenuText()
+                      + "\\\" and ";
             }
-            writer.write("when the following conditions are met: \\n");
-
+//            writer.write("when the following conditions are met: \\n");
+            actionsString += "when the following conditions are met: \\n";
             // go through all participant conditions:
             Vector<ActionTypeParticipantTrigger> partTriggers = 
             	trigger.getAllParticipantTriggers();
@@ -98,26 +113,40 @@ public class TriggerDescriptionsGenerator implements CodeGeneratorConstants {
                   String attGuard = attConstraint.getGuard();
                   if (attConstraint.isConstrained()) {
                     String condVal = attConstraint.getValue().toString();
-                    writer.write(partName + "." + attName + " (" + typeName
-                        + ") " + attGuard + " ");
+//                    writer.write(partName + "." + attName + " (" + typeName
+//                        + ") " + attGuard + " ");
+                    actionsString += partName + "." + attName + " (" + typeName
+                            + ") " + attGuard + " ";
                     if (attConstraint.getAttribute().getType() == 
                     	AttributeTypes.STRING) {
-                      writer.write("\\\"" + condVal + "\\\"");
+//                      writer.write("\\\"" + condVal + "\\\"");
+                      actionsString += "\\\"" + condVal + "\\\"";
                     } else {
-                      writer.write(condVal);
+//                      writer.write(condVal);
+                      actionsString += condVal;
                     }
-                    writer.write(" \\n");
+//                    writer.write(" \\n");
+                    actionsString += " \\n";
                   }
                 }
               }
             }
-            writer.write("\";");
-            writer.write(NEWLINE);
+//            writer.write("\";");
+            actionsString += "\";";
+//            writer.write(NEWLINE);
+            actionsString += "\n";
           }
         }
       }
       writer.write(CLOSED_BRACK);
       writer.close();
+      
+      TypeSpec triggerDescriptions = TypeSpec.classBuilder("TriggerDescriptions")
+    		  .addStaticBlock(CodeBlock.builder()
+    				  .add(actionsString)
+    				  .build())
+    		  .build();
+      
     } catch (IOException e) {
       JOptionPane.showMessageDialog(null, ("Error writing file "
           + trigDescFile.getPath() + ": " + e.toString()), "File IO Error",

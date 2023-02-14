@@ -17,6 +17,9 @@ import java.util.Vector;
 
 import javax.swing.JOptionPane;
 
+import com.squareup.javapoet.CodeBlock;
+import com.squareup.javapoet.TypeSpec;
+
 public class RuleDescriptionsGenerator implements CodeGeneratorConstants {
   private File directory; // directory to save generated code into
   private DefinedActionTypes actTypes;
@@ -43,6 +46,8 @@ public class RuleDescriptionsGenerator implements CodeGeneratorConstants {
       writer.write(NEWLINE);
       writer.write("public class RuleDescriptions {");
       writer.write(NEWLINE);
+      
+      String actionsString = "";
 
       // go through all actions:
       Vector<ActionType> actions = actTypes.getAllActionTypes();
@@ -52,17 +57,30 @@ public class RuleDescriptionsGenerator implements CodeGeneratorConstants {
           for (int j = 0; j < rules.size(); j++) {
             Rule rule = rules.get(j);
             if (rule.isVisibleInExplanatoryTool()) {
-              writer.write("static final String " + act.getName().toUpperCase()
-                  + "_" + rule.getName().toUpperCase() + " = \""
-                  + rule.getAnnotation().replaceAll("\n", "\\\\n").
-                  replaceAll("\"", "\\\\\"") + "\";");
-              writer.write(NEWLINE);
+              actionsString += "static final String " + act.getName().toUpperCase()
+                      + "_" + rule.getName().toUpperCase() + " = \""
+                      + rule.getAnnotation().replaceAll("\n", "\\\\n").
+                      replaceAll("\"", "\\\\\"") + "\";";
+//              writer.write("static final String " + act.getName().toUpperCase()
+//                  + "_" + rule.getName().toUpperCase() + " = \""
+//                  + rule.getAnnotation().replaceAll("\n", "\\\\n").
+//                  replaceAll("\"", "\\\\\"") + "\";");
+//              writer.write(NEWLINE);
+              actionsString += "\n";
             }
           }
         }
       }
       writer.write(CLOSED_BRACK);
       writer.close();
+      
+      TypeSpec ruleDescriptions = TypeSpec.classBuilder("RuleDescriptions")
+    		  .addStaticBlock(CodeBlock.builder()
+    				  .add(actionsString)
+    				  .build())
+    		  .build();
+    		  
+      
     } catch (IOException e) {
       JOptionPane.showMessageDialog(null, ("Error writing file "
           + ruleDescFile.getPath() + ": " + e.toString()), "File IO Error",
