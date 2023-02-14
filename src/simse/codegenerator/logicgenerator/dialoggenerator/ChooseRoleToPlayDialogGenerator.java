@@ -18,6 +18,7 @@ import simse.modelbuilder.rulebuilder.Rule;
 
 import java.awt.Button;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 
 import java.util.Vector;
@@ -170,7 +171,7 @@ public class ChooseRoleToPlayDialogGenerator implements CodeGeneratorConstants {
 	  
 
 	  ClassName actions = ClassName.get("simse.adts", "actions");
-	  JavaFile javaFile = JavaFile.builder("ChooseRoleToPlayDialog", roleDialog)
+	  JavaFile javaFile = JavaFile.builder("simse.logic.dialogs", roleDialog)
 			  .addStaticImport(actions, "*")  
 			  .build();
 	  
@@ -182,7 +183,10 @@ public class ChooseRoleToPlayDialogGenerator implements CodeGeneratorConstants {
         crtpdFile.delete(); // delete old version of file
       }
       
-      javaFile.writeTo(crtpdFile);
+      FileWriter writer = new FileWriter(crtpdFile);
+      
+      javaFile.writeTo(writer);
+      writer.close();
     } catch (IOException e) {
         JOptionPane.showMessageDialog(null, ("Error writing file "
             + crtpdFile.getPath() + ": " + e.toString()), "File IO Error",

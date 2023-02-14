@@ -93,7 +93,10 @@ public class ADTGenerator implements CodeGeneratorConstants {
 			    .build();
     
     try {
-    	javaFile.writeTo(objClass);
+    	FileWriter writer = new FileWriter(objClass);
+    	
+    	javaFile.writeTo(writer);
+    	writer.close();
     } catch (IOException e) {
         JOptionPane.showMessageDialog(null, ("Error writing file SSObject.java"),
             "File IO Error", JOptionPane.WARNING_MESSAGE);
@@ -363,7 +366,10 @@ public class ADTGenerator implements CodeGeneratorConstants {
     javaFile = JavaFile.builder("Employee", employee)
 		    .build();
     try {
-    	javaFile.writeTo(empClass);
+    	FileWriter writer = new FileWriter(empClass);
+    	
+    	javaFile.writeTo(writer);
+    	writer.close();
     } catch (IOException e) {
         JOptionPane.showMessageDialog(null, ("Error writing file "
             + empClass.getPath() + ": " + e.toString()), "File IO Error",
@@ -540,7 +546,10 @@ public class ADTGenerator implements CodeGeneratorConstants {
 		    .build();
     
     try {
-    	javaFile.writeTo(custClass);
+    	FileWriter writer = new FileWriter(custClass);
+    	
+    	javaFile.writeTo(writer);
+    	writer.close();
     } catch (IOException e) {
       JOptionPane.showMessageDialog(null, ("Error writing file "
           + custClass.getPath() + ": " + e.toString()), "File IO Error",
@@ -654,7 +663,10 @@ public class ADTGenerator implements CodeGeneratorConstants {
 		    .build();
     
     try {
-    	javaFile.writeTo(actClass);
+    	FileWriter writer = new FileWriter(actClass);
+    	
+    	javaFile.writeTo(writer);
+    	writer.close();
     } catch (IOException e) {
         JOptionPane.showMessageDialog(null, ("Error writing file " + actClass
             .getPath()), "File IO Error", JOptionPane.WARNING_MESSAGE);
@@ -798,7 +810,10 @@ public class ADTGenerator implements CodeGeneratorConstants {
 		    .build();
 	
     try {
-    	javaFile.writeTo(absClass);
+    	FileWriter writer = new FileWriter(absClass);
+    	
+    	javaFile.writeTo(writer);
+    	writer.close();
     } catch (IOException e) {
         JOptionPane.showMessageDialog(null, ("Error writing file "
             + absClass.getPath() + ": " + e.toString()), "File IO Error",
@@ -998,7 +1013,10 @@ public class ADTGenerator implements CodeGeneratorConstants {
 		    .build();
     
     try {
-        javaFile.writeTo(adtFile);
+    	FileWriter writer = new FileWriter(adtFile);
+    	
+        javaFile.writeTo(writer);
+        writer.close();
     } catch (IOException e) {
         JOptionPane.showMessageDialog(null, ("Error writing file "
             + adtFile.getPath() + ": " + e.toString()), "File IO Error",
@@ -1356,7 +1374,10 @@ public class ADTGenerator implements CodeGeneratorConstants {
 		    .build();
     
     try {
-        javaFile.writeTo(adtFile);
+    	FileWriter writer = new FileWriter(adtFile);
+    	
+        javaFile.writeTo(writer);
+        writer.close();
     } catch (IOException e) {
         JOptionPane.showMessageDialog(null, ("Error writing file "
             + adtFile.getPath() + ": " + e.toString()), "File IO Error",

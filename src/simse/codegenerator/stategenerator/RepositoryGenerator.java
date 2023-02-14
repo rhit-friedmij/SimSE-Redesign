@@ -278,7 +278,10 @@ public class RepositoryGenerator implements CodeGeneratorConstants {
 		    .build();
     
     try {
-    	javaFile.writeTo(asrFile);
+    	FileWriter writer = new FileWriter(asrFile);
+    	
+    	javaFile.writeTo(writer);
+    	writer.close();
     } catch (IOException e) {
         JOptionPane.showMessageDialog(null, ("Error writing file "
             + asrFile.getPath() + ": " + e.toString()), "File IO Error",
@@ -411,7 +414,10 @@ public class RepositoryGenerator implements CodeGeneratorConstants {
 		    .build();
     
     try {
-    	javaFile.writeTo(repFile);
+    	FileWriter writer = new FileWriter(repFile);
+    	
+    	javaFile.writeTo(writer);
+    	writer.close();
     } catch (IOException e) {
         JOptionPane.showMessageDialog(null, ("Error writing file "
             + repFile.getPath() + ": " + e.toString()), "File IO Error",
@@ -520,7 +526,10 @@ public class RepositoryGenerator implements CodeGeneratorConstants {
 		    .build();
     
     try {
-    	javaFile.writeTo(repFile);
+    	FileWriter writer = new FileWriter(repFile);
+    	
+    	javaFile.writeTo(writer);
+    	writer.close();
     } catch (IOException e) {
         JOptionPane.showMessageDialog(null, ("Error writing file "
             + repFile.getPath() + ": " + e.toString()), "File IO Error",
@@ -705,7 +714,10 @@ public class RepositoryGenerator implements CodeGeneratorConstants {
 		    .build();
     
     try {
-    	javaFile.writeTo(repFile);
+    	FileWriter writer = new FileWriter(repFile);
+    	
+    	javaFile.writeTo(writer);
+    	writer.close();
     } catch (IOException e) {
         JOptionPane.showMessageDialog(null, ("Error writing file "
                 + repFile.getPath() + ": " + e.toString()), "File IO Error",

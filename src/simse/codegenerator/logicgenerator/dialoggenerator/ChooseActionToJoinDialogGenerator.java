@@ -225,7 +225,7 @@ public class ChooseActionToJoinDialogGenerator implements
 			  .build();
 
 	  ClassName actions = ClassName.get("simse.adts", "actions");
-	  JavaFile javaFile = JavaFile.builder("ChooseActionToJoinDialog", joinDialog)
+	  JavaFile javaFile = JavaFile.builder("simse.logic.dialogs", joinDialog)
 			  .addStaticImport(actions, "*")  
 			  .build();
 	  
@@ -236,7 +236,10 @@ public class ChooseActionToJoinDialogGenerator implements
         catjdFile.delete(); // delete old version of file
       }
       
-      javaFile.writeTo(catjdFile);
+      FileWriter writer = new FileWriter(catjdFile);
+      
+      javaFile.writeTo(writer);
+      writer.close();
       
     } catch (IOException e) {
       JOptionPane.showMessageDialog(null, ("Error writing file "

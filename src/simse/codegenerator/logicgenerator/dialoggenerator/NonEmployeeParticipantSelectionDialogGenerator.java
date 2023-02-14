@@ -317,7 +317,10 @@ public class NonEmployeeParticipantSelectionDialogGenerator implements
         psdFile.delete(); // delete old version of file
       }
       
-      javaFile.writeTo(psdFile);
+      FileWriter writer = new FileWriter(psdFile);
+      
+      javaFile.writeTo(writer);
+      writer.close();
       
     } catch (IOException e) {
         JOptionPane.showMessageDialog(null, ("Error writing file "

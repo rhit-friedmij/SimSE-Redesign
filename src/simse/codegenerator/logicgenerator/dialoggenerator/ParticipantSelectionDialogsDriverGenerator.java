@@ -214,7 +214,10 @@ public class ParticipantSelectionDialogsDriverGenerator implements
         psddFile.delete(); // delete old version of file
       }
       
-      javaFile.writeTo(psddFile);
+      FileWriter writer = new FileWriter(psddFile);
+      
+      javaFile.writeTo(writer);
+      writer.close();
     } catch (IOException e) {
         JOptionPane.showMessageDialog(null, ("Error writing file "
             + psddFile.getPath() + ": " + e.toString()), "File IO Error",
