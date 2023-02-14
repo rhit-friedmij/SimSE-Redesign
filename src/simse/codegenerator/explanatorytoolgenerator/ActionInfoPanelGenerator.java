@@ -77,12 +77,6 @@ public class ActionInfoPanelGenerator implements CodeGeneratorConstants {
           } else {
             writeElse = true;
           }
-//          writer.write("if (action instanceof " + uCaseName + "Action) {");
-//          writer.write(NEWLINE);
-//          writer.write("text = \"" + 
-//              act.getAnnotation().replaceAll("\n", "\\\\n").
-//              replaceAll("\"", "\\\\\"") + "\";");
-//          writer.write(NEWLINE);
           initalizeActionDescriptionActions += "if (action instanceof " + uCaseName + "Action) {\n";
           initalizeActionDescriptionActions += "text = \"" + 
                   act.getAnnotation().replaceAll("\n", "\\\\n").
@@ -108,31 +102,18 @@ public class ActionInfoPanelGenerator implements CodeGeneratorConstants {
           String uCaseName = 
           	CodeGeneratorUtils.getUpperCaseLeading(act.getName());
           if (writeElse) {
-//            writer.write("else ");
             initalizeDestroyerListBlock += "else ";
           } else {
             writeElse = true;
           }
-//          writer.write("if (action instanceof " + uCaseName + "Action) {");
-//          writer.write(NEWLINE);
           initalizeDestroyerListBlock += "if (action instanceof " + uCaseName + "Action) {\n";
-//          writer.write("String [] list = {");
-//          writer.write(NEWLINE);
           initalizeDestroyerListBlock += "String [] list = {\n";
           Vector<ActionTypeDestroyer> destroyers = act.getAllDestroyers();
           for (ActionTypeDestroyer destroyer : destroyers) {
-//            writer.write("\"" + destroyer.getName() + "\",");
-//            writer.write(NEWLINE);
             initalizeDestroyerListBlock += "\"" + destroyer.getName() + "\",\n";
           }
-//          writer.write("};");
-//          writer.write(NEWLINE);
           initalizeDestroyerListBlock += "};\n";
-//          writer.write("destroyerList.setListData(list);");
-//          writer.write(NEWLINE);
           initalizeDestroyerListBlock += "destroyerList.setListData(list);\n";
-//          writer.write(CLOSED_BRACK);
-//          writer.write(NEWLINE);
           initalizeDestroyerListBlock += "}\n";
         }
       }
@@ -183,20 +164,13 @@ public class ActionInfoPanelGenerator implements CodeGeneratorConstants {
         	CodeGeneratorUtils.getUpperCaseLeading(act.getName());
         if (act.isVisibleInExplanatoryTool()) {
           if (writeElse) {
-//            writer.write("else ");
             participantsTableActions += "else ";
           } else {
             writeElse = true;
           }
-//          writer.write("if (action instanceof " + uCaseName + "Action) {");
-//          writer.write(NEWLINE);
           participantsTableActions += "if (action instanceof " + uCaseName + "Action) {\n";
-//    			writer.write(uCaseName + "Action " + uCaseName.toLowerCase() +
-//    					"Action = (" + uCaseName + "Action)action;");
-//    			writer.write(NEWLINE);
 		  participantsTableActions += uCaseName + "Action " + uCaseName.toLowerCase() +
 					"Action = (" + uCaseName + "Action)action;\n";
-//          writer.write(NEWLINE);
 
           // go through all participants:
           Vector<ActionTypeParticipant> participants = act.getAllParticipants();
@@ -204,36 +178,17 @@ public class ActionInfoPanelGenerator implements CodeGeneratorConstants {
             String metaType = SimSEObjectTypeTypes.getText(part
                 .getSimSEObjectTypeType());
             String lCasePartName = part.getName().toLowerCase();
-//            writer.write(" // " + part.getName() + " participant:");
-//            writer.write(NEWLINE);
   		  participantsTableActions += " // " + part.getName() + " participant:\n";
-//            writer.write("Vector<" + metaType + "> " + lCasePartName + "s = " +
-//            		uCaseName.toLowerCase() + "Action.getAll" + part.getName() + 
-//            		"s();");
-//            writer.write(NEWLINE);
             participantsTableActions += "Vector<" + metaType + "> " + lCasePartName + "s = " +
             		uCaseName.toLowerCase() + "Action.getAll" + part.getName() + 
             		"s();\n";
-//            writer
-//                .write("Vector<" + metaType + "> active" + part.getName() + 
-//                		"s = " + uCaseName.toLowerCase() + "Action.getAllActive" + 
-//                		part.getName() + "s();");
-//            writer.write(NEWLINE);
             participantsTableActions += "Vector<" + metaType + "> active" + part.getName() + 
             		"s = " + uCaseName.toLowerCase() + "Action.getAllActive" + 
             		part.getName() + "s();\n";
-//            writer.write("for (int i = 0; i < " + lCasePartName
-//                + "s.size(); i++) {");
-//            writer.write(NEWLINE);
             participantsTableActions += "for (int i = 0; i < " + lCasePartName
                     + "s.size(); i++) {\n";
-//            writer.write(metaType + " " + lCasePartName + " = " + 
-//            		lCasePartName + "s.get(i);");
-//            writer.write(NEWLINE);
             participantsTableActions += metaType + " " + lCasePartName + " = " + 
             		lCasePartName + "s.get(i);\n";
-//            writer.write("data[index][0] = \"" + part.getName() + "\";");
-//            writer.write(NEWLINE);
             participantsTableActions += "data[index][0] = \"" + part.getName() + "\";\n";
 
             // go through all allowable SimSEObjectTypes:
@@ -246,108 +201,49 @@ public class ActionInfoPanelGenerator implements CodeGeneratorConstants {
               	CodeGeneratorUtils.getUpperCaseLeading(part.getName());
               if (k < 0) {
               }
-//              writer.write("if (" + lCasePartName + " instanceof "
-//                  + uCaseTypeName + ") {");
-//              writer.write(NEWLINE);
               participantsTableActions += "if (" + lCasePartName + " instanceof "
                       + uCaseTypeName + ") {\n";
               Attribute keyAtt = type.getKey();
               String uCaseAttName = 
               	CodeGeneratorUtils.getUpperCaseLeading(keyAtt.getName());
-//              writer.write(uCaseTypeName + " " + uCaseTypeName.toLowerCase() +
-//              		uCasePartName + " = (" + uCaseTypeName + ")" + lCasePartName +
-//              		";");
-//              writer.write(NEWLINE);
               participantsTableActions += uCaseTypeName + " " + uCaseTypeName.toLowerCase() +
                 		uCasePartName + " = (" + uCaseTypeName + ")" + lCasePartName +
                   		";\n";
-//              writer.write(NEWLINE);
-//              participantsTableActions += "data[index][1] = \"" + type.getName() + " "
-//                      + metaType + " \" + " + uCaseTypeName.toLowerCase() +
-//                		uCasePartName + ".get" + uCaseAttName + "();\n\n";
-//              writer.write(NEWLINE);
-//              writer.write("// find out whether it's active or not:");
-//              writer.write(NEWLINE);
               participantsTableActions +="// find out whether it's active or not:\n";
-//              writer.write("boolean active = false;");
-//              writer.write(NEWLINE);
               participantsTableActions += "boolean active = false;\n";
-//              writer.write("for (int j = 0; j < active" + part.getName()
-//                  + "s.size(); j++) {");
-//              writer.write(NEWLINE);
               participantsTableActions += "boolean active = false;\n";
-//              writer.write("for (int j = 0; j < active" + part.getName()
-//              + "s.size(); j++) {\n";
               participantsTableActions += "for (int j = 0; j < active" + part.getName()
               + "s.size(); j++) {\n";
-//              writer.write(metaType + " active" + part.getName() + " = active" +
-//              		part.getName() + "s.get(j);");
-//              writer.write(NEWLINE);
               participantsTableActions += metaType + " active" + part.getName() + " = active" +
                 		part.getName() + "s.get(j);\n";
-//              writer.write("if ((active" + part.getName() + " instanceof "
-//                  + uCaseTypeName + ") && ((" + uCaseTypeName + ")active"
-//                  + part.getName() + ").get");
               participantsTableActions += "if ((active" + part.getName() + " instanceof "
                       + uCaseTypeName + ") && ((" + uCaseTypeName + ")active"
                       + part.getName() + ").get";
-//              writer.write(uCaseAttName + "()");
               participantsTableActions += uCaseAttName + "()";
               if (keyAtt.getType() == AttributeTypes.STRING) {
-//                writer.write(".equals(");
                 participantsTableActions += ".equals(";
               } else { // non-string
-//                writer.write(" == ");
                 participantsTableActions += " == ";
               }
-//              writer.write("((" + uCaseTypeName + ")" + lCasePartName + ").get"
-//                  + uCaseAttName + "())");
               participantsTableActions += "((" + uCaseTypeName + ")" + lCasePartName + ").get"
                       + uCaseAttName + "())";
               if (keyAtt.getType() == AttributeTypes.STRING) {
-//                writer.write(")");
                 participantsTableActions += ")";
               }
-//              writer.write(" {");
-//              writer.write(NEWLINE);
               participantsTableActions += " {\n";
-//              writer.write("active = true;");
-//              writer.write(NEWLINE);
               participantsTableActions += "active = true\n";
-//              writer.write("break;");
-//              writer.write(NEWLINE);
               participantsTableActions += "break;\n";
-//              writer.write(CLOSED_BRACK);
-//              writer.write(NEWLINE);
               participantsTableActions += "}\n";
-//              writer.write(CLOSED_BRACK);
-//              writer.write(NEWLINE);
               participantsTableActions += "}\n";
-//              writer
-//                  .write("data[index][2] = active ? \"Active\" : \"Inactive\";");
-//              writer.write(NEWLINE);
               participantsTableActions += "data[index][2] = active ? \"Active\" : \"Inactive\";\n";
-//              writer.write(CLOSED_BRACK);
-//              writer.write(NEWLINE);
               participantsTableActions += "}\n";
             }
-//            writer.write("index++;");
-//            writer.write(NEWLINE);
             participantsTableActions += "index++;\n";
-//            writer.write(CLOSED_BRACK);
-//            writer.write(NEWLINE);
             participantsTableActions += "}\n";
           }
-//          writer.write(CLOSED_BRACK);
-//          writer.write(NEWLINE);
           participantsTableActions += "}\n";
         }
       }
-//      writer.write("return new JTable(data, columnNames);");
-//      writer.write(NEWLINE);
-//      writer.write(CLOSED_BRACK);
-//      writer.write(NEWLINE);
-//      writer.write(NEWLINE);
       
       MethodSpec createParticipantsTable = MethodSpec.methodBuilder("createParticipantsTable")
     		  .returns(ParameterizedTypeName.get(tableView, participant))
@@ -456,16 +352,11 @@ public class ActionInfoPanelGenerator implements CodeGeneratorConstants {
         String capsName = act.getName().toUpperCase();
         if (act.isVisibleInExplanatoryTool()) {
           if (writeElse) {
-//            writer.write("else ");
         	  refreshDescriptionAreaBlock += "else ";
           } else {
             writeElse = true;
           }
-//          writer.write("if (action instanceof " + uCaseName + "Action) {");
-//          writer.write(NEWLINE);
           refreshDescriptionAreaBlock += "if (action instanceof " + uCaseName + "Action) {\n";
-//          writer.write("// triggers:");
-//          writer.write(NEWLINE);
           refreshDescriptionAreaBlock += "// triggers:\n";
 
           // go through all triggers:
@@ -476,18 +367,10 @@ public class ActionInfoPanelGenerator implements CodeGeneratorConstants {
             if (j > 0) {
               refreshDescriptionAreaBlock += "else ";
             }
-//            writer.write("if (trigOrDest == TRIGGER && name.equals(\""
-//                + trigger.getName() + "\")) {");
-//            writer.write(NEWLINE);
             refreshDescriptionAreaBlock += "if (trigOrDest == TRIGGER && name.equals(\""
                     + trigger.getName() + "\")) {\n";
-//            writer.write("text = TriggerDescriptions." + capsName + "_"
-//                + triggerCapsName + ";");
-//            writer.write(NEWLINE);
             refreshDescriptionAreaBlock += "text = TriggerDescriptions." + capsName + "_"
                     + triggerCapsName + ";\n";
-//            writer.write(CLOSED_BRACK);
-//            writer.write(NEWLINE);
             refreshDescriptionAreaBlock += "}\n";
           }
 
@@ -498,25 +381,14 @@ public class ActionInfoPanelGenerator implements CodeGeneratorConstants {
                 .get(j);
             String destroyerCapsName = destroyer.getName().toUpperCase();
             if (j > 0) {
-//              writer.write("else ");
             	refreshDescriptionAreaBlock += "else ";
             }
-//            writer.write("if (trigOrDest == DESTROYER && name.equals(\""
-//                + destroyer.getName() + "\")) {");
-//            writer.write(NEWLINE);
             refreshDescriptionAreaBlock += "if (trigOrDest == DESTROYER && name.equals(\""
                     + destroyer.getName() + "\")) {\n";
-//            writer.write("text = DestroyerDescriptions." + capsName + "_"
-//                + destroyerCapsName + ";");
-//            writer.write(NEWLINE);
             refreshDescriptionAreaBlock += "text = DestroyerDescriptions." + capsName + "_"
                     + destroyerCapsName + ";\n";
-//            writer.write(CLOSED_BRACK);
-//            writer.write(NEWLINE);
             refreshDescriptionAreaBlock += "}\n";
           }
-//          writer.write(CLOSED_BRACK);
-//          writer.write(NEWLINE);
           refreshDescriptionAreaBlock += "}\n";
         }
       }
