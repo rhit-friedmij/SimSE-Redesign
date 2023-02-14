@@ -208,7 +208,7 @@ public class RuleInfoPanelGenerator implements CodeGeneratorConstants {
 //          writer.write(NEWLINE);
           initalizeRuleListCodeBlock += "};";
           initalizeRuleListCodeBlock += "\n";
-          initalizeRuleListCodeBlock += "triggerRuleList.setListData(trigList);";
+          initalizeRuleListCodeBlock += "triggerRuleList.getItems().setAll(trigList);";
           initalizeRuleListCodeBlock += "\n";
         }
         Vector<Rule> destRules = actionItem.getAllDestroyerRules();
@@ -229,7 +229,7 @@ public class RuleInfoPanelGenerator implements CodeGeneratorConstants {
           }
           initalizeRuleListCodeBlock += "};";
           initalizeRuleListCodeBlock += "\n";
-          initalizeRuleListCodeBlock += "destroyerRuleList.setListData(destList);";
+          initalizeRuleListCodeBlock += "destroyerRuleList.getItems().setAll(destList);";
           initalizeRuleListCodeBlock += "\n";
 //          writer.write("};");
 //          writer.write(NEWLINE);
@@ -255,7 +255,7 @@ public class RuleInfoPanelGenerator implements CodeGeneratorConstants {
           }
           initalizeRuleListCodeBlock += "};";
           initalizeRuleListCodeBlock += "\n";
-          initalizeRuleListCodeBlock += "intermediateRuleList.setListData(intList);";
+          initalizeRuleListCodeBlock += "intermediateRuleList.getItems().setAll(intList);";
           initalizeRuleListCodeBlock += "\n";
 //          writer.write("};");
 //          writer.write(NEWLINE);
@@ -594,16 +594,16 @@ public class RuleInfoPanelGenerator implements CodeGeneratorConstants {
         }
       }
       MethodSpec refreshDescriptionArea = MethodSpec.methodBuilder("refreshDescriptionArea")
-    		  .addStatement("String name = null")
+    		  .addStatement("$T name = null", string)
     		  .beginControlFlow("if (!triggerRuleList.getSelectionModel().isEmpty())")
-    		  .addStatement("name = (String) triggerRuleList.getSelectionModel().getSelectedItem()")
+    		  .addStatement("name = ($T) triggerRuleList.getSelectionModel().getSelectedItem()", string)
     		  .nextControlFlow("else if (!destroyerRuleList.getSelectionModel().isEmpty())")
-    		  .addStatement("name = (String) destroyerRuleList.getSelectionModel().getSelectedItem()")
+    		  .addStatement("name = ($T) destroyerRuleList.getSelectionModel().getSelectedItem()", string)
     		  .nextControlFlow("else if (!intermediateRuleList.getSelectionModel().isEmpty())")
-    		  .addStatement("name = (String) intermediateRuleList.getSelectionModel().getSelectedItem()")
+    		  .addStatement("name = ($T) intermediateRuleList.getSelectionModel().getSelectedItem()", string)
     		  .endControlFlow()
     		  .beginControlFlow("if (name != null)")
-    		  .addStatement("String text = RuleCategories.getRuleMapping(name)")
+    		  .addStatement("$T text = RuleCategories.getRuleMapping(name)", string, ruleCategories)
     		  .addStatement("descriptionArea.setText(text)")
     		  .addStatement("descriptionArea.positionCaret(0)")
     		  .endControlFlow()
