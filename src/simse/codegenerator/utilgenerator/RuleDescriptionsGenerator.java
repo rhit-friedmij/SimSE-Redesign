@@ -51,11 +51,6 @@ public class RuleDescriptionsGenerator implements CodeGeneratorConstants {
                       + "_" + rule.getName().toUpperCase() + " = \""
                       + rule.getAnnotation().replaceAll("\n", "\\\\n").
                       replaceAll("\"", "\\\\\"") + "\";";
-//              writer.write("static final String " + act.getName().toUpperCase()
-//                  + "_" + rule.getName().toUpperCase() + " = \""
-//                  + rule.getAnnotation().replaceAll("\n", "\\\\n").
-//                  replaceAll("\"", "\\\\\"") + "\";");
-//              writer.write(NEWLINE);
               actionsString += "\n";
             }
           }
