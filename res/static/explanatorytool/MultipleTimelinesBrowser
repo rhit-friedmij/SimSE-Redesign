@@ -1,0 +1,424 @@
+package simse.explanatorytool;
+
+import java.util.ArrayList;
+import java.util.Optional;
+
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartRenderingInfo;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.annotations.XYTextAnnotation;
+import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.axis.ValueAxis;
+import org.jfree.chart.fx.ChartViewer;
+import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
+import org.jfree.chart.ui.RectangleEdge;
+import org.jfree.chart.ui.RectangleInsets;
+import org.jfree.chart.ui.TextAnchor;
+import org.jfree.data.Range;
+import org.jfree.data.xy.XYDataItem;
+import org.jfree.data.xy.XYDataset;
+import org.jfree.data.xy.XYSeries;
+import org.jfree.data.xy.XYSeriesCollection;
+
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.scene.Scene;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.SeparatorMenuItem;
+import javafx.scene.control.TextInputDialog;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.paint.Color;
+import javafx.stage.Stage;
+import simse.SimSE;
+import simse.gui.SimSEGUI;
+import simse.gui.util.JavaFXHelpers;
+import simse.state.Clock;
+import simse.state.State;
+import simse.state.logger.Logger;
+
+public class MultipleTimelinesBrowser extends Stage implements EventHandler<MouseEvent> {
+	private static final String ROOT_GAME_NAME = "ROOT GAME";
+	private JFreeChart chart; // chart object
+	private ChartViewer chartViewer;
+	private MenuItem newBranchItem;
+	private SeparatorMenuItem separator;
+	private Branch lastRightClickedBranch; // last branch that was right-clicked on
+	private int lastRightClickedX; // last x-val that was right-clicked on
+	private XYSeriesCollection dataset;
+	private int unnamedBranchesIndex;
+
+	private EventHandler<ActionEvent> menuEvent = new EventHandler<ActionEvent>() {
+        private String newBranchName = null;
+        
+		public void handle(ActionEvent event) {
+        	Object source = event.getSource();
+        	if (source == newBranchItem) {
+        		TextInputDialog td = new TextInputDialog();
+    			td.setTitle("Name New Branch");
+    			td.setContentText("Please name this new game:");
+    			td.setHeaderText(null);
+    			Optional<String> result = td.showAndWait();
+    			result.ifPresent(name -> {
+    				this.newBranchName = name;
+    			});
+    			if (newBranchName != null) {
+    				if ((lastRightClickedBranch != null) && (lastRightClickedX >= 0)) {
+    					// find branch index:
+    					for (int i = 0; i < SimSE.getBranches().size(); i++) {
+    						Branch tempBranch = SimSE.getBranches().get(i);
+    						if (lastRightClickedBranch == tempBranch) {
+    							// bring up branch (if not closed):
+    							SimSEGUI g = SimSE.getGUIs().get(i);
+    							if (!lastRightClickedBranch.isClosed()) {
+    								ArrayList<State> log = g.getSimSEState().getLogger().getLog();
+    								State tempState = (State) log.get(lastRightClickedX).clone();
+    								Logger tempLogger = new Logger(tempState,
+    										new ArrayList<State>(log.subList(0, lastRightClickedX)));
+    								Clock tempClock = new Clock(tempLogger, lastRightClickedX);
+    								tempState.setClock(tempClock);
+    								tempState.setLogger(tempLogger);
+    								SimSE.startNewBranch(tempState, new Branch(newBranchName, lastRightClickedX,
+    										tempClock.getTime(), lastRightClickedBranch, null));
+    							}
+    						}
+    					}
+    				}
+    			}
+        	}
+        }
+    };
+	
+	public MultipleTimelinesBrowser() {
+		super();
+		setTitle("Multiple Timelines Browser");
+		// create dataset:
+		dataset = new XYSeriesCollection();
+		XYDataset xydataset = createDataset();
+		chart = createChart(xydataset);
+		resetAnnotations();
+		setSeriesStrokes();
+		chartViewer = new ChartViewer(chart);
+		setChartColors();
+		chartViewer.addEventHandler(MouseEvent.MOUSE_CLICKED, this);
+		chartViewer.setPrefSize(500, 270);
+		setScene(new Scene(chartViewer));
+		newBranchItem = new MenuItem("Start new game from here");
+		newBranchItem.setOnAction(menuEvent);
+		separator = new SeparatorMenuItem();
+		lastRightClickedBranch = null;
+		lastRightClickedX = -1;
+		unnamedBranchesIndex = 0;
+	}
+
+	// Creates the dataset for this graph
+	private XYDataset createDataset() {
+		for (int i = 0; i < SimSE.getBranches().size(); i++) {
+			Branch b = SimSE.getBranches().get(i);
+			XYSeries newSeries = null;
+			if (b.getRoot() == null) { // root game
+				newSeries = new XYSeries(ROOT_GAME_NAME);
+			} else { // non-root game
+				if (b.getName() == null) {
+					newSeries = new XYSeries(unnamedBranchesIndex);
+					unnamedBranchesIndex++;
+				} else { // game has a name
+					newSeries = new XYSeries(b.getName());
+				}
+				// add branch line:
+				for (int j = 0; j < SimSE.getBranches().size(); j++) {
+					// find root:
+					if (SimSE.getBranches().get(j) == b.getRoot()) { // found
+																		// the
+																		// root
+						newSeries.add(b.getStartTick(), (j * 10 + 1));
+					}
+				}
+			}
+			newSeries.add(b.getStartTick(), (i * 10 + 1));
+			newSeries.add(b.getEndTick(), (i * 10 + 1));
+			dataset.addSeries(newSeries);
+		}
+		return dataset;
+	}
+
+	private void setChartColors() {
+		chartViewer.backgroundProperty().set(JavaFXHelpers.createBackgroundColor(Color.WHITE));
+	}
+	
+	// Creates the chart for this graph
+	private JFreeChart createChart(XYDataset dataset) {
+		// create the chart:
+		JFreeChart chart = ChartFactory.createXYLineChart(this.getTitle(),
+				"Clock Ticks", null, dataset, PlotOrientation.VERTICAL, true,
+				true, false);
+		XYPlot plot = (XYPlot) chart.getPlot();
+		plot.setBackgroundPaint(java.awt.Color.WHITE);
+		plot.setAxisOffset(new RectangleInsets(5.0, 5.0, 5.0, 5.0));
+		plot.setDomainGridlinesVisible(true);
+		plot.setRangeGridlinesVisible(false);
+		ValueAxis rangeAxis = plot.getRangeAxis();
+		rangeAxis.setTickLabelsVisible(false);
+		rangeAxis.setTickMarksVisible(false);
+		rangeAxis.setAxisLineVisible(false);
+		rangeAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
+		XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) plot.getRenderer();
+		// had to change these to setting the default, should still update just might 
+		// have some different functionality, keep an eye out
+		renderer.setDefaultShapesVisible(false); 
+		renderer.setDefaultShapesFilled(false);
+		renderer.setDrawSeriesLineAsPath(true);
+
+		// change the auto tick unit selection to integer units only:
+		NumberAxis domainAxis = (NumberAxis) plot.getDomainAxis();
+		domainAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
+
+		return chart;
+	}
+
+	public void update() {
+		if (SimSE.getBranches().size() > dataset.getSeriesCount()) { // need to
+																		// add
+																		// new
+																		// series
+			int numNewSeries = SimSE.getBranches().size() - dataset.getSeriesCount();
+			while (numNewSeries > 0) {
+				Branch newBranch = SimSE.getBranches().get(dataset.getSeriesCount());
+				XYSeries newSeries = null;
+				if (newBranch.getRoot() == null) { // root game
+					newSeries = new XYSeries(ROOT_GAME_NAME);
+				} else { // non-root game
+					if (newBranch.getName() == null) {
+						newSeries = new XYSeries(unnamedBranchesIndex);
+						unnamedBranchesIndex++;
+					} else { // game has a name
+						newSeries = new XYSeries(newBranch.getName());
+					}
+					// add branch line:
+					for (int j = 0; j < SimSE.getBranches().size(); j++) {
+						// find root:
+						if (SimSE.getBranches().get(j) == newBranch.getRoot()) { // found
+																					// the
+																					// root
+							newSeries.add(newBranch.getStartTick(), (j * 10 + 1));
+						}
+					}
+				}
+				dataset.addSeries(newSeries);
+				newSeries.add(newBranch.getStartTick(), (dataset.indexOf(newSeries.getKey()) * 10 + 1));
+				newSeries.add(newBranch.getEndTick(), (dataset.indexOf(newSeries.getKey()) * 10 + 1));
+				((XYLineAndShapeRenderer) ((XYPlot) chart.getPlot()).getRenderer()).setSeriesStroke(
+						(dataset.getSeriesCount() - 1), new java.awt.BasicStroke(10));
+				numNewSeries--;
+			}
+		}
+		// add a new end data point for each series if needed
+		for (int i = 0; i < SimSE.getBranches().size(); i++) {
+			// check each branch's series and see if its largest x value is less
+			// than
+			// that branch's endTick. if so, add a new point:
+			Branch b = SimSE.getBranches().get(i);
+			if (!b.isClosed()
+					&& ((b.getScore() == null) || (b.getScore().equals("-1")))) { // game
+																					// is
+																					// open
+																					// and
+																					// hasn't
+																					// ended
+																					// yet
+				int itemCount = dataset.getSeries(i).getItemCount();
+				XYDataItem lastItem = dataset.getSeries(i).getDataItem(itemCount - 1);
+
+				if (lastItem.getX().intValue() < b.getEndTick()) { // series
+																	// needs to
+																	// be
+																	// updated
+																	// with new
+																	// end tick
+					dataset.getSeries(i).add(b.getEndTick(), (i * 10 + 1));
+				}
+			}
+		}
+		setSeriesStrokes();
+		resetAnnotations();
+	}
+
+	private void resetAnnotations() {
+		XYPlot plot = (XYPlot) chart.getPlot();
+		plot.clearAnnotations();
+		java.awt.Font font = new java.awt.Font("SansSerif", java.awt.Font.BOLD, 12);
+		for (int i = 0; i < SimSE.getBranches().size(); i++) {
+			Branch b = SimSE.getBranches().get(i);
+			String str = new String();
+			if (b.getScore() != null && !b.getScore().equals("-1")) { // has a
+																		// score
+				str = "  " + b.getScore();
+			}
+			if (str.length() > 0) {
+				XYTextAnnotation annotation = new XYTextAnnotation(str,
+						b.getEndTick(), i * 10 + 1);
+				annotation.setTextAnchor(TextAnchor.HALF_ASCENT_LEFT);
+				annotation.setFont(font);
+				plot.addAnnotation(annotation);
+			}
+		}
+	}
+
+	private void setSeriesStrokes() {
+		XYPlot plot = (XYPlot) chart.getPlot();
+		XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) plot
+				.getRenderer();
+		for (int i = 0; i < dataset.getSeriesCount(); i++) {
+			if (SimSE.getBranches().get(i).isClosed()) { // make dashed line
+				renderer.setSeriesStroke(i, new java.awt.BasicStroke(10,
+						java.awt.BasicStroke.CAP_BUTT, java.awt.BasicStroke.JOIN_MITER, 1.0f,
+						new float[] { 5.0f, 5.0f }, 10.0f));
+			} else { // game is open; make solid line
+				renderer.setSeriesStroke(i, new java.awt.BasicStroke(10));
+			}
+		}
+	}
+	
+	@Override
+	public void handle(MouseEvent e) {
+		if (e.getSource() == chartViewer) {
+			if (e.getButton() == MouseButton.PRIMARY) { // left-click
+				Branch b = getBranchClickedOn(e);
+				if (b != null) {
+					// find branch index:
+					for (int i = 0; i < SimSE.getBranches().size(); i++) {
+						Branch tempBranch = SimSE.getBranches().get(i);
+						if (b == tempBranch) {
+							// bring up branch (if not closed):
+							SimSEGUI g = SimSE.getGUIs().get(i);
+							if (!b.isClosed()) {
+								if (g.isIconified()) {
+									g.setIconified(false);
+								}
+								g.show();
+							}
+						}
+					}
+				}
+			} else { // not left-click
+				Branch b = getBranchClickedOn(e);
+				boolean valid = true;
+				if ((b != null) && (!b.isClosed())
+						&& (b.getEndTick() != b.getStartTick())) { // clicked on a
+																	// valid branch
+					lastRightClickedBranch = b;
+					if (chartViewer.getContextMenu().getItems().indexOf(newBranchItem) == -1) { // no new branch item on menu currently
+						chartViewer.getContextMenu().getItems().add(separator);
+						chartViewer.getContextMenu().getItems().add(newBranchItem);
+					}
+	
+					// set last right clicked X:
+					XYPlot plot = chart.getXYPlot();
+					Range domainRange = plot.getDataRange(plot.getDomainAxis());
+					if (domainRange != null) { // chart is not blank
+						ChartRenderingInfo info = this.chartViewer.getRenderingInfo();
+						java.awt.geom.Rectangle2D dataArea = info.getPlotInfo().getDataArea();
+						NumberAxis domainAxis = (NumberAxis) plot.getDomainAxis();
+						RectangleEdge domainAxisEdge = plot.getDomainAxisEdge();
+						double chartX = domainAxis.java2DToValue(e.getX(), dataArea, domainAxisEdge);
+						int intX = (int) Math.rint(chartX);
+						if (intX < lastRightClickedBranch.getEndTick()) { // not end tick
+							lastRightClickedX = intX;
+						} else {
+							valid = false;
+						}
+					}
+				} else { // did not click on a valid branch segment
+					valid = false;
+				}
+				if (!valid) {
+					lastRightClickedBranch = null;
+					lastRightClickedX = -1;
+					if (chartViewer.getContextMenu().getItems().indexOf(newBranchItem) >= 0) {
+						// new branch item currently on menu
+						chartViewer.getContextMenu().getItems().remove(newBranchItem);
+						if (chartViewer.getContextMenu().getItems().indexOf(separator) >= 0) {
+							// has separator
+							chartViewer.getContextMenu().getItems().remove(separator);
+						}
+					}
+				}
+			}
+		} 
+	}
+
+	private Branch getBranchClickedOn(MouseEvent me) {
+		XYPlot plot = chart.getXYPlot();
+		Range domainRange = plot.getDataRange(plot.getDomainAxis());
+		if (domainRange != null) { // chart is not blank
+			ChartRenderingInfo info = this.chartViewer.getRenderingInfo();
+			java.awt.geom.Rectangle2D dataArea = info.getPlotInfo().getDataArea();
+			NumberAxis domainAxis = (NumberAxis) plot.getDomainAxis();
+			RectangleEdge domainAxisEdge = plot.getDomainAxisEdge();
+			double dblX = domainAxis.java2DToValue(me.getX(), dataArea,
+					domainAxisEdge);
+			int intX = (int) Math.rint(dblX);
+			NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
+			RectangleEdge rangeAxisEdge = plot.getRangeAxisEdge();
+			double dblY = rangeAxis.java2DToValue(me.getY(), dataArea,rangeAxisEdge);
+			int intY = (int) Math.rint(dblY);
+
+			// first check if it was a vertical branch segment that was clicked
+			// on:
+			// go through all branches and find any that start at that x:
+			ArrayList<Integer> branchIndices = new ArrayList<Integer>();
+			for (int i = 0; i < SimSE.getBranches().size(); i++) {
+				Branch b = SimSE.getBranches().get(i);
+				if (b.getStartTick() == intX) {
+					branchIndices.add(i);
+				}
+			}
+
+			// go through all possible branches and check if the clicked-on y
+			// val was on its vertical branch:
+			for (Integer i : branchIndices) {
+				Branch root = SimSE.getBranches().get(i.intValue()).getRoot();
+				int rootIndex = -1;
+
+				// find index of root:
+				for (int j = 0; j < SimSE.getBranches().size(); j++) {
+					if (SimSE.getBranches().get(j) == root) { // found root
+						rootIndex = j;
+						break;
+					}
+				}
+				if (rootIndex > -1) {
+					int rootGameYVal = rootIndex * 10 + 1;
+					int branchYVal = i * 10 + 1;
+					// check if the clicked-on Y val is between these two vals:
+					if (intY >= rootGameYVal && intY <= branchYVal) {
+						return SimSE.getBranches().get(i.intValue());
+					}
+				}
+			}
+
+			// if it wasn't a vertical branch segment that was clicked on, look
+			// for a horizontal one:
+			// get branch w/ that y-value (if there is one):
+			int adjustedYVal = (intY - 1) / 10;
+			if (intY >= 0 && adjustedYVal < SimSE.getBranches().size()) {
+				Branch b = SimSE.getBranches().get(adjustedYVal);
+				// check if x-val is within range:
+				if (dblX >= b.getStartTick() && dblX <= b.getEndTick()) {
+					return b;
+				}
+			}
+		}
+		return null;
+	}
+
+	public XYPlot getXYPlot() {
+		return chart.getXYPlot();
+	}
+
+	public String getChartTitle() {
+		return this.getTitle();
+	}
+}
