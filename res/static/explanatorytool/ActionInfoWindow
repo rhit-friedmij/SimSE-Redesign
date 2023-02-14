@@ -1,0 +1,28 @@
+package simse.explanatorytool;
+
+import javafx.scene.Scene;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
+import javafx.stage.Stage;
+import simse.adts.actions.Action;
+
+public class ActionInfoWindow extends Stage {
+	
+
+	public ActionInfoWindow(String actionName, Action action, int clockTick) {	
+		this.setTitle(actionName + " Info for Clock Tick " + clockTick);
+		
+		TabPane mainPane = new TabPane();
+		
+		ActionInfoPanel actionPanel = new ActionInfoPanel(action);
+		RuleInfoPanel rulePanel = new RuleInfoPanel(this, action);
+		Tab actionTab = new Tab("Action Info", actionPanel);
+		Tab ruleTab = new Tab("Rule Info", rulePanel);
+		mainPane.getTabs().add(actionTab);
+		mainPane.getTabs().add(ruleTab);
+		
+		Scene newScene = new Scene(mainPane, 900, 600);
+		this.setScene(newScene);
+		show();
+	}
+}

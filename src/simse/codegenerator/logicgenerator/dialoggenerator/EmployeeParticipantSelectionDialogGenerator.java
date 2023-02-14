@@ -18,38 +18,13 @@ import simse.modelbuilder.objectbuilder.DefinedObjectTypes;
 import simse.modelbuilder.objectbuilder.SimSEObjectType;
 import simse.modelbuilder.objectbuilder.SimSEObjectTypeTypes;
 
-import java.awt.Checkbox;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
 import java.util.Vector;
 
-import javax.lang.model.element.Modifier;
 import javax.swing.JOptionPane;
-
-import com.squareup.javapoet.ClassName;
-import com.squareup.javapoet.JavaFile;
-import com.squareup.javapoet.MethodSpec;
-import com.squareup.javapoet.ParameterizedTypeName;
-import com.squareup.javapoet.TypeName;
-import com.squareup.javapoet.TypeSpec;
-import com.squareup.javapoet.WildcardTypeName;
-
-import javafx.geometry.Point2D;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.Button;
-import javafx.scene.control.Dialog;
-import javafx.scene.control.Label;
-import javafx.scene.control.Separator;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
-import javafx.stage.Window;
-import javafx.stage.WindowEvent;
 
 public class EmployeeParticipantSelectionDialogGenerator implements
     CodeGeneratorConstants {
@@ -65,486 +40,636 @@ public class EmployeeParticipantSelectionDialogGenerator implements
     this.objTypes = objTypes;
   }
 
-  public void generate() {      
-	  ClassName eventHandler = ClassName.get("javafx.event", "EventHandler");
-	  ClassName mouseEvent = ClassName.get("javafx.scene.input", "MouseEvent");
-	  ClassName vector = ClassName.get("java.util", "Vector");
-	  ClassName stateClass = ClassName.get("simse.state", "State");
-	  ClassName ruleExecClass = ClassName.get("simse.logic", "RuleExecutor");
-	  ClassName employeeClass = ClassName.get("simse.adts.objects", "Employee");
-	  ClassName actionClass = ClassName.get("simse.adts.actions", "Action");
-	  ClassName checkboxClass = ClassName.get("javafx.scene.control", "CheckBox");
-	  ClassName buttonClass = ClassName.get("javafx.scene.control", "Button");
-	  ClassName dialogClass = ClassName.get(Dialog.class);
-	  ClassName ssObjectClass = ClassName.get("simse.adts.objects", "SSObject");
-	  ClassName imageLoaderClass = ClassName.get("simse.gui", "ImageLoader");
-	  ClassName tabPanelClass = ClassName.get("simse.gui", "TabPanel");
-	  ClassName windowEvent = ClassName.get("javafx.stage", "WindowEvent");
-	  TypeName mouseHandler = ParameterizedTypeName.get(eventHandler, mouseEvent);
-	  TypeName windowHandler = ParameterizedTypeName.get(eventHandler, windowEvent);
-	  TypeName dialogAction = ParameterizedTypeName.get(dialogClass, actionClass);
-	  TypeName checkboxVector = ParameterizedTypeName.get(vector, checkboxClass);
-	  TypeName ssObjectVector = ParameterizedTypeName.get(vector, ssObjectClass);
-
-      Vector<SimSEObjectType> objs = objTypes.getAllObjectTypes();
-      Vector<ActionType> acts = actTypes.getAllActionTypes();
-      
-      TypeSpec exitListener = TypeSpec.classBuilder("ExitListener")
-    		  .addModifiers(Modifier.PUBLIC)
-    		  .addSuperinterface(windowHandler)
-    		  .addMethod(MethodSpec.methodBuilder("handle")
-    				  .addAnnotation(Override.class)
-    				  .addModifiers(Modifier.PUBLIC)
-    				  .returns(void.class)
-    				  .addParameter(WindowEvent.class, "evt")
-    				  .beginControlFlow("if (!$N)", "dialogAccepted")
-    				  .addStatement("$N = true", "actionCancelled")
-    				  .endControlFlow()
-    				  .addStatement("close()")
-    				  .build())
-    		  .build();
-	  
-	  MethodSpec employeeConstructor = MethodSpec.constructorBuilder()
-			  .addModifiers(Modifier.PUBLIC)
-			  .addParameter(Stage.class, "owner")
-			  .addParameter(String.class, "pName")
-			  .addParameter(ssObjectVector, "parts")
-			  .addParameter(actionClass, "act")
-			  .addParameter(stateClass, "s")
-			  .addParameter(employeeClass, "emp")
-			  .addStatement("$N = pName", "partName")
-			  .addStatement("$N = parts", "participants")
-			  .addStatement("$N = act", "action")
-			  .addStatement("$N = s", "state")
-			  .addStatement("$N = emp", "selectedEmp")
-			  .addStatement("$N = false", "actionCancelled")
-			  .addStatement("$N = false", "dialogAccepted")
-			  .addStatement("setMinAndMax()")
-			  .beginControlFlow("if ((($N != null) && ($N > 0) && "
-			  		+ "($N.size() > 0 || (($N == null) && "
-			  		+ "($N.size() > $N))) ", "selectedEmp", "maxNumParts",
-			  		"participants", "selectedEmp", "participants", "minNumParts")
-			  .addStatement("$N = new $T()", "checkBoxes", checkboxVector)
-			  .addStatement("setTitle($S)", "Participant Selection")
-			  .addStatement("$T mainPane = new $T()", VBox.class, VBox.class)
-			  .addStatement("$T topPane = new $T()", VBox.class, VBox.class)
-			  .addStatement("$T title = $S", String.class, "Choose ")
-			  .beginControlFlow("if ($N != null) ", "selectedEmp")
-			  .addStatement("title = title.concat($S)", "other ")
-			  .endControlFlow()
-			  .addStatement("title = title.concat($N + $S)", "partName", " participant(s) (")
-			  .beginControlFlow("if ($N == $N) ", "minNumParts", "maxNumParts")
-			  .addStatement("title = title.concat($S + $N)", "exactly ", "minNumParts")
-			  .nextControlFlow("else ")
-			  .addStatement("title = title.concat($S + $N)", "at least ", "minNumParts")
-			  .beginControlFlow("if ($N < 999999) // not boundle", "maxNumParts")
-			  .addStatement("title = title.concat($S + $N)", ", at most ", "maxNumParts")
-			  .endControlFlow()
-			  .endControlFlow()
-			  .addStatement("title = title.concat($S)", "):")
-			  .addStatement("topPane.getChildren().add(new $T(title))", Label.class)
-			  .addStatement("topPane.setMinWidth(400)")
-			  .addStatement("$T middlePane = new $T()", VBox.class, VBox.class)
-			  .beginControlFlow("for (int i = 0; i < $N.size(); i++) ", "participants")
-			  .addStatement("$T tempObj = $N.elementAt(i)", ssObjectClass, "participants")
-			  .addStatement("$T label = new $T()", String.class, String.class)
-			  .addCode(generateNames(objs))
-			  .addStatement("$T tempPane = new $T()", BorderPane.class, BorderPane.class)
-			  .addStatement("$T tempCheckBox = new $T(label)", checkboxClass, checkboxClass)
-			  .addStatement("tempPane.setLeft(tempCheckBoxes)")
-			  .addStatement("$N.add(tempCheckBox)", "checkBoxes")
-			  .addStatement("$T icon = $T.getImageFromURL($T.getImage(tempObj))", ImageView.class,
-					  imageLoaderClass, tabPanelClass)
-			  .addStatement("tempPane.setRight(new $T($S, icon))", Label.class, "")
-			  .addStatement("middlePane.getChildren().add(tempPane)")
-			  .endControlFlow()
-			  .addStatement("$T checkPane = new $T()", HBox.class, HBox.class)
-			  .addStatement("$N = new $T($S)", "checkAllButton", Button.class, "Check All")
-			  .addStatement("$N.addEventHandler($T.MOUSE_CLICKED, this)", "checkAllButton", mouseEvent)
-			  .addStatement("$N.setMinWidth(75)", "checkAllButton")
-			  .addStatement("checkPane.getChildren().add($N)", "checkAllButton")
-			  .addStatement("$N = new $T($S)", "clearAllButton", Button.class, "Clear All")
-			  .addStatement("$N.addEventHandler($T.MOUSE_CLICKED, this)", "clearAllButton", mouseEvent)
-			  .addStatement("$N.setMinWidth(75)", "clearAllButton")
-			  .addStatement("checkPane.getChildren().add($N)", "clearAllButton")
-			  .addStatement("$T bottomPane = new $T()", HBox.class, HBox.class)
-			  .addStatement("$N = new $T($S)", "okButton", Button.class, "OK")
-			  .addStatement("$N.addEventHandler($T.MOUSE_CLICKED, this)", "okButton", mouseEvent)
-			  .addStatement("$N.setMinWidth(75)", "okButton")
-			  .addStatement("bottomPane.getChildren().add($N)", "okButton")
-			  .addStatement("$N = new $T($S)", "cancelButton", Button.class, "Cancel")
-			  .addStatement("$N.addEventHandler($T.MOUSE_CLICKED, this)", "cancelButton", mouseEvent)
-			  .addStatement("$N.setMinWidth(75)", "cancelButton")
-			  .addStatement("bottomPane.getChildren().add($N)", "cancelButton")
-			  .addStatement("mainPane.getChildren().addAll(topPane, middlePane)")
-			  .addStatement("$T separator1 = new $T()", Separator.class, Separator.class)
-			  .addStatement("separator1.setMaxSize(900, 5)")
-			  .addStatement("mainPane.getChildren().addAll(separator1, checkPane)")
-			  .addStatement("$T separator2 = new $T()", Separator.class, Separator.class)
-			  .addStatement("separator2.setMaxSize(900, 5)")
-			  .addStatement("mainPane.getChildren().addAll(separator2, bottomPane)")
-			  .addStatement("this.getDialogPane().getChildren().add(mainPane)")
-			  .addStatement("this.getDialogPane().setPrefSize(400, 400)")
-			  .addStatement("this.getDialogPane().getScene().getWindow().setOnCloseRequest(new ExitListener())")
-			  .addStatement("$T ownerLoc = new $T(owner.getX(), owner.getY())", Point2D.class, Point2D.class)
-			  .addStatement("$T thisLoc = new $T((ownerLoc.getX() + (owner.getWidth() / 2) - (this.getWidth() / 2))",
-					  Point2D.class, Point2D.class)
-			  .addStatement("(ownerLoc.getY() + (owner.getHeight() / 2) - (this.getHeight() / 2)))")
-			  .addStatement("this.setX(thisLoc.getX())")
-			  .addStatement("this.setY(thisLoc.getY())")
-			  .addStatement("showAndWait()")
-			  .nextControlFlow("else if (($N == null) && ($N.size() == $N)) ",
-					  "selectedEmp", "participants", "minNumParts")
-			  .beginControlFlow("for (int i = 0; i < $N.size(); i++) ", "participants")
-			  .addStatement("$T tempEmp = ($T) $N.elementAt(i)", employeeClass, employeeClass, "participants")
-			  .addCode(addToAction(acts))
-			  .endControlFlow()
-			  .endControlFlow()
-			  .beginControlFlow("if($N != null)", "selectedEmp")
-			  .addCode(addToAction2(acts))
-			  .endControlFlow()
-			  .build();
-	  
-	  MethodSpec closeDialog = MethodSpec.methodBuilder("closeDialog")
-			  .addModifiers(Modifier.PRIVATE)
-			  .returns(void.class)
-			  .addParameter(boolean.class, "accepted")
-			  .addStatement("$N = accepted", "dialogAccepted")
-			  .addStatement("$T window = this.getDialogPane().getScene().getWindow()", Window.class)
-			  .addStatement("window.fireEvent(new $T(window, $T.WINDOW_CLOSEREQUEST))",
-					  WindowEvent.class, WindowEvent.class)
-			  .build();
-	  
-	  MethodSpec handle = MethodSpec.methodBuilder("handle")
-			  .addModifiers(Modifier.PUBLIC)
-			  .returns(void.class)
-			  .addAnnotation(Override.class)
-			  .addParameter(mouseEvent, "evt")
-			  .addStatement("$T source = evt.getSource()", Object.class)
-			  .beginControlFlow("if (source == $N) ", "cancelButton")
-			  .addStatement("$N = true", "actionCancelled")
-			  .addStatement("closeDialog(false)")
-			  .nextControlFlow(" else if (source == $N) ", "okButton")
-			  .addStatement("$T checkedBoxes = new $T()", checkboxVector, checkboxVector)
-			  .beginControlFlow("for (int i = 0; i < $N.size(); i++) ", "checkBoxes")
-			  .addStatement("$T tempCBox = $N.elementAt(i)", checkboxClass, "checkBoxes")
-			  .beginControlFlow("if (tempCBox.isSelected()) ")
-			  .addStatement("checkedBoxes.add(tempCBox);")
-			  .endControlFlow()
-			  .endControlFlow()
-			  .beginControlFlow("if (checkedBoxes.size() < $N) ", "minNumParts")
-			  .addStatement("$T alert = new $T($T.WARNING, $S)", Alert.class, Alert.class,
-					  AlertType.class, "You must choose at least one action")
-			  .addStatement("alert.setTitle($S)", "Invalid Input")
-			  .addStatement("alert.setHeaderText(null)")
-			  .addStatement("alert.showAndWait()")
-			  .nextControlFlow(" else if (checkedBoxes.size() > $N) ", "maxNumParts")
-			  .addStatement("$T alert = new $T($T.WARNING, $S + $T + $S)", Alert.class,
-					  Alert.class, AlertType.class, "You may only choose at most ",
-					  "maxNumParts", " participants")
-			  .addStatement("alert.setTitle($S)", "Invalid Input")
-			  .addStatement("alert.setHeaderText(null)")
-			  .addStatement("alert.showAndWait()")
-			  .nextControlFlow(" else ")
-			  .beginControlFlow("for (int i = 0; i < checkedBoxes.size(); i++) ")
-			  .addStatement("$T checkedBox = checkedBoxes.elementAt(i)", checkboxClass)
-			  .addStatement("$T cBoxText = checkedBox.getText()", String.class)
-			  .addStatement("$T objTypeName = cBoxText.substring(0(cBoxText"
-			  		+ ".indexOf('(') - 1))", String.class)
-			  .addStatement("$T keyValStr = cBoxText.substring(cBoxText"
-			  		+ ".indexOf('(') + 1), cBoxText.lastIndexOf(')'))")
-			  .addStatement("addParticipant(objTypeName, keyValStr);", String.class)
-			  .endControlFlow()
-			  .addStatement("closeDialog(true)")
-			  .endControlFlow()
-			  .nextControlFlow(" else if (source == $N) ", "checkAllButton")
-			  .beginControlFlow("for (int i = 0; i < $N.size(); i++) ", "checkBoxes")
-			  .addStatement("$N.elementAt(i).setSelected(true);", "checkBoxes")
-			  .endControlFlow()
-			  .nextControlFlow(" else if (source == $N) ", "clearAllButton")
-			  .beginControlFlow("for (int i = 0; i < $N.size(); i++) ", "checkBoxes")
-			  .addStatement("$N.elementAt(i).setSelected(false)", "checkBoxes")
-			  .endControlFlow()
-			  .endControlFlow()
-			  .build();
-	  
-	  MethodSpec addParticipant = MethodSpec.methodBuilder("addParticipant")
-			  .addModifiers(Modifier.PRIVATE)
-			  .returns(void.class)
-			  .addParameter(String.class, "objTypeName")
-			  .addParameter(String.class, "keyValStr")
-			  .addCode(generateAddParticipant(objs, acts))
-			  .build();
-	  
-	  MethodSpec setMinAndMax = MethodSpec.methodBuilder("setMinAndMax")
-			  .addModifiers(Modifier.PRIVATE)
-			  .returns(void.class)
-			  .addCode(generateSetMinAndMax(acts))
-			  .build();
-	  
-	  MethodSpec actionCancelled = MethodSpec.methodBuilder("actionCancelled")
-			  .addModifiers(Modifier.PUBLIC)
-			  .returns(boolean.class)
-			  .addStatement("return $N", "actionCancelled")
-			  .build();
-	  
-	  TypeSpec employeeDialog = TypeSpec.classBuilder("EmployeeParticipantSelectionDialog")
-	  			.superclass(dialogAction)
-	  			.addSuperinterface(mouseHandler)
-	  			.addType(exitListener)
-	  			.addField(String.class, "partName", Modifier.PRIVATE)
-	  			.addField(ssObjectVector, "participants", Modifier.PRIVATE)
-	  			.addField(actionClass, "action", Modifier.PRIVATE)
-	  			.addField(stateClass, "state", Modifier.PRIVATE)
-	  			.addField(employeeClass, "selectedEmp", Modifier.PRIVATE)
-	  			.addField(int.class, "minNumParts", Modifier.PRIVATE)
-	  			.addField(int.class, "maxNumParts", Modifier.PRIVATE)
-	  			.addField(checkboxVector, "checkBoxes", Modifier.PRIVATE)
-	  			.addField(buttonClass, "checkAllButton", Modifier.PRIVATE)
-	  			.addField(buttonClass, "clearAllButton", Modifier.PRIVATE)
-	  			.addField(buttonClass, "okButton", Modifier.PRIVATE)
-	  			.addField(buttonClass, "cancelButton", Modifier.PRIVATE)
-	  			.addField(boolean.class, "actionCancelled", Modifier.PRIVATE)
-	  			.addField(boolean.class, "dialogAccepted", Modifier.PRIVATE)
-	  			.addMethod(employeeConstructor)
-	  			.addMethod(closeDialog)
-	  			.addMethod(handle)
-	  			.addMethod(addParticipant)
-	  			.addMethod(setMinAndMax)
-	  			.addMethod(actionCancelled)
-	  			.build();
-		  
-
-	  ClassName actions = ClassName.get("simse.adts", "actions");
-	  JavaFile javaFile = JavaFile.builder("EmployeeParticipantSelectionDialog", employeeDialog)
-				.addStaticImport(actions, "*")    
-			  .build();
-	  
+  public void generate() {
     try {
       psdFile = new File(directory,
           ("simse\\logic\\dialogs\\EmployeeParticipantSelectionDialog.java"));
       if (psdFile.exists()) {
         psdFile.delete(); // delete old version of file
       }
+      FileWriter writer = new FileWriter(psdFile);
+      writer
+          .write("/* File generated by: simse.codegenerator.logicgenerator.dialoggenerator.EmployeeParticipantSelectionDialogGenerator */");
+      writer.write(NEWLINE);
+      // package statement:
+      writer.write("package simse.logic.dialogs;");
+      writer.write(NEWLINE);
+      // imports:
+      writer.write("import simse.gui.ImageLoader;");
+      writer.write(NEWLINE);
+      writer.write("import simse.gui.TabPanel;");
+      writer.write(NEWLINE);
+      writer.write("import simse.state.*;");
+      writer.write(NEWLINE);
+      writer.write("import simse.adts.objects.*;");
+      writer.write(NEWLINE);
+      writer.write("import simse.adts.actions.*;");
+      writer.write(NEWLINE);
+      writer.write("import java.util.*;");
+      writer.write(NEWLINE);
+      writer.write("import javax.swing.*;");
+      writer.write(NEWLINE);
+      writer.write("import java.awt.event.*;");
+      writer.write(NEWLINE);
+      writer.write("import java.awt.*;");
+      writer.write(NEWLINE);
+      writer.write("import javax.swing.border.*;");
+      writer.write(NEWLINE);
+      writer.write("import javax.swing.event.*;");
+      writer.write(NEWLINE);
+      writer
+          .write("public class EmployeeParticipantSelectionDialog extends JDialog implements ActionListener");
+      writer.write(NEWLINE);
+      writer.write(OPEN_BRACK);
+      writer.write(NEWLINE);
       
-      javaFile.writeTo(psdFile);
+      // member variables:
+      writer.write("private String partName;");
+      writer.write(NEWLINE);
+      writer.write("private Vector<SSObject> participants;");
+      writer.write(NEWLINE);
+      writer.write("private simse.adts.actions.Action action;");
+      writer.write(NEWLINE);
+      writer.write("private State state;");
+      writer.write(NEWLINE);
+      writer.write("private Employee selectedEmp;");
+      writer.write(NEWLINE);
+      writer.write("private int minNumParts;");
+      writer.write(NEWLINE);
+      writer.write("private int maxNumParts;");
+      writer.write(NEWLINE);
+      writer.write("private Vector<JCheckBox> checkBoxes;");
+      writer.write(NEWLINE);
+      writer.write("private JButton checkAllButton;");
+      writer.write(NEWLINE);
+      writer.write("private JButton clearAllButton;");
+      writer.write(NEWLINE);
+      writer.write("private JButton okButton;");
+      writer.write(NEWLINE);
+      writer.write("private JButton cancelButton;");
+      writer.write(NEWLINE);
+      writer.write("private boolean actionCancelled;");
+      writer.write(NEWLINE);
       
-    } catch (IOException e) {
-        JOptionPane.showMessageDialog(null, ("Error writing file "
-            + psdFile.getPath() + ": " + e.toString()), "File IO Error",
-            JOptionPane.WARNING_MESSAGE);
-    }
+      // constructor:
+      writer
+          .write("public EmployeeParticipantSelectionDialog(JFrame owner, String pName, Vector<SSObject> parts, simse.adts.actions.Action act, State s, Employee emp)");
+      writer.write(NEWLINE);
+      writer.write(OPEN_BRACK);
+      writer.write(NEWLINE);
+      writer.write("super(owner, true);");
+      writer.write(NEWLINE);
+      writer.write("partName = pName;");
+      writer.write(NEWLINE);
+      writer.write("participants = parts;");
+      writer.write(NEWLINE);
+      writer.write("action = act;");
+      writer.write(NEWLINE);
+      writer.write("state = s;");
+      writer.write(NEWLINE);
+      writer.write("selectedEmp = emp;");
+      writer.write(NEWLINE);
+      writer.write("actionCancelled = false;");
+      writer.write(NEWLINE);
+      writer.write("setMinAndMax();");
+      writer.write(NEWLINE);
+      writer
+          .write("if(((selectedEmp != null) && (maxNumParts > 0) && (participants.size() > 0)) || ((selectedEmp == null) && (participants.size() > minNumParts)))");
+      writer.write(NEWLINE);
+      writer.write(OPEN_BRACK);
+      writer.write(NEWLINE);
+      writer.write("checkBoxes = new Vector<JCheckBox>();");
+      writer.write(NEWLINE);
+      writer.write("setTitle(\"Participant Selection\");");
+      writer.write(NEWLINE);
+      // main pane:
+      writer.write("Box mainPane = Box.createVerticalBox();");
+      writer.write(NEWLINE);
+      // top pane:
+      writer.write("JPanel topPane = new JPanel();");
+      writer.write(NEWLINE);
+      writer.write("String title = \"Choose \";");
+      writer.write(NEWLINE);
+      writer
+          .write("if(selectedEmp != null) // selected emp already added in this participant role");
+      writer.write(NEWLINE);
+      writer.write(OPEN_BRACK);
+      writer.write(NEWLINE);
+      writer.write("title = title.concat(\"other \");");
+      writer.write(NEWLINE);
+      writer.write(CLOSED_BRACK);
+      writer.write(NEWLINE);
+      writer.write("title = title.concat(partName + \" participant(s) (\");");
+      writer.write(NEWLINE);
+      writer.write("if(minNumParts == maxNumParts)");
+      writer.write(NEWLINE);
+      writer.write(OPEN_BRACK);
+      writer.write(NEWLINE);
+      writer.write("title = title.concat(\"exactly \" + minNumParts);");
+      writer.write(NEWLINE);
+      writer.write(CLOSED_BRACK);
+      writer.write(NEWLINE);
+      writer.write("else");
+      writer.write(NEWLINE);
+      writer.write(OPEN_BRACK);
+      writer.write(NEWLINE);
+      writer.write("title = title.concat(\"at least \" + minNumParts);");
+      writer.write(NEWLINE);
+      writer.write("if(maxNumParts < 999999) // not boundless");
+      writer.write(NEWLINE);
+      writer.write(OPEN_BRACK);
+      writer.write(NEWLINE);
+      writer.write("title = title.concat(\", at most \" + maxNumParts);");
+      writer.write(NEWLINE);
+      writer.write(CLOSED_BRACK);
+      writer.write(NEWLINE);
+      writer.write(CLOSED_BRACK);
+      writer.write(NEWLINE);
+      writer.write("title = title.concat(\"):\");");
+      writer.write(NEWLINE);
+      writer.write("topPane.add(new JLabel(title));");
+      writer.write(NEWLINE);
+      // middle pane:
+      writer.write("JPanel middlePane = new JPanel(new GridLayout(0, 1));");
+      writer.write(NEWLINE);
+      writer.write("for(int i=0; i<participants.size(); i++)");
+      writer.write(NEWLINE);
+      writer.write(OPEN_BRACK);
+      writer.write(NEWLINE);
+      writer.write("SSObject tempObj = participants.elementAt(i);");
+      writer.write(NEWLINE);
+      writer.write("String label = new String();");
+      writer.write(NEWLINE);
+      // go through each object type:
+      Vector<SimSEObjectType> objs = objTypes.getAllObjectTypes();
+      for (int i = 0; i < objs.size(); i++) {
+        SimSEObjectType tempType = objs.elementAt(i);
+        if (i > 0) { // not on first element
+          writer.write("else ");
+        }
+        writer.write("if(tempObj instanceof "
+            + CodeGeneratorUtils.getUpperCaseLeading(tempType.getName()) + ")");
+        writer.write(NEWLINE);
+        writer.write(OPEN_BRACK);
+        writer.write(NEWLINE);
+        writer
+            .write("label = (\"" + CodeGeneratorUtils.getUpperCaseLeading(
+            		tempType.getName()) + " (\" + ((" + 
+            		CodeGeneratorUtils.getUpperCaseLeading(tempType.getName()) + 
+            		")tempObj).get" + CodeGeneratorUtils.getUpperCaseLeading(
+            				tempType.getKey().getName()) + "() + \")\");");
+        writer.write(NEWLINE);
+        writer.write(CLOSED_BRACK);
+        writer.write(NEWLINE);
+      }
+      writer.write("JPanel tempPane = new JPanel(new BorderLayout());");
+      writer.write(NEWLINE);
+      writer.write("JCheckBox tempCheckBox = new JCheckBox(label);");
+      writer.write(NEWLINE);
+      writer.write("tempPane.add(tempCheckBox, BorderLayout.WEST);");
+      writer.write(NEWLINE);
+      writer.write("checkBoxes.add(tempCheckBox);");
+      writer.write(NEWLINE);
+      writer.write("ImageIcon icon =  new ImageIcon(ImageLoader.getImageFromURL(TabPanel.getImage(tempObj)).getScaledInstance(30, 30, Image.SCALE_AREA_AVERAGING));");
+      writer.write(NEWLINE);
+      writer.write("tempPane.add(new JLabel(icon), BorderLayout.EAST);");
+      writer.write(NEWLINE);
+      writer.write("middlePane.add(tempPane);");
+      writer.write(NEWLINE);
+      writer.write(CLOSED_BRACK);
+      writer.write(NEWLINE);
       
-      /* I think I was trying to do some fancy thing here for convenience, but
-       * it was causing problems by automatically adding the participant even if
-       * the user didn't check it (if there was only one participant to choose from):
-       */
-//            writer.write("if(participants.size() == 1)");
+      // check pane:
+      writer.write("JPanel checkPane = new JPanel();");
+      writer.write(NEWLINE);
+      writer.write("checkAllButton = new JButton(\"Check All\");");
+      writer.write(NEWLINE);
+      writer.write("checkAllButton.addActionListener(this);");
+      writer.write(NEWLINE);
+      writer.write("checkPane.add(checkAllButton);");
+      writer.write(NEWLINE);
+      writer.write("clearAllButton = new JButton(\"Clear All\");");
+      writer.write(NEWLINE);
+      writer.write("clearAllButton.addActionListener(this);");
+      writer.write(NEWLINE);
+      writer.write("checkPane.add(clearAllButton);");
+      writer.write(NEWLINE);
+
+      // bottom pane:
+      writer.write("JPanel bottomPane = new JPanel();");
+      writer.write(NEWLINE);
+      writer.write("okButton = new JButton(\"OK\");");
+      writer.write(NEWLINE);
+      writer.write("okButton.addActionListener(this);");
+      writer.write(NEWLINE);
+      writer.write("bottomPane.add(okButton);");
+      writer.write(NEWLINE);
+      writer.write("cancelButton = new JButton(\"Cancel\");");
+      writer.write(NEWLINE);
+      writer.write("cancelButton.addActionListener(this);");
+      writer.write(NEWLINE);
+      writer.write("bottomPane.add(cancelButton);");
+      writer.write(NEWLINE);
+
+      // add panes to main pane:
+      writer.write("mainPane.add(topPane);");
+      writer.write(NEWLINE);
+      writer.write("mainPane.add(middlePane);");
+      writer.write(NEWLINE);
+      writer.write("JSeparator separator1 = new JSeparator();");
+      writer.write(NEWLINE);
+      writer.write("separator1.setMaximumSize(new Dimension(900, 1));");
+      writer.write(NEWLINE);
+      writer.write("mainPane.add(separator1);");
+      writer.write(NEWLINE);
+      writer.write("mainPane.add(checkPane);");
+      writer.write(NEWLINE);
+      writer.write("JSeparator separator2 = new JSeparator();");
+      writer.write(NEWLINE);
+      writer.write("separator2.setMaximumSize(new Dimension(900, 1));");
+      writer.write(NEWLINE);
+      writer.write("mainPane.add(separator2);");
+      writer.write(NEWLINE);
+      writer.write("mainPane.add(bottomPane);");
+      writer.write(NEWLINE);
+      
+      // add window listener:
+      writer.write("addWindowListener(new ExitListener());");
+      writer.write(NEWLINE);
+
+      // Set main window frame properties:
+      writer.write("setContentPane(mainPane);");
+      writer.write(NEWLINE);
+      writer.write("validate();");
+      writer.write(NEWLINE);
+      writer.write("pack();");
+      writer.write(NEWLINE);
+      writer.write("repaint();");
+      writer.write(NEWLINE);
+      writer.write("toFront();");
+      writer.write(NEWLINE);
+      writer.write("Point ownerLoc = owner.getLocationOnScreen();");
+      writer.write(NEWLINE);
+      writer.write("Point thisLoc = new Point();");
+      writer.write(NEWLINE);
+      writer
+          .write("thisLoc.setLocation((ownerLoc.getX() + (owner.getWidth() / 2) - (this.getWidth() / 2)), (ownerLoc.getY() + (owner.getHeight() / 2) - (this.getHeight() / 2)));");
+      writer.write(NEWLINE);
+      writer.write("setLocation(thisLoc);");
+      writer.write(NEWLINE);
+      writer.write("setVisible(true);");
+      writer.write(NEWLINE);
+      writer.write(CLOSED_BRACK);
+      writer.write(NEWLINE);
+      
+  		writer.write("else if ((selectedEmp == null) && (participants.size() == minNumParts)) {");
+  		writer.write(NEWLINE);
+  		writer.write("for (int i = 0; i < participants.size(); i++) {");
+  		writer.write(NEWLINE);
+  		writer.write("Employee tempEmp = (Employee) participants.elementAt(i);");
+  		writer.write(NEWLINE);
+      // go through each action type:
+      Vector<ActionType> acts = actTypes.getAllActionTypes();
+      boolean putElse = false;
+      for (int j = 0; j < acts.size(); j++) {
+        ActionType tempAct = acts.elementAt(j);
+        Vector<ActionTypeTrigger> trigs = tempAct.getAllTriggers();
+        // only generate code for actions w/ user triggers:
+        for (int k = 0; k < trigs.size(); k++) {
+          ActionTypeTrigger tempTrig = trigs.elementAt(k);
+          if (tempTrig instanceof UserActionTypeTrigger) {
+            if (putElse) { // not on first element
+              writer.write("else ");
+            } else {
+              putElse = true;
+            }
+            writer.write("if(action instanceof "
+                + CodeGeneratorUtils.getUpperCaseLeading(tempAct.getName()) + 
+                "Action)");
+            writer.write(NEWLINE);
+            writer.write(OPEN_BRACK);
+            writer.write(NEWLINE);
+            // go through all participants:
+            Vector<ActionTypeParticipant> participants = 
+            	tempAct.getAllParticipants();
+            boolean nextOneWriteElse = false;
+            for (int m = 0; m < participants.size(); m++) {
+              ActionTypeParticipant tempPart = participants.elementAt(m);
+              if (tempPart.getSimSEObjectTypeType() == 
+              	SimSEObjectTypeTypes.EMPLOYEE) { // Employee participant
+                if (nextOneWriteElse) { // not on first element
+                  writer.write("else ");
+                }
+                writer.write("if(partName.equals(\"" + tempPart.getName()
+                    + "\"))");
+                writer.write(NEWLINE);
+                writer.write(OPEN_BRACK);
+                writer.write(NEWLINE);
+                writer.write("((" + CodeGeneratorUtils.getUpperCaseLeading(
+                		tempAct.getName()) + "Action)action).add" + 
+                		tempPart.getName() + "(tempEmp);");
+                writer.write(NEWLINE);
+                writer.write(CLOSED_BRACK);
+                writer.write(NEWLINE);
+                nextOneWriteElse = true;
+              }
+            }
+            writer.write(CLOSED_BRACK);
+            writer.write(NEWLINE);
+          }
+        }
+      }
+      writer.write(CLOSED_BRACK);
+      writer.write(NEWLINE);
+      writer.write(CLOSED_BRACK);
+      writer.write("if(selectedEmp != null)");
+      writer.write(NEWLINE);
+      writer.write(OPEN_BRACK);
+      writer.write(NEWLINE);
+      // go through each action type:
+      putElse = false;
+      for (int j = 0; j < acts.size(); j++) {
+        ActionType tempAct = acts.elementAt(j);
+        Vector<ActionTypeTrigger> trigs = tempAct.getAllTriggers();
+        // only generate code for actions w/ user triggers:
+        for (int k = 0; k < trigs.size(); k++) {
+          ActionTypeTrigger tempTrig = trigs.elementAt(k);
+          if (tempTrig instanceof UserActionTypeTrigger) {
+            if (putElse) { // not on first element
+              writer.write("else ");
+            } else {
+              putElse = true;
+            }
+            writer.write("if(action instanceof "
+                + CodeGeneratorUtils.getUpperCaseLeading(tempAct.getName()) + 
+                "Action)");
+            writer.write(NEWLINE);
+            writer.write(OPEN_BRACK);
+            writer.write(NEWLINE);
+            // go through all participants:
+            Vector<ActionTypeParticipant> participants = 
+            	tempAct.getAllParticipants();
+            boolean nextOneWriteElse = false;
+            for (int m = 0; m < participants.size(); m++) {
+              ActionTypeParticipant tempPart = participants.elementAt(m);
+              if (tempPart.getSimSEObjectTypeType() == 
+              	SimSEObjectTypeTypes.EMPLOYEE) { // Employee participant
+                if (nextOneWriteElse) { // not on first element
+                  writer.write("else ");
+                }
+                writer.write("if(partName.equals(\"" + tempPart.getName()
+                    + "\"))");
+                writer.write(NEWLINE);
+                writer.write(OPEN_BRACK);
+                writer.write(NEWLINE);
+                writer.write("((" + CodeGeneratorUtils.getUpperCaseLeading(
+                		tempAct.getName()) + "Action)action).add" + 
+                		tempPart.getName()
+                    + "(selectedEmp);");
+                writer.write(NEWLINE);
+                writer.write(CLOSED_BRACK);
+                writer.write(NEWLINE);
+                nextOneWriteElse = true;
+              }
+            }
+            writer.write(CLOSED_BRACK);
+            writer.write(NEWLINE);
+          }
+        }
+      }
+      writer.write(CLOSED_BRACK);
+      writer.write(NEWLINE);
+
+/* I think I was trying to do some fancy thing here for convenience, but
+ * it was causing problems by automatically adding the participant even if
+ * the user didn't check it (if there was only one participant to choose from):
+ */
+//      writer.write("if(participants.size() == 1)");
+//      writer.write(NEWLINE);
+//      writer.write(OPEN_BRACK);
+//      writer.write(NEWLINE);
+//      writer.write("Employee e = (Employee)participants.elementAt(0);");
+//      writer.write(NEWLINE);
+//      boolean putElse2 = false;
+//      for (int j = 0; j < acts.size(); j++) {
+//        ActionType tempAct = (ActionType) acts.elementAt(j);
+//        Vector trigs = tempAct.getAllTriggers();
+//        // only generate code for actions w/ user triggers:
+//        for (int k = 0; k < trigs.size(); k++) {
+//          ActionTypeTrigger tempTrig = (ActionTypeTrigger) trigs.elementAt(k);
+//          if (tempTrig instanceof UserActionTypeTrigger) {
+//            if (putElse2) // not on first element
+//            {
+//              writer.write("else ");
+//            } else {
+//              putElse2 = true;
+//            }
+//            writer.write("if(action instanceof "
+//                + getUpperCaseLeading(tempAct.getName()) + "Action)");
 //            writer.write(NEWLINE);
 //            writer.write(OPEN_BRACK);
 //            writer.write(NEWLINE);
-//            writer.write("Employee e = (Employee)participants.elementAt(0);");
-//            writer.write(NEWLINE);
-//            boolean putElse2 = false;
-//            for (int j = 0; j < acts.size(); j++) {
-//              ActionType tempAct = (ActionType) acts.elementAt(j);
-//              Vector trigs = tempAct.getAllTriggers();
-//              // only generate code for actions w/ user triggers:
-//              for (int k = 0; k < trigs.size(); k++) {
-//                ActionTypeTrigger tempTrig = (ActionTypeTrigger) trigs.elementAt(k);
-//                if (tempTrig instanceof UserActionTypeTrigger) {
-//                  if (putElse2) // not on first element
-//                  {
-//                    writer.write("else ");
-//                  } else {
-//                    putElse2 = true;
-//                  }
-//                  writer.write("if(action instanceof "
-//                      + getUpperCaseLeading(tempAct.getName()) + "Action)");
-//                  writer.write(NEWLINE);
-//                  writer.write(OPEN_BRACK);
-//                  writer.write(NEWLINE);
-//                  // go through all participants:
-//                  Vector participants = tempAct.getAllParticipants();
-//                  boolean nextOneWriteElse = false;
-//                  for (int m = 0; m < participants.size(); m++) {
-//                    ActionTypeParticipant tempPart = (ActionTypeParticipant) participants
-//                        .elementAt(m);
-//                    if (tempPart.getSimSEObjectTypeType() == SimSEObjectTypeTypes.EMPLOYEE) // Employee
-//                                                                                            // participant
-//                    {
-//                      if (nextOneWriteElse) // not on first element
-//                      {
-//                        writer.write("else ");
-//                      }
-//                      writer.write("if(partName.equals(\"" + tempPart.getName()
-//                          + "\"))");
-//                      writer.write(NEWLINE);
-//                      writer.write(OPEN_BRACK);
-//                      writer.write(NEWLINE);
-//                      writer.write("((" + getUpperCaseLeading(tempAct.getName())
-//                          + "Action)action).add" + tempPart.getName() + "(e);");
-//                      writer.write(NEWLINE);
-//                      writer.write(CLOSED_BRACK);
-//                      writer.write(NEWLINE);
-//                      nextOneWriteElse = true;
-//                    }
-//                  }
-//                  writer.write(CLOSED_BRACK);
-//                  writer.write(NEWLINE);
-//                  break;
+//            // go through all participants:
+//            Vector participants = tempAct.getAllParticipants();
+//            boolean nextOneWriteElse = false;
+//            for (int m = 0; m < participants.size(); m++) {
+//              ActionTypeParticipant tempPart = (ActionTypeParticipant) participants
+//                  .elementAt(m);
+//              if (tempPart.getSimSEObjectTypeType() == SimSEObjectTypeTypes.EMPLOYEE) // Employee
+//                                                                                      // participant
+//              {
+//                if (nextOneWriteElse) // not on first element
+//                {
+//                  writer.write("else ");
 //                }
+//                writer.write("if(partName.equals(\"" + tempPart.getName()
+//                    + "\"))");
+//                writer.write(NEWLINE);
+//                writer.write(OPEN_BRACK);
+//                writer.write(NEWLINE);
+//                writer.write("((" + getUpperCaseLeading(tempAct.getName())
+//                    + "Action)action).add" + tempPart.getName() + "(e);");
+//                writer.write(NEWLINE);
+//                writer.write(CLOSED_BRACK);
+//                writer.write(NEWLINE);
+//                nextOneWriteElse = true;
 //              }
 //            }
 //            writer.write(CLOSED_BRACK);
 //            writer.write(NEWLINE);
-  }
-  
-  private String generateNames(Vector<SimSEObjectType> objs) {
-	  String names = "";
-	  
-      for (int i = 0; i < objs.size(); i++) {
-          SimSEObjectType tempType = objs.elementAt(i);
-          if (i > 0) { // not on first element
-            names += "else ";
-          }
-          names += "if(tempObj instanceof "
-              + CodeGeneratorUtils.getUpperCaseLeading(tempType.getName()) + ")\n{\n";
-          names += "label = (\"" + CodeGeneratorUtils.getUpperCaseLeading(
-              		tempType.getName()) + " (\" + ((" + 
-              		CodeGeneratorUtils.getUpperCaseLeading(tempType.getName()) + 
-              		")tempObj).get" + CodeGeneratorUtils.getUpperCaseLeading(
-              				tempType.getKey().getName()) + "() + \")\");\n}\n";
-      }
-      
-      return names;
-  }
-  
-  private String addToAction(Vector<ActionType> acts) {
-	  String actionEmps = "";
-	  boolean putElse = false;
-      for (int j = 0; j < acts.size(); j++) {
-        ActionType tempAct = acts.elementAt(j);
-        Vector<ActionTypeTrigger> trigs = tempAct.getAllTriggers();
-        // only generate code for actions w/ user triggers:
-        for (int k = 0; k < trigs.size(); k++) {
-          ActionTypeTrigger tempTrig = trigs.elementAt(k);
-          if (tempTrig instanceof UserActionTypeTrigger) {
-            if (putElse) { // not on first element
-              actionEmps += "else ";
-            } else {
-              putElse = true;
-            }
-            actionEmps += "if(action instanceof "
-                + CodeGeneratorUtils.getUpperCaseLeading(tempAct.getName()) + 
-                "Action)\n{\n";
-            // go through all participants:
-            Vector<ActionTypeParticipant> participants = 
-            	tempAct.getAllParticipants();
-            boolean nextOneWriteElse = false;
-            for (int m = 0; m < participants.size(); m++) {
-              ActionTypeParticipant tempPart = participants.elementAt(m);
-              if (tempPart.getSimSEObjectTypeType() == 
-              	SimSEObjectTypeTypes.EMPLOYEE) { // Employee participant
-                if (nextOneWriteElse) { // not on first element
-                  actionEmps += "else ";
-                }
-                actionEmps += "if(partName.equals(\"" + tempPart.getName()
-                    + "\"))\n{\n";
-                actionEmps += "((" + CodeGeneratorUtils.getUpperCaseLeading(
-                		tempAct.getName()) + "Action)action).add" + 
-                		tempPart.getName() + "(tempEmp);\n}\n";
-                nextOneWriteElse = true;
-              }
-            }
-            actionEmps += "}\n";
-          }
-        }
-      }
-      
-      return actionEmps;
-  }
-  
-  private String addToAction2(Vector<ActionType> acts) {
-	  String actionEmps = "";
-	  boolean putElse = false;
-      for (int j = 0; j < acts.size(); j++) {
-        ActionType tempAct = acts.elementAt(j);
-        Vector<ActionTypeTrigger> trigs = tempAct.getAllTriggers();
-        // only generate code for actions w/ user triggers:
-        for (int k = 0; k < trigs.size(); k++) {
-          ActionTypeTrigger tempTrig = trigs.elementAt(k);
-          if (tempTrig instanceof UserActionTypeTrigger) {
-            if (putElse) { // not on first element
-              actionEmps += "else ";
-            } else {
-              putElse = true;
-            }
-            actionEmps += "if(action instanceof "
-                + CodeGeneratorUtils.getUpperCaseLeading(tempAct.getName()) + 
-                "Action)\n{\n";
-            // go through all participants:
-            Vector<ActionTypeParticipant> participants = 
-            	tempAct.getAllParticipants();
-            boolean nextOneWriteElse = false;
-            for (int m = 0; m < participants.size(); m++) {
-              ActionTypeParticipant tempPart = participants.elementAt(m);
-              if (tempPart.getSimSEObjectTypeType() == 
-              	SimSEObjectTypeTypes.EMPLOYEE) { // Employee participant
-                if (nextOneWriteElse) { // not on first element
-                  actionEmps += "else ";
-                }
-                actionEmps += "if(partName.equals(\"" + tempPart.getName()
-                    + "\"))\n{\n";
-                actionEmps += "((" + CodeGeneratorUtils.getUpperCaseLeading(
-                		tempAct.getName()) + "Action)action).add" + 
-                		tempPart.getName()
-                    + "(selectedEmp);\n}\n";
-                nextOneWriteElse = true;
-              }
-            }
-            actionEmps += "}\n";
-          }
-        }
-      }
-      
-      return actionEmps;
-  }
-  
-  private String generateAddParticipant(Vector<SimSEObjectType> objs, Vector<ActionType> acts) {
-	  String participants = "";
-	  boolean putElse9 = false;
+//            break;
+//          }
+//        }
+//      }
+//      writer.write(CLOSED_BRACK);
+//      writer.write(NEWLINE);
+      writer.write(CLOSED_BRACK);
+      writer.write(NEWLINE);
+      writer.write(NEWLINE);
+
+      // actionPerformed function:
+      writer.write("public void actionPerformed(ActionEvent evt)");
+      writer.write(NEWLINE);
+      writer.write(OPEN_BRACK);
+      writer.write(NEWLINE);
+      writer.write("Object source = evt.getSource();");
+      writer.write(NEWLINE);
+      writer.write("if(source == cancelButton)");
+      writer.write(NEWLINE);
+      writer.write(OPEN_BRACK);
+      writer.write(NEWLINE);
+      writer.write("actionCancelled = true;");
+      writer.write(NEWLINE);
+      writer.write("setVisible(false);");
+      writer.write(NEWLINE);
+      writer.write("dispose();");
+      writer.write(NEWLINE);
+      writer.write(CLOSED_BRACK);
+      writer.write(NEWLINE);
+      writer.write("else if(source == okButton)");
+      writer.write(NEWLINE);
+      writer.write(OPEN_BRACK);
+      writer.write(NEWLINE);
+      writer.write("Vector<JCheckBox> checkedBoxes = new Vector<JCheckBox>();");
+      writer.write(NEWLINE);
+      writer.write("for(int i=0; i<checkBoxes.size(); i++)");
+      writer.write(NEWLINE);
+      writer.write(OPEN_BRACK);
+      writer.write(NEWLINE);
+      writer.write("JCheckBox tempCBox = checkBoxes.elementAt(i);");
+      writer.write(NEWLINE);
+      writer.write("if(tempCBox.isSelected())");
+      writer.write(NEWLINE);
+      writer.write(OPEN_BRACK);
+      writer.write(NEWLINE);
+      writer.write("checkedBoxes.add(tempCBox);");
+      writer.write(NEWLINE);
+      writer.write(CLOSED_BRACK);
+      writer.write(NEWLINE);
+      writer.write(CLOSED_BRACK);
+      writer.write(NEWLINE);
+      writer.write("if(checkedBoxes.size() < minNumParts)");
+      writer.write(NEWLINE);
+      writer.write(OPEN_BRACK);
+      writer.write(NEWLINE);
+      writer
+          .write("JOptionPane.showMessageDialog(null, (\"You must choose at least \" + minNumParts + \" participants\"), \"Invalid Input\", JOptionPane.ERROR_MESSAGE);");
+      writer.write(NEWLINE);
+      writer.write(CLOSED_BRACK);
+      writer.write(NEWLINE);
+      writer.write("else if(checkedBoxes.size() > maxNumParts)");
+      writer.write(NEWLINE);
+      writer.write(OPEN_BRACK);
+      writer.write(NEWLINE);
+      writer
+          .write("JOptionPane.showMessageDialog(null, (\"You may only choose at most \" + maxNumParts + \" participants\"), \"Invalid Input\", JOptionPane.ERROR_MESSAGE);");
+      writer.write(NEWLINE);
+      writer.write(CLOSED_BRACK);
+      writer.write(NEWLINE);
+      writer.write("else");
+      writer.write(NEWLINE);
+      writer.write(OPEN_BRACK);
+      writer.write(NEWLINE);
+      writer.write("for(int i=0; i<checkedBoxes.size(); i++)");
+      writer.write(NEWLINE);
+      writer.write(OPEN_BRACK);
+      writer.write(NEWLINE);
+      writer
+          .write("JCheckBox checkedBox = checkedBoxes.elementAt(i);");
+      writer.write(NEWLINE);
+      writer.write("String cBoxText = checkedBox.getText();");
+      writer.write(NEWLINE);
+      writer
+          .write("String objTypeName = cBoxText.substring(0, (cBoxText.indexOf('(') - 1));");
+      writer.write(NEWLINE);
+      writer
+          .write("String keyValStr = cBoxText.substring((cBoxText.indexOf('(') + 1), cBoxText.lastIndexOf(')'));");
+      writer.write(NEWLINE);
+      writer.write(NEWLINE);
+      writer.write("addParticipant(objTypeName, keyValStr);");
+      writer.write(NEWLINE);
+      writer.write(CLOSED_BRACK);
+      writer.write(NEWLINE);
+      writer.write("setVisible(false);");
+      writer.write(NEWLINE);
+      writer.write("dispose();");
+      writer.write(NEWLINE);
+      writer.write(CLOSED_BRACK);
+      writer.write(NEWLINE);
+      writer.write(CLOSED_BRACK);
+      writer.write(NEWLINE);
+      writer.write("else if (source == checkAllButton) {");
+      writer.write(NEWLINE);
+      writer.write("for (int i = 0; i < checkBoxes.size(); i++) {");
+      writer.write(NEWLINE);
+      writer.write("checkBoxes.elementAt(i).setSelected(true);");
+      writer.write(NEWLINE);
+      writer.write(CLOSED_BRACK);
+      writer.write(NEWLINE);
+      writer.write(CLOSED_BRACK);
+      writer.write(NEWLINE);
+      writer.write("else if (source == clearAllButton) {");
+      writer.write(NEWLINE);
+      writer.write("for (int i = 0; i < checkBoxes.size(); i++) {");
+      writer.write(NEWLINE);
+      writer.write("checkBoxes.elementAt(i).setSelected(false);");
+      writer.write(NEWLINE);
+      writer.write(CLOSED_BRACK);
+      writer.write(NEWLINE);
+      writer.write(CLOSED_BRACK);
+      writer.write(NEWLINE);
+      writer.write(CLOSED_BRACK);
+      writer.write(NEWLINE);
+      writer.write(NEWLINE);
+
+      // addParticipant function:
+      writer
+          .write("private void addParticipant(String objTypeName, String keyValStr)");
+      writer.write(NEWLINE);
+      writer.write(OPEN_BRACK);
+      writer.write(NEWLINE);
+      boolean putElse9 = false;
       // go through each object type:
       for (int i = 0; i < objs.size(); i++) {
         SimSEObjectType tempType = objs.elementAt(i);
         if (tempType.getType() == SimSEObjectTypeTypes.EMPLOYEE) {
           if (putElse9) {
-            participants += "else ";
+            writer.write("else ");
           } else {
             putElse9 = true;
           }
-          participants += "if(objTypeName.equals(\""
+          writer.write("if(objTypeName.equals(\""
               + CodeGeneratorUtils.getUpperCaseLeading(tempType.getName()) + 
-              "\"))\n{\n";
+              "\"))");
+          writer.write(NEWLINE);
+          writer.write(OPEN_BRACK);
+          writer.write(NEWLINE);
           if ((tempType.getKey().getType() == AttributeTypes.DOUBLE)
               || (tempType.getKey().getType() == AttributeTypes.INTEGER)) {
-            participants += "try\n{\n";
+            writer.write("try");
+            writer.write(NEWLINE);
+            writer.write(OPEN_BRACK);
+            writer.write(NEWLINE);
           }
-          participants += CodeGeneratorUtils.getUpperCaseLeading(
+          writer.write(CodeGeneratorUtils.getUpperCaseLeading(
           		tempType.getName()) + " a = state.get" + 
           		SimSEObjectTypeTypes.getText(tempType.getType()) + 
           		"StateRepository().get" + CodeGeneratorUtils.getUpperCaseLeading(
-          				tempType.getName()) + "StateRepository().get(";
+          				tempType.getName()) + "StateRepository().get(");
           if (tempType.getKey().getType() == AttributeTypes.STRING) {
-            participants += "keyValStr);";
+            writer.write("keyValStr);");
           } else if (tempType.getKey().getType() == AttributeTypes.BOOLEAN) {
-            participants += "(new Boolean(keyValStr)).booleanValue());";
+            writer.write("(new Boolean(keyValStr)).booleanValue());");
           } else if (tempType.getKey().getType() == AttributeTypes.INTEGER) {
-            participants += "(new Integer(keyValStr)).intValue());";
+            writer.write("(new Integer(keyValStr)).intValue());");
           } else if (tempType.getKey().getType() == AttributeTypes.DOUBLE) {
-            participants += "(new Double(keyValStr)).doubleValue());";
+            writer.write("(new Double(keyValStr)).doubleValue());");
           }
-          participants += "\nif(a != null)\n{\n";
+          writer.write(NEWLINE);
+          writer.write("if(a != null)");
+          writer.write(NEWLINE);
+          writer.write(OPEN_BRACK);
+          writer.write(NEWLINE);
           // go through each action type:
           boolean putElse88 = false;
           for (int j = 0; j < acts.size(); j++) {
@@ -555,112 +680,186 @@ public class EmployeeParticipantSelectionDialogGenerator implements
               ActionTypeTrigger tempTrig = trigs.elementAt(k);
               if (tempTrig instanceof UserActionTypeTrigger) {
                 if (putElse88) { // not on first element
-                  participants += "else ";
+                  writer.write("else ");
                 } else {
                   putElse88 = true;
                 }
-                participants += "if(action instanceof "
+                writer.write("if(action instanceof "
                     + CodeGeneratorUtils.getUpperCaseLeading(
-                    		tempAct.getName()) + "Action)\n{\n";
+                    		tempAct.getName()) + "Action)");
+                writer.write(NEWLINE);
+                writer.write(OPEN_BRACK);
+                writer.write(NEWLINE);
                 // go through all participants:
-                Vector<ActionTypeParticipant> parts = 
+                Vector<ActionTypeParticipant> participants = 
                 	tempAct.getAllParticipants();
                 boolean nextOneWriteElse = false;
-                for (int m = 0; m < parts.size(); m++) {
-                  ActionTypeParticipant tempPart = parts.elementAt(m);
+                for (int m = 0; m < participants.size(); m++) {
+                  ActionTypeParticipant tempPart = participants.elementAt(m);
                   if (tempPart.getSimSEObjectType(tempType.getName()) != null) { 
                   	// this SimSEObjectType is an allowable type for this
                   	// participant
                     if (nextOneWriteElse) { // not on first element
-                      participants += "else ";
+                      writer.write("else ");
                     }
-                    participants += "if(partName.equals(\"" + tempPart.getName()
-                        + "\"))\n{\n";
-                    participants += "((" + CodeGeneratorUtils.getUpperCaseLeading(
+                    writer.write("if(partName.equals(\"" + tempPart.getName()
+                        + "\"))");
+                    writer.write(NEWLINE);
+                    writer.write(OPEN_BRACK);
+                    writer.write(NEWLINE);
+                    writer.write("((" + CodeGeneratorUtils.getUpperCaseLeading(
                     		tempAct.getName()) + "Action)action).add" + 
-                    		tempPart.getName() + "(a);\n}\n";
+                    		tempPart.getName() + "(a);");
+                    writer.write(NEWLINE);
+                    writer.write(CLOSED_BRACK);
+                    writer.write(NEWLINE);
                     nextOneWriteElse = true;
                   }
                 }
-                
-                participants += "}\n";
+                writer.write(CLOSED_BRACK);
+                writer.write(NEWLINE);
               }
             }
           }
-          participants += "}\n";
-          
+          writer.write(CLOSED_BRACK);
+          writer.write(NEWLINE);
           if ((tempType.getKey().getType() == AttributeTypes.INTEGER)
               || (tempType.getKey().getType() == AttributeTypes.DOUBLE)) {
-            participants += "}\ncatch(NumberFormatException e)\n{\n";
-            participants += "System.out.println(e);\n}\n";
+            writer.write(CLOSED_BRACK);
+            writer.write(NEWLINE);
+            writer.write("catch(NumberFormatException e)");
+            writer.write(NEWLINE);
+            writer.write(OPEN_BRACK);
+            writer.write(NEWLINE);
+            writer.write("System.out.println(e);");
+            writer.write(NEWLINE);
+            writer.write(CLOSED_BRACK);
+            writer.write(NEWLINE);
           }
-          participants += "}\n";
+          writer.write(CLOSED_BRACK);
+          writer.write(NEWLINE);
         }
       }
-      
-      return participants;
-  }
-  
-  private String generateSetMinAndMax(Vector<ActionType> acts) {
-	  String parts = "";
-	  
+      writer.write(CLOSED_BRACK);
+      writer.write(NEWLINE);
+      writer.write(NEWLINE);
+
+      // setMinandMax function:
+      writer.write("private void setMinAndMax()");
+      writer.write(NEWLINE);
+      writer.write(OPEN_BRACK);
+      writer.write(NEWLINE);
+      // go through each action:
       for (int i = 0; i < acts.size(); i++) {
-          ActionType tempAct = acts.elementAt(i);
-          if (i > 0) { // not on first element
-            parts += "else ";
-          }
-          parts += "if(action instanceof "
-              + CodeGeneratorUtils.getUpperCaseLeading(tempAct.getName()) + 
-              "Action)\n{\n";
-          // go through each participant:
-          Vector<ActionTypeParticipant> participants = 
-          	tempAct.getAllParticipants();
-          for (int j = 0; j < participants.size(); j++) {
-            if (j > 0) { // not on first element
-              parts += "else ";
-            }
-            ActionTypeParticipant tempPart = participants.elementAt(j);
-            parts += "if(partName.equals(\"" + tempPart.getName() + "\"))\n{\n";
-            if (tempPart.getSimSEObjectTypeType() == 
-            	SimSEObjectTypeTypes.EMPLOYEE) {
-              parts += "if(selectedEmp == null)\n{\n";
-            }
-            parts += "minNumParts = ";
-            if (tempPart.getQuantity().isMinValBoundless()) {
-              parts += "0;";
-            } else { // min val has a value
-              parts += tempPart.getQuantity().getMinVal().toString() + ";";
-            }
-            parts += "\nmaxNumParts = ";
-            if (tempPart.getQuantity().isMaxValBoundless()) {
-              parts += "999999;";
-            } else { // max val has a value
-              parts += tempPart.getQuantity().getMaxVal().toString() + ";";
-            }
-            if (tempPart.getSimSEObjectTypeType() == 
-            	SimSEObjectTypeTypes.EMPLOYEE) {
-              parts += "}\nelse\n{\n";
-              parts += "minNumParts = ";
-              if (tempPart.getQuantity().isMinValBoundless()) {
-                parts += "0;";
-              } else { // min val has a value
-                parts += tempPart.getQuantity().getMinVal().toString()
-                    + " - 1;";
-              }
-              parts += "\nmaxNumParts = ";
-              if (tempPart.getQuantity().isMaxValBoundless()) {
-                parts += "999999;";
-              } else { // max val has a value
-                parts += tempPart.getQuantity().getMaxVal().toString()
-                    + " - 1;";
-              }
-              
-              parts += "\n}\n";
-            }
-            parts += "\n}\n";
-          }
-          parts += "}\n";
+        ActionType tempAct = acts.elementAt(i);
+        if (i > 0) { // not on first element
+          writer.write("else ");
         }
-      return parts;
+        writer.write("if(action instanceof "
+            + CodeGeneratorUtils.getUpperCaseLeading(tempAct.getName()) + 
+            "Action)");
+        writer.write(NEWLINE);
+        writer.write(OPEN_BRACK);
+        writer.write(NEWLINE);
+        // go through each participant:
+        Vector<ActionTypeParticipant> participants = 
+        	tempAct.getAllParticipants();
+        for (int j = 0; j < participants.size(); j++) {
+          if (j > 0) { // not on first element
+            writer.write("else ");
+          }
+          ActionTypeParticipant tempPart = participants.elementAt(j);
+          writer.write("if(partName.equals(\"" + tempPart.getName() + "\"))");
+          writer.write(NEWLINE);
+          writer.write(OPEN_BRACK);
+          writer.write(NEWLINE);
+          if (tempPart.getSimSEObjectTypeType() == 
+          	SimSEObjectTypeTypes.EMPLOYEE) {
+            writer.write("if(selectedEmp == null)");
+            writer.write(NEWLINE);
+            writer.write(OPEN_BRACK);
+            writer.write(NEWLINE);
+          }
+          writer.write("minNumParts = ");
+          if (tempPart.getQuantity().isMinValBoundless()) {
+            writer.write("0;");
+          } else { // min val has a value
+            writer.write(tempPart.getQuantity().getMinVal().toString() + ";");
+          }
+          writer.write(NEWLINE);
+          writer.write("maxNumParts = ");
+          if (tempPart.getQuantity().isMaxValBoundless()) {
+            writer.write("999999;");
+          } else { // max val has a value
+            writer.write(tempPart.getQuantity().getMaxVal().toString() + ";");
+          }
+          if (tempPart.getSimSEObjectTypeType() == 
+          	SimSEObjectTypeTypes.EMPLOYEE) {
+            writer.write(CLOSED_BRACK);
+            writer.write(NEWLINE);
+            writer.write("else");
+            writer.write(NEWLINE);
+            writer.write(OPEN_BRACK);
+            writer.write(NEWLINE);
+            writer.write("minNumParts = ");
+            if (tempPart.getQuantity().isMinValBoundless()) {
+              writer.write("0;");
+            } else { // min val has a value
+              writer.write(tempPart.getQuantity().getMinVal().toString()
+                  + " - 1;");
+            }
+            writer.write(NEWLINE);
+            writer.write("maxNumParts = ");
+            if (tempPart.getQuantity().isMaxValBoundless()) {
+              writer.write("999999;");
+            } else { // max val has a value
+              writer.write(tempPart.getQuantity().getMaxVal().toString()
+                  + " - 1;");
+            }
+            writer.write(NEWLINE);
+            writer.write(CLOSED_BRACK);
+            writer.write(NEWLINE);
+          }
+          writer.write(NEWLINE);
+          writer.write(CLOSED_BRACK);
+          writer.write(NEWLINE);
+        }
+        writer.write(CLOSED_BRACK);
+        writer.write(NEWLINE);
+      }
+      writer.write(CLOSED_BRACK);
+      writer.write(NEWLINE);
+
+      // actionCancelled function:
+      writer.write("public boolean actionCancelled()");
+      writer.write(NEWLINE);
+      writer.write(OPEN_BRACK);
+      writer.write(NEWLINE);
+      writer.write("return actionCancelled;");
+      writer.write(NEWLINE);
+      writer.write(CLOSED_BRACK);
+      writer.write(NEWLINE);
+      writer.write(NEWLINE);
+      
+      // ExitListener class:
+      writer.write("public class ExitListener extends WindowAdapter {");
+      writer.write(NEWLINE);
+      writer.write("public void windowClosing(WindowEvent event) {");
+      writer.write(NEWLINE);
+      writer.write("actionCancelled = true;");
+      writer.write(NEWLINE);
+      writer.write(CLOSED_BRACK);
+      writer.write(NEWLINE);
+      writer.write(CLOSED_BRACK);
+      writer.write(NEWLINE);
+
+      writer.write(CLOSED_BRACK);
+      writer.write(NEWLINE);
+      writer.close();
+    } catch (IOException e) {
+      JOptionPane.showMessageDialog(null, ("Error writing file "
+          + psdFile.getPath() + ": " + e.toString()), "File IO Error",
+          JOptionPane.WARNING_MESSAGE);
+    }
   }
 }
