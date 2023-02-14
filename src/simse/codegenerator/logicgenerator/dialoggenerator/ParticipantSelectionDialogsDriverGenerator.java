@@ -203,7 +203,7 @@ public class ParticipantSelectionDialogsDriverGenerator implements
 	  
 
 	  ClassName actions = ClassName.get("simse.adts", "actions");
-	  JavaFile javaFile = JavaFile.builder("ParticipantSelectionDialogsDriver", participantDialog)
+	  JavaFile javaFile = JavaFile.builder("simse.logic.dialogs", participantDialog)
 			  .addStaticImport(actions, "*")  
 			  .build();
 	  

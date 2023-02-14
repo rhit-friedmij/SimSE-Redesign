@@ -274,7 +274,7 @@ public class RepositoryGenerator implements CodeGeneratorConstants {
     		.addMethod(refetchParticipants)
     		.build();
     
-	JavaFile javaFile = JavaFile.builder("ActionStateRepository", actionRepo)
+	JavaFile javaFile = JavaFile.builder("simse.state.ActionStateRepository", actionRepo)
 		    .build();
     
     try {
@@ -410,7 +410,7 @@ public class RepositoryGenerator implements CodeGeneratorConstants {
     		.addMethod(remove)
     		.build();
     
-    JavaFile javaFile = JavaFile.builder(uCaseName + "StateRepository", repStateRepo)
+    JavaFile javaFile = JavaFile.builder("simse.state." + uCaseName + "StateRepository", repStateRepo)
 		    .build();
     
     try {
@@ -522,7 +522,7 @@ public class RepositoryGenerator implements CodeGeneratorConstants {
     
     TypeSpec repStateRepo = repStateRepoBuilder.build();
     
-    JavaFile javaFile = JavaFile.builder(typeName + "StateRepository", repStateRepo)
+    JavaFile javaFile = JavaFile.builder("simse.state." + typeName + "StateRepository", repStateRepo)
 		    .build();
     
     try {
@@ -710,7 +710,7 @@ public class RepositoryGenerator implements CodeGeneratorConstants {
     		.addMethod(refetchParticipants)
     		.build();
     
-    JavaFile javaFile = JavaFile.builder(uCaseName + "ActionStateRepository", repStateRepo)
+    JavaFile javaFile = JavaFile.builder("simse.state." + uCaseName + "ActionStateRepository", repStateRepo)
 		    .build();
     
     try {

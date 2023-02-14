@@ -306,7 +306,7 @@ public class NonEmployeeParticipantSelectionDialogGenerator implements
 	  
 
 	  ClassName actions = ClassName.get("simse.adts", "actions");
-	  JavaFile javaFile = JavaFile.builder("NonEmployeeParticipantSelectionDialog", nonEmployeeDialog)
+	  JavaFile javaFile = JavaFile.builder("simse.logic.dialogs", nonEmployeeDialog)
 			  .addStaticImport(actions, "*")  
 			  .build();
 	  

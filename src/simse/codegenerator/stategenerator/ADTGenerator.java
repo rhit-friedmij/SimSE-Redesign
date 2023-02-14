@@ -89,7 +89,7 @@ public class ADTGenerator implements CodeGeneratorConstants {
     		.addMethod(clone1)
     		.build();
 
-	  JavaFile javaFile = JavaFile.builder("SSObject", ssObject)
+	  JavaFile javaFile = JavaFile.builder("simse.adts.objects.SSObject", ssObject)
 			    .build();
     
     try {
@@ -363,7 +363,7 @@ public class ADTGenerator implements CodeGeneratorConstants {
     
     TypeSpec employee = employeeBuilder.build();
     
-    javaFile = JavaFile.builder("Employee", employee)
+    javaFile = JavaFile.builder("simse.adts.objects.Employee", employee)
 		    .build();
     try {
     	FileWriter writer = new FileWriter(empClass);
@@ -542,7 +542,7 @@ public class ADTGenerator implements CodeGeneratorConstants {
 	
 	TypeSpec customer = customerBuilder.build();
 	
-	javaFile = JavaFile.builder("Customer", customer)
+	javaFile = JavaFile.builder("simse.adts.objects.Customer", customer)
 		    .build();
     
     try {
@@ -659,7 +659,7 @@ public class ADTGenerator implements CodeGeneratorConstants {
     		.addMethod(getAllInactiveParticipants)
     		.build();
     
-    javaFile = JavaFile.builder("Action", action)
+    javaFile = JavaFile.builder("simse.adts.actions.Action", action)
 		    .build();
     
     try {
@@ -806,7 +806,7 @@ public class ADTGenerator implements CodeGeneratorConstants {
     
 	TypeSpec absClassSpec = absClassSpecBuilder.build();
 	
-	JavaFile javaFile = JavaFile.builder(className, absClassSpec)
+	JavaFile javaFile = JavaFile.builder("simse.adts.objects." + className, absClassSpec)
 		    .build();
 	
     try {
@@ -1009,7 +1009,8 @@ public class ADTGenerator implements CodeGeneratorConstants {
     
     TypeSpec adt = adtBuilder.build();
     
-    JavaFile javaFile = JavaFile.builder(name, adt)
+    JavaFile javaFile = JavaFile.builder("simse.adts.objects." + CodeGeneratorUtils.
+    		getUpperCaseLeading(objType.getName()), adt)
 		    .build();
     
     try {
@@ -1370,7 +1371,8 @@ public class ADTGenerator implements CodeGeneratorConstants {
     		.addMethod(refetchParticipants)
     		.build();
 
-    JavaFile javaFile = JavaFile.builder(name, adt)
+    JavaFile javaFile = JavaFile.builder("simse.adts.actions." + CodeGeneratorUtils.
+    		getUpperCaseLeading(actType.getName()), adt)
 		    .build();
     
     try {
