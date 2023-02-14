@@ -67,11 +67,5 @@ public class ActionInfoWindowGenerator implements CodeGeneratorConstants {
     	JavaFile javaFile = JavaFile.builder("simse.explanatorytool", actionInfoWindow)
     		    .build();
 
-    		try {
-				javaFile.writeTo(System.out);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
   }
  }

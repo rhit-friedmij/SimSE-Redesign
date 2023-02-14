@@ -630,7 +630,10 @@ public class ActionGraphGenerator implements CodeGeneratorConstants {
     		    .build();
 
       try {
-		javaFile.writeTo(actGraphFile);
+    	FileWriter writer = new FileWriter(actGraphFile);
+		javaFile.writeTo(writer);
+		
+		writer.close();
 	} catch (IOException e) {
 		// TODO Auto-generated catch block
 		e.printStackTrace();

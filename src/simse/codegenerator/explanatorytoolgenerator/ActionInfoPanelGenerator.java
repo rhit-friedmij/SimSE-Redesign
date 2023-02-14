@@ -558,7 +558,10 @@ public class ActionInfoPanelGenerator implements CodeGeneratorConstants {
   		    .build();
 
     try {
-		javaFile.writeTo(actInfoFile);
+    	FileWriter writer = new FileWriter(actInfoFile);
+		javaFile.writeTo(writer);
+		
+		writer.close();
 	} catch (IOException e) {
 		// TODO Auto-generated catch block
 		e.printStackTrace();

@@ -269,7 +269,10 @@ public class CompositeGraphGenerator implements CodeGeneratorConstants {
 		    .build();
 	
     try {
-		javaFile.writeTo(compGraphFile);
+    	FileWriter writer = new FileWriter(compGraphFile);
+		javaFile.writeTo(writer);
+		
+		writer.close();
 	} catch (IOException e) {
 		// TODO Auto-generated catch block
 		e.printStackTrace();
