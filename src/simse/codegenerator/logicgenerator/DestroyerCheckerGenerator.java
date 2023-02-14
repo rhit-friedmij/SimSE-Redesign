@@ -25,6 +25,7 @@ import simse.modelbuilder.actionbuilder.UserActionTypeDestroyer;
 import simse.modelbuilder.rulebuilder.Rule;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 
 import java.util.Vector;
@@ -114,9 +115,9 @@ public class DestroyerCheckerGenerator implements CodeGeneratorConstants {
 			if (destFile.exists()) {
 				destFile.delete(); // delete old version of file
 			}
-			
+			FileWriter writer = new FileWriter(destFile);
 			System.out.println(javaFile.toString());
-		    javaFile.writeTo(destFile);
+		    javaFile.writeTo(writer);
 		} catch (IOException e) {
 			JOptionPane.showMessageDialog(null, ("Error writing file " + destFile.getPath() + ": " + e.toString()),
 					"File IO Error", JOptionPane.WARNING_MESSAGE);

@@ -150,9 +150,9 @@ public class LogicGenerator implements CodeGeneratorConstants {
         if (logicFile.exists()) {
           logicFile.delete(); // delete old version of file
         }
-        
+        FileWriter writer = new FileWriter(logicFile);
         System.out.println(javaFile.toString());
-		javaFile.writeTo(logicFile);
+		javaFile.writeTo(writer);
 		return success;
     } catch (IOException e) {
     	JOptionPane.showMessageDialog(null, ("Error writing file " + logicFile.getPath() + ": " + e.toString()), 

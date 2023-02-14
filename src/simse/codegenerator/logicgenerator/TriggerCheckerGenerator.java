@@ -25,6 +25,7 @@ import simse.modelbuilder.objectbuilder.SimSEObjectTypeTypes;
 import simse.modelbuilder.rulebuilder.Rule;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 
 import java.util.Vector;
@@ -104,8 +105,9 @@ public class TriggerCheckerGenerator implements CodeGeneratorConstants {
 			if (trigFile.exists()) {
 				trigFile.delete(); // delete old version of file
 			}
+			FileWriter writer = new FileWriter(trigFile);
 			System.out.println(javaFile.toString());
-			javaFile.writeTo(trigFile);
+			javaFile.writeTo(writer);
 		} catch (IOException e) {
 			JOptionPane.showMessageDialog(null, ("Error writing file " + trigFile.getPath() + ": " + e.toString()),
 					"File IO Error", JOptionPane.WARNING_MESSAGE);

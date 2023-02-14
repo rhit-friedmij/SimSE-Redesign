@@ -117,9 +117,9 @@ public class MiscUpdaterGenerator implements CodeGeneratorConstants {
 	      if (muFile.exists()) {
 	        muFile.delete(); // delete old version of file
 	      }
-	      
+	      FileWriter writer = new FileWriter(muFile);
 	      System.out.println(javaFile.toString());
-	      javaFile.writeTo(muFile);
+	      javaFile.writeTo(writer);
     } catch (IOException e) {
       JOptionPane.showMessageDialog(null, ("Error writing file " + muFile.getPath() + ": " + 
     		  e.toString()), "File IO Error", JOptionPane.WARNING_MESSAGE);

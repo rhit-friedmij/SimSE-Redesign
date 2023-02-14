@@ -18,6 +18,7 @@ import simse.modelbuilder.startstatebuilder.SimSEObject;
 import java.util.ArrayList;
 import java.util.Vector;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 
 import javax.lang.model.element.Modifier;
@@ -257,9 +258,9 @@ public class EngineGenerator implements CodeGeneratorConstants {
 			if (engineFile.exists()) {
 				engineFile.delete(); // delete old version of file
 			}
-			
+			FileWriter writer = new FileWriter(engineFile);
 			System.out.println(javaFile.toString());
-			javaFile.writeTo(engineFile);
+			javaFile.writeTo(writer);
 		} catch (IOException e) {
 			JOptionPane.showMessageDialog(null, ("Error writing file " + engineFile.getPath() + ": " + e.toString()),
 					"File IO Error", JOptionPane.WARNING_MESSAGE);

@@ -170,9 +170,9 @@ public class RuleExecutorGenerator implements CodeGeneratorConstants {
 			if (ruleExFile.exists()) {
 				ruleExFile.delete(); // delete old version of file
 			}
-			
+			writer = new FileWriter(ruleExFile);
 			System.out.println(javaFile.toString());
-			javaFile.writeTo(ruleExFile);
+			javaFile.writeTo(writer);
 			
 			// generate warnings, if any:
 			if (warnings.size() > 0) {
