@@ -130,7 +130,8 @@ public class DestroyerDescriptionsGenerator implements CodeGeneratorConstants {
       
       JavaFile javaFile = JavaFile.builder("simse.util", destroyerDescriptions).build();
       try {
-		javaFile.writeTo(destDescFile);
+    	FileWriter writer = new FileWriter(destDescFile);
+		javaFile.writeTo(writer);
 	} catch (IOException e) {
 		// TODO Auto-generated catch block
 		e.printStackTrace();

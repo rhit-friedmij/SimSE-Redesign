@@ -359,7 +359,10 @@ public class RuleInfoPanelGenerator implements CodeGeneratorConstants {
   		    .build();
 
     try {
-		javaFile.writeTo(ruleInfoFile);
+    	FileWriter writer = new FileWriter(ruleInfoFile);
+		javaFile.writeTo(writer);
+		
+		writer.close();
 	} catch (IOException e) {
 		// TODO Auto-generated catch block
 		e.printStackTrace();

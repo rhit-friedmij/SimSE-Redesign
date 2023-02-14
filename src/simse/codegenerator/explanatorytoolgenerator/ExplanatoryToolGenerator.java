@@ -803,7 +803,10 @@ public class ExplanatoryToolGenerator implements CodeGeneratorConstants {
   		    .build();
 
     try {
-		javaFile.writeTo(expToolFile);
+    	FileWriter writer = new FileWriter(expToolFile);
+		javaFile.writeTo(writer);
+		
+		writer.close();
 	} catch (IOException e) {
 		// TODO Auto-generated catch block
 		e.printStackTrace();

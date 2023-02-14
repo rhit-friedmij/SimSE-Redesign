@@ -553,7 +553,10 @@ public class ObjectGraphGenerator implements CodeGeneratorConstants {
   		    .build();
 
     try {
-		javaFile.writeTo(objGraphFile);
+    	FileWriter writer = new FileWriter(objGraphFile);
+		javaFile.writeTo(writer);
+		
+		writer.close();
 	} catch (IOException e) {
 		// TODO Auto-generated catch block
 		e.printStackTrace();
