@@ -9,22 +9,11 @@ public class CharacterIdleLeftGenerator {
 
 	private File dir;
 	
-	public static void main(String[] args) {
-		File directory = new File("C:\\Users\\localmgr\\Documents\\TestFiles");
-		CharacterIdleLeftGenerator gen = new CharacterIdleLeftGenerator(directory);
-	}
-	
 	public CharacterIdleLeftGenerator(File dir) {
 		this.dir = dir;
-		try {
-			generate();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 	}
 
-	private void generate() throws IOException {
+	private void generate() {
 		// TODO Auto-generated method stub
 	    File characterIdleLeftFile = new File(dir,
 	            ("animations\\CharacterIdleLeft.java"));
@@ -33,7 +22,8 @@ public class CharacterIdleLeftGenerator {
 	        	characterIdleLeftFile.delete(); // delete old version of file
 	        }
 		
-		
+		try {
+			
 		FileReader reader = new FileReader("C:\\Users\\localmgr\\git\\simse-redesign\\simse-redesign\\res\\static\\animations\\CharacterIdleLeft.txt");
 		FileWriter writer = new FileWriter(characterIdleLeftFile);
 	
@@ -47,6 +37,10 @@ public class CharacterIdleLeftGenerator {
 		
 		reader.close();
 		writer.close();
+		
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		
 	}
 	

@@ -9,22 +9,12 @@ public class CharacterIdleFrontGenerator {
 
 	private File dir;
 	
-	public static void main(String[] args) {
-		File directory = new File("C:\\Users\\localmgr\\Documents\\TestFiles");
-		CharacterIdleFrontGenerator gen = new CharacterIdleFrontGenerator(directory);
-	}
-	
 	public CharacterIdleFrontGenerator(File dir) {
 		this.dir = dir;
-		try {
-			generate();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+
 	}
 
-	private void generate() throws IOException {
+	private void generate() {
 		// TODO Auto-generated method stub
 	    File characterIdleFrontFile = new File(dir,
 	            ("animations\\CharacterIdleFront.java"));
@@ -32,7 +22,9 @@ public class CharacterIdleFrontGenerator {
 	        if (characterIdleFrontFile.exists()) {
 	        	characterIdleFrontFile.delete(); // delete old version of file
 	        }
-		
+	        
+	    
+		try {
 		
 		FileReader reader = new FileReader("C:\\Users\\localmgr\\git\\simse-redesign\\simse-redesign\\res\\static\\animations\\CharacterIdleFront.txt");
 		FileWriter writer = new FileWriter(characterIdleFrontFile);
@@ -47,6 +39,10 @@ public class CharacterIdleFrontGenerator {
 		
 		reader.close();
 		writer.close();
+		
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		
 	}
 	

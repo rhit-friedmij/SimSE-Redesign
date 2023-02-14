@@ -9,19 +9,8 @@ public class CharacterWalkBackGenerator {
 
 	private File dir;
 	
-	public static void main(String[] args) {
-		File directory = new File("C:\\Users\\localmgr\\Documents\\TestFiles");
-		CharacterWalkBackGenerator gen = new CharacterWalkBackGenerator(directory);
-	}
-	
 	public CharacterWalkBackGenerator(File dir) {
 		this.dir = dir;
-		try {
-			generate();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 	}
 
 	private void generate() throws IOException {
@@ -33,6 +22,7 @@ public class CharacterWalkBackGenerator {
 	        	characterWalkBackFile.delete(); // delete old version of file
 	        }
 		
+	    try {
 		
 		FileReader reader = new FileReader("C:\\Users\\localmgr\\git\\simse-redesign\\simse-redesign\\res\\static\\animations\\CharacterWalkBack.txt");
 		FileWriter writer = new FileWriter(characterWalkBackFile);
@@ -47,6 +37,10 @@ public class CharacterWalkBackGenerator {
 		
 		reader.close();
 		writer.close();
+		
+	    } catch (IOException e) {
+	    	e.printStackTrace();
+	    }
 		
 	}
 	

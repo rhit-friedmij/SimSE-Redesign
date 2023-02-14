@@ -9,22 +9,11 @@ public class PathDataGenerator {
 
 	private File dir;
 	
-	public static void main(String[] args) {
-		File directory = new File("C:\\Users\\localmgr\\Documents\\TestFiles");
-		PathDataGenerator gen = new PathDataGenerator(directory);
-	}
-	
 	public PathDataGenerator(File dir) {
 		this.dir = dir;
-		try {
-			generate();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 	}
 
-	private void generate() throws IOException {
+	private void generate() {
 		// TODO Auto-generated method stub
 	    File pathDataFile = new File(dir,
 	            ("animations\\PathData.java"));
@@ -33,7 +22,8 @@ public class PathDataGenerator {
 	        	pathDataFile.delete(); // delete old version of file
 	        }
 		
-		
+		try {
+	        
 		FileReader reader = new FileReader("C:\\Users\\localmgr\\git\\simse-redesign\\simse-redesign\\res\\static\\animations\\PathData.txt");
 		FileWriter writer = new FileWriter(pathDataFile);
 	
@@ -47,6 +37,10 @@ public class PathDataGenerator {
 		
 		reader.close();
 		writer.close();
+		
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		
 	}
 	

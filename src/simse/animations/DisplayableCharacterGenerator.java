@@ -8,23 +8,12 @@ import java.io.IOException;
 public class DisplayableCharacterGenerator {
 
 	private File dir;
-	
-	public static void main(String[] args) {
-		File directory = new File("C:\\Users\\localmgr\\Documents\\TestFiles");
-		DisplayableCharacterGenerator gen = new DisplayableCharacterGenerator(directory);
-	}
-	
+
 	public DisplayableCharacterGenerator(File dir) {
 		this.dir = dir;
-		try {
-			generate();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 	}
 
-	private void generate() throws IOException {
+	private void generate() {
 		// TODO Auto-generated method stub
 	    File displayableCharacterFile = new File(dir,
 	            ("animations\\DisplayableCharacter.java"));
@@ -33,7 +22,8 @@ public class DisplayableCharacterGenerator {
 	        	displayableCharacterFile.delete(); // delete old version of file
 	        }
 		
-		
+		try {
+	        
 		FileReader reader = new FileReader("C:\\Users\\localmgr\\git\\simse-redesign\\simse-redesign\\res\\static\\animations\\DisplayableCharacter.txt");
 		FileWriter writer = new FileWriter(displayableCharacterFile);
 	
@@ -48,6 +38,9 @@ public class DisplayableCharacterGenerator {
 		reader.close();
 		writer.close();
 		
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 }

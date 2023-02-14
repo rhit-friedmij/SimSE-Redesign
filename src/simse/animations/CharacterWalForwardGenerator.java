@@ -9,22 +9,11 @@ public class CharacterWalForwardGenerator {
 
 	private File dir;
 	
-	public static void main(String[] args) {
-		File directory = new File("C:\\Users\\localmgr\\Documents\\TestFiles");
-		CharacterWalForwardGenerator gen = new CharacterWalForwardGenerator(directory);
-	}
-	
 	public CharacterWalForwardGenerator(File dir) {
 		this.dir = dir;
-		try {
-			generate();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 	}
 
-	private void generate() throws IOException {
+	private void generate() {
 		// TODO Auto-generated method stub
 	    File characterWalkForwardFile = new File(dir,
 	            ("animations\\CharacterWalkForward.java"));
@@ -33,7 +22,8 @@ public class CharacterWalForwardGenerator {
 	        	characterWalkForwardFile.delete(); // delete old version of file
 	        }
 		
-		
+		try { 
+			
 		FileReader reader = new FileReader("C:\\Users\\localmgr\\git\\simse-redesign\\simse-redesign\\res\\static\\animations\\CharacterWalkForward.txt");
 		FileWriter writer = new FileWriter(characterWalkForwardFile);
 	
@@ -47,6 +37,10 @@ public class CharacterWalForwardGenerator {
 		
 		reader.close();
 		writer.close();
+		
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		
 	}
 	

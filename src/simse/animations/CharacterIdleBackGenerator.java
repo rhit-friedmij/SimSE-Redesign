@@ -9,22 +9,11 @@ public class CharacterIdleBackGenerator {
 
 	private File dir;
 	
-	public static void main(String[] args) {
-		File directory = new File("C:\\Users\\localmgr\\Documents\\TestFiles");
-		CharacterIdleBackGenerator gen = new CharacterIdleBackGenerator(directory);
-	}
-	
 	public CharacterIdleBackGenerator(File dir) {
 		this.dir = dir;
-		try {
-			generate();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 	}
 
-	private void generate() throws IOException {
+	private void generate(){
 		// TODO Auto-generated method stub
 	    File characterIdleBackFile = new File(dir,
 	            ("animations\\CharacterIdleBack.java"));
@@ -33,7 +22,8 @@ public class CharacterIdleBackGenerator {
 	        	characterIdleBackFile.delete(); // delete old version of file
 	        }
 		
-		
+		try {
+			
 		FileReader reader = new FileReader("C:\\Users\\localmgr\\git\\simse-redesign\\simse-redesign\\res\\static\\animations\\CharacterIdleBack.txt");
 		FileWriter writer = new FileWriter(characterIdleBackFile);
 	
@@ -47,6 +37,9 @@ public class CharacterIdleBackGenerator {
 		
 		reader.close();
 		writer.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		
 	}
 	

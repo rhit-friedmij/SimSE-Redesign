@@ -9,22 +9,11 @@ public class SimSECharacterGenerator {
 
 	private File dir;
 	
-	public static void main(String[] args) {
-		File directory = new File("C:\\Users\\localmgr\\Documents\\TestFiles");
-		SimSECharacterGenerator gen = new SimSECharacterGenerator(directory);
-	}
-	
 	public SimSECharacterGenerator(File dir) {
 		this.dir = dir;
-		try {
-			generate();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 	}
 
-	private void generate() throws IOException {
+	private void generate() {
 		// TODO Auto-generated method stub
 	    File simSECharacterFile = new File(dir,
 	            ("animations\\SimSECharacter.java"));
@@ -33,7 +22,8 @@ public class SimSECharacterGenerator {
 	        	simSECharacterFile.delete(); // delete old version of file
 	        }
 		
-		
+		try {
+	        
 		FileReader reader = new FileReader("C:\\Users\\localmgr\\git\\simse-redesign\\simse-redesign\\res\\static\\animations\\SimSECharacter.txt");
 		FileWriter writer = new FileWriter(simSECharacterFile);
 	
@@ -48,6 +38,9 @@ public class SimSECharacterGenerator {
 		reader.close();
 		writer.close();
 		
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 }
