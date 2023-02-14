@@ -27,6 +27,7 @@ import javax.swing.JOptionPane;
 
 import com.squareup.javapoet.ArrayTypeName;
 import com.squareup.javapoet.ClassName;
+import com.squareup.javapoet.CodeBlock;
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.ParameterizedTypeName;
@@ -364,14 +365,16 @@ public class ObjectGraphGenerator implements CodeGeneratorConstants {
                 		  .build())
                   .build();
     	
-//    	TypeSpec.Builder eventHandler = TypeSpec.classBuilder("menuEvent")
-//    		            .addModifiers(Modifier.PRIVATE)
-//    		            .addStatement("private $T<$T> menuEvent = new $T<$T>() $L",
-//    		                          eventHandlerClass,
-//    		                          actionEvent,
-//    		                          eventHandlerClass,
-//    		                          actionEvent,
-//    		                          anonHandleClass)
+    	TypeSpec eventHandler = TypeSpec.classBuilder("menuEvent")
+    		            .addModifiers(Modifier.PRIVATE)
+    		            .addStaticBlock(CodeBlock.builder()	
+    		            .addStatement("private $T<$T> menuEvent = new $T<$T>() $L",
+    		                          eventHandlerClass,
+    		                          actionEvent,
+    		                          eventHandlerClass,
+    		                          actionEvent,
+    		                          anonHandleClass).build())
+    		            .build();
 
     		            
     	
@@ -423,6 +426,7 @@ public class ObjectGraphGenerator implements CodeGeneratorConstants {
 			  .addMethod(getChartTitle)
 			  .addMethod(getLog)
 			  .addMethod(chartMouseClicked)
+			  .addType(eventHandler)
     		  .build();
       
 
