@@ -327,7 +327,7 @@ public class EmployeeParticipantSelectionDialogGenerator implements
 		  
 
 	  ClassName actions = ClassName.get("simse.adts", "actions");
-	  JavaFile javaFile = JavaFile.builder("EmployeeParticipantSelectionDialog", employeeDialog)
+	  JavaFile javaFile = JavaFile.builder("simse.logic.dialogs", employeeDialog)
 				.addStaticImport(actions, "*")    
 			  .build();
 	  
@@ -338,7 +338,10 @@ public class EmployeeParticipantSelectionDialogGenerator implements
         psdFile.delete(); // delete old version of file
       }
       
-      javaFile.writeTo(psdFile);
+      FileWriter writer = new FileWriter(psdFile);
+      
+      javaFile.writeTo(writer);
+      writer.close();
       
     } catch (IOException e) {
         JOptionPane.showMessageDialog(null, ("Error writing file "

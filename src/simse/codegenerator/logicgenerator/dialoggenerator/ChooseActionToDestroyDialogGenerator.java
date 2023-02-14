@@ -190,7 +190,7 @@ public class ChooseActionToDestroyDialogGenerator implements
   			.build();
 	  
 	  ClassName actions = ClassName.get("simse.adts", "actions");
-	  JavaFile javaFile = JavaFile.builder("ChooseActionToDestroyDialog", destroyDialog)
+	  JavaFile javaFile = JavaFile.builder("simse.logic.dialogs", destroyDialog)
 			    .addStaticImport(actions, "*")
 			  .build();
 	  
@@ -200,8 +200,11 @@ public class ChooseActionToDestroyDialogGenerator implements
       if (catddFile.exists()) {
         catddFile.delete(); // delete old version of file
       }
+
+	  FileWriter writer = new FileWriter(catddFile);
       
-      javaFile.writeTo(catddFile);
+      javaFile.writeTo(writer);
+      writer.close();
 
     } catch (IOException e) {
       JOptionPane.showMessageDialog(null, ("Error writing file "

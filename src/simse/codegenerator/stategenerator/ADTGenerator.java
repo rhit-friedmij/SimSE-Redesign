@@ -89,11 +89,14 @@ public class ADTGenerator implements CodeGeneratorConstants {
     		.addMethod(clone1)
     		.build();
 
-	  JavaFile javaFile = JavaFile.builder("SSObject", ssObject)
+	  JavaFile javaFile = JavaFile.builder("simse.adts.objects.SSObject", ssObject)
 			    .build();
     
     try {
-    	javaFile.writeTo(objClass);
+    	FileWriter writer = new FileWriter(objClass);
+    	
+    	javaFile.writeTo(writer);
+    	writer.close();
     } catch (IOException e) {
         JOptionPane.showMessageDialog(null, ("Error writing file SSObject.java"),
             "File IO Error", JOptionPane.WARNING_MESSAGE);
@@ -360,10 +363,13 @@ public class ADTGenerator implements CodeGeneratorConstants {
     
     TypeSpec employee = employeeBuilder.build();
     
-    javaFile = JavaFile.builder("Employee", employee)
+    javaFile = JavaFile.builder("simse.adts.objects.Employee", employee)
 		    .build();
     try {
-    	javaFile.writeTo(empClass);
+    	FileWriter writer = new FileWriter(empClass);
+    	
+    	javaFile.writeTo(writer);
+    	writer.close();
     } catch (IOException e) {
         JOptionPane.showMessageDialog(null, ("Error writing file "
             + empClass.getPath() + ": " + e.toString()), "File IO Error",
@@ -536,11 +542,14 @@ public class ADTGenerator implements CodeGeneratorConstants {
 	
 	TypeSpec customer = customerBuilder.build();
 	
-	javaFile = JavaFile.builder("Customer", customer)
+	javaFile = JavaFile.builder("simse.adts.objects.Customer", customer)
 		    .build();
     
     try {
-    	javaFile.writeTo(custClass);
+    	FileWriter writer = new FileWriter(custClass);
+    	
+    	javaFile.writeTo(writer);
+    	writer.close();
     } catch (IOException e) {
       JOptionPane.showMessageDialog(null, ("Error writing file "
           + custClass.getPath() + ": " + e.toString()), "File IO Error",
@@ -650,11 +659,14 @@ public class ADTGenerator implements CodeGeneratorConstants {
     		.addMethod(getAllInactiveParticipants)
     		.build();
     
-    javaFile = JavaFile.builder("Action", action)
+    javaFile = JavaFile.builder("simse.adts.actions.Action", action)
 		    .build();
     
     try {
-    	javaFile.writeTo(actClass);
+    	FileWriter writer = new FileWriter(actClass);
+    	
+    	javaFile.writeTo(writer);
+    	writer.close();
     } catch (IOException e) {
         JOptionPane.showMessageDialog(null, ("Error writing file " + actClass
             .getPath()), "File IO Error", JOptionPane.WARNING_MESSAGE);
@@ -794,11 +806,14 @@ public class ADTGenerator implements CodeGeneratorConstants {
     
 	TypeSpec absClassSpec = absClassSpecBuilder.build();
 	
-	JavaFile javaFile = JavaFile.builder(className, absClassSpec)
+	JavaFile javaFile = JavaFile.builder("simse.adts.objects." + className, absClassSpec)
 		    .build();
 	
     try {
-    	javaFile.writeTo(absClass);
+    	FileWriter writer = new FileWriter(absClass);
+    	
+    	javaFile.writeTo(writer);
+    	writer.close();
     } catch (IOException e) {
         JOptionPane.showMessageDialog(null, ("Error writing file "
             + absClass.getPath() + ": " + e.toString()), "File IO Error",
@@ -994,11 +1009,15 @@ public class ADTGenerator implements CodeGeneratorConstants {
     
     TypeSpec adt = adtBuilder.build();
     
-    JavaFile javaFile = JavaFile.builder(name, adt)
+    JavaFile javaFile = JavaFile.builder("simse.adts.objects." + CodeGeneratorUtils.
+    		getUpperCaseLeading(objType.getName()), adt)
 		    .build();
     
     try {
-        javaFile.writeTo(adtFile);
+    	FileWriter writer = new FileWriter(adtFile);
+    	
+        javaFile.writeTo(writer);
+        writer.close();
     } catch (IOException e) {
         JOptionPane.showMessageDialog(null, ("Error writing file "
             + adtFile.getPath() + ": " + e.toString()), "File IO Error",
@@ -1352,11 +1371,15 @@ public class ADTGenerator implements CodeGeneratorConstants {
     		.addMethod(refetchParticipants)
     		.build();
 
-    JavaFile javaFile = JavaFile.builder(name, adt)
+    JavaFile javaFile = JavaFile.builder("simse.adts.actions." + CodeGeneratorUtils.
+    		getUpperCaseLeading(actType.getName()), adt)
 		    .build();
     
     try {
-        javaFile.writeTo(adtFile);
+    	FileWriter writer = new FileWriter(adtFile);
+    	
+        javaFile.writeTo(writer);
+        writer.close();
     } catch (IOException e) {
         JOptionPane.showMessageDialog(null, ("Error writing file "
             + adtFile.getPath() + ": " + e.toString()), "File IO Error",

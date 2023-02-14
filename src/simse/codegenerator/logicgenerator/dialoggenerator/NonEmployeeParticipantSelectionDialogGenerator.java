@@ -306,7 +306,7 @@ public class NonEmployeeParticipantSelectionDialogGenerator implements
 	  
 
 	  ClassName actions = ClassName.get("simse.adts", "actions");
-	  JavaFile javaFile = JavaFile.builder("NonEmployeeParticipantSelectionDialog", nonEmployeeDialog)
+	  JavaFile javaFile = JavaFile.builder("simse.logic.dialogs", nonEmployeeDialog)
 			  .addStaticImport(actions, "*")  
 			  .build();
 	  
@@ -317,7 +317,10 @@ public class NonEmployeeParticipantSelectionDialogGenerator implements
         psdFile.delete(); // delete old version of file
       }
       
-      javaFile.writeTo(psdFile);
+      FileWriter writer = new FileWriter(psdFile);
+      
+      javaFile.writeTo(writer);
+      writer.close();
       
     } catch (IOException e) {
         JOptionPane.showMessageDialog(null, ("Error writing file "
