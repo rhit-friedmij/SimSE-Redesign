@@ -274,13 +274,14 @@ public class DestroyerCheckerGenerator implements CodeGeneratorConstants {
 						if (k == 0) { 
 							// on first element
 							conditions.beginControlFlow("if(a instanceof $T)", objTypeClassName);
+						} else {
+							conditions.nextControlFlow("else if(a instanceof $T)", objTypeClassName);
 						}
-						conditions.nextControlFlow("else if(a instanceof $T)", objTypeClassName);
+						
 						// go through all attribute constraints:
 						ActionTypeParticipantAttributeConstraint[] attConstraints = constraint.getAllAttributeConstraints();
 						int numAttConsts = 0;
 						String ifConditional = "";
-						Vector<ClassName> classes = new Vector<>();
 						for (int m = 0; m < attConstraints.length; m++) {
 							ActionTypeParticipantAttributeConstraint tempAttConst = attConstraints[m];
 							if (tempAttConst.isConstrained()) {
@@ -290,8 +291,7 @@ public class DestroyerCheckerGenerator implements CodeGeneratorConstants {
 								} else {
 									ifConditional += " || ";
 								}
-								ifConditional += "(!((($T)a).get" + tempAttConst.getAttribute().getName() + "()";
-								classes.add(objTypeClassName);
+								ifConditional += "(!(((" + objTypeName +")a).get" + tempAttConst.getAttribute().getName() + "()";
 								if (tempAttConst.getAttribute().getType() == AttributeTypes.STRING) {
 									ifConditional += ".equals(" + "\"" + tempAttConst.getValue().toString() + "\")";
 								} else {
@@ -308,7 +308,7 @@ public class DestroyerCheckerGenerator implements CodeGeneratorConstants {
 						}
 						if (numAttConsts > 0) { // there is at least one constraint
 							ifConditional += ")";
-							conditions.beginControlFlow(ifConditional, classes);
+							conditions.beginControlFlow(ifConditional);
 							conditions.addStatement("destroy = false");
 							conditions.addStatement("break");
 							conditions.endControlFlow();
@@ -326,11 +326,10 @@ public class DestroyerCheckerGenerator implements CodeGeneratorConstants {
 				}
 				
 				conditions.addStatement("$T b = tempAct.getAllParticipants()", vectorOfObjects);
-				conditions.beginControlFlow("for (int j = 0 j < b.size() j++) {");
+				conditions.beginControlFlow("for (int j = 0 j < b.size() j++)");
 				conditions.addStatement("$T c = b.elementAt(j)", ssObject);
-				conditions.beginControlFlow("if (c instanceof $T) {", employee);
+				conditions.beginControlFlow("if (c instanceof $T)", employee);
 				if ((tempDest instanceof AutonomousActionTypeDestroyer) || (tempDest instanceof RandomActionTypeDestroyer)) {
-					
 					if ((tempDest.getDestroyerText() != null) && (tempDest.getDestroyerText().length() > 0)) {
 						conditions.addStatement("(($T)c).setOverheadText(\"" + tempDest.getDestroyerText() + "\")", employee);
 					}
@@ -350,7 +349,7 @@ public class DestroyerCheckerGenerator implements CodeGeneratorConstants {
 						conditions.addStatement("(($T)c).setOverheadText(\"" + tempDest.getDestroyerText() + "\")", customer);
 					}
 					conditions.endControlFlow();
-					conditions.endControlFlow();
+//					conditions.endControlFlow();
 
 					// execute all destroyer rules:
 					Vector<Rule> destRules = tempAct.getAllDestroyerRules();

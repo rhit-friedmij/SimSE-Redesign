@@ -270,7 +270,7 @@ public class TriggerCheckerGenerator implements CodeGeneratorConstants {
 				String partVarName = part.getName().toLowerCase() + "s" + counter;
 				if (part.getSimSEObjectTypeType() == SimSEObjectTypeTypes.EMPLOYEE) {
 					checker.beginControlFlow("for(int j = 0; j < " + partVarName + ".size(); j++)");
-					checker.addStatement("$T z = ($T)" + partVarName + ".elementAt(j)", employee);
+					checker.addStatement("$T z = ($T)" + partVarName + ".elementAt(j)", employee, employee);
 					checker.addStatement("z.addMenuItem(\"" + ((UserActionTypeTrigger) outerTrig).getMenuText() + "\")");
 					checker.endControlFlow();
 				}
@@ -482,10 +482,7 @@ public class TriggerCheckerGenerator implements CodeGeneratorConstants {
 						String objTypeClassName = CodeGeneratorUtils.getUpperCaseLeading(objTypeName);
 						ClassName objTypeClass = ClassName.get("simse.adts.objects", objTypeClassName);
 						
-						String instanceCond = "if($L instanceof $T)";
-						Vector<Object> args = new Vector<>();
-						args.add(oneObjCnt);
-						args.add(objTypeClass);							
+						String instanceCond = "if(" + oneObjCnt + " instanceof " + objTypeClassName + ")";			
 						
 						// go through all attribute constraints:
 						ActionTypeParticipantAttributeConstraint[] attConstraints = outerTrig
@@ -494,14 +491,11 @@ public class TriggerCheckerGenerator implements CodeGeneratorConstants {
 						for (int m = 0; m < attConstraints.length; m++) {
 							ActionTypeParticipantAttributeConstraint attConst = attConstraints[m];
 							if (attConst.isConstrained()) {
-								instanceCond += " && ((($L) $L).get" + CodeGeneratorUtils
+								instanceCond += " && ((("+ objTypeClassName + ") " + oneObjCnt + ").get" + CodeGeneratorUtils
 										.getUpperCaseLeading(attConst.getAttribute().getName())	+ "() ";
-								args.add(objTypeClassName);
-								args.add(oneObjCnt);
 								
 								if (attConst.getAttribute().getType() == AttributeTypes.STRING) {
-									instanceCond += ".equals($S)";
-									args.add(attConst.getValue().toString());
+									instanceCond += ".equals(\"" + attConst.getValue().toString() + "\")";
 								} else {
 									if (attConst.getGuard().equals(AttributeGuard.EQUALS)) {
 										instanceCond += "== ";
@@ -516,14 +510,13 @@ public class TriggerCheckerGenerator implements CodeGeneratorConstants {
 						instanceCond += ")";
 						if (k == 0) { 
 							// on first element
-							checker.beginControlFlow(instanceCond, args);
+							checker.beginControlFlow(instanceCond);
 						} else {
-							checker.nextControlFlow("else " + instanceCond, args);
+							checker.nextControlFlow("else " + instanceCond);
 						}
 						checker.addStatement("$L.addMenuItem($S)", oneObjCnt, "JOIN " + ((UserActionTypeTrigger) outerTrig).getMenuText());
 						checker.endControlFlow();
 					}
-					checker.endControlFlow();
 					checker.endControlFlow();
 					checker.endControlFlow();
 					checker.endControlFlow();
