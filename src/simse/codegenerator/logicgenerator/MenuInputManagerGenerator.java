@@ -171,6 +171,7 @@ public class MenuInputManagerGenerator implements CodeGeneratorConstants {
 			FileWriter writer = new FileWriter(mimFile);
 			System.out.println(javaFile.toString());
 			javaFile.writeTo(writer);
+			writer.close();
 		} catch (IOException e) {
 			JOptionPane.showMessageDialog(null, ("Error writing file " + mimFile.getPath() + ": " + e.toString()),
 					"File IO Error", JOptionPane.WARNING_MESSAGE);

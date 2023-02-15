@@ -153,6 +153,7 @@ public class LogicGenerator implements CodeGeneratorConstants {
         FileWriter writer = new FileWriter(logicFile);
         System.out.println(javaFile.toString());
 		javaFile.writeTo(writer);
+		writer.close();
 		return success;
     } catch (IOException e) {
     	JOptionPane.showMessageDialog(null, ("Error writing file " + logicFile.getPath() + ": " + e.toString()), 

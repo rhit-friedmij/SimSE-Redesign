@@ -24,6 +24,9 @@ import simse.modelbuilder.actionbuilder.UserActionTypeTrigger;
 import simse.modelbuilder.objectbuilder.DefinedObjectTypes;
 import simse.modelbuilder.objectbuilder.NonNumericalAttribute;
 import simse.modelbuilder.objectbuilder.SimSEObjectType;
+import simse.modelbuilder.rulebuilder.DestroyObjectsRule;
+import simse.modelbuilder.rulebuilder.EffectRule;
+import simse.modelbuilder.rulebuilder.ParticipantRuleEffect;
 import simse.modelbuilder.startstatebuilder.CreatedObjects;
 import simse.modelbuilder.startstatebuilder.InstantiatedAttribute;
 import simse.modelbuilder.startstatebuilder.SimSEObject;
@@ -84,6 +87,16 @@ public class TestGenerator {
 		at1.addTrigger(new UserActionTypeTrigger("CultivateEffect", at1, "Start Cultivating", true));
 		at3.addTrigger(new AutonomousActionTypeTrigger("TrigA", at3));
 		at4.addTrigger(new RandomActionTypeTrigger("RandomTrig", at4));
+		
+		EffectRule r1 = new EffectRule("CultivateEffectA", at1);
+		r1.setTiming(1);
+		r1.setVisibilityInExplanatoryTool(true);
+		at1.addRule(r1);
+		
+		DestroyObjectsRule r2 = new DestroyObjectsRule("DestroyCultivate", at1);
+		r1.setTiming(2);
+		at1.addRule(r2);
+		
 		actTypes.addActionType(at1);
 		actTypes.addActionType(at2);
 		actTypes.addActionType(at3);

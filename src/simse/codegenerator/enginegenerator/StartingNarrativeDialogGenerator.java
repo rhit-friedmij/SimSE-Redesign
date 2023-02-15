@@ -129,6 +129,7 @@ public class StartingNarrativeDialogGenerator implements CodeGeneratorConstants 
 			FileWriter writer = new FileWriter(snFile);
 			System.out.println(javaFile.toString());
 			javaFile.writeTo(writer);
+			writer.close();
 		} catch (IOException e) {
 			JOptionPane.showMessageDialog(null, ("Error writing file " + snFile.getPath() + ": " + e.toString()),
 					"File IO Error", JOptionPane.WARNING_MESSAGE);

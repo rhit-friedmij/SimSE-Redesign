@@ -157,7 +157,7 @@ public class RuleExecutorGenerator implements CodeGeneratorConstants {
 				.addMethod(setTrigCheck)
 				.addMethod(setDestCheck)
 				.addMethod(update)
-//				.addMethods(genMethods)
+				.addMethods(genMethods)
 				.addMethod(checkMin)
 				.build();
 
@@ -173,6 +173,7 @@ public class RuleExecutorGenerator implements CodeGeneratorConstants {
 			writer = new FileWriter(ruleExFile);
 			System.out.println(javaFile.toString());
 			javaFile.writeTo(writer);
+			
 			
 			// generate warnings, if any:
 			if (warnings.size() > 0) {
@@ -414,7 +415,7 @@ public class RuleExecutorGenerator implements CodeGeneratorConstants {
 						methodBody.beginControlFlow("if (response.equalsIgnoreCase($S))", "true");
 						methodBody.addStatement("$L = true", inputName);
 						methodBody.addStatement("gotValidInput$L = true", j);
-						methodBody.nextControlFlow("else if(response.equalsIgnoreCase($S))", "true");
+						methodBody.nextControlFlow("else if(response.equalsIgnoreCase($S))", "false");
 						methodBody.addStatement("gotValidInput$L = true", j);
 						methodBody.nextControlFlow("else");
 						methodBody.add(warningPopup("Invalid Input", "Invalid Input -- Please try again!").build());
@@ -478,7 +479,7 @@ public class RuleExecutorGenerator implements CodeGeneratorConstants {
 					methodBody.addStatement("$T $L = $L.getAllActive$Ls()", vectorOfMetaType, partTypeVar, oneActTypeVar, partTypeName);
 				}
 				methodBody.addStatement("$T $T = $T.getAllActive$Ls()", vectorOfMetaType, partTypeVar, oneActTypeVar, partTypeName);
-				methodBody.beginControlFlow("for (int j = 0; j < $T.size(); j++) {", partTypeVar);
+				methodBody.beginControlFlow("for (int j = 0; j < $T.size(); j++)", partTypeVar);
 				methodBody.addStatement("$T $T = $T.elementAt(j)", metaTypeName, onePartTypeVar, partTypeVar);
 				
 				// go through all participant type rule effects:
@@ -531,7 +532,7 @@ public class RuleExecutorGenerator implements CodeGeneratorConstants {
 								methodBody.nextControlFlow("else if (tempAct instanceof $T) {", onePartTypeVar, actClass);
 							}
 							if (tempActType.getName().equals(actType.getName())) {
-								methodBody.addStatement("if(tempAct.equals($L) == false)", oneActTypeVar);
+								methodBody.beginControlFlow("if(tempAct.equals($L) == false)", oneActTypeVar);
 							}
 							// go through all participants:
 							Vector<ActionTypeParticipant> allParts = tempActType.getAllParticipants();
@@ -1007,9 +1008,7 @@ public class RuleExecutorGenerator implements CodeGeneratorConstants {
 												methodBody.endControlFlow();
 											}
 											methodBody.endControlFlow();
-										}
-
-										else { 
+										} else { 
 											// num participants
 											StringBuffer variableName = new StringBuffer("num");
 											if (firstWord.indexOf("Active") >= 0) {
@@ -1643,7 +1642,6 @@ public class RuleExecutorGenerator implements CodeGeneratorConstants {
 			}
 			methodBody.endControlFlow();
 			methodBody.endControlFlow();
-			methodBody.endControlFlow();
 		} else if (rule instanceof CreateObjectsRule) { 
 			// CREATE OBJECTS RULE
 			CreateObjectsRule coRule = (CreateObjectsRule) rule;
@@ -1657,7 +1655,7 @@ public class RuleExecutorGenerator implements CodeGeneratorConstants {
 			}
 			methodBody.beginControlFlow(ruleCond);
 			methodBody.beginControlFlow("for(int i=0; i<" + actType.getName().toLowerCase() + "Acts.size(); i++)");
-			methodBody.beginControlFlow(CodeGeneratorUtils.getUpperCaseLeading(actType.getName()) + "Action "
+			methodBody.addStatement(CodeGeneratorUtils.getUpperCaseLeading(actType.getName()) + "Action "
 					+ actType.getName().toLowerCase() + "Act = ("
 					+ CodeGeneratorUtils.getUpperCaseLeading(actType.getName()) + "Action)"
 					+ actType.getName().toLowerCase() + "Acts.elementAt(i)");
@@ -1747,12 +1745,11 @@ public class RuleExecutorGenerator implements CodeGeneratorConstants {
 			}
 			methodBody.addStatement("(($T) gui).forceGUIUpdate()", simseGui);
 			if (!minCondition.equals("if ()")) {
-				methodBody.beginControlFlow(minCondition);
+				methodBody.endControlFlow();
 			}
 			if ((rule.getTiming() == RuleTiming.TRIGGER) || (rule.getTiming() == RuleTiming.DESTROYER)) {
 				methodBody.endControlFlow();
 			}
-			methodBody.endControlFlow();
 			methodBody.endControlFlow();
 			methodBody.endControlFlow();
 		} else if (rule instanceof DestroyObjectsRule) { 
@@ -1892,7 +1889,6 @@ public class RuleExecutorGenerator implements CodeGeneratorConstants {
 			}
 			methodBody.endControlFlow();
 			methodBody.endControlFlow();
-			methodBody.endControlFlow();
 		}
 		
 		MethodSpec method = MethodSpec.methodBuilder(methodName)
@@ -1971,9 +1967,9 @@ public class RuleExecutorGenerator implements CodeGeneratorConstants {
 				if ((destText != null) && (destText.length() > 0)) { 
 					// has destroyer text
 					conditions.addStatement("$T c = b.getAllParticipants()", vectorOfObjs);
-					conditions.beginControlFlow("for (int j = 0; j < c.size(); j++) {");
+					conditions.beginControlFlow("for (int j = 0; j < c.size(); j++)");
 					conditions.addStatement("$T d = c.elementAt(j)", ssObject);
-					conditions.beginControlFlow("if (d instanceof $T) {", employee);
+					conditions.beginControlFlow("if (d instanceof $T)", employee);
 					conditions.addStatement("(($T) d).setOverheadText($S)", employee, destText);
 					conditions.nextControlFlow("else if (d instanceof $T)", customer);
 					conditions.addStatement("(($T) d).setOverheadText($S)", customer, destText);
@@ -2063,7 +2059,10 @@ public class RuleExecutorGenerator implements CodeGeneratorConstants {
 				}
 			}
 			conditions.endControlFlow();
-			conditions.endControlFlow();
+			//TODO: Keep an eye on this part, if an error shows up that says there is a hanging indent in this file
+			// uncomment this line cause number-wise I think this is how many endControlFlows there should be but
+			// it only works without this at the moment
+//			conditions.endControlFlow();
 		}
 		
 		return conditions;

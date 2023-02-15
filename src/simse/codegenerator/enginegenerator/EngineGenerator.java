@@ -261,6 +261,7 @@ public class EngineGenerator implements CodeGeneratorConstants {
 			FileWriter writer = new FileWriter(engineFile);
 			System.out.println(javaFile.toString());
 			javaFile.writeTo(writer);
+			writer.close();
 		} catch (IOException e) {
 			JOptionPane.showMessageDialog(null, ("Error writing file " + engineFile.getPath() + ": " + e.toString()),
 					"File IO Error", JOptionPane.WARNING_MESSAGE);
