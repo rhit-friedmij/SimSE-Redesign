@@ -1882,7 +1882,7 @@ public class RuleExecutorGenerator implements CodeGeneratorConstants {
 				methodBody.endControlFlow();
 			}
 			if (!minCondition.equals("if ()")) {
-				methodBody.beginControlFlow(minCondition);
+				methodBody.endControlFlow(minCondition);
 			}
 			if ((rule.getTiming() == RuleTiming.TRIGGER) || (rule.getTiming() == RuleTiming.DESTROYER)) {
 				methodBody.endControlFlow();
@@ -1950,7 +1950,9 @@ public class RuleExecutorGenerator implements CodeGeneratorConstants {
 				ifCond += ")";
 			}
 			ifCond += ")";
-			conditions.beginControlFlow(ifCond);
+			if (!ifCond.equals("if ()")) {
+				conditions.beginControlFlow(ifCond);
+			}
 
 			// get the destroyer text from the highest priority destroyer:
 			String destText = new String();
@@ -2058,7 +2060,9 @@ public class RuleExecutorGenerator implements CodeGeneratorConstants {
 					}
 				}
 			}
-			conditions.endControlFlow();
+			if (!ifCond.equals("if ()")) {
+				conditions.endControlFlow(ifCond);
+			}
 			//TODO: Keep an eye on this part, if an error shows up that says there is a hanging indent in this file
 			// uncomment this line cause number-wise I think this is how many endControlFlows there should be but
 			// it only works without this at the moment
