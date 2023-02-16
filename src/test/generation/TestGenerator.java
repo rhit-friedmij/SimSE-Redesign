@@ -3,6 +3,12 @@ package test.generation;
 import java.io.File;
 import java.util.Vector;
 
+import com.squareup.javapoet.ClassName;
+import com.squareup.javapoet.CodeBlock;
+import com.squareup.javapoet.ParameterizedTypeName;
+import com.squareup.javapoet.TypeName;
+
+import simse.codegenerator.CodeGeneratorUtils;
 import simse.codegenerator.enginegenerator.EngineGenerator;
 import simse.codegenerator.enginegenerator.StartingNarrativeDialogGenerator;
 import simse.codegenerator.logicgenerator.DestroyerCheckerGenerator;
@@ -14,6 +20,10 @@ import simse.codegenerator.logicgenerator.TriggerCheckerGenerator;
 import simse.modelbuilder.ModelOptions;
 import simse.modelbuilder.actionbuilder.ActionType;
 import simse.modelbuilder.actionbuilder.ActionTypeDestroyer;
+import simse.modelbuilder.actionbuilder.ActionTypeParticipant;
+import simse.modelbuilder.actionbuilder.ActionTypeParticipantAttributeConstraint;
+import simse.modelbuilder.actionbuilder.ActionTypeParticipantConstraint;
+import simse.modelbuilder.actionbuilder.ActionTypeParticipantDestroyer;
 import simse.modelbuilder.actionbuilder.AutonomousActionTypeTrigger;
 import simse.modelbuilder.actionbuilder.DefinedActionTypes;
 import simse.modelbuilder.actionbuilder.RandomActionTypeDestroyer;
@@ -21,12 +31,14 @@ import simse.modelbuilder.actionbuilder.RandomActionTypeTrigger;
 import simse.modelbuilder.actionbuilder.TimedActionTypeDestroyer;
 import simse.modelbuilder.actionbuilder.UserActionTypeDestroyer;
 import simse.modelbuilder.actionbuilder.UserActionTypeTrigger;
+import simse.modelbuilder.objectbuilder.AttributeTypes;
 import simse.modelbuilder.objectbuilder.DefinedObjectTypes;
 import simse.modelbuilder.objectbuilder.NonNumericalAttribute;
 import simse.modelbuilder.objectbuilder.SimSEObjectType;
 import simse.modelbuilder.rulebuilder.DestroyObjectsRule;
 import simse.modelbuilder.rulebuilder.EffectRule;
 import simse.modelbuilder.rulebuilder.ParticipantRuleEffect;
+import simse.modelbuilder.rulebuilder.Rule;
 import simse.modelbuilder.startstatebuilder.CreatedObjects;
 import simse.modelbuilder.startstatebuilder.InstantiatedAttribute;
 import simse.modelbuilder.startstatebuilder.SimSEObject;
@@ -49,6 +61,7 @@ public class TestGenerator {
 //		triggerCheckerTest();
 //		menuInputManagerTest();
 		ruleExecutorTest();
+//		testConditionalFlows();
 	}
 	
 	public static void setUp() {
@@ -141,5 +154,24 @@ public class TestGenerator {
 	public static void ruleExecutorTest() {
 		RuleExecutorGenerator mimGen = new RuleExecutorGenerator(actTypes, directory);
 		mimGen.generate();
+	}
+	
+	public static void testConditionalFlows() {
+		CodeBlock.Builder conditions = CodeBlock.builder();
+		for (int i = 0; i < 5; i++) {
+			if (i == 0) { 
+				// on first element
+				conditions.beginControlFlow("if (i == 0)", i);
+			} else {
+				conditions.nextControlFlow("else if (i > 0)", i);
+			}
+			
+			conditions.addStatement("On loop $L", i);
+			
+			if (i == 4) {
+				conditions.endControlFlow();
+			}
+		}
+		System.out.println(conditions.build().toString());
 	}
 }

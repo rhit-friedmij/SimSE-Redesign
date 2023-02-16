@@ -313,7 +313,9 @@ public class DestroyerCheckerGenerator implements CodeGeneratorConstants {
 							conditions.addStatement("break");
 							conditions.endControlFlow();
 						}
-						conditions.endControlFlow(); // instance of object types
+						if (k == constraints.size() - 1) {
+							conditions.endControlFlow(); // instance of object types
+						}
 					}
 					conditions.endControlFlow(); // for loop
 				}
@@ -326,7 +328,7 @@ public class DestroyerCheckerGenerator implements CodeGeneratorConstants {
 				}
 				
 				conditions.addStatement("$T b = tempAct.getAllParticipants()", vectorOfObjects);
-				conditions.beginControlFlow("for (int j = 0 j < b.size() j++)");
+				conditions.beginControlFlow("for (int j = 0; j < b.size(); j++)");
 				conditions.addStatement("$T c = b.elementAt(j)", ssObject);
 				conditions.beginControlFlow("if (c instanceof $T)", employee);
 				if ((tempDest instanceof AutonomousActionTypeDestroyer) || (tempDest instanceof RandomActionTypeDestroyer)) {

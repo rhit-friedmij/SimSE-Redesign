@@ -194,7 +194,7 @@ public class TriggerCheckerGenerator implements CodeGeneratorConstants {
 
 				if (partMetaType == SimSEObjectTypeTypes.EMPLOYEE || partMetaType == SimSEObjectTypeTypes.ARTIFACT) { 
 					// employees and artifacts can only be in one of these actions in this role at a time
-					checker.beginControlFlow("for (int j = 0 j < allActions.size() j++) ");
+					checker.beginControlFlow("for (int j = 0; j < allActions.size(); j++) ");
 					checker.addStatement("$T b = allActions.elementAt(j)", actName);
 					checker.beginControlFlow("if (b.getAll" + partName + "s().contains(a)) ");
 					checker.addStatement("alreadyInAction = true");
@@ -317,7 +317,7 @@ public class TriggerCheckerGenerator implements CodeGeneratorConstants {
 			}
 			checker.add("// set all overhead texts:\n");
 			checker.addStatement("$T allPart = a.getAllParticipants()", vectorOfObjects);
-			checker.beginControlFlow("for (int i = 0 i < allPart.size() i++) {");
+			checker.beginControlFlow("for (int i = 0; i < allPart.size(); i++) {");
 			checker.addStatement("$T tempObj = allPart.elementAt(i)", ssObject);
 			checker.beginControlFlow("if (tempObj instanceof $T)", employee);
 			
@@ -423,7 +423,7 @@ public class TriggerCheckerGenerator implements CodeGeneratorConstants {
 					((UserActionTypeTrigger) outerTrig).getMenuText());
 			checker.endControlFlow();
 			checker.endControlFlow();
-			checker.beginControlFlow("for (int i = 0 i < $L.size() i++)", actCntVar);
+			checker.beginControlFlow("for (int i = 0; i < $L.size(); i++)", actCntVar);
 			checker.addStatement("$T $L = ($T) $L.elementAt(i)", actName, oneActCnt, actName, actCntVar);
 			
 			// go through all participants:
@@ -447,7 +447,7 @@ public class TriggerCheckerGenerator implements CodeGeneratorConstants {
 					String empBool = "z" + cnt;
 					
 					checker.addStatement("$T $L = state.getEmployeeStateRepository().getAll()", vector, objCntVar);
-					checker.beginControlFlow("for (int j = 0 j < $L.size() j++)", objCntVar);
+					checker.beginControlFlow("for (int j = 0; j < $L.size(); j++)", objCntVar);
 					checker.addStatement("$T $L = ($T) $L.elementAt(j)", employee, oneObjCnt, employee, objCntVar);
 					
 					String objCondition = "if ((";
@@ -465,7 +465,7 @@ public class TriggerCheckerGenerator implements CodeGeneratorConstants {
 					objCondition += ") && (" + oneActCnt + ".getAll" + partName + "s().contains(" + oneObjCnt + ") == false))";
 					checker.beginControlFlow(objCondition);
 					checker.addStatement("$T $L = true", boolean.class, empBool);
-					checker.beginControlFlow("for (int k = 0 k < $L.size() k++)", actCntVar);
+					checker.beginControlFlow("for (int k = 0; k < $L.size(); k++)", actCntVar);
 					checker.addStatement("$T a" + cnt + "b = ($T) $L.elementAt(k)", actName, actName, actCntVar);
 					checker.beginControlFlow("if(a" + cnt + "b.getAll" + partName + "s().contains($L))", oneObjCnt);
 					checker.addStatement("$L = false", empBool);
@@ -515,7 +515,9 @@ public class TriggerCheckerGenerator implements CodeGeneratorConstants {
 							checker.nextControlFlow("else " + instanceCond);
 						}
 						checker.addStatement("$L.addMenuItem($S)", oneObjCnt, "JOIN " + ((UserActionTypeTrigger) outerTrig).getMenuText());
-						checker.endControlFlow();
+						if (k == types.size() - 1) {
+							checker.endControlFlow();
+						}
 					}
 					checker.endControlFlow();
 					checker.endControlFlow();

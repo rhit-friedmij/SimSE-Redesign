@@ -524,7 +524,7 @@ public class MenuInputManagerGenerator implements CodeGeneratorConstants {
 						effectCode3.addStatement("$T allActions = state.getActionStateRepository()"
 								+ ".get$LStateRepository().getAllActions(a)", vectorOfActTypes, actTypeName);
 						effectCode3.beginControlFlow("for (int j = 0; j < allActions.size(); j++)");
-						effectCode3.addStatement("$T b = allActions.elementAt(j)", actTypeName);
+						effectCode3.addStatement("$T b = allActions.elementAt(j)", actName);
 						effectCode3.beginControlFlow("if(b.getAll" + partName + "s().contains(a))");
 						effectCode3.addStatement("alreadyInAction = true");
 						effectCode3.addStatement("break");
