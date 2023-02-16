@@ -56,7 +56,7 @@ public class TriggerCheckerGenerator implements CodeGeneratorConstants {
 	private Vector<ActionTypeTrigger> prioritizedTriggers;
 
 	private ClassName vector = ClassName.get("java.util", "Vector");
-	private ClassName ruleExecuter = ClassName.get("simse.logic", "RuleExecuter");
+	private ClassName ruleExecutor = ClassName.get("simse.logic", "RuleExecutor");
 
 	public TriggerCheckerGenerator(DefinedActionTypes actTypes, File directory) {
 		this.actTypes = actTypes;
@@ -73,7 +73,7 @@ public class TriggerCheckerGenerator implements CodeGeneratorConstants {
 		MethodSpec triggerConstructor = MethodSpec.constructorBuilder()
 				.addModifiers(Modifier.PUBLIC)
 				.addParameter(state, "s")
-				.addParameter(ruleExecuter, "r")
+				.addParameter(ruleExecutor, "r")
 				.addStatement("state = s")
 				.addStatement("ruleExec = r")
 				.addStatement("ranNumGen = new $T()", random)
@@ -90,7 +90,7 @@ public class TriggerCheckerGenerator implements CodeGeneratorConstants {
 		TypeSpec trigger = TypeSpec.classBuilder("TriggerChecker")
 				.addModifiers(Modifier.PUBLIC)
 				.addField(state, "state", Modifier.PRIVATE)
-				.addField(ruleExecuter, "ruleExec", Modifier.PRIVATE)
+				.addField(ruleExecutor, "ruleExec", Modifier.PRIVATE)
 				.addField(random, "ranNumGen", Modifier.PRIVATE)
 				.addMethod(triggerConstructor)
 				.addMethod(update)
@@ -334,7 +334,7 @@ public class TriggerCheckerGenerator implements CodeGeneratorConstants {
 			Vector<Rule> trigRules = action.getAllTriggerRules();
 			for (int i = 0; i < trigRules.size(); i++) {
 				Rule tRule = trigRules.elementAt(i);
-				checker.addStatement("ruleExec.update(gui, $T.UPDATE_ONE, \"" + tRule.getName() + "\", a)", ruleExecuter);
+				checker.addStatement("ruleExec.update(gui, $T.UPDATE_ONE, \"" + tRule.getName() + "\", a)", ruleExecutor);
 			}
 
 			// game-ending:
@@ -417,8 +417,8 @@ public class TriggerCheckerGenerator implements CodeGeneratorConstants {
 			checker.addStatement("$T $L = state.getActionStateRepository().get"
 					+ actTypeName + "StateRepository().getAllActions()", vector, actCntVar);
 			checker.beginControlFlow("if ($L.size() == 0)", actCntVar);
-			checker.addStatement("$T $L = state.getEmployeeStateRepository().getAll()", vector, actCntVar);
-			checker.beginControlFlow("for (int i = 0 i < $L.size() i++)", empCntVar);
+			checker.addStatement("$T $L = state.getEmployeeStateRepository().getAll()", vector, empCntVar);
+			checker.beginControlFlow("for (int i = 0; i < $L.size(); i++)", empCntVar);
 			checker.addStatement("(($T) $L.elementAt(i)).removeMenuItem($S)", employee, empCntVar,
 					((UserActionTypeTrigger) outerTrig).getMenuText());
 			checker.endControlFlow();
@@ -472,7 +472,7 @@ public class TriggerCheckerGenerator implements CodeGeneratorConstants {
 					checker.addStatement("break");
 					checker.endControlFlow();
 					checker.endControlFlow();
-					checker.beginControlFlow("if($L && ($L.getMenu().contains($S) == false))", empBool, oneObjCnt, 
+					checker.beginControlFlow("if($L && ($L.getMenu().contains($S) == false)", empBool, oneObjCnt, 
 							"JOIN " + ((UserActionTypeTrigger) outerTrig).getMenuText());
 					
 					// go through all participant constraints:

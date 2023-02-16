@@ -1881,7 +1881,9 @@ public class RuleExecutorGenerator implements CodeGeneratorConstants {
 						methodBody.addStatement("checkAllMins(gui)");
 					}
 					methodBody.addStatement("(($T) gui).forceGUIUpdate()", simseGui);
-					methodBody.endControlFlow();
+					if (k == constraints.size() - 1) { 
+						methodBody.endControlFlow();
+					}
 				}
 				methodBody.endControlFlow();
 			}

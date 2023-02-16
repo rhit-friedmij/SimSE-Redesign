@@ -57,10 +57,10 @@ public class TestGenerator {
 //		engineTest();
 //		logicTest();
 //		miscUpdaterTest();
-//		destroyerCheckerTest();
+		destroyerCheckerTest();
 //		triggerCheckerTest();
 //		menuInputManagerTest();
-		ruleExecutorTest();
+//		ruleExsecutorTest();
 //		testConditionalFlows();
 	}
 	

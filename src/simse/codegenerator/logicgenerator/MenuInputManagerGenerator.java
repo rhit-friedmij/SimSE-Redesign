@@ -71,7 +71,7 @@ public class MenuInputManagerGenerator implements CodeGeneratorConstants {
 	private ClassName chooseActionToDestroyDialog = ClassName.get("simse.logic.dialogs", "ChooseActionToDestroyDialog");
 	private ClassName customer = ClassName.get("simse.adts.objects", "Customer");
 	private ClassName employee = ClassName.get("simse.adts.objects", "Employee");
-	private ClassName ruleExecuter = ClassName.get("simse.logic", "RuleExecuter");
+	private ClassName ruleExecutor = ClassName.get("simse.logic", "RuleExecutor");
 	private ClassName simseGui = ClassName.get("simse.gui", "SimSEGUI");
 	private ClassName ssObject = ClassName.get("simse.adts.objects", "SSObject");
 	private ClassName vector = ClassName.get("java.util", "Vector");
@@ -108,7 +108,7 @@ public class MenuInputManagerGenerator implements CodeGeneratorConstants {
 				.addParameter(state, "s")
 				.addParameter(trigCheck, "t")
 				.addParameter(destCheck, "d")
-				.addParameter(ruleExecuter, "r")
+				.addParameter(ruleExecutor, "r")
 				.addStatement("state = s")
 				.addStatement("trigChecker = t")
 				.addStatement("destChecker = d")
@@ -153,7 +153,7 @@ public class MenuInputManagerGenerator implements CodeGeneratorConstants {
 				.addField(state, "state", Modifier.PRIVATE)
 				.addField(trigCheck, "trigChecker", Modifier.PRIVATE)
 				.addField(destCheck, "destChecker", Modifier.PRIVATE)
-				.addField(ruleExecuter, "ruleExec", Modifier.PRIVATE)
+				.addField(ruleExecutor, "ruleExec", Modifier.PRIVATE)
 				.addField(melloPanel, "mello", Modifier.PRIVATE)
 				.addMethod(menuConstructor)
 				.addMethod(itemSelected)
@@ -318,7 +318,7 @@ public class MenuInputManagerGenerator implements CodeGeneratorConstants {
 					for (int i = 0; i < destRules.size(); i++) {
 						Rule dRule = destRules.elementAt(i);
 						lambda.addStatement("ruleExec.update(parent, $T.UPDATE_ONE, $S, b" + j + ")"
-								, ruleExecuter, dRule.getName());
+								, ruleExecutor, dRule.getName());
 					}
 
 					lambda.addStatement("b" + j + ".remove" + tempPart.getName() + "(emp)");
@@ -336,7 +336,7 @@ public class MenuInputManagerGenerator implements CodeGeneratorConstants {
 					lambda.addStatement("$T c$L = b$L.getAllParticipants()", vectorOfObjs, j, j);
 					lambda.beginControlFlow("for (int j = 0; j < c$L.size(); j++)", j);
 					lambda.addStatement("$T d$L = c$L.elementAt(j)", ssObject, j, j);
-					lambda.beginControlFlow("if (d$L instanceof $T) {", j, employee);
+					lambda.beginControlFlow("if (d$L instanceof $T)", j, employee);
 					
 					if ((outerDest.getDestroyerText() != null) && (outerDest.getDestroyerText().length() > 0)) {
 						lambda.addStatement("(($T) d$L).setOverheadText($S)", employee, j, outerDest.getDestroyerText());
@@ -349,7 +349,7 @@ public class MenuInputManagerGenerator implements CodeGeneratorConstants {
 					lambda.endControlFlow();
 					lambda.endControlFlow();
 					// remove action from repository:
-					lambda.addStatement("state.getActionStateRepository().get$LStateRepository().remove(b$L)", actName, j);
+					lambda.addStatement("state.getActionStateRepository().get$LStateRepository().remove(b$L)", actTypeName, j);
 
 					// game-ending:
 					if (outerDest.isGameEndingDestroyer()) {
@@ -433,7 +433,7 @@ public class MenuInputManagerGenerator implements CodeGeneratorConstants {
 				}
 			}
 			lambda.endControlFlow();
-			lambda.addStatement("new $T(parent, b$L, state, emp, ruleExec, s)", chooseActionToDestroyDialog, j);
+			lambda.addStatement("new $T(parent, b$L, state, emp, ruleExec, itemText)", chooseActionToDestroyDialog, j);
 			lambda.endControlFlow();
 		}
 		lambda.endControlFlow();
@@ -645,7 +645,7 @@ public class MenuInputManagerGenerator implements CodeGeneratorConstants {
 			effectCode1.addStatement("$T a = state.getActionStateRepository().get$LStateRepository().getAllActions()"
 					, vectorOfActTypes, actTypeName);   
 			effectCode1.addStatement("$T b = new $T()", vectorOfActTypes, vectorOfActTypes);
-			effectCode1.beginControlFlow("for (int i = 0; i < a.size(); i++) {");
+			effectCode1.beginControlFlow("for (int i = 0; i < a.size(); i++)");
 			effectCode1.addStatement("$T c = a.elementAt(i)", actName);
 			
 			// go through all participants:
@@ -653,7 +653,7 @@ public class MenuInputManagerGenerator implements CodeGeneratorConstants {
 				ActionTypeParticipantTrigger trig = triggers.elementAt(j);
 				ActionTypeParticipant tempPart = trig.getParticipant();
 				if (tempPart.getSimSEObjectTypeType() == SimSEObjectTypeTypes.EMPLOYEE) {
-					effectCode1.addStatement("if ((c.getAll$L().contains(selectedEmp) == false) "
+					effectCode1.addStatement("if ((c.getAll$Ls().contains(selectedEmp) == false) "
 							+ "&& (b.contains(c) == false))", tempPart.getName());
 					effectCode1.addStatement("b.add(c)");
 				}
@@ -684,7 +684,7 @@ public class MenuInputManagerGenerator implements CodeGeneratorConstants {
 			effectCode.endControlFlow();
 			effectCode.endControlFlow();
 			effectCode.beginControlFlow("if (a == 1) {");
-			effectCode.beginControlFlow("for (int i = 0; i < allActions.size(); i++) {");
+			effectCode.beginControlFlow("for (int i = 0; i < allActions.size(); i++)");
 			effectCode.addStatement("$T b = allActions.elementAt(i)", actName);
 			
 			// go through all participants:
@@ -708,7 +708,7 @@ public class MenuInputManagerGenerator implements CodeGeneratorConstants {
 					for (int i = 0; i < destRules.size(); i++) {
 						Rule dRule = destRules.elementAt(i);
 						if (dRule.getExecuteOnJoins() == true) {
-							effectCode.addStatement("ruleExec.update(parent, $T.UPDATE_ONE, $S, b)", ruleExecuter, dRule.getName());
+							effectCode.addStatement("ruleExec.update(parent, $T.UPDATE_ONE, $S, b)", ruleExecutor, dRule.getName());
 						}
 					}
 
@@ -725,7 +725,7 @@ public class MenuInputManagerGenerator implements CodeGeneratorConstants {
 						// has a minimum
 						bound = tempPart.getQuantity().getMinVal().intValue();
 					}
-					effectCode.beginControlFlow("if (b.getAll$L().size() < $L)", objName, bound);
+					effectCode.beginControlFlow("if (b.getAll$Ls().size() < $L)", objName, bound);
 					effectCode.addStatement("$T c = b.getAllParticipants()", vectorOfObjs);
 					effectCode.beginControlFlow("for (int j = 0; j < c.size(); j++)");
 					effectCode.addStatement("$T d = c.elementAt(j)", ssObject);
@@ -821,13 +821,13 @@ public class MenuInputManagerGenerator implements CodeGeneratorConstants {
 				String objName = tempPart.getName();
 				
 				if (tempPart.getSimSEObjectTypeType() == SimSEObjectTypeTypes.EMPLOYEE) {
-					effectCode.beginControlFlow("if ((c.getAll$L().contains(selectedEmp)) && (!(b.contains(c))))", objName);
+					effectCode.beginControlFlow("if ((c.getAll$Ls().contains(selectedEmp)) && (!(b.contains(c))))", objName);
 					effectCode.addStatement("b.add(c)");
 					effectCode.endControlFlow();
 				}
 			}
 			effectCode.endControlFlow();
-			effectCode.addStatement("new $T(parent, b, state, selectedEmp,ruleExec, itemText)", chooseActionToDestroyDialog);
+			effectCode.addStatement("new $T(parent, b, state, selectedEmp, ruleExec, itemText)", chooseActionToDestroyDialog);
 			effectCode.endControlFlow();
 			effectCode.endControlFlow();
 		}

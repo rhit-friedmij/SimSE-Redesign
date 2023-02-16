@@ -50,7 +50,7 @@ public class DestroyerCheckerGenerator implements CodeGeneratorConstants {
 	private Vector<ActionTypeDestroyer> allDestroyers;
 	
 	private ClassName vector = ClassName.get("java.util", "Vector");
-	private ClassName ruleExecuter = ClassName.get("simse.logic", "RuleExecuter");
+	private ClassName ruleExecutor = ClassName.get("simse.logic", "RuleExecutor");
 	
 
 	public DestroyerCheckerGenerator(DefinedActionTypes actTypes, File directory) {
@@ -72,7 +72,7 @@ public class DestroyerCheckerGenerator implements CodeGeneratorConstants {
 		MethodSpec destroyerConstructor = MethodSpec.constructorBuilder()
 				.addModifiers(Modifier.PUBLIC)
 				.addParameter(state, "s")
-				.addParameter(ruleExecuter, "r")
+				.addParameter(ruleExecutor, "r")
 				.addParameter(trigCheck, "t")
 				.addStatement("state = s")
 				.addStatement("ruleExec = r")
@@ -87,7 +87,7 @@ public class DestroyerCheckerGenerator implements CodeGeneratorConstants {
 					.addParameter(boolean.class, "updateUserDestsOnly")
 					.addParameter(stage, "gui")
 					.addStatement("$T actions = state.getActionStateRepository().getAllActions()", vectorOfActions)
-					.beginControlFlow("for (int i = 0 i < actions.size() i++) {")
+					.beginControlFlow("for (int i = 0; i < actions.size(); i++)")
 					.addStatement("$T tempAct = actions.elementAt(i)", action)
 					.addCode(getDestroyerConditions().build())
 					.endControlFlow()
@@ -98,7 +98,7 @@ public class DestroyerCheckerGenerator implements CodeGeneratorConstants {
 		 TypeSpec destroyer = TypeSpec.classBuilder("DestroyerChecker")
 					.addModifiers(Modifier.PUBLIC)
 					.addField(state, "state", Modifier.PRIVATE)
-					.addField(ruleExecuter, "ruleExec", Modifier.PRIVATE)
+					.addField(ruleExecutor, "ruleExec", Modifier.PRIVATE)
 					.addField(trigCheck, "trigCheck", Modifier.PRIVATE)
 					.addField(random, "ranNumGen", Modifier.PRIVATE)
 					.addField(melloPanel, "mello", Modifier.PRIVATE)
@@ -172,7 +172,7 @@ public class DestroyerCheckerGenerator implements CodeGeneratorConstants {
 				Vector<Rule> destRules = tempAct.getAllDestroyerRules();
 				for (int k = 0; k < destRules.size(); k++) {
 					Rule dRule = destRules.elementAt(k);
-					conditions.addStatement("ruleExec.update(gui, $T.UPDATE_ONE, \"" + dRule.getName() + "\", tempAct)", ruleExecuter);
+					conditions.addStatement("ruleExec.update(gui, $T.UPDATE_ONE, \"" + dRule.getName() + "\", tempAct)", ruleExecutor);
 				}
 				conditions.addStatement("state.getActionStateRepository().get" + actTypeName 
 						+ "StateRepository().remove(" + tempActName + ")");
@@ -351,14 +351,14 @@ public class DestroyerCheckerGenerator implements CodeGeneratorConstants {
 						conditions.addStatement("(($T)c).setOverheadText(\"" + tempDest.getDestroyerText() + "\")", customer);
 					}
 					conditions.endControlFlow();
-//					conditions.endControlFlow();
+					conditions.endControlFlow();
 
 					// execute all destroyer rules:
 					Vector<Rule> destRules = tempAct.getAllDestroyerRules();
 					for (int k = 0; k < destRules.size(); k++) {
 						Rule dRule = destRules.elementAt(k);
 						conditions.addStatement("ruleExec.update(gui, $T.UPDATE_ONE, \"" + dRule.getName()
-								+ "\", tempAct)", ruleExecuter);
+								+ "\", tempAct)", ruleExecutor);
 					}
 					conditions.addStatement("state.getActionStateRepository().get" + actTypeName 
 							+ "StateRepository().remove(" + tempActName + ")");
