@@ -37,7 +37,7 @@ public class BranchGenerator implements CodeGeneratorConstants {
 
 		try {
 
-		FileReader reader = new FileReader("C:\\Users\\localmgr\\git\\simse-redesign\\simse-redesign\\res\\static\\explanatorytool\\Branch.txt");
+		FileReader reader = new FileReader("res\\static\\explanatorytool\\Branch.txt");
 		FileWriter writer = new FileWriter(branchFile);
 
 		String fileContents = "";
