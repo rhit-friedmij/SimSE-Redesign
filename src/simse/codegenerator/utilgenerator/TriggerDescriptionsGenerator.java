@@ -121,7 +121,10 @@ public class TriggerDescriptionsGenerator implements CodeGeneratorConstants {
       JavaFile javaFile = JavaFile.builder("simse.util", triggerDescriptions).build();
       
       try {
-		javaFile.writeTo(trigDescFile);
+    	FileWriter writer = new FileWriter(trigDescFile);
+		javaFile.writeTo(writer);
+		
+		writer.close();
 	} catch (IOException e) {
 		// TODO Auto-generated catch block
 		e.printStackTrace();

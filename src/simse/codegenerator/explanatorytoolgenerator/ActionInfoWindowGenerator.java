@@ -55,6 +55,5 @@ public class ActionInfoWindowGenerator implements CodeGeneratorConstants {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
 	}
  }

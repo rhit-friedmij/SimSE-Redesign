@@ -1,0 +1,231 @@
+.table-view {
+    -fx-background-color: #E0E0E0;
+} /* This will color the border of the table itself */
+
+.table-view .column-header-background .filler {
+    -fx-background-color: #E0E0E0;
+} /* Space behind the columns coloring */
+
+.table-view .corner {
+    -fx-background-color: #E0E0E0;
+}
+
+.table-view .column-header-background{
+    -fx-background-color: #E0E0E0;
+    /* -fx-background-radius: 7px 7px 0px 0px; */
+    -fx-background-insets: 0 11px 0 0;
+    -fx-padding: 0 0 5px 0;
+} /* Background behind the columns */
+
+.table-view .column-header {
+    -fx-background-color: transparent;
+} /* The columns themselves */
+
+.table-view .table-cell{
+    -fx-border-color: transparent;
+    -fx-padding: 2 0 2 10px;
+} /* Cell styling itself */
+
+.table-row-cell:hover {
+    -fx-background-color: #93f9b911;
+    -fx-text-background-color: #f8f8ff;
+} /* Cell on-hover effect */
+
+.table-row-cell:odd{
+    -fx-background-color: #93f9b911;
+    -fx-background-insets: 0, 0 0 1 0;
+    -fx-padding: 0.0em;
+} /* Odd numbered cell effect */
+
+.table-row-cell:even{
+    -fx-background-color: #1dbbdd11;
+    -fx-background-insets: 0, 0 0 1 0;
+    -fx-padding: 0.0em;
+} /* Even numbered cell effect */
+
+.titled-pane 
+{ 
+-fx-text-fill: #F5F5F5;
+-fx-alignment: center;
+}
+.titled-pane:focused 
+{
+-fx-text-fill: #F5F5F5;
+}
+
+.titled-pane > .title 
+{
+-fx-background-color: #9C9C9C;
+-fx-background-insets: 0, 1, 2;
+-fx-background-radius: 5 5 0 0, 4 4 0 0, 3 3 0 0;
+-fx-padding: 0.166667em 0.833333em 0.25em 0.833333em; /* 2 10 3 10 */
+}
+
+.titled-pane:focused > .title 
+{
+-fx-color: green;
+}
+
+.titled-pane > .title > .arrow-button 
+{
+-fx-background-color: null;
+-fx-background-insets: 0;
+-fx-background-radius: 0;
+/* -fx-padding: 0.0em 0.25em 0.0em 0.0em; */
+}
+
+.titled-pane > .title > .arrow-button .arrow 
+{
+-fx-background-color: -fx-mark-highlight-color, -fx-mark-color;
+-fx-background-insets: 1 0 -1 0, 0;
+-fx-padding: 0.25em 0.3125em 0.25em 0.3125em; /* 3 3.75 3 3.75 */
+}
+
+.titled-pane:collapsed > .title > .arrow-button .arrow 
+{
+-fx-rotate: -180;
+}
+
+#actionPanelVBox {
+-fx-background-color: #666666;
+}
+
+#scrollPaneActionPanel {
+    -fx-background-color: #666666;
+
+}
+
+#ActionTitlePanel {
+    -fx-background-color: #1c2c54;
+}
+
+#ActionPanelEmployee {
+    -fx-background-color: #d9d9d9;
+    -fx-border-color: #666666;
+    -fx-border-width: 2;
+    -fx-padding: 5;
+}
+
+#ActionPanelEmployee:hover {
+    -fx-background-color: #A8A8A8;
+}
+
+#ActionPanelLayout {
+    -fx-background-color: #d9d9d9;
+}
+
+#ActionPanelEmployeeBorder {
+    -fx-background-color: #d9d9d9;
+}
+
+#EmployeePic {
+    -fx-background-color: #C5D3DB;
+    /* -fx-border-radius: 50; */
+    -fx-border-color: #81898F;
+    -fx-border-width: 2;
+
+}
+
+#EmployeeName {
+
+}
+
+#popup {
+    -fx-background-color: red;
+}
+
+#ActionPanelMain {
+    -fx-background: #d9d9d9;
+    -fx-background-color: #d9d9d9;
+}
+
+.list-cell:hover {
+    /* -fx-text-fill: white; */
+    -fx-background-color: #A8A8A8;
+}
+
+.list-cell {
+    /* -fx-border-color: #666666; */
+}
+
+#Icon {
+    -fx-background-color: #d9d9d9;
+}
+
+.combo-box .list-cell 
+{
+    -fx-background: white;
+    /* -fx-background-color: transparent; */
+    -fx-text-fill: -fx-text-base-color;
+    -fx-padding: 3 0 2 7;
+    /* -fx-cell-size: 1.66667em;  */
+}
+
+.combo-box-popup .list-view 
+{
+    -fx-background-color: white, white;
+    -fx-background-insets: 0, 1;
+    -fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.6) , 8, 0.0 , 0 , 0 );
+}    
+
+.combo-box-popup .list-view .list-cell 
+{
+    -fx-padding: 4 0 4 5;
+
+    /* No alternate highlighting */
+    -fx-background-color: white;
+}
+
+.combo-box-popup .list-view .list-cell:filled:selected, .combo-box-popup .list-view .list-cell:filled:selected:hover 
+{
+    -fx-background: -fx-accent;
+    -fx-background-color: -fx-selection-bar;
+    -fx-text-fill: -fx-selection-bar-text;
+}
+
+.combo-box-popup .list-view .list-cell:filled:hover 
+{
+    -fx-background-color: white;
+    -fx-text-fill: -fx-text-inner-color;
+}
+
+.combo-box-base  
+{
+    -fx-background-color: white, white, white, white;
+    -fx-background-radius: 5, 5, 4, 3;
+    -fx-background-insets: 0 0 -1 0, 0, 1, 2;
+    -fx-padding: 0;
+}
+
+.combo-box-base:hover
+{
+    -fx-color: -fx-hover-base;
+}
+
+.combo-box-base:showing 
+{
+    -fx-color: -fx-pressed-base;
+}
+
+.combo-box-base:focused {
+    -fx-background-color: -fx-focus-color, -fx-outer-border, -fx-inner-border, -fx-body-color;
+    -fx-background-radius: 6.4, 4, 5, 3;
+    -fx-background-insets: -1.4, 0, 1, 2;
+}
+
+.combo-box-base:disabled {
+    -fx-opacity: .4;
+}
+
+#TabButton {
+    -fx-background-color: #4D65C6;
+    -fx-border-color: #B0E7EF;
+    -fx-border-radius: 5;
+    -fx-text-fill: white;
+}
+
+#TabButton:hover {
+    -fx-border-color: #666666;
+    -fx-border-radius: 5;
+    -fx-effect: dropshadow( gaussian, lightgray, 10 , 0.0 , 0 , 0 );
+}

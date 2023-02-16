@@ -22,7 +22,7 @@ public class RulesInfoScreenGenerator {
 	      worldFile.delete(); // delete old version of file
 	    }
 	    try {
-	      FileReader reader = new FileReader("\\resources\\RulesInfoScreen.txt");
+	      FileReader reader = new FileReader("resources\\RulesInfoScreen.txt");
 	      Scanner s = new Scanner(reader);
 	      FileWriter writer = new FileWriter(worldFile);
 	      

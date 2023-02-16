@@ -40,7 +40,7 @@ public class DestroyerDescriptionsGenerator implements CodeGeneratorConstants {
 
   public void generate() {
     File destDescFile = new File(directory,
-        ("simse\\explanatorytool\\DestroyerDescriptions.java"));
+        ("simse\\util\\DestroyerDescriptions.java"));
     if (destDescFile.exists()) {
       destDescFile.delete(); // delete old version of file
     }  
@@ -130,7 +130,8 @@ public class DestroyerDescriptionsGenerator implements CodeGeneratorConstants {
       
       JavaFile javaFile = JavaFile.builder("simse.util", destroyerDescriptions).build();
       try {
-		javaFile.writeTo(destDescFile);
+    	FileWriter writer = new FileWriter(destDescFile);
+		javaFile.writeTo(writer);
 	} catch (IOException e) {
 		// TODO Auto-generated catch block
 		e.printStackTrace();

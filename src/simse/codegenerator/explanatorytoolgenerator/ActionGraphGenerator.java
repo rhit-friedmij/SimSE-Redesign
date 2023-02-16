@@ -107,6 +107,7 @@ public class ActionGraphGenerator implements CodeGeneratorConstants {
     		  .addMethod(toolTipConstructor)
     		  .addMethod(generateToolTip)
     		  .build();
+      
 
       String actionFields = "";
       
@@ -183,7 +184,7 @@ public class ActionGraphGenerator implements CodeGeneratorConstants {
     		  .addStatement("// create the chart")
     		  .addStatement("$T chart = $T.createXYLineChart(\"Action Graph\", \"Clock Ticks\", null, dataset, $T.VERTICAL, true, true, false)", jFreeChart, chartFactory, plotOrientation)
     		  .addStatement("$T plot = ($T) chart.getPlot()", xyPlot, xyPlot)
-    		  .addStatement("plot.getRenderer().setDefaultToolTipGenerator(new $T())", actionGraphToolTipGenerator)
+    		  .addStatement("plot.getRenderer().setDefaultToolTipGenerator(new ActionGraphToolTipGenerator())")
     		  .addStatement("plot.setBackgroundPaint(new $T(0xFF, 0xFF, 0xCC))", colorAWT)
     		  .addStatement("plot.setAxisOffset(new $T(5.0, 5.0, 5.0, 5.0))", rectangleInsets)
     		  .addStatement("plot.setDomainGridlinePaint($T.BLACK)", colorAWT)
@@ -468,11 +469,14 @@ public class ActionGraphGenerator implements CodeGeneratorConstants {
     		  .addType(actionGraphToolTipGenerator)
     		  .build();
       
-      JavaFile javaFile = JavaFile.builder("simse.explantorytool", actionGraph)
+      JavaFile javaFile = JavaFile.builder("simse.explanatorytool", actionGraph)
     		    .build();
 
       try {
-		javaFile.writeTo(actGraphFile);
+    	FileWriter writer = new FileWriter(actGraphFile);
+		javaFile.writeTo(writer);
+		
+		writer.close();
 	} catch (IOException e) {
 		// TODO Auto-generated catch block
 		e.printStackTrace();

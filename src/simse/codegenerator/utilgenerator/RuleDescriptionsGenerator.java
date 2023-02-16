@@ -65,7 +65,8 @@ public class RuleDescriptionsGenerator implements CodeGeneratorConstants {
       JavaFile javaFile = JavaFile.builder("simse.util", ruleDescriptions).build();
       
       try {
-		javaFile.writeTo(ruleDescFile);
+    	FileWriter writer = new FileWriter(ruleDescFile);
+		javaFile.writeTo(writer);
 	} catch (IOException e) {
 		// TODO Auto-generated catch block
 		e.printStackTrace();

@@ -452,7 +452,8 @@ public class RuleCategoriesGenerator implements CodeGeneratorConstants {
       JavaFile javaFile = JavaFile.builder("simse.util", ruleCategories).build();
       
       try {
-		javaFile.writeTo(ruleCategoriesFile);
+    	FileWriter writer = new FileWriter(ruleCategoriesFile);
+		javaFile.writeTo(writer);
 	} catch (IOException e) {
 		// TODO Auto-generated catch block
 		e.printStackTrace();

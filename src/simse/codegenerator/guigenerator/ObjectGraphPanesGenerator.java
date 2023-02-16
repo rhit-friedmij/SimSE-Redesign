@@ -132,7 +132,7 @@ public class ObjectGraphPanesGenerator {
 	    		  .addMethod(handle)
 	    		  .build();
 	      
-	      JavaFile file = JavaFile.builder("simse.gui.ObjectGraphPanel", ogPanel)
+	      JavaFile file = JavaFile.builder("simse.gui", ogPanel)
 	    		  .build();
 	      
 	      file.writeTo(writer);
@@ -338,7 +338,7 @@ public class ObjectGraphPanesGenerator {
 		    		  .addMethod(chartMouseMoved)
 		    		  .build();
 		      
-		      JavaFile file = JavaFile.builder("simse.gui.ObjectGraphPane", ogPane)
+		      JavaFile file = JavaFile.builder("simse.gui", ogPane)
 		    		  .build();
 		      
 		      file.writeTo(writer);

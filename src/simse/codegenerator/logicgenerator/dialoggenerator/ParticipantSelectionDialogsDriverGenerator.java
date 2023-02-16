@@ -52,6 +52,7 @@ public class ParticipantSelectionDialogsDriverGenerator implements
   public void generate() {
 	  ClassName actionClass = ClassName.get("simse.adts.actions", "Action");
 	  ClassName vector = ClassName.get("java.util", "Vector");
+	  ClassName iteratorClass = ClassName.get("java.util", "Iterator");
 	  ClassName stateClass = ClassName.get("simse.state", "State");
 	  ClassName employeeClass = ClassName.get("simse.adts.objects", "Employee");
 	  ClassName ruleExecClass = ClassName.get("simse.logic", "RuleExecutor");
@@ -61,6 +62,24 @@ public class ParticipantSelectionDialogsDriverGenerator implements
 	  ClassName ssObjectClass = ClassName.get("simse.adts.objects", "SSObject");
 	  ClassName empPartDialog = ClassName.get("simse.logic.dialogs", "EmployeeParticipantSelectionDialog");
 	  ClassName nonEmpPartDialog = ClassName.get("simse.logic.dialogs", "NonEmployeeParticipantSelectionDialog");
+	  ClassName windowEvent = ClassName.get("javafx.stage", "WindowEvent");
+	  ClassName buttonClass = ClassName.get("javafx.scene.control", "Button");
+	  ClassName stageClass = ClassName.get("javafx.stage", "Stage");
+	  ClassName vBoxClass = ClassName.get("javafx.scene.layout", "VBox");
+	  ClassName labelClass = ClassName.get("javafx.scene.control", "Label");
+	  ClassName paneClass = ClassName.get("javafx.scene.layout", "Pane");
+	  ClassName gridPaneClass = ClassName.get("javafx.scene.layout", "GridPane");
+	  ClassName point2DClass = ClassName.get("javafx.geometry", "Point2D");
+	  ClassName alertClass = ClassName.get("javafx.scene.control", "Alert");
+	  ClassName alertTypeClass = ClassName.get("javafx.scene.control.Alert", "AlertType");
+	  ClassName toggleGroupClass = ClassName.get("javafx.scene.control", "ToggleGroup");
+	  ClassName radioButtonClass = ClassName.get("javafx.scene.control", "RadioButton");
+	  ClassName comboBoxClass = ClassName.get("javafx.scene.control", "ComboBox");
+	  ClassName hBoxClass = ClassName.get("javafx.scene.layout", "HBox");
+	  ClassName separatorClass = ClassName.get("javafx.scene.control", "Separator");
+	  ClassName borderPaneClass = ClassName.get("javafx.scene.layout", "BorderPane");
+	  ClassName imageViewClass = ClassName.get("javafx.scene.image", "ImageView");
+	  ClassName windowClass = ClassName.get("javafx.stage", "Window");
 	  TypeName stringVector = ParameterizedTypeName.get(vector, stringClass);
 	  TypeName ssObjectWildcard = WildcardTypeName.subtypeOf(ssObjectClass);
 	  TypeName ssWildcardVector = ParameterizedTypeName.get(vector, ssObjectWildcard);
@@ -84,7 +103,7 @@ public class ParticipantSelectionDialogsDriverGenerator implements
 	  
 	  MethodSpec participantConstructor = MethodSpec.constructorBuilder()
 			  .addModifiers(Modifier.PUBLIC)
-			  .addParameter(Stage.class, "parent")
+			  .addParameter(stageClass, "parent")
 			  .addParameter(stringVector, "pNames")
 			  .addParameter(nestedSSVector, "parts")
 			  .addParameter(actionClass, "act")
@@ -105,7 +124,7 @@ public class ParticipantSelectionDialogsDriverGenerator implements
 			  .addStatement("$T actionValid = true", boolean.class)
 			  .beginControlFlow("for (int i = 0; i < $N.size(); i++) ", "partNames")
 			  .addStatement("$T participantName = $N.elementAt(i)", String.class, "partNames")
-			  .addStatement("$T participants = $T.elementAt(i)", ssWildcardVector, "partsVector")
+			  .addStatement("$T participants = $N.elementAt(i)", ssWildcardVector, "partsVector")
 			  .addStatement("// check to see if any of these possible participants have alread")
 			  .addStatement("// been added to the action in a different role")
 			  .addStatement("$T allParts = $N.getAllParticipants()", ssObjectVector, "action")
@@ -130,7 +149,7 @@ public class ParticipantSelectionDialogsDriverGenerator implements
 			  .endControlFlow()
 			  .endControlFlow()
 			  .addStatement("$T participantsContainsSelEmp = false", boolean.class)
-			  .addStatement("$T participantsIterator = participants.iterator()", Iterator.class)
+			  .addStatement("$T participantsIterator = participants.iterator()", iteratorClass)
 			  .beginControlFlow("while (participantsIterator.hasNext()) ")
 			  .addStatement("$T tempObj = ($T) participantsIterator.next()", ssObjectClass, ssObjectClass)
 			  .beginControlFlow("if (tempObj == $N) ", "selectedEmp")
@@ -184,7 +203,7 @@ public class ParticipantSelectionDialogsDriverGenerator implements
 	  
 
 	  ClassName actions = ClassName.get("simse.adts", "actions");
-	  JavaFile javaFile = JavaFile.builder("ParticipantSelectionDialogsDriver", participantDialog)
+	  JavaFile javaFile = JavaFile.builder("simse.logic.dialogs", participantDialog)
 			  .addStaticImport(actions, "*")  
 			  .build();
 	  
@@ -195,7 +214,10 @@ public class ParticipantSelectionDialogsDriverGenerator implements
         psddFile.delete(); // delete old version of file
       }
       
-      javaFile.writeTo(psddFile);
+      FileWriter writer = new FileWriter(psddFile);
+      
+      javaFile.writeTo(writer);
+      writer.close();
     } catch (IOException e) {
         JOptionPane.showMessageDialog(null, ("Error writing file "
             + psddFile.getPath() + ": " + e.toString()), "File IO Error",

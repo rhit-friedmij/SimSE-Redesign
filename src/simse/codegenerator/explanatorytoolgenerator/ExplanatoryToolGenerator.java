@@ -161,6 +161,8 @@ public class ExplanatoryToolGenerator implements CodeGeneratorConstants {
       ClassName objectGraph = ClassName.get("simse.explanatorytool", "ObjectGraph");
       ClassName compositeGraph = ClassName.get("simse.explanatorytool", "CompositeGraph");
       ClassName toolTip = ClassName.get("javafx.scene.control", "Tooltip");
+      ClassName eventHandler = ClassName.get("javafx.event", "EventHandler");
+      ClassName actionEvent = ClassName.get("javafx.event", "ActionEvent");
 
       
 
@@ -283,13 +285,13 @@ public class ExplanatoryToolGenerator implements CodeGeneratorConstants {
     		  .addStatement("objectTitlePane.setCenter(new $T(\"Object Graph:\"))", label)
     		  .addStatement("objectPane.getChildren().add(objectTitlePane)")
     		  .addCode(constructorObj)
-    		  .addStatement("objectList = new $T<$T>(objects)")
+    		  .addStatement("objectList = new $T<$T>(objects)", comboBox, String.class)
     		  .addStatement("		objectList.setOnAction(new $T<$T>() {\r\n" + 
     		  		"			@Override\r\n" + 
     		  		"			public void handle($T arg0) {\r\n" + 
     		  		"				$N();\r\n" + 
     		  		"			}\r\n" + 
-    		  		"		});", comboBox, String.class)
+    		  		"		});", eventHandler, actionEvent, actionEvent, refreshAttributeList)
     		  .addStatement("objectPane.getChildren().add(objectList)")
     		  .addStatement("// Create attribute list pane:")
     		  .addStatement("$T attributeListTitlePane = new $T();", pane, pane)
@@ -383,7 +385,7 @@ public class ExplanatoryToolGenerator implements CodeGeneratorConstants {
     		  		"		})")
     		  .addStatement("actionComboBoxPane.getChildren().add(actionComboBox)")
     		  .addStatement("// Create rulesMainPane")
-    		  .addStatement("$T rulesMainPane = new $T()", tilePane)
+    		  .addStatement("$T rulesMainPane = new $T()", tilePane, tilePane)
     		  .addStatement("// Create ruleListsPane")
     		  .addStatement("$T ruleListsPane = new $T()", vBox, vBox)
     		  .addStatement("// rule lists")
@@ -395,7 +397,7 @@ public class ExplanatoryToolGenerator implements CodeGeneratorConstants {
     		  .addStatement("triggerRuleList.getSelectionModel().setSelectionMode($T.SINGLE)", selectionMode)
     		  .addStatement("triggerRuleList.addEventHandler($T.MOUSE_CLICKED, this)", mouseEvent)
     		  .addStatement("triggerRuleList.setMinWidth(272)")
-    		  .addStatement("$t triggerRuleListPane = new $T(triggerRuleList)", scrollPane, scrollPane)
+    		  .addStatement("$T triggerRuleListPane = new $T(triggerRuleList)", scrollPane, scrollPane)
     		  .addStatement("triggerRuleListPane.setMaxHeight(80)")
     		  .addStatement("ruleListsPane.getChildren().add(triggerRuleListPane)")
     		  .addStatement("$T destRuleTitlePane = new $T()", pane, pane)
@@ -717,11 +719,14 @@ public class ExplanatoryToolGenerator implements CodeGeneratorConstants {
     		  .addMethod(getLog)
     		  .build();
       
-      JavaFile javaFile = JavaFile.builder("simse.explantorytool", explanatoryTool)
+      JavaFile javaFile = JavaFile.builder("simse.explanatorytool", explanatoryTool)
   		    .build();
 
     try {
-		javaFile.writeTo(expToolFile);
+    	FileWriter writer = new FileWriter(expToolFile);
+		javaFile.writeTo(writer);
+		
+		writer.close();
 	} catch (IOException e) {
 		// TODO Auto-generated catch block
 		e.printStackTrace();
