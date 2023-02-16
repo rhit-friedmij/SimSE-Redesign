@@ -15,6 +15,7 @@ import javax.lang.model.element.Modifier;
 import javax.swing.JOptionPane;
 
 import com.squareup.javapoet.ClassName;
+import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.TypeSpec;
 
@@ -26,13 +27,11 @@ public class RuleTypeGenerator implements CodeGeneratorConstants {
   }
 
   public void generate() {
-    File branchFile = new File(directory,
-        ("simse\\explanatorytool\\Branch.java"));
-    if (branchFile.exists()) {
-      branchFile.delete(); // delete old version of file
+    File ruleTypeFile = new File(directory,
+        ("simse\\explanatorytool\\RuleType.java"));
+    if (ruleTypeFile.exists()) {
+    	ruleTypeFile.delete(); // delete old version of file
     }
-    try {
-      FileWriter writer = new FileWriter(branchFile);
       
       
       TypeSpec ruleType = TypeSpec.enumBuilder("RuleType")
@@ -44,11 +43,15 @@ public class RuleTypeGenerator implements CodeGeneratorConstants {
     		  .addEnumConstant("PROJECT")
     		  .addEnumConstant("PEOPLE")
     		  .build();
-     
-    } catch (IOException e) {
-      JOptionPane.showMessageDialog(null, ("Error writing file "
-          + branchFile.getPath() + ": " + e.toString()), "File IO Error",
-          JOptionPane.WARNING_MESSAGE);
-    }
+      
+      JavaFile javaFile = JavaFile.builder("simse.explantorytool", ruleType)
+    		    .build();
+
+      try {
+  		javaFile.writeTo(ruleTypeFile);
+  	} catch (IOException e) {
+  		// TODO Auto-generated catch block
+  		e.printStackTrace();
+  	}
   }
 }

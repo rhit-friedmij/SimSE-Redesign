@@ -173,19 +173,12 @@ public class ExplanatoryToolGenerator implements CodeGeneratorConstants {
       Vector<SimSEObject> objects = objs.getAllObjects();
       for (int i = 0; i < objects.size(); i++) {
         SimSEObject obj = objects.get(i);
-//        writer.write("\"" + CodeGeneratorUtils.getUpperCaseLeading(
-//        		obj.getSimSEObjectType().getName()) + " " + 
-//        		CodeGeneratorUtils.getUpperCaseLeading(
-//        				SimSEObjectTypeTypes.getText(
-//        						obj.getSimSEObjectType().getType())) + " " + 
-//        						obj.getKey().getValue().toString() + "\",");
         constructorObj += "\"" + CodeGeneratorUtils.getUpperCaseLeading(
         		obj.getSimSEObjectType().getName()) + " " + 
         		CodeGeneratorUtils.getUpperCaseLeading(
         				SimSEObjectTypeTypes.getText(
         						obj.getSimSEObjectType().getType())) + " " + 
         						obj.getKey().getValue().toString() + "\",\n";
-//        writer.write(NEWLINE);
       }
       
 
@@ -198,11 +191,8 @@ public class ExplanatoryToolGenerator implements CodeGeneratorConstants {
       for (int i = 0; i < actions.size(); i++) {
         ActionType act = actions.get(i);
         if (act.isVisibleInExplanatoryTool()) {
-//          writer.write("\"" + 
-//          		CodeGeneratorUtils.getUpperCaseLeading(act.getName()) + "\",");
           construtorActions += "\"" + 
             		CodeGeneratorUtils.getUpperCaseLeading(act.getName()) + "\",\n";
-//          writer.write(NEWLINE);
         }
       }
       
@@ -212,20 +202,12 @@ public class ExplanatoryToolGenerator implements CodeGeneratorConstants {
       for (int i = 0; i < objectTypes.size(); i++) {
         SimSEObjectType objType = objectTypes.get(i);
         if (i > 0) {
-//          writer.write("else ");
           refreshAttributeListObjectTypes += "else ";
         }
-//        writer.write("if (selectedObject.startsWith(\""
-//            + CodeGeneratorUtils.getUpperCaseLeading(objType.getName()) + " "
-//            + SimSEObjectTypeTypes.getText(objType.getType())
-//            + "\")) {");
         refreshAttributeListObjectTypes += "if (selectedObject.startsWith(\""
                 + CodeGeneratorUtils.getUpperCaseLeading(objType.getName()) + " "
                 + SimSEObjectTypeTypes.getText(objType.getType())
                 + "\")) {\n";
-//        writer.write(NEWLINE);
-//        writer.write("String[] attributes = {");
-//        writer.write(NEWLINE);
         refreshAttributeListObjectTypes += "String[] attributes = {\n";
         Vector<Attribute> attributes = objType.getAllAttributes();
         int numVisibleNumericalAtts = 0;
@@ -233,44 +215,25 @@ public class ExplanatoryToolGenerator implements CodeGeneratorConstants {
           Attribute att = attributes.get(j);
           if ((att instanceof NumericalAttribute)
               && ((att.isVisible()) || (att.isVisibleOnCompletion()))) {
-//            writer.write("\"" + att.getName() + "\",");
-//            writer.write(NEWLINE);
             refreshAttributeListObjectTypes += "\"" + att.getName() + "\",\n";
             numVisibleNumericalAtts++;
           }
         }
         if (numVisibleNumericalAtts == 0) {
-//          writer.write("\"(No numerical attributes)\"");
-//          writer.write(NEWLINE);
           refreshAttributeListObjectTypes += "\"(No numerical attributes)\"\n";
         }
-//        writer.write("};");
-//        writer.write(NEWLINE);
         refreshAttributeListObjectTypes += "};\n";
-//        writer.write("attributeList.setListData(attributes);");
-//        writer.write(NEWLINE);
         refreshAttributeListObjectTypes += "attributeList.getItems.setAll(attributes);\n";
         if (numVisibleNumericalAtts == 0) {
-//          writer.write("attributeList.setEnabled(false);");
-//          writer.write(NEWLINE);
           refreshAttributeListObjectTypes += "attributeList.setEditable(true);\n";
         } else {
-//          writer.write("attributeList.setEnabled(true);");
-//          writer.write(NEWLINE);
           refreshAttributeListObjectTypes += "attributeList.scrollTo(0);\n";
-//          writer.write("attributeList.setSelectedIndex(0);");
-//          writer.write(NEWLINE);
           refreshAttributeListObjectTypes += "attributeList.getSelectionModel().select(0);\n";
           refreshAttributeListObjectTypes += "attributeList.getFocusModel().focus(0);\n";
         }
-//        writer.write(CLOSED_BRACK);
         refreshAttributeListObjectTypes += "}\n";
-//        writer.write(NEWLINE);
       }
-//      writer.write(CLOSED_BRACK);
       refreshAttributeListObjectTypes += "}\n\n";
-//      writer.write(NEWLINE);
-//      writer.write(NEWLINE);
       
       MethodSpec refreshAttributeList = MethodSpec.methodBuilder("refreshAttributeList")
     		  .addStatement("attributeList.getItems().removeAll()")
@@ -620,86 +583,55 @@ public class ExplanatoryToolGenerator implements CodeGeneratorConstants {
       for (ActionType action : actions) {
         if (action.isVisibleInExplanatoryTool()) {
           if (writeElse) {
-//            writer.write("else ");
             ruleBlock += "else ";
           } else {
             writeElse = true;
           }
-//          writer.write("if (actionName.equals(\"" + 
-//          		CodeGeneratorUtils.getUpperCaseLeading(action.getName()) + 
-//          		"\")) {");
-//          writer.write(NEWLINE);
           ruleBlock += "if (actionName.equals(\"" + 
             		CodeGeneratorUtils.getUpperCaseLeading(action.getName()) + 
               		"\")) {\n";
           Vector<Rule> trigRules = action.getAllTriggerRules();
           if (trigRules.size() > 0) {
-//            writer.write("String[] trigList = {");
-//            writer.write(NEWLINE);
             ruleBlock += "String[] trigList = {\n";
             
             // go through all trigger rules:
             for (int j = 0; j < trigRules.size(); j++) {
               Rule trigRule = trigRules.get(j);
               if (trigRule.isVisibleInExplanatoryTool()) {
-//                writer.write("\"" + trigRule.getName() + "\",");
-//                writer.write(NEWLINE);
                 ruleBlock += "\"" + trigRule.getName() + "\",\n";
               }
             }
-//            writer.write("};");
-//            writer.write(NEWLINE);
             ruleBlock += "};\n";
-//            writer.write("triggerRuleList.setListData(trigList);");
-//            writer.write(NEWLINE);
             ruleBlock += "triggerRuleList.getItems().setAll(trigList);\n";
           }
           Vector<Rule> destRules = action.getAllDestroyerRules();
           if (destRules.size() > 0) {
-//            writer.write("String[] destList = {");
-//            writer.write(NEWLINE);
             ruleBlock += "String[] destList = {\n";
 
             // go through all destroyer rules:
             for (int j = 0; j < destRules.size(); j++) {
               Rule destRule = destRules.get(j);
               if (destRule.isVisibleInExplanatoryTool()) {
-//                writer.write("\"" + destRule.getName() + "\",");
-//                writer.write(NEWLINE);
                 ruleBlock += "\"" + destRule.getName() + "\",\n";
               }
             }
-//            writer.write("};");
-//            writer.write(NEWLINE);
             ruleBlock += "};\n";
-//            writer.write("destroyerRuleList.setListData(destList);");
-//            writer.write(NEWLINE);
             ruleBlock += "destroyerRuleList.getItems().setAll(destList);\n";
           }
           Vector<Rule> contRules = action.getAllContinuousRules();
           if (contRules.size() > 0) {
-//            writer.write("String[] intList = {");
-//            writer.write(NEWLINE);
             ruleBlock += "String[] intList = {\n";
 
             // go through all continuous rules:
             for (int j = 0; j < contRules.size(); j++) {
               Rule contRule = contRules.get(j);
               if (contRule.isVisibleInExplanatoryTool()) {
-//                writer.write("\"" + contRule.getName() + "\",");
-//                writer.write(NEWLINE);
                 ruleBlock += "\"" + contRule.getName() + "\",\n";
               }
             }
-//            writer.write("};");
-//            writer.write(NEWLINE);
             ruleBlock += "};\n";
-//            writer.write("intermediateRuleList.setListData(intList);");
-//            writer.write(NEWLINE);
             ruleBlock += "intermediateRuleList.getItems.setAll(intList);\n";
           }
-//          writer.write(CLOSED_BRACK);
-//          writer.write(NEWLINE);
           ruleBlock += "}\n";
         }
       }
@@ -724,25 +656,16 @@ public class ExplanatoryToolGenerator implements CodeGeneratorConstants {
           for (Rule rule : rules) {
             if (rule.isVisibleInExplanatoryTool()) {
               if (writeElse) {
-//                writer.write("else ");
                 actionBlock += "else ";
               } else {
                 writeElse = true;
               }
-//              writer.write("if (ruleName.equals(\"" + rule.getName() + 
-//              		"\")) {");
-//              writer.write(NEWLINE);
               actionBlock += "if (ruleName.equals(\"" + rule.getName() + 
                 		"\")) {\n";
-//              writer.write("text = RuleDescriptions."
-//                  + action.getName().toUpperCase() + "_"
-//                  + rule.getName().toUpperCase() + ";");
-//              writer.write(NEWLINE);
               actionBlock += "text = RuleDescriptions."
                       + action.getName().toUpperCase() + "_"
                       + rule.getName().toUpperCase() + ";\n";
               
-//              writer.write(CLOSED_BRACK);
             }
           }
         }
@@ -795,9 +718,6 @@ public class ExplanatoryToolGenerator implements CodeGeneratorConstants {
     		  .addMethod(refreshDescriptionArea)
     		  .addMethod(getLog)
     		  .build();
-      
-//      writer.write(CLOSED_BRACK);
-//      writer.close();
       
       JavaFile javaFile = JavaFile.builder("simse.explanatorytool", explanatoryTool)
   		    .build();

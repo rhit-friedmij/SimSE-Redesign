@@ -111,89 +111,38 @@ public class CompositeGraphGenerator implements CodeGeneratorConstants {
     
     	String rightClickBlock = "";
     	if (options.getAllowBranchingOption()) {
-//	    	writer.write("if (me.getButton() != MouseEvent.BUTTON1) { // not left-click");
-//	    	writer.write(NEWLINE);
 	    	rightClickBlock += "if (me.getButton() != MouseEvent.BUTTON1) { // not left-click\n";
-//	    	writer.write("XYPlot plot = chart.getXYPlot();");
-//	    	writer.write(NEWLINE);
 	    	rightClickBlock += "XYPlot plot = chart.getXYPlot();\n";
-//	    	writer.write("Range domainRange = plot.getDataRange(plot.getDomainAxis());");
-//	    	writer.write(NEWLINE);
 	    	rightClickBlock += "Range domainRange = plot.getDataRange(plot.getDomainAxis());\n";
-//	    	writer.write("if (domainRange != null) { // chart is not blank");
-//	    	writer.write(NEWLINE);
 	    	rightClickBlock += "if (domainRange != null) { // chart is not blank\\n";
-//	    	writer.write("Point2D pt = chartPanel.translateScreenToJava2D(new Point(me.getX(), me.getY()));");
-//	    	writer.write(NEWLINE);
 	    	rightClickBlock += "javafx.geometry.Point2D pt = chartViewer.localToScreen(event.getScreenX(), event.getScreenY());\n";
-//	    	writer.write("ChartRenderingInfo info = this.chartPanel.getChartRenderingInfo();");
-//	    	writer.write(NEWLINE);
 	    	rightClickBlock += "ChartRenderingInfo info = this.chartViewer.getRenderingInfo();\n";
-//	    	writer.write("Rectangle2D dataArea = info.getPlotInfo().getDataArea();");
-//	    	writer.write(NEWLINE);
 	    	rightClickBlock += "java.awt.geom.Rectangle2D dataArea = info.getPlotInfo().getDataArea();\n";
-//	    	writer.write("NumberAxis domainAxis = (NumberAxis)plot.getDomainAxis();");
-//	    	writer.write(NEWLINE);
 	    	rightClickBlock += "NumberAxis domainAxis = (NumberAxis) plot.getDomainAxis();\n";
-//	    	writer.write("RectangleEdge domainAxisEdge = plot.getDomainAxisEdge();");
-//	    	writer.write(NEWLINE);
 	    	rightClickBlock += "RectangleEdge domainAxisEdge = plot.getDomainAxisEdge();\n";
-//	    	writer.write("double chartX = domainAxis.java2DToValue(pt.getX(), dataArea, domainAxisEdge);");
-//	    	writer.write(NEWLINE);
 	    	rightClickBlock += "double chartX = domainAxis.java2DToValue(pt.getX(), dataArea, domainAxisEdge);\n";
-//	    	writer.write("lastRightClickedX = (int)Math.rint(chartX);");
-//	    	writer.write(NEWLINE);
 	    	rightClickBlock += "lastRightClickedX = (int) Math.rint(chartX);\n";
-//	    	writer.write("if (domainRange != null && lastRightClickedX >= domainRange.getLowerBound() && lastRightClickedX <= domainRange.getUpperBound()) { // clicked within domain range");
-//	    	writer.write(NEWLINE);
 	    	rightClickBlock += "if (domainRange != null && lastRightClickedX >= domainRange.getLowerBound() && lastRightClickedX <= domainRange.getUpperBound()) { // clicked within domain range\n";
-//	    	writer.write("if (chartPanel.getPopupMenu().getComponentIndex(newBranchItem) == -1) { // no new branch item on menu currently");
-//	    	writer.write(NEWLINE);
 	    	rightClickBlock += "if ((chartViewer).getContextMenu().getItems().indexOf(\r\n" + 
 	    			"							newBranchItem) == -1) { // no new branch item on\r\n" + 
 	    			"													// menu currently\n";
-//	    	writer.write("chartPanel.getPopupMenu().add(separator);");
-//	    	writer.write(NEWLINE);
 	    	rightClickBlock += "chartViewer.getContextMenu().getItems().add(separator);\n";
-//	    	writer.write("chartPanel.getPopupMenu().add(newBranchItem);");
-//	    	writer.write(NEWLINE);
 	    	rightClickBlock += "chartViewer.getContextMenu().getItems().add(newBranchItem);\n";
 	    	rightClickBlock += "}\n";
 	    	rightClickBlock += "else { // clicked outside of domain range\n";
-//	    	writer.write("if (chartPanel.getPopupMenu().getComponentIndex(newBranchItem) >= 0) { // new branch item currently on menu");
-//	    	writer.write(NEWLINE);
 	    	rightClickBlock += "if (chartViewer.getContextMenu().getItems().indexOf(newBranchItem) >= 0) { // new branch item currently\r\n" + 
 	    			"													// on menu";
-//	    	writer.write("chartPanel.getPopupMenu().remove(newBranchItem);");
-//	    	writer.write(NEWLINE);
 	    	rightClickBlock += "chartViewer.getContextMenu().getItems().remove(newBranchItem);\n";
-//	    	writer.write("if (chartPanel.getPopupMenu().getComponentIndex(separator) >= 0) { // has separator");
-//	    	writer.write(NEWLINE);
 	    	rightClickBlock += "if (chartViewer.getContextMenu().getItems().indexOf(\r\n" + 
 	    			"								separator) >= 0) { // has separator";
-//	    	writer.write("chartPanel.getPopupMenu().remove(separator);");
-//	    	writer.write(NEWLINE);
 	    	rightClickBlock += "chartViewer.getContextMenu().getItems().remove(separator);";
-//	    	writer.write(CLOSED_BRACK);
-//	    	writer.write(NEWLINE);
 	    	rightClickBlock += "}\n";
-//	    	writer.write("chartPanel.getPopupMenu().pack();");
-//	    	writer.write(NEWLINE);
 	    	rightClickBlock += "}\n";
-//	    	writer.write(CLOSED_BRACK);
-//	    	writer.write(NEWLINE);
 	    	rightClickBlock += "}\n";
-//	    	writer.write(CLOSED_BRACK);
-//	    	writer.write(NEWLINE);
 	    	rightClickBlock += "}\n";
-//	    	writer.write(CLOSED_BRACK);
-//	    	writer.write(NEWLINE);
 	    	rightClickBlock += "}\n";
     	}
-//    	writer.write(CLOSED_BRACK);
-//    	writer.write(NEWLINE);
-//    	writer.write(NEWLINE);
-    	
+
 	MethodSpec update = MethodSpec.methodBuilder("update")
 			.returns(void.class)
 			.addStatement(CodeBlock.builder().add("actGraph.update()").build())
@@ -261,8 +210,6 @@ public class CompositeGraphGenerator implements CodeGeneratorConstants {
 			.addMethod(chartMouseClicked)
 			.build();
 			
-	
-	
 
     
     JavaFile javaFile = JavaFile.builder("simse.explanatorytool", compositeGraph)

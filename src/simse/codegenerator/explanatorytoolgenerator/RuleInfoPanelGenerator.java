@@ -144,7 +144,6 @@ public class RuleInfoPanelGenerator implements CodeGeneratorConstants {
     	
       if (actionItem.isVisibleInExplanatoryTool()) {
         if (writeElse) {
-//          writer.write("else ");
         	initalizeRuleListCodeBlock += "else ";
         } else {
           writeElse = true;
@@ -152,18 +151,12 @@ public class RuleInfoPanelGenerator implements CodeGeneratorConstants {
         initalizeRuleListCodeBlock += "if (action instanceof "
                 + CodeGeneratorUtils.getUpperCaseLeading(actionItem.getName()) + 
                 "Action) {";
-//        writer.write("if (action instanceof "
-//            + CodeGeneratorUtils.getUpperCaseLeading(actionItem.getName()) + 
-//            "Action) {");
-//        writer.write(NEWLINE);
         initalizeRuleListCodeBlock += "\n";
         Vector<Rule> trigRules = actionItem.getAllTriggerRules();
         
         
         if (trigRules.size() > 0) {
         	initalizeRuleListCodeBlock += "String[] trigList = {"; 
-//          writer.write("String[] trigList = {");
-//          writer.write(NEWLINE);
         	initalizeRuleListCodeBlock += "\n";
 
           // go through all trigger rules:
@@ -171,16 +164,10 @@ public class RuleInfoPanelGenerator implements CodeGeneratorConstants {
           for (int j = 0; j < trigRules.size(); j++) {
             Rule trigRule = trigRules.get(j);
             if (trigRule.isVisibleInExplanatoryTool()) {
-//              writer.write("\"" + trigRule.getName() + "\",");
             	initalizeRuleListCodeBlock += "\"" + trigRule.getName() + "\",";
-//              writer.write(NEWLINE);
             	initalizeRuleListCodeBlock += "\n";
             }
           }
-//          writer.write("};");
-//          writer.write(NEWLINE);
-//          writer.write("triggerRuleList.setListData(trigList);");
-//          writer.write(NEWLINE);
           initalizeRuleListCodeBlock += "};";
           initalizeRuleListCodeBlock += "\n";
           initalizeRuleListCodeBlock += "triggerRuleList.getItems().setAll(trigList);";
@@ -189,53 +176,37 @@ public class RuleInfoPanelGenerator implements CodeGeneratorConstants {
         Vector<Rule> destRules = actionItem.getAllDestroyerRules();
         if (destRules.size() > 0) {
         	initalizeRuleListCodeBlock += "String[] destList = {";
-//          writer.write("String[] destList = {");
-//          writer.write(NEWLINE);
         	initalizeRuleListCodeBlock += "\n";
 
           // go through all destroyer rules:
           for (int j = 0; j < destRules.size(); j++) {
             Rule destRule = destRules.get(j);
             if (destRule.isVisibleInExplanatoryTool()) {
-//              writer.write("\"" + destRule.getName() + "\",");
               initalizeRuleListCodeBlock += "\"" + destRule.getName() + "\",";
-//              writer.write(NEWLINE);
             }
           }
           initalizeRuleListCodeBlock += "};";
           initalizeRuleListCodeBlock += "\n";
           initalizeRuleListCodeBlock += "destroyerRuleList.getItems().setAll(destList);";
           initalizeRuleListCodeBlock += "\n";
-//          writer.write("};");
-//          writer.write(NEWLINE);
-//          writer.write("destroyerRuleList.setListData(destList);");
-//          writer.write(NEWLINE);
         }
         Vector<Rule> contRules = actionItem.getAllContinuousRules();
         if (contRules.size() > 0) {
         	initalizeRuleListCodeBlock += "String[] intList = {";
         	initalizeRuleListCodeBlock += "\n";
-//          writer.write("String[] intList = {");
-//          writer.write(NEWLINE);
 
           // go through all continuous rules:
           for (int j = 0; j < contRules.size(); j++) {
             Rule contRule = contRules.get(j);
             if (contRule.isVisibleInExplanatoryTool()) {
-//              writer.write("\"" + contRule.getName() + "\",");
               initalizeRuleListCodeBlock += "\"" + contRule.getName() + "\",";
               initalizeRuleListCodeBlock += "\n";
-//              writer.write(NEWLINE);
             }
           }
           initalizeRuleListCodeBlock += "};";
           initalizeRuleListCodeBlock += "\n";
           initalizeRuleListCodeBlock += "intermediateRuleList.getItems().setAll(intList);";
           initalizeRuleListCodeBlock += "\n";
-//          writer.write("};");
-//          writer.write(NEWLINE);
-//          writer.write("intermediateRuleList.setListData(intList);");
-//          writer.write(NEWLINE);
         }
 
       }
@@ -281,13 +252,9 @@ public class RuleInfoPanelGenerator implements CodeGeneratorConstants {
           } else {
             writeElse = true;
           }
-//          writer.write("if (action instanceof "
-//              + CodeGeneratorUtils.getUpperCaseLeading(action.getName()) + 
-//              "Action) {");
           refreshDescriptionAreaActionBlock += "if (action instanceof "
                   + CodeGeneratorUtils.getUpperCaseLeading(action.getName()) + 
                   "Action) {";
-//          writer.write(NEWLINE);
           refreshDescriptionAreaActionBlock += "\n";
 
           // go through all rules:
@@ -296,29 +263,19 @@ public class RuleInfoPanelGenerator implements CodeGeneratorConstants {
           for (Rule rule : rules) {
             if (rule.isVisibleInExplanatoryTool()) {
               if (writeElse2) {
-//                writer.write("else ");
                 refreshDescriptionAreaActionBlock += "else ";
               } else {
                 writeElse2 = true;
               }
-//              writer.write("if (name.equals(\"" + rule.getName() + "\")) {");
               refreshDescriptionAreaActionBlock += "if (name.equals(\"" + rule.getName() + "\")) {";
-//              writer.write(NEWLINE);
               refreshDescriptionAreaActionBlock += "\n";
-//              writer.write("text = RuleDescriptions."
-//                  + action.getName().toUpperCase() + "_"
-//                  + rule.getName().toUpperCase() + ";");
               refreshDescriptionAreaActionBlock += "text = RuleDescriptions."
                       + action.getName().toUpperCase() + "_"
                       + rule.getName().toUpperCase() + ";";
-//              writer.write(NEWLINE);
               refreshDescriptionAreaActionBlock += "\n";
-//              writer.write(CLOSED_BRACK);
             }
           }
-//          writer.write(CLOSED_BRACK);
           refreshDescriptionAreaActionBlock += "\n";
-//          writer.write(NEWLINE);
         }
       }
       MethodSpec refreshDescriptionArea = MethodSpec.methodBuilder("refreshDescriptionArea")

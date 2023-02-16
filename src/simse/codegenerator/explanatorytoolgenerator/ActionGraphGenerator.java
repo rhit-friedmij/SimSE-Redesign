@@ -117,15 +117,8 @@ public class ActionGraphGenerator implements CodeGeneratorConstants {
         ActionType act = actions.get(i);
         if (act.isVisibleInExplanatoryTool()) {
           String lCaseName = act.getName().toLowerCase();
-//          writer.write("private int " + lCaseName
-//                  + "Index = 1; // index to be used for labeling multiple actions of the same type");
-//          writer.write(NEWLINE);
           actionFields += "private int " + lCaseName
                   + "Index = 1; // index to be used for labeling multiple actions of the same type\n";
-//          writer.write("private ArrayList<Integer> " + lCaseName
-//                  + "Indices = new ArrayList<Integer>(); // an ArrayList to map indices for "
-//                  + act.getName() + " Action labels to action ids");
-//          writer.write(NEWLINE);
           actionFields += "private ArrayList<Integer> " + lCaseName
                   + "Indices = new ArrayList<Integer>(); // an ArrayList to map indices for "
                   + act.getName() + " Action labels to action ids\n";
@@ -137,9 +130,6 @@ public class ActionGraphGenerator implements CodeGeneratorConstants {
       for (int i = 0; i < actions.size(); i++) {
         ActionType act = actions.get(i);
         if (act.isVisibleInExplanatoryTool()) {
-//          writer.write(act.getName().toLowerCase()
-//              + "Indices.add(0, new Integer(-1));");
-//          writer.write(NEWLINE);
           dummyEntriesBlock += act.getName().toLowerCase()
                   + "Indices.add(0, new Integer(-1));\n";
         }
@@ -156,59 +146,26 @@ public class ActionGraphGenerator implements CodeGeneratorConstants {
         String lCaseName = act.getName().toLowerCase();
         if (act.isVisibleInExplanatoryTool()) {
           if (writeElse) {
-//            writer.write("else ");
             actionBlock += "else ";
           } else {
             writeElse = true;
           }
-//          writer.write("if (actionNames[i].equals(\"" + uCaseName + "\")) {");
-//          writer.write(NEWLINE);
           actionBlock += "if (actionNames[i].equals(\"" + uCaseName + "\"))\n";
-//          writer.write("// go through the " + uCaseName
-//              + "ActionStateRepository for each clock tick:");
-//          writer.write(NEWLINE);
           actionBlock += "// go through the " + uCaseName
                   + "ActionStateRepository for each clock tick:\n";
-//          writer.write("for (int j = 0; j < log.size(); j++) {");
-//          writer.write(NEWLINE);
           actionBlock += "for (int j = 0; j < log.size(); j++)\n";
-//          writer.write("State state = log.get(j);");
-//          writer.write(NEWLINE);
           actionBlock += "State state = log.get(j);\n";
-//          writer.write("Vector<" + uCaseName + "Action> " + lCaseName
-//              + "Actions = state.getActionStateRepository().get" + uCaseName
-//              + "ActionStateRepository().getAllActions();");
-//          writer.write(NEWLINE);
-//          writer.write(NEWLINE);
           actionBlock += "Vector<" + uCaseName + "Action> " + lCaseName
                   + "Actions = state.getActionStateRepository().get" + uCaseName
                   + "ActionStateRepository().getAllActions();\n\n";
-//          writer.write("// go through each " + uCaseName + "Action:");
-//          writer.write(NEWLINE);
           actionBlock += "// go through each " + uCaseName + "Action:\n";
-//          writer.write("for (int k = 0; k < " + lCaseName
-//              + "Actions.size(); k++) {");
-//          writer.write(NEWLINE);
           actionBlock += "for (int k = 0; k < " + lCaseName
                   + "Actions.size(); k++)\n";
-//          writer.write(uCaseName + "Action action = " + lCaseName + "Actions.get(k);");
-//          writer.write(NEWLINE);
-//          writer.write(NEWLINE);
           actionBlock += uCaseName + "Action action = " + lCaseName + "Actions.get(k);\n\n";
-//          writer.write("// update series:");
-//          writer.write(NEWLINE);
           actionBlock += "// update series:\n";
-//          writer.write("updateSeries(action, j);");
-//          writer.write(NEWLINE);
           actionBlock += "updateSeries(action, j);\n";
-//          writer.write(CLOSED_BRACK);
-//          writer.write(NEWLINE);
           actionBlock += "}\n";
-//          writer.write(CLOSED_BRACK);
-//          writer.write(NEWLINE);
           actionBlock += "}\n";
-//          writer.write(CLOSED_BRACK);
-//          writer.write(NEWLINE);
           actionBlock += "}\n";
         }
       }
@@ -299,29 +256,16 @@ public class ActionGraphGenerator implements CodeGeneratorConstants {
         String lCaseName = act.getName().toLowerCase();
         if (act.isVisibleInExplanatoryTool()) {
           if (writeElse2) {
-//            writer.write("else ");
             ifStatementActionBlock += "else ";
           } else {
             writeElse2 = true;
           }
-//          writer.write("if (action instanceof " + uCaseName + "Action) {");
-//          writer.write(NEWLINE);
           ifStatementActionBlock += "if (action instanceof \" + uCaseName + \"Action) {\n";
-//          writer.write("newSeriesName = \"" + uCaseName + "Action-\" + "
-//              + lCaseName + "Index;");
-//          writer.write(NEWLINE);
           ifStatementActionBlock += "newSeriesName = \"" + uCaseName + "Action-\" + "
                   + lCaseName + "Index;\n";
-//          writer.write("newSeries = new XYSeries(newSeriesName);");
-//          writer.write(NEWLINE);
           ifStatementActionBlock += "newSeries = new XYSeries(newSeriesName);\n";
-//          writer.write(lCaseName + "Indices.add(" + lCaseName
-//              + "Index, new Integer(action.getId()));");
-//          writer.write(NEWLINE);
           ifStatementActionBlock += lCaseName + "Indices.add(" + lCaseName
                   + "Index, new Integer(action.getId()));\n";
-//          writer.write(lCaseName + "Index++;");
-//          writer.write(NEWLINE);
           ifStatementActionBlock += lCaseName + "Index++;\n";
           ifStatementActionBlock += "}\n";
         }
@@ -338,30 +282,16 @@ public class ActionGraphGenerator implements CodeGeneratorConstants {
         String lCaseName = act.getName().toLowerCase();
         if (act.isVisibleInExplanatoryTool()) {
           if (writeElse3) {
-//            writer.write("else ");
             elseStatementCodeBlock += "else ";
           } else {
             writeElse3 = true;
           }
-//          writer.write("if (action instanceof " + uCaseName + "Action) {");
-//          writer.write(NEWLINE);
           elseStatementCodeBlock += "if (action instanceof " + uCaseName + "Action) {\n";
-//          writer.write("index = " + lCaseName
-//              + "Indices.indexOf(new Integer(action.getId()));");
-//          writer.write(NEWLINE);
-//          writer.write(NEWLINE);
           elseStatementCodeBlock += "index = " + lCaseName
                   + "Indices.indexOf(new Integer(action.getId()));\n\n";
-//          writer.write("// add the data value to the series:");
-//          writer.write(NEWLINE);
           elseStatementCodeBlock += "// add the data value to the series:\n"; 
-//          writer.write("oldSeries.add(clockTick, indices.indexOf(\""
-//              + uCaseName + "Action-\" + index));");
-//          writer.write(NEWLINE);
           elseStatementCodeBlock += "oldSeries.add(clockTick, indices.indexOf(\""
                   + uCaseName + "Action-\" + index));\n";
-//          writer.write(CLOSED_BRACK);
-//          writer.write(NEWLINE);
           elseStatementCodeBlock += "}\n";
         }
       }
@@ -412,88 +342,31 @@ public class ActionGraphGenerator implements CodeGeneratorConstants {
     	String mouseReleasedBlock = "";
     	
     	if (options.getAllowBranchingOption()) {
-//	    	writer.write("if (me.getButton() != MouseEvent.BUTTON1) { // not left-click");
-//	    	writer.write(NEWLINE);
 	    	mouseReleasedBlock += "if (me.getButton() != MouseEvent.BUTTON1) { // not left-click\n";
-//	    	writer.write("XYPlot plot = chart.getXYPlot();");
-//	    	writer.write(NEWLINE);
 	    	mouseReleasedBlock += "XYPlot plot = chart.getXYPlot();\n";
-//	    	writer.write("Range domainRange = plot.getDataRange(plot.getDomainAxis());");
-//	    	writer.write(NEWLINE);
 	    	mouseReleasedBlock += "Range domainRange = plot.getDataRange(plot.getDomainAxis());\n";
-//	    	writer.write("if (domainRange != null) { // chart is not blank");
-//	    	writer.write(NEWLINE);
 	    	mouseReleasedBlock += "if (domainRange != null) { // chart is not blank\n";
-//	    	writer.write("Point2D pt = chartPanel.translateScreenToJava2D(new Point(me.getX(), me.getY()));");
-//	    	writer.write(NEWLINE);
 	    	mouseReleasedBlock += "javafx.geometry.Point2D pt = chartViewer.localToScreen(event.getScreenX(), event.getScreenY());\n";
-//	    	writer.write("ChartRenderingInfo info = this.chartPanel.getChartRenderingInfo();");
-//	    	writer.write(NEWLINE);
 	    	mouseReleasedBlock += "ChartRenderingInfo info = this.chartViewer.getRenderingInfo();\n";
-//	    	writer.write("Rectangle2D dataArea = info.getPlotInfo().getDataArea();");
-//	    	writer.write(NEWLINE);
 	    	mouseReleasedBlock += "java.awt.geom.Rectangle2D dataArea = info.getPlotInfo().getDataArea();\n";
-//	    	writer.write("NumberAxis domainAxis = (NumberAxis)plot.getDomainAxis();");
-//	    	writer.write(NEWLINE);
 	    	mouseReleasedBlock += "NumberAxis domainAxis = (NumberAxis) plot.getDomainAxis();\n";
-//	    	writer.write("RectangleEdge domainAxisEdge = plot.getDomainAxisEdge();");
-//	    	writer.write(NEWLINE);
 	    	mouseReleasedBlock += "RectangleEdge domainAxisEdge = plot.getDomainAxisEdge();\n";
-//	    	writer.write("double chartX = domainAxis.java2DToValue(pt.getX(), dataArea, domainAxisEdge);");
-//	    	writer.write(NEWLINE);
 	    	mouseReleasedBlock += "double chartX = domainAxis.java2DToValue(pt.getX(), dataArea, domainAxisEdge);\n";
-//	    	writer.write("lastRightClickedX = (int)Math.rint(chartX);");
-//	    	writer.write(NEWLINE);
 	    	mouseReleasedBlock += "lastRightClickedX = (int)Math.rint(chartX);\n";
-//	    	writer.write("if (domainRange != null && lastRightClickedX >= domainRange.getLowerBound() && lastRightClickedX <= domainRange.getUpperBound()) { // clicked within domain range");
-//	    	writer.write(NEWLINE);
 	    	mouseReleasedBlock += "if (domainRange != null && lastRightClickedX >= domainRange.getLowerBound() && lastRightClickedX <= domainRange.getUpperBound()) { // clicked within domain range\n";
-//	    	writer.write("if (chartPanel.getPopupMenu().getComponentIndex(newBranchItem) == -1) { // no new branch item on menu currently");
-//	    	writer.write(NEWLINE);
 	    	mouseReleasedBlock += "if (chartViewer.getContextMenu().getItems().indexOf(newBranchItem) == -1) { // no new branch item on menu currently\n";
-//	    	writer.write("chartPanel.getPopupMenu().add(separator);");
-//	    	writer.write(NEWLINE);
 	    	mouseReleasedBlock += "chartViewer.getContextMenu().getItems().add(separator);\n";
-//	    	writer.write("chartPanel.getPopupMenu().add(newBranchItem);");
-//	    	writer.write(NEWLINE);
 	    	mouseReleasedBlock += "chartViewer.getContextMenu().getItems().add(newBranchItem)\n";
-//	    	writer.write("chartPanel.getPopupMenu().pack();");
-//	    	writer.write(NEWLINE);
-//	    	writer.write(NEWLINE);
-//	    	writer.write(CLOSED_BRACK);
 	    	mouseReleasedBlock += "\n}\n";
-//	    	writer.write(NEWLINE);
-//	    	writer.write(CLOSED_BRACK);
-//	    	writer.write(NEWLINE);
-//	    	writer.write("else { // clicked outside of domain range");
-//	    	writer.write(NEWLINE);
 	    	mouseReleasedBlock += "else { // clicked outside of domain range";
-//	    	writer.write("if (chartPanel.getPopupMenu().getComponentIndex(newBranchItem) >= 0) { // new branch item currently on menu");
-//	    	writer.write(NEWLINE);
 	    	mouseReleasedBlock += "if (chartViewer.getContextMenu().getItems().indexOf(newBranchItem) >= 0) { // new branch item currently on menu";
-//	    	writer.write("chartPanel.getPopupMenu().remove(newBranchItem);");
-//	    	writer.write(NEWLINE);
 	    	mouseReleasedBlock += "chartViewer.getContextMenu().getItems().remove(newBranchItem);\n";
-//	    	writer.write("if (chartPanel.getPopupMenu().getComponentIndex(separator) >= 0) { // has separator");
-//	    	writer.write(NEWLINE);
 	    	mouseReleasedBlock += "if (chartViewer.getContextMenu().getItems().indexOf(separator) >= 0) { // has separator\n";
-//	    	writer.write("chartPanel.getPopupMenu().remove(separator);");
-//	    	writer.write(NEWLINE);
 	    	mouseReleasedBlock += "chartViewer.getContextMenu().getItems().remove(separator);\n";
-//	    	writer.write(CLOSED_BRACK);
-//	    	writer.write(NEWLINE);
 	    	mouseReleasedBlock += "}\n";
-//	    	writer.write(CLOSED_BRACK);
-//	    	writer.write(NEWLINE);
 	    	mouseReleasedBlock += "}\n";
-//	    	writer.write(CLOSED_BRACK);
-//	    	writer.write(NEWLINE);
 	    	mouseReleasedBlock += "}\n";
-//	    	writer.write(CLOSED_BRACK);
-//	    	writer.write(NEWLINE);
 	    	mouseReleasedBlock += "}\n";
-//	    	writer.write(CLOSED_BRACK);
-//	    	writer.write(NEWLINE);
 	    	mouseReleasedBlock += "}\n";
     	}
     	
@@ -537,54 +410,24 @@ public class ActionGraphGenerator implements CodeGeneratorConstants {
         String lCaseName = act.getName().toLowerCase();
         if (act.isVisibleInExplanatoryTool()) {
           if (writeElse) {
-//            writer.write("else ");
             updateActionCodeBlock += "else ";
           } else {
             writeElse = true;
           }
-//          writer.write("if (actionNames[i].equals(\"" + uCaseName + "\")) {");
-//          writer.write(NEWLINE);
           updateActionCodeBlock += "if (actionNames[i].equals(\"" + uCaseName + "\")) {\n";
-//          writer.write("// get the " + uCaseName
-//              + "ActionStateRepository for the last clock tick:");
-//          writer.write(NEWLINE);
           updateActionCodeBlock += "// get the " + uCaseName
                   + "ActionStateRepository for the last clock tick:\n";
-//          writer.write("State state = log.get(log.size() - 1);");
-//          writer.write(NEWLINE);
           updateActionCodeBlock += "State state = log.get(log.size() - 1);\n";
-//          writer.write("Vector<" + uCaseName + "Action> " + lCaseName
-//              + "Actions = state.getActionStateRepository().get" + uCaseName
-//              + "ActionStateRepository().getAllActions();");
-//          writer.write(NEWLINE);
-//          writer.write(NEWLINE);
           updateActionCodeBlock += "Vector<" + uCaseName + "Action> " + lCaseName
                   + "Actions = state.getActionStateRepository().get" + uCaseName
                   + "ActionStateRepository().getAllActions();\n\n";
-//          writer.write("// go through each " + uCaseName + "Action:");
-//          writer.write(NEWLINE);
           updateActionCodeBlock += "// go through each " + uCaseName + "Action:\n";
-//          writer.write("for (int k = 0; k < " + lCaseName
-//              + "Actions.size(); k++) {");
-//          writer.write(NEWLINE);
           updateActionCodeBlock += "for (int k = 0; k < " + lCaseName
                   + "Actions.size(); k++) {\n";
-//          writer.write(uCaseName + "Action action = " + lCaseName + 
-//          		"Actions.get(k);");
-//          writer.write(NEWLINE);
-//          writer.write(NEWLINE);
           updateActionCodeBlock += uCaseName + "Action action = " + lCaseName + 
             		"Actions.get(k);\n\n";
-//          writer.write("// update series:");
-//          writer.write(NEWLINE);
           updateActionCodeBlock += "// update series:\n";
-//          writer.write("updateSeries(action, (log.size() - 1));");
-//          writer.write(NEWLINE);
           updateActionCodeBlock += "updateSeries(action, (log.size() - 1));\n";
-//          writer.write(CLOSED_BRACK);
-//          writer.write(NEWLINE);
-//          writer.write(CLOSED_BRACK);
-//          writer.write(NEWLINE);
           updateActionCodeBlock += "}\n}\n";
         }
       }

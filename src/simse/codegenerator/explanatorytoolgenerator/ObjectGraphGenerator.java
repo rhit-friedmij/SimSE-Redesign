@@ -27,6 +27,7 @@ import javax.swing.JOptionPane;
 
 import com.squareup.javapoet.ArrayTypeName;
 import com.squareup.javapoet.ClassName;
+import com.squareup.javapoet.CodeBlock;
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.ParameterizedTypeName;
@@ -80,20 +81,13 @@ public class ObjectGraphGenerator implements CodeGeneratorConstants {
         	CodeGeneratorUtils.getUpperCaseLeading(type.getName());
         String lCaseName = type.getName().toLowerCase();
         if (i > 0) {
-//          writer.write("else ");
           createDatasetCodeBlock += "else ";
         }
-//        writer.write("if (objTypeType.equals(\""
-//            + SimSEObjectTypeTypes.getText(type.getType())
-//            + "\") && objType.equals(\"" + uCaseName + "\")) {");
         createDatasetCodeBlock += "if (objTypeType.equals(\""
                 + SimSEObjectTypeTypes.getText(type.getType())
                 + "\") && objType.equals(\"" + uCaseName + "\")) {";
-//        writer.write(NEWLINE);
         createDatasetCodeBlock += "\n";
-//        writer.write(uCaseName + " " + lCaseName + " = null;");
         createDatasetCodeBlock += uCaseName + " " + lCaseName + " = null;";
-//        writer.write(NEWLINE);
         createDatasetCodeBlock += "\n";
 
         // go through each created object of that type and generate code for it:
@@ -101,38 +95,24 @@ public class ObjectGraphGenerator implements CodeGeneratorConstants {
         for (int j = 0; j < objsOfType.size(); j++) {
           SimSEObject obj = objsOfType.get(j);
           if (j > 0) {
-//            writer.write("else ");
             createDatasetCodeBlock += "else ";
           }
-//          writer.write("if (keyAttVal.equals(\""
-//              + obj.getKey().getValue().toString() + "\")) {");
           createDatasetCodeBlock += "if (keyAttVal.equals(\""
                   + obj.getKey().getValue().toString() + "\")) {";
-//          writer.write(NEWLINE);
           createDatasetCodeBlock += "\n";
-//          writer.write(lCaseName + " = log.get(i).get"
-//              + SimSEObjectTypeTypes.getText(type.getType())
-//              + "StateRepository().get" + uCaseName + "StateRepository().get(");
           createDatasetCodeBlock += lCaseName + " = log.get(i).get"
                   + SimSEObjectTypeTypes.getText(type.getType())
                   + "StateRepository().get" + uCaseName + "StateRepository().get(";
           if (obj.getKey().getAttribute().getType() == AttributeTypes.STRING) { 
-//            writer.write("\"" + obj.getKey().getValue().toString() + "\");");
             createDatasetCodeBlock += "\"" + obj.getKey().getValue().toString() + "\");";
           } else { // non-String attribute
-//            writer.write(obj.getKey().getValue().toString() + ");");
             createDatasetCodeBlock += obj.getKey().getValue().toString() + ");";
           }
-//          writer.write(NEWLINE);
           createDatasetCodeBlock += "\n";
-//          writer.write(CLOSED_BRACK);
           createDatasetCodeBlock += "}";
-//          writer.write(NEWLINE);
           createDatasetCodeBlock += "\n";
         }
-//        writer.write("if (" + lCaseName + " != null) {");
         createDatasetCodeBlock += "if (" + lCaseName + " != null) {";
-//        writer.write(NEWLINE);
         createDatasetCodeBlock += "\n";
 
         // go through each attribute for this type and generate code for it:
@@ -142,39 +122,24 @@ public class ObjectGraphGenerator implements CodeGeneratorConstants {
           if ((att instanceof NumericalAttribute)
               && (att.isVisible() || att.isVisibleOnCompletion())) {
             if (writeElse) {
-//              writer.write("else ");
               createDatasetCodeBlock += "else ";
             }
-//            writer.write("if (attributes[j].equals(\""
-//                + CodeGeneratorUtils.getUpperCaseLeading(att.getName()) + 
-//                "\")) {");
             createDatasetCodeBlock += "if (attributes[j].equals(\""
                     + CodeGeneratorUtils.getUpperCaseLeading(att.getName()) + 
                     "\")) {";
-//            writer.write(NEWLINE);
             createDatasetCodeBlock += "\n";
-//            writer.write("series[j].add(i, " + lCaseName + ".get"
-//                + CodeGeneratorUtils.getUpperCaseLeading(att.getName()) + 
-//                "());");
             createDatasetCodeBlock += "series[j].add(i, " + lCaseName + ".get"
                     + CodeGeneratorUtils.getUpperCaseLeading(att.getName()) + 
                     "());";
-//            writer.write(NEWLINE);
             createDatasetCodeBlock += "\n";
-//            writer.write(CLOSED_BRACK);
             createDatasetCodeBlock += "}";
-//            writer.write(NEWLINE);
             createDatasetCodeBlock += "\n";
             writeElse = true;
           }
         }
-//        writer.write(CLOSED_BRACK);
         createDatasetCodeBlock += "}";
-//        writer.write(NEWLINE);
         createDatasetCodeBlock += "\n";
-//        writer.write(CLOSED_BRACK);
         createDatasetCodeBlock += "}";
-//        writer.write(NEWLINE);
         createDatasetCodeBlock += "\n";
       }
       
@@ -257,20 +222,13 @@ public class ObjectGraphGenerator implements CodeGeneratorConstants {
         	CodeGeneratorUtils.getUpperCaseLeading(type.getName());
         String lCaseName = type.getName().toLowerCase();
         if (i > 0) {
-//          writer.write("else ");
           updateCodeBlock += "else ";
         }
-//        writer.write("if (objTypeType.equals(\""
-//            + SimSEObjectTypeTypes.getText(type.getType())
-//            + "\") && objType.equals(\"" + uCaseName + "\")) {");
         updateCodeBlock += "if (objTypeType.equals(\""
                 + SimSEObjectTypeTypes.getText(type.getType())
                 + "\") && objType.equals(\"" + uCaseName + "\")) {";
-//        writer.write(NEWLINE);
         updateCodeBlock += "\n";
-//        writer.write(uCaseName + " " + lCaseName + " = null;");
         updateCodeBlock += uCaseName + " " + lCaseName + " = null;";
-//        writer.write(NEWLINE);
         updateCodeBlock += "\n";
 
         // go through each created object of that type and generate code for it:
@@ -278,38 +236,24 @@ public class ObjectGraphGenerator implements CodeGeneratorConstants {
         for (int j = 0; j < objsOfType.size(); j++) {
           SimSEObject obj = objsOfType.get(j);
           if (j > 0) {
-//            writer.write("else ");
             updateCodeBlock += "else ";
           }
-//          writer.write("if (keyAttVal.equals(\""
-//              + obj.getKey().getValue().toString() + "\")) {");
           updateCodeBlock += "if (keyAttVal.equals(\""
                   + obj.getKey().getValue().toString() + "\")) {";
-//          writer.write(NEWLINE);
           updateCodeBlock += "\n";
-//          writer.write(lCaseName + " = log.get(log.size() - 1).get"
-//              + SimSEObjectTypeTypes.getText(type.getType())
-//              + "StateRepository().get" + uCaseName + "StateRepository().get(");
           updateCodeBlock += lCaseName + " = log.get(log.size() - 1).get"
                   + SimSEObjectTypeTypes.getText(type.getType())
                   + "StateRepository().get" + uCaseName + "StateRepository().get(";
           if (obj.getKey().getAttribute().getType() == AttributeTypes.STRING) {
-//            writer.write("\"" + obj.getKey().getValue().toString() + "\");");
             updateCodeBlock += "\"" + obj.getKey().getValue().toString() + "\");";
           } else { // non-String attribute
-//            writer.write(obj.getKey().getValue().toString() + ");");
             updateCodeBlock += obj.getKey().getValue().toString() + ");";
           }
-//          writer.write(NEWLINE);
           updateCodeBlock += "\n";
-//          writer.write(CLOSED_BRACK);
           updateCodeBlock += "}";
-//          writer.write(NEWLINE);
           updateCodeBlock += "\n";
         }
-//        writer.write("if (" + lCaseName + " != null) {");
         updateCodeBlock += "if (" + lCaseName + " != null) {";
-//        writer.write(NEWLINE);
         updateCodeBlock += "\n";
 
         // go through each attribute for this type and generate code for it:
@@ -319,38 +263,24 @@ public class ObjectGraphGenerator implements CodeGeneratorConstants {
           if ((att instanceof NumericalAttribute)
               && (att.isVisible() || att.isVisibleOnCompletion())) {
             if (writeElse) {
-//              writer.write("else ");
               updateCodeBlock += "else ";
             }
-//            writer.write("if (attributes[j].equals(\""
-//                + CodeGeneratorUtils.getUpperCaseLeading(att.getName()) + 
-//                "\")) {");
             updateCodeBlock += "if (attributes[j].equals(\""
                     + CodeGeneratorUtils.getUpperCaseLeading(att.getName()) + 
                     "\")) {";
-//            writer.write(NEWLINE);
             updateCodeBlock += "\n";
-//            writer.write("series[j].add(log.size(), " + lCaseName + ".get"
-//                + CodeGeneratorUtils.getUpperCaseLeading(att.getName()) + 
-//                "());");
             updateCodeBlock += "series[j].add(log.size(), " + lCaseName + ".get"
                     + CodeGeneratorUtils.getUpperCaseLeading(att.getName()) + 
                     "());";
-//            writer.write(NEWLINE);
             updateCodeBlock += "\n";
-//            writer.write(CLOSED_BRACK);
             updateCodeBlock += "}";
-//            writer.write(NEWLINE);
             updateCodeBlock += "\n";
             writeElse = true;
           }
         }
-//        writer.write(CLOSED_BRACK);
         updateCodeBlock += "}";
         updateCodeBlock += "\n";
-//        writer.write(CLOSED_BRACK);
         updateCodeBlock += "}";
-//        writer.write(NEWLINE);
         updateCodeBlock += "\n";
       }
       
@@ -366,82 +296,32 @@ public class ObjectGraphGenerator implements CodeGeneratorConstants {
     	String chartMouseClickedBlock = "";
     	
     	if (options.getAllowBranchingOption()) {
-//	    	writer.write("if (me.getButton() != MouseEvent.BUTTON1) { // not left-click");
 	    	chartMouseClickedBlock += "if (me.getButton() != MouseEvent.BUTTON1) { // not left-click\n";
-//	    	writer.write(NEWLINE);
-//	    	writer.write("XYPlot plot = chart.getXYPlot();");
 	    	chartMouseClickedBlock += "XYPlot plot = chart.getXYPlot();\n";
-//	    	writer.write(NEWLINE);
 	    	chartMouseClickedBlock += "Range domainRange = plot.getDataRange(plot.getDomainAxis());\n";
-//	    	writer.write(NEWLINE);
-//	    	writer.write("if (domainRange != null) { // chart is not blank");
 	    	chartMouseClickedBlock += "if (domainRange != null) { // chart is not blank\n";
-//	    	writer.write(NEWLINE);
 	    	chartMouseClickedBlock += "javafx.geometry.Point2D pt = chartViewer.localToScreen(event.getScreenX(), event.getScreenY());\n";
-//	    	writer.write(NEWLINE);
-//	    	writer.write("ChartRenderingInfo info = this.chartPanel.getChartRenderingInfo();");
 	    	chartMouseClickedBlock += "ChartRenderingInfo info = this.chartViewer.getRenderingInfo();\n";
-//	    	writer.write(NEWLINE);
-	    	chartMouseClickedBlock += "java.awt.geom.Rectangle2D dataArea = info.getPlotInfo().getDataArea();\n";
-//	    	writer.write(NEWLINE);
-//	    	writer.write("NumberAxis domainAxis = (NumberAxis)plot.getDomainAxis();");
 	    	chartMouseClickedBlock += "NumberAxis domainAxis = (NumberAxis) plot.getDomainAxis();\n";
-//	    	writer.write(NEWLINE);
 	    	chartMouseClickedBlock += "RectangleEdge domainAxisEdge = plot.getDomainAxisEdge();\n";
-//	    	writer.write("RectangleEdge domainAxisEdge = plot.getDomainAxisEdge();");
-//	    	writer.write(NEWLINE);
 	    	chartMouseClickedBlock += "double chartX = domainAxis.java2DToValue(pt.getX(), dataArea, domainAxisEdge);\n";
-//	    	writer.write("double chartX = domainAxis.java2DToValue(pt.getX(), dataArea, domainAxisEdge);");
-//	    	writer.write(NEWLINE);
 	    	chartMouseClickedBlock += "lastRightClickedX = (int) Math.rint(chartX);\n";
-//	    	writer.write("lastRightClickedX = (int)Math.rint(chartX);");
-//	    	writer.write(NEWLINE);
 	    	chartMouseClickedBlock += "if (domainRange != null && lastRightClickedX >= domainRange.getLowerBound()\r\n" + 
 	    			"						&& lastRightClickedX <= (domainRange.getUpperBound() - 1) && lastRightClickedX >= 0) {\n";
-//	    	writer.write("if (domainRange != null && lastRightClickedX >= domainRange.getLowerBound() && lastRightClickedX <= (domainRange.getUpperBound() - 1) && lastRightClickedX >= 0) { // clicked within domain range");
-//	    	writer.write(NEWLINE);
 	    	chartMouseClickedBlock += "if (chartViewer.getContextMenu().getItems().indexOf(newBranchItem) == -1) { // no new branch item on\n";
-//	    	writer.write("if (chartPanel.getPopupMenu().getComponentIndex(newBranchItem) == -1) { // no new branch item on menu currently");
-//	    	writer.write(NEWLINE);
 	    	chartMouseClickedBlock += "chartViewer.getContextMenu().getItems().add(separator);\n";
-//	    	writer.write("chartPanel.getPopupMenu().add(separator);");
-//	    	writer.write(NEWLINE);
 	    	chartMouseClickedBlock += "chartViewer.getContextMenu().getItems().add(newBranchItem);\n";
-//	    	writer.write("chartPanel.getPopupMenu().add(newBranchItem);");
-//	    	writer.write(NEWLINE);
-//	    	writer.write(NEWLINE);
-//	    	writer.write(CLOSED_BRACK);
 	    	chartMouseClickedBlock += "}\n";
-//	    	writer.write(NEWLINE);
 	    	chartMouseClickedBlock += "}\n";
-//	    	writer.write("else { // clicked outside of domain range");
-//	    	writer.write(NEWLINE);
 	    	chartMouseClickedBlock += "else { // clicked outside of domain range\n";
-//	    	writer.write("if (chartPanel.getPopupMenu().getComponentIndex(newBranchItem) >= 0) { // new branch item currently on menu");
-//	    	writer.write(NEWLINE);
 	    	chartMouseClickedBlock += "if (chartViewer.getContextMenu().getItems().indexOf(newBranchItem) >= 0) { // new branch item\n";
-//	    	writer.write("chartPanel.getPopupMenu().remove(newBranchItem);");
-//	    	writer.write(NEWLINE);
 	    	chartMouseClickedBlock += "chartViewer.getContextMenu().getItems().remove(newBranchItem);\n";
-//	    	writer.write("if (chartPanel.getPopupMenu().getComponentIndex(separator) >= 0) { // has separator");
-//	    	writer.write(NEWLINE);
 	    	chartMouseClickedBlock += "if (chartViewer.getContextMenu().getItems().indexOf(separator) >= 0) { // has separator\n";
-//	    	writer.write("chartPanel.getPopupMenu().remove(separator);");
-//	    	writer.write(NEWLINE);
 	    	chartMouseClickedBlock += "chartViewer.getContextMenu().getItems().remove(separator);\n";
-//	    	writer.write(CLOSED_BRACK);
-//	    	writer.write(NEWLINE);
 	    	chartMouseClickedBlock += "}\n";
-//	    	writer.write("chartPanel.getPopupMenu().pack();");
 	    	chartMouseClickedBlock += "}\n";
-//	    	writer.write(CLOSED_BRACK);
-//	    	writer.write(NEWLINE);
 	    	chartMouseClickedBlock += "}\n";
-//	    	writer.write(CLOSED_BRACK);
-//	    	writer.write(NEWLINE);
 	    	chartMouseClickedBlock += "}\n";
-//	    	writer.write(CLOSED_BRACK);
-//	    	writer.write(NEWLINE);
 	    	chartMouseClickedBlock += "}\n";
     	}
     	
@@ -485,14 +365,16 @@ public class ObjectGraphGenerator implements CodeGeneratorConstants {
                 		  .build())
                   .build();
     	
-//    	TypeSpec.Builder eventHandler = TypeSpec.classBuilder("menuEvent")
-//    		            .addModifiers(Modifier.PRIVATE)
-//    		            .addStatement("private $T<$T> menuEvent = new $T<$T>() $L",
-//    		                          eventHandlerClass,
-//    		                          actionEvent,
-//    		                          eventHandlerClass,
-//    		                          actionEvent,
-//    		                          anonHandleClass)
+    	TypeSpec eventHandler = TypeSpec.classBuilder("menuEvent")
+    		            .addModifiers(Modifier.PRIVATE)
+    		            .addStaticBlock(CodeBlock.builder()	
+    		            .addStatement("private $T<$T> menuEvent = new $T<$T>() $L",
+    		                          eventHandlerClass,
+    		                          actionEvent,
+    		                          eventHandlerClass,
+    		                          actionEvent,
+    		                          anonHandleClass).build())
+    		            .build();
 
     		            
     	
@@ -544,6 +426,7 @@ public class ObjectGraphGenerator implements CodeGeneratorConstants {
 			  .addMethod(getChartTitle)
 			  .addMethod(getLog)
 			  .addMethod(chartMouseClicked)
+			  .addType(eventHandler)
     		  .build();
       
 

@@ -52,18 +52,12 @@ public class TriggerDescriptionsGenerator implements CodeGeneratorConstants {
         if (act.isVisibleInExplanatoryTool()) {
           Vector<ActionTypeTrigger> triggers = act.getAllTriggers();
           for (ActionTypeTrigger trigger : triggers) {
-//            writer.write("static final String " + act.getName().toUpperCase()
-//                + "_" + trigger.getName().toUpperCase() + " = ");
             actionsString += "static final String " + act.getName().toUpperCase()
                     + "_" + trigger.getName().toUpperCase() + " = ";
             
-//            writer.write(NEWLINE);
             actionsString += "\n";
-//            writer.write("\"This action occurs ");
             actionsString += "\"This action occurs ";
             if (trigger instanceof RandomActionTypeTrigger) {
-//              writer.write(((RandomActionTypeTrigger) trigger).getFrequency()
-//                  + "% of the time ");
               actionsString += ((RandomActionTypeTrigger) trigger).getFrequency()
                       + "% of the time ";
             } else if (trigger instanceof UserActionTypeTrigger) {
@@ -71,7 +65,6 @@ public class TriggerDescriptionsGenerator implements CodeGeneratorConstants {
                       + ((UserActionTypeTrigger) trigger).getMenuText()
                       + "\\\" and ";
             }
-//            writer.write("when the following conditions are met: \\n");
             actionsString += "when the following conditions are met: \\n";
             // go through all participant conditions:
             Vector<ActionTypeParticipantTrigger> partTriggers = 
@@ -100,27 +93,20 @@ public class TriggerDescriptionsGenerator implements CodeGeneratorConstants {
                   String attGuard = attConstraint.getGuard();
                   if (attConstraint.isConstrained()) {
                     String condVal = attConstraint.getValue().toString();
-//                    writer.write(partName + "." + attName + " (" + typeName
-//                        + ") " + attGuard + " ");
                     actionsString += partName + "." + attName + " (" + typeName
                             + ") " + attGuard + " ";
                     if (attConstraint.getAttribute().getType() == 
                     	AttributeTypes.STRING) {
-//                      writer.write("\\\"" + condVal + "\\\"");
                       actionsString += "\\\"" + condVal + "\\\"";
                     } else {
-//                      writer.write(condVal);
                       actionsString += condVal;
                     }
-//                    writer.write(" \\n");
                     actionsString += " \\n";
                   }
                 }
               }
             }
-//            writer.write("\";");
             actionsString += "\";";
-//            writer.write(NEWLINE);
             actionsString += "\n";
           }
         }
