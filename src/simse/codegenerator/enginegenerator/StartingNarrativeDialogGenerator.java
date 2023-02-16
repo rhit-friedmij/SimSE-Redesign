@@ -112,7 +112,7 @@ public class StartingNarrativeDialogGenerator implements CodeGeneratorConstants 
 				.addSuperinterface(mouseHandler)
 				.addField(textArea, "textArea", Modifier.PRIVATE)
 				.addField(button, "okButton", Modifier.PRIVATE)
-				.addField(button, "cancelButton", Modifier.PRIVATE)
+				.addField(borderPane, "root", Modifier.PRIVATE)
 				.addMethod(narrativeConstructor)
 				.addMethod(handle)
 				.build();

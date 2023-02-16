@@ -255,10 +255,10 @@ public class RuleExecutorGenerator implements CodeGeneratorConstants {
 			String ruleType = "";
 			if (ruleTiming == RuleTiming.CONTINUOUS) { 
 				// continuous rule
-				ruleType = "UPDATE_ALL_CONTINUOUS))";
+				ruleType = "UPDATE_ALL_CONTINUOUS";
 			} else if (ruleTiming == RuleTiming.TRIGGER || ruleTiming == RuleTiming.DESTROYER) {
 				// trigger/destroyer rule
-				ruleType = "UPDATE_ONE) && (ruleName.equals(\"" + ruleName + "\")))";
+				ruleType = "UPDATE_ONE) && (ruleName.equals(\"" + ruleName + "\")";
 			}
 			methodBody.beginControlFlow("if ((updateInstructions == $L))", ruleType);
 			methodBody.beginControlFlow("for (int i = 0; i < $L.size(); i++)", actTypeVar);  
@@ -453,7 +453,7 @@ public class RuleExecutorGenerator implements CodeGeneratorConstants {
 					inputConds += ")";
 				}
 			}
-			if (!inputConds.equals("")) {
+			if (rInputs.size() > 0) {
 				methodBody.beginControlFlow(inputConds);
 			}
 			
@@ -478,7 +478,6 @@ public class RuleExecutorGenerator implements CodeGeneratorConstants {
 					ruleVariables.add(partTypeVar); 
 					methodBody.addStatement("$T $L = $L.getAllActive$Ls()", vectorOfMetaType, partTypeVar, oneActTypeVar, partTypeName);
 				}
-				methodBody.addStatement("$T $L = $L.getAllActive$Ls()", vectorOfMetaType, partTypeVar, oneActTypeVar, partTypeName);
 				methodBody.beginControlFlow("for (int j = 0; j < $L.size(); j++)", partTypeVar);
 				methodBody.addStatement("$T $L = $L.elementAt(j)", metaType, onePartTypeVar, partTypeVar);
 				
@@ -496,9 +495,9 @@ public class RuleExecutorGenerator implements CodeGeneratorConstants {
 					ClassName objTypeClass = ClassName.get("simse.adts.objects", objType);
 					if (k == 0) { 
 						// on first element
-						methodBody.beginControlFlow("if ($L instanceof $T) {", onePartTypeVar, objTypeClass);
+						methodBody.beginControlFlow("if ($L instanceof $T)", onePartTypeVar, objTypeClass);
 					} else {
-						methodBody.nextControlFlow("else if ($L instanceof $T) {", onePartTypeVar, objTypeClass);
+						methodBody.nextControlFlow("else if ($L instanceof $T)", onePartTypeVar, objTypeClass);
 					}
 					methodBody.addStatement("$T $L = ($T) $L", objTypeClass, objTypeVar, objTypeClass, onePartTypeVar);
 
@@ -559,9 +558,7 @@ public class RuleExecutorGenerator implements CodeGeneratorConstants {
 								methodBody.endControlFlow();
 							}
 						}
-						if (k == partTypeEffects.size() - 1) { 
-							methodBody.endControlFlow();
-						}
+						methodBody.endControlFlow();
 					} else if (partTypeRuleEff.getOtherActionsEffect().getEffect()
 							.equals(OtherActionsEffect.ACTIVATE_DEACTIVATE_SPECIFIC_ACTIONS)) {
 
@@ -1631,7 +1628,9 @@ public class RuleExecutorGenerator implements CodeGeneratorConstants {
 							}
 						}
 					}
-					methodBody.endControlFlow();
+					if (k == partTypeEffects.size() - 1) { 
+						methodBody.endControlFlow();
+					}
 				}
 				methodBody.endControlFlow();
 			}
@@ -1933,7 +1932,6 @@ public class RuleExecutorGenerator implements CodeGeneratorConstants {
 			} else {
 				conditions.nextControlFlow("else if (act instanceof $T)", actClass);
 			}
-			
 			conditions.addStatement("$T b = ($T) act", actClass, actClass);
 			
 			String ifCond = "if (";
@@ -2067,7 +2065,7 @@ public class RuleExecutorGenerator implements CodeGeneratorConstants {
 				}
 			}
 			if (!ifCond.equals("if ()")) {
-				conditions.endControlFlow(ifCond);
+				conditions.endControlFlow();
 			}
 			if (i == actions.size() - 1) {
 				conditions.endControlFlow();

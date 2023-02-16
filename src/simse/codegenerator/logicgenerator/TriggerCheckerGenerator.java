@@ -443,7 +443,7 @@ public class TriggerCheckerGenerator implements CodeGeneratorConstants {
 					checker.beginControlFlow("if ($L.getAll$Ls().size() < $L)", oneActCnt, partName, bound);
 					
 					String oneObjCnt = "b" + cnt;
-					String objCntVar = oneActCnt + "s";
+					String objCntVar = oneObjCnt + "s";
 					String empBool = "z" + cnt;
 					
 					checker.addStatement("$T $L = state.getEmployeeStateRepository().getAll()", vector, objCntVar);
@@ -472,7 +472,7 @@ public class TriggerCheckerGenerator implements CodeGeneratorConstants {
 					checker.addStatement("break");
 					checker.endControlFlow();
 					checker.endControlFlow();
-					checker.beginControlFlow("if($L && ($L.getMenu().contains($S) == false)", empBool, oneObjCnt, 
+					checker.beginControlFlow("if($L && ($L.getMenu().contains($S) == false))", empBool, oneObjCnt, 
 							"JOIN " + ((UserActionTypeTrigger) outerTrig).getMenuText());
 					
 					// go through all participant constraints:
@@ -482,7 +482,7 @@ public class TriggerCheckerGenerator implements CodeGeneratorConstants {
 						String objTypeClassName = CodeGeneratorUtils.getUpperCaseLeading(objTypeName);
 						ClassName objTypeClass = ClassName.get("simse.adts.objects", objTypeClassName);
 						
-						String instanceCond = "if(" + oneObjCnt + " instanceof " + objTypeClassName + ")";			
+						String instanceCond = "if ((" + oneObjCnt + " instanceof " + objTypeClassName + ")";			
 						
 						// go through all attribute constraints:
 						ActionTypeParticipantAttributeConstraint[] attConstraints = outerTrig
@@ -524,6 +524,7 @@ public class TriggerCheckerGenerator implements CodeGeneratorConstants {
 					checker.endControlFlow();
 				}
 			}
+			checker.endControlFlow();
 			checker.endControlFlow();
 		}
 		return checker;
