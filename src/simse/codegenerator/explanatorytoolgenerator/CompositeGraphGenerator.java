@@ -265,11 +265,14 @@ public class CompositeGraphGenerator implements CodeGeneratorConstants {
 	
 
     
-    JavaFile javaFile = JavaFile.builder("simse.explantorytool", compositeGraph)
+    JavaFile javaFile = JavaFile.builder("simse.explanatorytool", compositeGraph)
 		    .build();
 	
     try {
-		javaFile.writeTo(compGraphFile);
+    	FileWriter writer = new FileWriter(compGraphFile);
+		javaFile.writeTo(writer);
+		
+		writer.close();
 	} catch (IOException e) {
 		// TODO Auto-generated catch block
 		e.printStackTrace();

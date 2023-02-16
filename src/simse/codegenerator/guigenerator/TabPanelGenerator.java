@@ -218,7 +218,7 @@ public class TabPanelGenerator implements CodeGeneratorConstants {
     		  .addStatement("$N = a", "attributePane")
     		  .addStatement("this.$N = $N", "expTool", "expTool")
     		  .addStatement("$N = new $T()", "objsToImages", hashObjImg)
-    		  .addStatement("$N = new ()", "buttonsToObjs", hashButtonObj)
+    		  .addStatement("$N = new $T()", "buttonsToObjs", hashButtonObj)
     		  .addStatement("$N = new ArtifactsOverviewScreen(state, gui, l)", "artifactFrame")
     		  .addStatement("$N = new EmployeesOverviewScreen(state, gui, $N)", "employeeFrame", "logic")
     		  .addStatement("")
@@ -627,7 +627,7 @@ public class TabPanelGenerator implements CodeGeneratorConstants {
     		  .addMethod(getClock)
     		  .build();
       
-      JavaFile file = JavaFile.builder("simse.gui.TabPanel", tabPanel)
+      JavaFile file = JavaFile.builder("simse.gui", tabPanel)
     		  .build();
       
       file.writeTo(writer);

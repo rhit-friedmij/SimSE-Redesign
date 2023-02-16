@@ -29,7 +29,7 @@ public class ImageLoaderGenerator implements CodeGeneratorConstants {
     }
     try {
       FileWriter writer = new FileWriter(ilFile);
-      FileReader reader = new FileReader("\\resources\\ImageLoader.txt");
+      FileReader reader = new FileReader("resources\\ImageLoader.txt");
       Scanner s = new Scanner(reader);
       
       while (s.hasNext()) {

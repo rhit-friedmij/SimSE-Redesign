@@ -55,7 +55,7 @@ public class RepositoryGenerator implements CodeGeneratorConstants {
 	  ClassName toolStateRepoClass = ClassName.get("simse.state", "ToolStateRepository");
 	  ClassName actionClass = ClassName.get("simse.adts.actions", "Action");
 	  ClassName ssObjectClass = ClassName.get("simse.adts.objects", "SSObject");
-	  ClassName vector = ClassName.get(Vector.class);
+	  ClassName vector = ClassName.get("java.util", "Vector");
 	  TypeName actionVector = ParameterizedTypeName.get(vector, actionClass);
 	  TypeName ssObjectVector = ParameterizedTypeName.get(vector, ssObjectClass);
     Vector<SimSEObjectType> objs = objTypes.getAllObjectTypes();
@@ -274,11 +274,14 @@ public class RepositoryGenerator implements CodeGeneratorConstants {
     		.addMethod(refetchParticipants)
     		.build();
     
-	JavaFile javaFile = JavaFile.builder("ActionStateRepository", actionRepo)
+	JavaFile javaFile = JavaFile.builder("simse.state.ActionStateRepository", actionRepo)
 		    .build();
     
     try {
-    	javaFile.writeTo(asrFile);
+    	FileWriter writer = new FileWriter(asrFile);
+    	
+    	javaFile.writeTo(writer);
+    	writer.close();
     } catch (IOException e) {
         JOptionPane.showMessageDialog(null, ("Error writing file "
             + asrFile.getPath() + ": " + e.toString()), "File IO Error",
@@ -291,7 +294,7 @@ public class RepositoryGenerator implements CodeGeneratorConstants {
     String lCaseName = objType.getName().toLowerCase();
     String uCaseNameFunc = CodeGeneratorUtils.getUpperCaseLeading(objType.getKey().getName());
     ClassName objClass = ClassName.get("simse.adts.objects", uCaseName);
-    ClassName vector = ClassName.get(Vector.class);
+    ClassName vector = ClassName.get("java.util", "Vector");
     ClassName objRepo = ClassName.get("simse.state", uCaseName + "StateRepository");
     TypeName objVector = ParameterizedTypeName.get(vector, objClass);
     File repFile = new File(options.getCodeGenerationDestinationDirectory(), 
@@ -407,11 +410,14 @@ public class RepositoryGenerator implements CodeGeneratorConstants {
     		.addMethod(remove)
     		.build();
     
-    JavaFile javaFile = JavaFile.builder(uCaseName + "StateRepository", repStateRepo)
+    JavaFile javaFile = JavaFile.builder("simse.state." + uCaseName + "StateRepository", repStateRepo)
 		    .build();
     
     try {
-    	javaFile.writeTo(repFile);
+    	FileWriter writer = new FileWriter(repFile);
+    	
+    	javaFile.writeTo(writer);
+    	writer.close();
     } catch (IOException e) {
         JOptionPane.showMessageDialog(null, ("Error writing file "
             + repFile.getPath() + ": " + e.toString()), "File IO Error",
@@ -422,7 +428,7 @@ public class RepositoryGenerator implements CodeGeneratorConstants {
   private void generateMetaObjectTypeRepository(String typeName) {
 	  ClassName typeStateRepo = ClassName.get("simse.state", typeName + "StateRepository");
 	  ClassName type = ClassName.get("simse.adts.objects", typeName);
-	  ClassName vector = ClassName.get(Vector.class);
+	  ClassName vector = ClassName.get("java.util", "Vector");
 	  TypeName typeVector = ParameterizedTypeName.get(vector, type);
     File repFile = new File(options.getCodeGenerationDestinationDirectory(),
         ("simse\\state\\" + typeName + "StateRepository.java"));
@@ -516,11 +522,14 @@ public class RepositoryGenerator implements CodeGeneratorConstants {
     
     TypeSpec repStateRepo = repStateRepoBuilder.build();
     
-    JavaFile javaFile = JavaFile.builder(typeName + "StateRepository", repStateRepo)
+    JavaFile javaFile = JavaFile.builder("simse.state." + typeName + "StateRepository", repStateRepo)
 		    .build();
     
     try {
-    	javaFile.writeTo(repFile);
+    	FileWriter writer = new FileWriter(repFile);
+    	
+    	javaFile.writeTo(writer);
+    	writer.close();
     } catch (IOException e) {
         JOptionPane.showMessageDialog(null, ("Error writing file "
             + repFile.getPath() + ": " + e.toString()), "File IO Error",
@@ -533,7 +542,7 @@ public class RepositoryGenerator implements CodeGeneratorConstants {
     		actType.getName());
     ClassName actionClass = ClassName.get("simse.adts.actions", uCaseName + "Action");
     ClassName actionRepoClass = ClassName.get("simse.state", uCaseName + "ActionStateRepository");
-    ClassName vector = ClassName.get(Vector.class);
+    ClassName vector = ClassName.get("java.util", "Vector");
     ClassName ssObjectClass = ClassName.get("simse.adts.objects", "SSObject");
 	  ClassName artifactStateRepoClass = ClassName.get("simse.state", "ArtifactStateRepository");
 	  ClassName customerStateRepoClass = ClassName.get("simse.state", "CustomerStateRepository");
@@ -701,11 +710,14 @@ public class RepositoryGenerator implements CodeGeneratorConstants {
     		.addMethod(refetchParticipants)
     		.build();
     
-    JavaFile javaFile = JavaFile.builder(uCaseName + "ActionStateRepository", repStateRepo)
+    JavaFile javaFile = JavaFile.builder("simse.state." + uCaseName + "ActionStateRepository", repStateRepo)
 		    .build();
     
     try {
-    	javaFile.writeTo(repFile);
+    	FileWriter writer = new FileWriter(repFile);
+    	
+    	javaFile.writeTo(writer);
+    	writer.close();
     } catch (IOException e) {
         JOptionPane.showMessageDialog(null, ("Error writing file "
                 + repFile.getPath() + ": " + e.toString()), "File IO Error",

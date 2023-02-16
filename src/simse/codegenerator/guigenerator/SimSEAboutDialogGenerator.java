@@ -30,7 +30,7 @@ public class SimSEAboutDialogGenerator implements CodeGeneratorConstants {
     }
     try {
       FileWriter writer = new FileWriter(aboutDialogFile);
-      FileReader reader = new FileReader("\\resources\\World.txt");
+      FileReader reader = new FileReader("resources\\SimSeAboutDialog.txt");
       Scanner s = new Scanner(reader);
       
       while (s.hasNext()) {
