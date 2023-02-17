@@ -33,7 +33,7 @@ CodeGeneratorConstants {
 
 		try {
 
-		FileReader reader = new FileReader("C:\\Users\\localmgr\\git\\simse-redesign\\simse-redesign\\res\\static\\explanatorytool\\MultipleTimelinesBrowser.txt");
+		FileReader reader = new FileReader("res\\static\\explanatorytool\\MultipleTimelinesBrowser.txt");
 		FileWriter writer = new FileWriter(multipleTimelinesBrowserFile);
 
 		String fileContents = "";

@@ -70,7 +70,7 @@ public class CodeGenerator {
         stsObjsToImages, ruleObjsToImages, map, userDatas);
     expToolGen = new ExplanatoryToolGenerator(options, objTypes, objs, 
         actTypes);
-    idGen = new IDGeneratorGenerator(options);
+    idGen = new IDGeneratorGenerator(options.getCodeGenerationDestinationDirectory());
   }
 
   public void setAllowHireFire(boolean b) {

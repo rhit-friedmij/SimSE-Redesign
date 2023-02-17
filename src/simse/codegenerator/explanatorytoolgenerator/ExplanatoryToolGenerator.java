@@ -719,6 +719,9 @@ public class ExplanatoryToolGenerator implements CodeGeneratorConstants {
     		  .addMethod(getLog)
     		  .build();
       
+//      writer.write(CLOSED_BRACK);
+//      writer.close();
+      
       JavaFile javaFile = JavaFile.builder("simse.explanatorytool", explanatoryTool)
   		    .build();
 
