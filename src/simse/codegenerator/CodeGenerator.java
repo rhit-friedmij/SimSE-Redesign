@@ -278,7 +278,7 @@ public class CodeGenerator {
     		    .addStatement("state.getClock().setGUI(gui)")
     		    .addStatement("gui.setX(0)")
     		    .addStatement("gui.setY(0)")
-    		    .addStatement("gui.setWidth(1180))")
+    		    .addStatement("gui.setWidth(1180)")
     		    .addStatement("gui.setHeight(720)")
     		    .addStatement("$T.initializeRuleCategories()", ruleCategories)
     		    .addStatement("$N.giveGUI(gui)", engineField)
@@ -291,7 +291,7 @@ public class CodeGenerator {
     	MethodSpec getBranches = MethodSpec.methodBuilder("getBranches")
     			.addModifiers(Modifier.PUBLIC, Modifier.STATIC)
     			.returns(listOfBranches)
-    			.addStatement("returns $N", branches)
+    			.addStatement("return $N", branches)
     			.build();
     			
     	MethodSpec getNumOpenBranches = MethodSpec.methodBuilder("getNumOpenBranches")
@@ -309,7 +309,7 @@ public class CodeGenerator {
     	MethodSpec getGUIs = MethodSpec.methodBuilder("getGUIs")
     			.addModifiers(Modifier.PUBLIC, Modifier.STATIC)
     			.returns(listOfGuis)
-    			.addStatement("returns $N", guis)
+    			.addStatement("return $N", guis)
     			.build();
     	
     	MethodSpec main = MethodSpec.methodBuilder("main")
