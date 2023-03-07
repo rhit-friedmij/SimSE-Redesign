@@ -34,7 +34,7 @@ public class IDGeneratorGenerator implements CodeGeneratorConstants {
 
 		try {
 
-		FileReader reader = new FileReader("C:\\Users\\localmgr\\git\\simse-redesign\\simse-redesign\\res\\static\\util\\IDGenerator.txt");
+		FileReader reader = new FileReader("res\\static\\util\\IDGenerator.txt");
 		FileWriter writer = new FileWriter(idGeneratorFile);
 
 		String fileContents = "";
