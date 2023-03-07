@@ -32,8 +32,8 @@ public class ClockPanelGenerator implements CodeGeneratorConstants {
       FileReader reader = new FileReader("resources\\ClockPanel.txt");
       Scanner s = new Scanner(reader);
       
-      while (s.hasNext()) {
-    	  writer.write(s.next());
+      while (s.hasNextLine()) {
+      	  writer.write(s.nextLine() + "\n");
       }
       
       s.close();
