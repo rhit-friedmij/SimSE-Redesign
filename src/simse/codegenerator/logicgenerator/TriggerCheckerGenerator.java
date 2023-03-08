@@ -106,7 +106,6 @@ public class TriggerCheckerGenerator implements CodeGeneratorConstants {
 				trigFile.delete(); // delete old version of file
 			}
 			FileWriter writer = new FileWriter(trigFile);
-			System.out.println(javaFile.toString());
 			javaFile.writeTo(writer);
 			writer.close();
 		} catch (IOException e) {

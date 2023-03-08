@@ -169,7 +169,6 @@ public class MenuInputManagerGenerator implements CodeGeneratorConstants {
 				mimFile.delete(); // delete old version of file
 			}
 			FileWriter writer = new FileWriter(mimFile);
-			System.out.println(javaFile.toString());
 			javaFile.writeTo(writer);
 			writer.close();
 		} catch (IOException e) {

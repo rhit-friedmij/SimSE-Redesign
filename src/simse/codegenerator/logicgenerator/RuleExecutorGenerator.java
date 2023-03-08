@@ -171,7 +171,6 @@ public class RuleExecutorGenerator implements CodeGeneratorConstants {
 				ruleExFile.delete(); // delete old version of file
 			}
 			writer = new FileWriter(ruleExFile);
-			System.out.println(javaFile.toString());
 			javaFile.writeTo(writer);
 			writer.close();
 			
@@ -526,9 +525,9 @@ public class RuleExecutorGenerator implements CodeGeneratorConstants {
 							ActionType tempActType = allActTypes.elementAt(m);
 							if (m == 0) { 
 								// on first element
-								methodBody.beginControlFlow("if (tempAct instanceof $T) {", onePartTypeVar, actClass);
+								methodBody.beginControlFlow("if (tempAct instanceof $T)", onePartTypeVar, actClass);
 							} else {
-								methodBody.nextControlFlow("else if (tempAct instanceof $T) {", onePartTypeVar, actClass);
+								methodBody.nextControlFlow("else if (tempAct instanceof $T)", onePartTypeVar, actClass);
 							}
 							if (tempActType.getName().equals(actType.getName())) {
 								methodBody.beginControlFlow("if(tempAct.equals($L) == false)", oneActTypeVar);
@@ -1437,6 +1436,8 @@ public class RuleExecutorGenerator implements CodeGeneratorConstants {
 										try {
 											Integer minVal = Integer.getInteger(token.substring((token.indexOf(':') + 1), token.indexOf(',')));
 											Integer maxVal = Integer.getInteger(token.substring(token.indexOf(',') + 1));
+											//TODO
+											System.out.println("Min:" + token.substring((token.indexOf(':') + 1), token.indexOf(',')));
 											// append to expression:
 											expression.append("((double)((ranNumGen.nextInt(" + maxVal + " - "
 													+ minVal + " + 1) + " + minVal + ")))");

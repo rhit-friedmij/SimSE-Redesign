@@ -116,7 +116,6 @@ public class DestroyerCheckerGenerator implements CodeGeneratorConstants {
 				destFile.delete(); // delete old version of file
 			}
 			FileWriter writer = new FileWriter(destFile);
-			System.out.println(javaFile.toString());
 		    javaFile.writeTo(writer);
 		    writer.close();
 		} catch (IOException e) {

@@ -259,7 +259,6 @@ public class EngineGenerator implements CodeGeneratorConstants {
 				engineFile.delete(); // delete old version of file
 			}
 			FileWriter writer = new FileWriter(engineFile);
-			System.out.println(javaFile.toString());
 			javaFile.writeTo(writer);
 			writer.close();
 		} catch (IOException e) {

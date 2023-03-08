@@ -118,7 +118,6 @@ public class MiscUpdaterGenerator implements CodeGeneratorConstants {
 	        muFile.delete(); // delete old version of file
 	      }
 	      FileWriter writer = new FileWriter(muFile);
-	      System.out.println(javaFile.toString());
 	      javaFile.writeTo(writer);
 	      writer.close();
     } catch (IOException e) {

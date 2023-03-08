@@ -127,7 +127,6 @@ public class StartingNarrativeDialogGenerator implements CodeGeneratorConstants 
 				snFile.delete(); // delete old version of file
 			}
 			FileWriter writer = new FileWriter(snFile);
-			System.out.println(javaFile.toString());
 			javaFile.writeTo(writer);
 			writer.close();
 		} catch (IOException e) {
