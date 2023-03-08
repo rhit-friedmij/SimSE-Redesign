@@ -1434,10 +1434,8 @@ public class RuleExecutorGenerator implements CodeGeneratorConstants {
 										}
 										// get min & max vals:
 										try {
-											Integer minVal = Integer.getInteger(token.substring((token.indexOf(':') + 1), token.indexOf(',')));
-											Integer maxVal = Integer.getInteger(token.substring(token.indexOf(',') + 1));
-											//TODO
-											System.out.println("Min:" + token.substring((token.indexOf(':') + 1), token.indexOf(',')));
+											Integer minVal = Integer.valueOf(token.substring((token.indexOf(':') + 1), token.indexOf(',')));
+											Integer maxVal = Integer.valueOf(token.substring(token.indexOf(',') + 1));
 											// append to expression:
 											expression.append("((double)((ranNumGen.nextInt(" + maxVal + " - "
 													+ minVal + " + 1) + " + minVal + ")))");
