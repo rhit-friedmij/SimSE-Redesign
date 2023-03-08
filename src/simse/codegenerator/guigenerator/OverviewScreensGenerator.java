@@ -70,8 +70,8 @@ public class OverviewScreensGenerator implements CodeGeneratorConstants {
 	      Scanner s = new Scanner(reader);
 	      FileWriter writer = new FileWriter(aosFile);
 	      
-	      while (s.hasNext()) {
-	    	  writer.write(s.next());
+	      while (s.hasNextLine()) {
+	      	  writer.write(s.nextLine() + "\n");
 	      }
 	      
 	      writer.close();
@@ -93,8 +93,8 @@ public class OverviewScreensGenerator implements CodeGeneratorConstants {
 	      Scanner s = new Scanner(reader);
 	      FileWriter writer = new FileWriter(posFile);
 	      
-	      while (s.hasNext()) {
-	    	  writer.write(s.next());
+	      while (s.hasNextLine()) {
+	      	  writer.write(s.nextLine() + "\n");
 	      }
 	      
 	      writer.close();
