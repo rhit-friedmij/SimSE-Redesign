@@ -227,7 +227,7 @@ public class RepositoryGenerator implements CodeGeneratorConstants {
     for (int i = 0; i < acts.size(); i++) {
         ActionType tempAct = acts.elementAt(i);
         refetchParticipantsBuilder.addStatement("$L.refetchParticipants(artifactRep,"
-        		+ " customerRep, employeeRep, projectRep, toolRep)", 
+        		+ " customerRep, employeeRep, projectRep, toolRep))", 
         		tempAct.getName().substring(0, 1).toLowerCase() + i);
       }
     
