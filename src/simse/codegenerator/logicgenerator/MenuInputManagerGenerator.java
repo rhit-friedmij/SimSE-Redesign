@@ -664,7 +664,35 @@ public class MenuInputManagerGenerator implements CodeGeneratorConstants {
 			// TODO: Figure out how to add Employees but only when it's a join conditional and a continuous action so not
 			// game-ending or instant things like firing or changing pay rates
 			// Go back through triggers?
-//			effectCode1.addStatement("mello.addEmployeeToTask($S, (($T)selectedEmp).getName())", actType, metaType);
+			if (!outerTrig.isGameEndingTrigger()) {
+				for (int j = 0; j < triggers.size(); j++) {
+					ActionTypeParticipantTrigger trig = triggers.elementAt(j);
+					ActionTypeParticipant tempPart = trig.getParticipant();
+					Vector<SimSEObjectType> objTypes = tempPart.getAllSimSEObjectTypes();
+					int objMetaType = tempPart.getSimSEObjectTypeType();
+					
+					if (objMetaType == SimSEObjectTypeTypes.EMPLOYEE) { 
+						for (int k = 0; k < objTypes.size(); k++) {
+							SimSEObjectType sObjType = objTypes.get(k);
+							String currObjTypeName = sObjType.getName();
+							String uCaseObjTypeName = CodeGeneratorUtils.getUpperCaseLeading(currObjTypeName);
+							ClassName currObjType = ClassName.get("simse.adts.objects", uCaseObjTypeName);
+							if (k == 0) {
+								effectCode1.beginControlFlow("if (selectedEmp instanceof $T)", currObjType);
+							} else {
+								effectCode1.nextControlFlow("else if (selectedEmp instanceof $T)", currObjType);
+							}
+							
+							Attribute keyAttribute = sObjType.getKey();
+							String keyName = keyAttribute.getName();
+							effectCode1.addStatement("mello.addEmployeeToTask($S, (($T)selectedEmp).get$L())", actType, currObjType, keyName);
+							if (k == objTypes.size() - 1) {
+								effectCode1.endControlFlow();
+							}
+						}
+					}
+				}
+			}
 			effectCode.add(effectCode1.build());
 		}
 		
@@ -712,11 +740,6 @@ public class MenuInputManagerGenerator implements CodeGeneratorConstants {
 					// SimSEObjectType has getKeyAttribute
 					// Attribute has getName
 					// Need to figure out which SimSEObjectType is the current participant
-//					ActionTypeParticipantConstraint constraint = constraints.elementAt(k);
-//					String objTypeName = constraint.getSimSEObjectType().getName();
-//					String objTypeVarName = objTypeName.toLowerCase() + "s";
-//					String uCaseObjTypeName = CodeGeneratorUtils.getUpperCaseLeading(objTypeName);
-//					ClassName objType = ClassName.get("simse.adts.objects", uCaseObjTypeName);
 					
 					Vector<SimSEObjectType> objTypes = tempPart.getAllSimSEObjectTypes();
 					String objTypeName = "";
