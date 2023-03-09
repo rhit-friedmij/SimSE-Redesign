@@ -73,6 +73,8 @@ public class ADTGenerator implements CodeGeneratorConstants {
     }
     
     MethodSpec clone1 = MethodSpec.methodBuilder("clone")
+    		.addModifiers(Modifier.PUBLIC)
+    		.returns(Object.class)
     		.beginControlFlow("try")
     		.addStatement("$T cl = ($T) (super.clone())", ssObjectClass, ssObjectClass)
     		.addStatement("return cl")
@@ -85,11 +87,12 @@ public class ADTGenerator implements CodeGeneratorConstants {
     TypeSpec ssObject = TypeSpec.classBuilder("SSObject")
     		.addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
     		.addSuperinterface(Cloneable.class)
-    		.addMethod(MethodSpec.constructorBuilder().build())
+    		.addMethod(MethodSpec.constructorBuilder()
+    				.addModifiers(Modifier.PUBLIC).build())
     		.addMethod(clone1)
     		.build();
 
-	  JavaFile javaFile = JavaFile.builder("simse.adts.objects.SSObject", ssObject)
+	  JavaFile javaFile = JavaFile.builder("simse.adts.objects", ssObject)
 			    .build();
     
     try {
@@ -154,7 +157,8 @@ public class ADTGenerator implements CodeGeneratorConstants {
     
     for (Attribute compare: compareAttributes) {
     	employeeConstructorBuilder.addParameter(getTypeAsClass(compare), compare.getName())
-    			.addStatement("this.$N = $N", compare.getName(), compare.getName());
+    			.addStatement("this.$N = $N", compare.getName().toLowerCase(),
+    					compare.getName().toLowerCase());
     }
     
     MethodSpec employeeConstructor = employeeConstructorBuilder.build();
@@ -171,7 +175,8 @@ public class ADTGenerator implements CodeGeneratorConstants {
     		.addStatement("cl.$N = $N", "overheadText", "overheadText");
     
     for (Attribute compare: compareAttributes) {
-    	clone2Builder.addStatement("cl.$N = $N", compare.getName(),	compare.getName());
+    	clone2Builder.addStatement("cl.$N = $N", compare.getName().toLowerCase(),
+    			compare.getName().toLowerCase());
     }
     	
     MethodSpec clone2 = clone2Builder.addStatement("return cl")
@@ -242,7 +247,7 @@ public class ADTGenerator implements CodeGeneratorConstants {
     		.beginControlFlow("if (($N != null) && ($N.length() > 0)) ", "overheadText", "overheadText")
     		.beginControlFlow("if ($N.equals($N)) ", "overheadText", "IDLE_STRING")
     		.addStatement("$N = s", "overheadText")
-    		.nextControlFlow(" else if (!$N.endsWith(s)) // string has not just been said", "overheadText")
+    		.nextControlFlow(" else if (!$N.endsWith(s))", "overheadText")
     		.addStatement("$N = $N.concat($S + s)", "overheadText", "overheadText", " AND ")
     		.endControlFlow()
     		.nextControlFlow(" else ")
@@ -268,7 +273,7 @@ public class ADTGenerator implements CodeGeneratorConstants {
     
     FieldSpec idle = FieldSpec.builder(String.class, "IDLE_STRING")
     		.addModifiers(Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL)
-    		.initializer("I'm not doing anything right now")
+    		.initializer("$S", "I'm not doing anything right now")
     		.build();
     
     TypeSpec.Builder employeeBuilder = TypeSpec.classBuilder("Employee")
@@ -282,7 +287,7 @@ public class ADTGenerator implements CodeGeneratorConstants {
 
     	
 	for (Attribute compare: compareAttributes) {
-		employeeBuilder.addField(this.getTypeAsClass(compare), compare.getName(), Modifier.PRIVATE);
+		employeeBuilder.addField(this.getTypeAsClass(compare), compare.getName().toLowerCase(), Modifier.PRIVATE);
 	}
     
     
@@ -317,11 +322,12 @@ public class ADTGenerator implements CodeGeneratorConstants {
     	employeeBuilder.addMethod(MethodSpec.methodBuilder("get" + compare.getName())
     			.addModifiers(Modifier.PUBLIC)
     			.returns(getTypeAsClass(compare))
-    			.addStatement("return $N", compare.getName())
+    			.addStatement("return $N", compare.getName().toLowerCase())
     			.build());
     	
     	MethodSpec.Builder tempSetBuilder = MethodSpec.methodBuilder("set" + compare.getName())
     			.addModifiers(Modifier.PUBLIC)
+    			.addParameter(getTypeAsClass(compare), "a")
     			.returns(void.class);
     	
     	if ((compare instanceof NumericalAttribute)
@@ -363,7 +369,7 @@ public class ADTGenerator implements CodeGeneratorConstants {
     
     TypeSpec employee = employeeBuilder.build();
     
-    javaFile = JavaFile.builder("simse.adts.objects.Employee", employee)
+    javaFile = JavaFile.builder("simse.adts.objects", employee)
 		    .build();
     try {
     	FileWriter writer = new FileWriter(empClass);
@@ -420,9 +426,9 @@ public class ADTGenerator implements CodeGeneratorConstants {
     		.addStatement("$N = $T.getInstance()", "track", trackClass);
     
     for (Attribute compare: compareAttributes) {
-		customerConstructorBuilder.addParameter(getTypeAsClass(compare), compare.getName())
-								.addStatement("this.$N = $N", compare.getName(), 
-										compare.getName());
+		customerConstructorBuilder.addParameter(getTypeAsClass(compare), compare.getName().toLowerCase())
+								.addStatement("this.$N = $N", compare.getName().toLowerCase(), 
+										compare.getName().toLowerCase());
     }
     
     MethodSpec customerConstructor = customerConstructorBuilder.build();
@@ -481,7 +487,7 @@ public class ADTGenerator implements CodeGeneratorConstants {
     		.addField(trackClass, "track");
     
 	for (Attribute compare: compareAttributes) {
-		customerBuilder.addField(this.getTypeAsClass(compare), compare.getName(), Modifier.PRIVATE);
+		customerBuilder.addField(getTypeAsClass(compare), compare.getName().toLowerCase(), Modifier.PRIVATE);
 	}
 	
 	customerBuilder.addMethod(customerConstructor)
@@ -542,7 +548,7 @@ public class ADTGenerator implements CodeGeneratorConstants {
 	
 	TypeSpec customer = customerBuilder.build();
 	
-	javaFile = JavaFile.builder("simse.adts.objects.Customer", customer)
+	javaFile = JavaFile.builder("simse.adts.objects", customer)
 		    .build();
     
     try {
@@ -638,7 +644,7 @@ public class ADTGenerator implements CodeGeneratorConstants {
     	FieldSpec tempField = FieldSpec.builder(String.class,
     			acts.get(i).getName().toUpperCase())
     			.addModifiers(Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL)
-    			.initializer(acts.get(i).getName())
+    			.initializer("$S", acts.get(i).getName())
     			.build();
     	
     	actionBuilder.addField(tempField);
@@ -659,7 +665,7 @@ public class ADTGenerator implements CodeGeneratorConstants {
     		.addMethod(getAllInactiveParticipants)
     		.build();
     
-    javaFile = JavaFile.builder("simse.adts.actions.Action", action)
+    javaFile = JavaFile.builder("simse.adts.actions", action)
 		    .build();
     
     try {
@@ -725,7 +731,8 @@ public class ADTGenerator implements CodeGeneratorConstants {
     
     for (Attribute compare: compareAttributes) {
     	constructorBuilder.addParameter(getTypeAsClass(compare), compare.getName())
-    			.addStatement("this.$N = $N", compare.getName(), compare.getName());
+    			.addStatement("this.$N = $N", compare.getName().toLowerCase(),
+    					compare.getName().toLowerCase());
     }
     
     MethodSpec constructor = constructorBuilder.build();
@@ -736,7 +743,8 @@ public class ADTGenerator implements CodeGeneratorConstants {
     		.addStatement("$T cl = ($T) (super.clone())", objClass, objClass);
     
     for (Attribute compare: compareAttributes) {
-    	cloneBuilder.addStatement("cl.$N = $N", compare.getName(),	compare.getName());
+    	cloneBuilder.addStatement("cl.$N = $N", compare.getName().toLowerCase(),
+    			compare.getName().toLowerCase());
     }
     	
     MethodSpec clone = cloneBuilder.addStatement("return cl")
@@ -749,7 +757,7 @@ public class ADTGenerator implements CodeGeneratorConstants {
     		.superclass(ssObjectClass);
     
 	for (Attribute compare: compareAttributes) {
-		absClassSpecBuilder.addField(getTypeAsClass(compare), compare.getName(),
+		absClassSpecBuilder.addField(getTypeAsClass(compare), compare.getName().toLowerCase(),
 				Modifier.PRIVATE);
 	}
 	
@@ -760,11 +768,12 @@ public class ADTGenerator implements CodeGeneratorConstants {
 		absClassSpecBuilder.addMethod(MethodSpec.methodBuilder("get" + compare.getName())
     			.addModifiers(Modifier.PUBLIC)
     			.returns(getTypeAsClass(compare))
-    			.addStatement("return $N", compare.getName())
+    			.addStatement("return $N", compare.getName().toLowerCase())
     			.build());
     	
     	MethodSpec.Builder tempSetBuilder = MethodSpec.methodBuilder("set" + compare.getName())
     			.addModifiers(Modifier.PUBLIC)
+    			.addParameter(getTypeAsClass(compare), "a")
     			.returns(void.class);
     	
     	if ((compare instanceof NumericalAttribute)
@@ -806,7 +815,7 @@ public class ADTGenerator implements CodeGeneratorConstants {
     
 	TypeSpec absClassSpec = absClassSpecBuilder.build();
 	
-	JavaFile javaFile = JavaFile.builder("simse.adts.objects." + className, absClassSpec)
+	JavaFile javaFile = JavaFile.builder("simse.adts.objects", absClassSpec)
 		    .build();
 	
     try {
@@ -888,7 +897,7 @@ public class ADTGenerator implements CodeGeneratorConstants {
     if (superConstructorAtts.size() > 0) {
     	superConstructor += superConstructorAtts.get(superConstructorAtts.size() - 1);
     }
-    superConstructor += ");";
+    superConstructor += ");\n";
     
     constructorBuilder.addCode(superConstructor);
     		
@@ -932,11 +941,12 @@ public class ADTGenerator implements CodeGeneratorConstants {
 		adtBuilder.addMethod(MethodSpec.methodBuilder("get" + att.getName())
     			.addModifiers(Modifier.PUBLIC)
     			.returns(getTypeAsClass(att))
-    			.addStatement("return $N", att.getName())
+    			.addStatement("return $N", att.getName().toLowerCase())
     			.build());
     	
     	MethodSpec.Builder tempSetBuilder = MethodSpec.methodBuilder("set" + att.getName())
     			.addModifiers(Modifier.PUBLIC)
+    			.addParameter(getTypeAsClass(att), "a")
     			.returns(void.class);
     	
     	if ((att instanceof NumericalAttribute)
@@ -1009,8 +1019,7 @@ public class ADTGenerator implements CodeGeneratorConstants {
     
     TypeSpec adt = adtBuilder.build();
     
-    JavaFile javaFile = JavaFile.builder("simse.adts.objects." + CodeGeneratorUtils.
-    		getUpperCaseLeading(objType.getName()), adt)
+    JavaFile javaFile = JavaFile.builder("simse.adts.objects", adt)
 		    .build();
     
     try {
@@ -1112,7 +1121,7 @@ public class ADTGenerator implements CodeGeneratorConstants {
     MethodSpec.Builder cloneBuilder = MethodSpec.methodBuilder("clone")
     		.addModifiers(Modifier.PUBLIC)
     		.returns(Object.class)
-    		.addStatement("$T cl = ($T) (super.clone)", thisClass, thisClass);
+    		.addStatement("$T cl = ($T) (super.clone())", thisClass, thisClass);
     
     for (int i = 0; i < participants.size(); i++) {
         ActionTypeParticipant tempPart = participants.elementAt(i);
@@ -1151,9 +1160,9 @@ public class ADTGenerator implements CodeGeneratorConstants {
       getAllActiveParticipantsBuilder.addStatement("all.addAll(getAllActive$Ls())",  tempPart.getName());
     }
     
-    MethodSpec getAllActiveParticipants = getAllParticipantsBuilder.addStatement("return all").build();
+    MethodSpec getAllActiveParticipants = getAllActiveParticipantsBuilder.addStatement("return all").build();
     
-    MethodSpec.Builder getAllInactiveParticipantsBuilder = MethodSpec.methodBuilder("getAllParticipants")
+    MethodSpec.Builder getAllInactiveParticipantsBuilder = MethodSpec.methodBuilder("getAllInactiveParticipants")
     		.addModifiers(Modifier.PUBLIC)
     		.returns(ssObjectVector)
     		.addStatement("$T all = new $T()", ssObjectVector, ssObjectVector);
@@ -1163,15 +1172,15 @@ public class ADTGenerator implements CodeGeneratorConstants {
       getAllInactiveParticipantsBuilder.addStatement("all.addAll(getAllInactive$Ls())",  tempPart.getName());
     }
     
-    MethodSpec getAllInactiveParticipants = getAllParticipantsBuilder.addStatement("return all").build();
+    MethodSpec getAllInactiveParticipants = getAllInactiveParticipantsBuilder.addStatement("return all").build();
     
     // "refetchParticipants" method:
     MethodSpec refetchParticipants = MethodSpec.methodBuilder("refetchParticipants")
-    		.addComment("Replaces all the participants in this action with their equivalent\r\n"
-    				+ "objects in the current state. Calling this function solves the problem\r\n"
-    				+ "that happens when you clone actions -- their hashtables point to\r\n"
-    				+ "participant objects that were part of the previous, non-cloned state.\r\n"
-    				+ "Hence, this function should be called after this object is cloned.")
+    		.addComment("Replaces all the participants in this action with their equivalent")
+			.addComment("objects in the current state. Calling this function solves the problem")
+			.addComment("that happens when you clone actions -- their hashtables point to")
+			.addComment("participant objects that were part of the previous, non-cloned state.")
+			.addComment("Hence, this function should be called after this object is cloned.")
     		.addModifiers(Modifier.PUBLIC)
     		.returns(void.class)
     		.addParameter(artifactStateRepoClass, "artifactRep")
@@ -1237,6 +1246,8 @@ public class ADTGenerator implements CodeGeneratorConstants {
 
         // "getAll[Participant]s" method:
         MethodSpec getAll = MethodSpec.methodBuilder("getAll" + tempPart.getName() + "s")
+        		.addModifiers(Modifier.PUBLIC)
+        		.returns(partVector)
         		.addStatement("$T a = new $T()", partVector, partVector)
         		.addStatement("$T e = $Ls.keys()", partEnum, lcName)
         		.beginControlFlow("for (int i = 0; i < $Ls.size(); i++)", lcName)
@@ -1247,6 +1258,8 @@ public class ADTGenerator implements CodeGeneratorConstants {
 
         // "getAllActive[Participant]s" method:
         MethodSpec getAllActive = MethodSpec.methodBuilder("getAllActive" + tempPart.getName() + "s")
+        		.addModifiers(Modifier.PUBLIC)
+        		.returns(partVector)
         		.addStatement("$T a = new $T()", partVector, partVector)
         		.addStatement("$T e = $Ls.keys()", partEnum, lcName)
         		.beginControlFlow("for (int i = 0; i < $Ls.size(); i++)", lcName)
@@ -1259,7 +1272,9 @@ public class ADTGenerator implements CodeGeneratorConstants {
         		.build();
 
         // "getAllInactive[Participant]s" method:
-        MethodSpec getAllInActive = MethodSpec.methodBuilder("getAllInActive" + tempPart.getName() + "s")
+        MethodSpec getAllInActive = MethodSpec.methodBuilder("getAllInactive" + tempPart.getName() + "s")
+        		.addModifiers(Modifier.PUBLIC)
+        		.returns(partVector)
         		.addStatement("$T a = new $T()", partVector, partVector)
         		.addStatement("$T e = $Ls.keys()", partEnum, lcName)
         		.beginControlFlow("for (int i = 0; i < $Ls.size(); i++)", lcName)
@@ -1371,14 +1386,19 @@ public class ADTGenerator implements CodeGeneratorConstants {
     		.addMethod(refetchParticipants)
     		.build();
 
-    JavaFile javaFile = JavaFile.builder("simse.adts.actions." + CodeGeneratorUtils.
-    		getUpperCaseLeading(actType.getName()), adt)
+    JavaFile javaFile = JavaFile.builder("", adt)
 		    .build();
     
     try {
+    	String toAppend = "package simse.adts.actions;\n"
+    			+ "\n"
+    			+ "import java.util.Iterator;\n"
+    			+ "import java.util.Map;\n"
+    			+ "import simse.adts.objects.*;\n";
+    	String fileText = javaFile.toString();
     	FileWriter writer = new FileWriter(adtFile);
     	
-        javaFile.writeTo(writer);
+        writer.write(String.join(toAppend, fileText));
         writer.close();
     } catch (IOException e) {
         JOptionPane.showMessageDialog(null, ("Error writing file "

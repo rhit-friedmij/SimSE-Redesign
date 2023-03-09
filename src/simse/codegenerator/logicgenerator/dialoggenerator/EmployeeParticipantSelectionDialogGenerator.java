@@ -148,7 +148,7 @@ public class EmployeeParticipantSelectionDialogGenerator implements
 			  .addStatement("title = title.concat($S + $N)", "exactly ", "minNumParts")
 			  .nextControlFlow("else ")
 			  .addStatement("title = title.concat($S + $N)", "at least ", "minNumParts")
-			  .beginControlFlow("if ($N < 999999) // not boundle", "maxNumParts")
+			  .beginControlFlow("if ($N < 999999)", "maxNumParts")
 			  .addStatement("title = title.concat($S + $N)", ", at most ", "maxNumParts")
 			  .endControlFlow()
 			  .endControlFlow()
@@ -162,7 +162,7 @@ public class EmployeeParticipantSelectionDialogGenerator implements
 			  .addCode(generateNames(objs))
 			  .addStatement("$T tempPane = new $T()", borderPaneClass, borderPaneClass)
 			  .addStatement("$T tempCheckBox = new $T(label)", checkboxClass, checkboxClass)
-			  .addStatement("tempPane.setLeft(tempCheckBoxes)")
+			  .addStatement("tempPane.setLeft(tempCheckBox)")
 			  .addStatement("$N.add(tempCheckBox)", "checkBoxes")
 			  .addStatement("$T icon = $T.getImageFromURL($T.getImage(tempObj))", imageViewClass,
 					  imageLoaderClass, tabPanelClass)
@@ -198,9 +198,8 @@ public class EmployeeParticipantSelectionDialogGenerator implements
 			  .addStatement("this.getDialogPane().setPrefSize(400, 400)")
 			  .addStatement("this.getDialogPane().getScene().getWindow().setOnCloseRequest(new ExitListener())")
 			  .addStatement("$T ownerLoc = new $T(owner.getX(), owner.getY())", point2DClass, point2DClass)
-			  .addStatement("$T thisLoc = new $T((ownerLoc.getX() + (owner.getWidth() / 2) - (this.getWidth() / 2))",
-					  point2DClass, point2DClass)
-			  .addStatement("(ownerLoc.getY() + (owner.getHeight() / 2) - (this.getHeight() / 2)))")
+			  .addStatement("$T thisLoc = new $T((ownerLoc.getX() + (owner.getWidth() / 2) - (this.getWidth() / 2)),\n "
+			  		+ "(ownerLoc.getY() + (owner.getHeight() / 2) - (this.getHeight() / 2)))", point2DClass, point2DClass)
 			  .addStatement("this.setX(thisLoc.getX())")
 			  .addStatement("this.setY(thisLoc.getY())")
 			  .addStatement("showAndWait()")
@@ -222,7 +221,7 @@ public class EmployeeParticipantSelectionDialogGenerator implements
 			  .addParameter(boolean.class, "accepted")
 			  .addStatement("$N = accepted", "dialogAccepted")
 			  .addStatement("$T window = this.getDialogPane().getScene().getWindow()", windowClass)
-			  .addStatement("window.fireEvent(new $T(window, $T.WINDOW_CLOSEREQUEST))",
+			  .addStatement("window.fireEvent(new $T(window, $T.WINDOW_CLOSE_REQUEST))",
 					  windowEvent, windowEvent)
 			  .build();
 	  
@@ -260,9 +259,9 @@ public class EmployeeParticipantSelectionDialogGenerator implements
 			  .beginControlFlow("for (int i = 0; i < checkedBoxes.size(); i++) ")
 			  .addStatement("$T checkedBox = checkedBoxes.elementAt(i)", checkboxClass)
 			  .addStatement("$T cBoxText = checkedBox.getText()", String.class)
-			  .addStatement("$T objTypeName = cBoxText.substring(0(cBoxText"
+			  .addStatement("$T objTypeName = cBoxText.substring(0, (cBoxText"
 			  		+ ".indexOf('(') - 1))", String.class)
-			  .addStatement("$T keyValStr = cBoxText.substring(cBoxText"
+			  .addStatement("$T keyValStr = cBoxText.substring((cBoxText"
 			  		+ ".indexOf('(') + 1), cBoxText.lastIndexOf(')'))", String.class)
 			  .addStatement("addParticipant(objTypeName, keyValStr);", String.class)
 			  .endControlFlow()
@@ -327,8 +326,7 @@ public class EmployeeParticipantSelectionDialogGenerator implements
 		  
 
 	  ClassName actions = ClassName.get("simse.adts", "actions");
-	  JavaFile javaFile = JavaFile.builder("simse.logic.dialogs", employeeDialog)
-				.addStaticImport(actions, "*")    
+	  JavaFile javaFile = JavaFile.builder("simse.logic.dialogs", employeeDialog)   
 			  .build();
 	  
     try {
@@ -339,8 +337,12 @@ public class EmployeeParticipantSelectionDialogGenerator implements
       }
       
       FileWriter writer = new FileWriter(psdFile);
-      
-      javaFile.writeTo(writer);
+	  String toAppend = "package simse.logic.dialogs;\n"
+		  		+ "\n"
+		  		+ "import simse.adts.actions.*;\n"
+		  		+ "import simse.adts.objects.*;\n";
+		  
+	  writer.write(String.join(toAppend, javaFile.toString()));
       writer.close();
       
     } catch (IOException e) {

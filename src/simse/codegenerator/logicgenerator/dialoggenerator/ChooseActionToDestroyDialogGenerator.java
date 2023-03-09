@@ -40,10 +40,12 @@ import com.squareup.javapoet.WildcardTypeName;
 
 import javafx.geometry.Point2D;
 import javafx.scene.control.Alert;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
@@ -116,6 +118,7 @@ public class ChooseActionToDestroyDialogGenerator implements
 			  .addStatement("$N = new $T()", "checkBoxes", checkboxType)
 			  .addStatement("setTitle($S)", "Stop Action(s)")
 			  .addStatement("$T mainPane = new $T()", vBoxClass, vBoxClass)
+			  .addStatement("$T topPane = new $T()", paneClass, paneClass)
 			  .addStatement("$T actionName = new $T()", String.class, String.class)
 			  .addStatement("$T tempAct = $N.elementAt(0)", actionClass, "actions")
 			  .addCode(generateNames(userDestActs))
@@ -131,7 +134,7 @@ public class ChooseActionToDestroyDialogGenerator implements
 			  .addStatement("$N.addEventHandler($T.MOUSE_CLICKED, this)", "cancelButton", mouseEvent)
 			  .addStatement("bottomPane.getChildren().add($N)", "cancelButton")
 			  .addStatement("mainPane.getChildren().addAll(topPane, middlePane, bottomPane)")
-			  .addStatement("$T ownerLoc = new $T(parent.getX(), parent.getY()", point2DClass, point2DClass)
+			  .addStatement("$T ownerLoc = new $T(parent.getX(), parent.getY())", point2DClass, point2DClass)
 			  .addStatement("$T thisLoc = new $T((ownerLoc.getX() + (parent.getWidth() / 2) - (this.getWidth() / 2)),"
 			  		+ "(ownerLoc.getY() + (parent.getHeight() / 2) - (this.getHeight() / 2)))", point2DClass, point2DClass)
 			  .addStatement("this.setX(thisLoc.getX())")
@@ -161,7 +164,7 @@ public class ChooseActionToDestroyDialogGenerator implements
 			  .addStatement("alert.setTitle($S)", "Invalid Input")
 			  .addStatement("alert.show()")
 			  .nextControlFlow("else")
-			  .beginControlFlow("for (int i = 0; i < $N.size(); i++", "checkBoxes")
+			  .beginControlFlow("for (int i = 0; i < $N.size(); i++)", "checkBoxes")
 			  .addStatement("$T cBox = $N.elementAt(i)", checkboxClass, "checkBoxes")
 			  .beginControlFlow("if (cBox.isSelected())")
 			  .addStatement("$T tempAct = $N.elementAt(i)", actionClass, "actions")
@@ -191,7 +194,6 @@ public class ChooseActionToDestroyDialogGenerator implements
 	  
 	  ClassName actions = ClassName.get("simse.adts", "actions");
 	  JavaFile javaFile = JavaFile.builder("simse.logic.dialogs", destroyDialog)
-			    .addStaticImport(actions, "*")
 			  .build();
 	  
     try {
@@ -203,7 +205,12 @@ public class ChooseActionToDestroyDialogGenerator implements
 
 	  FileWriter writer = new FileWriter(catddFile);
       
-      javaFile.writeTo(writer);
+	  String toAppend = "package simse.logic.dialogs;\n"
+	  		+ "\n"
+	  		+ "import simse.adts.actions.*;\n"
+	  		+ "import simse.adts.objects.*;\n";
+	  
+      writer.write(String.join(toAppend, javaFile.toString()));
       writer.close();
 
     } catch (IOException e) {
@@ -287,11 +294,11 @@ public class ChooseActionToDestroyDialogGenerator implements
 	          }
 	          actions += "}\n";
 	        }
-	        actions += "JPanel tempPane = new JPanel(new BorderLayout());\n";
-	        actions += "JCheckBox tempCheckBox = new JCheckBox(label.toString());\n";
-	        actions += "tempPane.add(tempCheckBox, BorderLayout.WEST);\n";
+	        actions += "BorderPane tempPane = new BorderPane();\n";
+	        actions += "CheckBox tempCheckBox = new CheckBox(label.toString());\n";
+	        actions += "tempPane.setLeft(tempCheckBox);\n";
 	        actions += "checkBoxes.add(tempCheckBox);\n";
-	        actions += "middlePane.add(tempPane);\n}\n}\n}\n";
+	        actions += "middlePane.getChildren().add(tempPane);\n}\n}\n}\n";
       }
 	  
 	  return actions;

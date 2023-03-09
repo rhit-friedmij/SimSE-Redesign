@@ -125,7 +125,7 @@ public class NonEmployeeParticipantSelectionDialogGenerator implements
 			  .addStatement("$N = false", "dialogAccepted")
 			  .addStatement("setMinAndMax()")
 			  .beginControlFlow("if (($N == 0) || ($N.size() > 1)) ", "minNumParts", "participants")
-			  .addStatement("checkBoxes = new $T()", checkboxClass)
+			  .addStatement("checkBoxes = new $T()", checkboxVector)
 			  .addStatement("setTitle($S)", "Participant Selection")
 			  .addStatement("$T mainPane = new $T()", vBoxClass, vBoxClass)
 			  .addStatement("$T topPane = new $T()", vBoxClass, vBoxClass)
@@ -135,7 +135,7 @@ public class NonEmployeeParticipantSelectionDialogGenerator implements
 			  .addStatement("title = title.concat($S + $N)", "exactly ", "minNumParts")
 			  .nextControlFlow("else ")
 			  .addStatement("title = title.concat($S + $N)", "at least ", "minNumParts")
-			  .beginControlFlow("if ($N < 999999) // not boundle", "maxNumParts")
+			  .beginControlFlow("if ($N < 999999)", "maxNumParts")
 			  .addStatement("title = title.concat($S + $N)", ", at most ", "maxNumParts")
 			  .endControlFlow()
 			  .endControlFlow()
@@ -242,7 +242,7 @@ public class NonEmployeeParticipantSelectionDialogGenerator implements
 			  .addStatement("$T cBoxText = checkedBox.getText()", String.class)
 			  .addStatement("$T objTypeName = cBoxText.substring(0, "
 			  		+ "(cBoxText.indexOf('(') - 1))", String.class)
-			  .addStatement("String keyValStr = cBoxText.substring(cBoxText."
+			  .addStatement("String keyValStr = cBoxText.substring((cBoxText."
 			  		+ "indexOf('(') + 1), cBoxText.lastIndexOf(')'))")
 			  .addStatement("addParticipant(objTypeName, keyValStr)")
 			  .endControlFlow()
@@ -307,7 +307,6 @@ public class NonEmployeeParticipantSelectionDialogGenerator implements
 
 	  ClassName actions = ClassName.get("simse.adts", "actions");
 	  JavaFile javaFile = JavaFile.builder("simse.logic.dialogs", nonEmployeeDialog)
-			  .addStaticImport(actions, "*")  
 			  .build();
 	  
     try {
@@ -318,8 +317,12 @@ public class NonEmployeeParticipantSelectionDialogGenerator implements
       }
       
       FileWriter writer = new FileWriter(psdFile);
-      
-      javaFile.writeTo(writer);
+	  String toAppend = "package simse.logic.dialogs;\n"
+		  		+ "\n"
+		  		+ "import simse.adts.actions.*;\n"
+		  		+ "import simse.adts.objects.*;\n";
+		  
+	      writer.write(String.join(toAppend, javaFile.toString()));
       writer.close();
       
     } catch (IOException e) {
