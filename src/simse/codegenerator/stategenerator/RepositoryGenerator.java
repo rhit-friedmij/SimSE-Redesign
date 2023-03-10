@@ -357,15 +357,15 @@ public class RepositoryGenerator implements CodeGeneratorConstants {
     		.build();
     
     Attribute keyAtt = objType.getKey();
-    ClassName attType;
+    Class attType;
     if (keyAtt.getType() == AttributeTypes.INTEGER) {
-      attType = ClassName.get(int.class);
+      attType = int.class;
     } else if (keyAtt.getType() == AttributeTypes.DOUBLE) {
-      attType = ClassName.get(double.class);
+      attType = double.class;
     } else if (keyAtt.getType() == AttributeTypes.BOOLEAN) {
-      attType = ClassName.get(boolean.class);
+      attType = boolean.class;
     } else { //(keyAtt.getType() == AttributeTypes.STRING)
-      attType = ClassName.get(String.class);
+      attType = String.class;
     }
     
     
