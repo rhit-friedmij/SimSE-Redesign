@@ -18,8 +18,10 @@ import javax.swing.JOptionPane;
 
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.CodeBlock;
+import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.MethodSpec;
+import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.TypeSpec;
 
 public class CompositeGraphGenerator implements CodeGeneratorConstants {
@@ -68,9 +70,8 @@ public class CompositeGraphGenerator implements CodeGeneratorConstants {
   	  ClassName clock = ClassName.get("simse.state", "Clock");
   	  ClassName logger = ClassName.get("simse.state.logger", "Logger");
   	  ClassName simse = ClassName.get("simse", "SimSE");
-
-     
-      
+  	  ClassName stage = ClassName.get("javafx.stage", "Stage");
+  	  
       MethodSpec constructor = MethodSpec.constructorBuilder()
     		  .addParameter(objectGraph, "objGraph")
     		  .addParameter(actionGraph, "actGraph")
@@ -184,18 +185,11 @@ public class CompositeGraphGenerator implements CodeGeneratorConstants {
 			.endControlFlow()
 			.build();
 	
-	TypeSpec eventHandler = TypeSpec.classBuilder("menuEvent")
-  .addModifiers(Modifier.PRIVATE)
-  .addStaticBlock(CodeBlock.builder()
-  .addStatement("private $T<$T> menuEvent = new $T<$T>() $L",
-                eventHandlerClass,
-                actionEvent,
-                eventHandlerClass,
-                actionEvent,
-                anonHandleClass).build())
-  .build();
+
 	
 	TypeSpec compositeGraph = TypeSpec.classBuilder("CompositeGraph")
+			.superclass(stage)
+			.addSuperinterface(chartMouseListenerFX)
 			.addField(actionGraph, "actGraph")
 			.addField(objectGraph, "objGraph")
 			.addField(jFreeChart, "chart")
@@ -204,7 +198,14 @@ public class CompositeGraphGenerator implements CodeGeneratorConstants {
 			.addField(menuItem, "newBranchItem")
 			.addField(separatorMenuItem, "separator")
 			.addField(branch, "branch")
-			.addType(eventHandler)
+			.addField(FieldSpec.builder(ParameterizedTypeName.get(eventHandlerClass, actionEvent), "menuEvent", Modifier.PRIVATE)
+					.initializer(CodeBlock.builder()
+							  .addStatement("private $T<$T> menuEvent = new $T<$T>() $L",
+						                eventHandlerClass,
+						                actionEvent,
+						                eventHandlerClass,
+						                actionEvent,
+						                anonHandleClass).build()).build())
 			.addMethod(constructor)
 			.addMethod(update)
 			.addMethod(chartMouseClicked)

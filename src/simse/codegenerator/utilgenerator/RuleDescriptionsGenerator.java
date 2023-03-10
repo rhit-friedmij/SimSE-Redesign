@@ -13,11 +13,14 @@ import simse.modelbuilder.rulebuilder.Rule;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Vector;
 
+import javax.lang.model.element.Modifier;
 import javax.swing.JOptionPane;
 
 import com.squareup.javapoet.CodeBlock;
+import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.TypeSpec;
 
@@ -37,29 +40,32 @@ public class RuleDescriptionsGenerator implements CodeGeneratorConstants {
     if (ruleDescFile.exists()) {
       ruleDescFile.delete(); // delete old version of file
     }
-      String actionsString = "";
+      
+    ArrayList<FieldSpec> actionFields = new ArrayList<>();
 
       // go through all actions:
       Vector<ActionType> actions = actTypes.getAllActionTypes();
       for (ActionType act : actions) {
+    	  String actionsString = "";
         if (act.isVisibleInExplanatoryTool()) {
           Vector<Rule> rules = act.getAllRules();
           for (int j = 0; j < rules.size(); j++) {
             Rule rule = rules.get(j);
             if (rule.isVisibleInExplanatoryTool()) {
-              actionsString += "static final String " + act.getName().toUpperCase()
-                      + "_" + rule.getName().toUpperCase() + " = \""
-                      + rule.getAnnotation().replaceAll("\n", "\\\\n").
+              actionsString += rule.getAnnotation().replaceAll("\n", "\\\\n").
                       replaceAll("\"", "\\\\\"") + "\";";
-              actionsString += "\n";
             }
+            actionFields.add(FieldSpec.builder(String.class, 
+            		act.getName().toUpperCase()
+                    + "_" + rule.getName().toUpperCase(), Modifier.STATIC).initializer(actionsString).build());
           }
         }
+        
+        
+        
       }
       TypeSpec ruleDescriptions = TypeSpec.classBuilder("RuleDescriptions")
-    		  .addStaticBlock(CodeBlock.builder()
-    				  .add(actionsString)
-    				  .build())
+    		  .addFields(actionFields)
     		  .build();
     		  
       JavaFile javaFile = JavaFile.builder("simse.util", ruleDescriptions).build();

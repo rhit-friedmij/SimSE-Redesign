@@ -25,10 +25,13 @@ import java.util.Vector;
 import javax.swing.JOptionPane;
 
 import com.squareup.javapoet.ClassName;
+import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.TypeSpec;
+
+import jdk.javadoc.internal.doclets.toolkit.builders.FieldBuilder;
 
 public class ActionInfoPanelGenerator implements CodeGeneratorConstants {
   private File directory; // directory to save generated code into
@@ -62,6 +65,7 @@ public class ActionInfoPanelGenerator implements CodeGeneratorConstants {
       ClassName gridPane = ClassName.get("javafx.scene.layout", "GridPane");
       ClassName listView = ClassName.get("javafx.scene.control", "ListView");
       ClassName selectionMode = ClassName.get("javafx.scene.control", "SelectionMode");
+      ClassName string = ClassName.get("java.lang", "String");
       
       String initalizeActionDescriptionActions = "";
       
@@ -139,7 +143,7 @@ public class ActionInfoPanelGenerator implements CodeGeneratorConstants {
             writeElse = true;
           }
           initalizeTriggerListBlock += "if (action instanceof " + uCaseName + "Action) {\n";
-          initalizeTriggerListBlock += "\"String [] list = {\"\n";
+          initalizeTriggerListBlock += "String [] list = {\"\n";
           Vector<ActionTypeTrigger> triggers = act.getAllTriggers();
           for (ActionTypeTrigger trigger : triggers) {
         	  initalizeTriggerListBlock += "\"" + trigger.getName() + "\",\n";
@@ -416,7 +420,16 @@ public class ActionInfoPanelGenerator implements CodeGeneratorConstants {
     		  .build();
       
     	TypeSpec actionInfoPanel = TypeSpec.classBuilder("ActionInfoPanel")
+    			.addField(action, "action")
+    			.addField(ParameterizedTypeName.get(tableView, participant), "table")
+    			.addField(ParameterizedTypeName.get(listView, string), "triggerList")
+    			.addField(ParameterizedTypeName.get(listView, string), "destroyerList")
+    			.addField(textArea, "descriptionArea")
+    			.addField(textArea, "actionDescriptionArea")
+    			.addField(FieldSpec.builder(int.class, "TRIGGER").initializer("0").build())
+    			.addField(FieldSpec.builder(int.class, "DESTROYER").initializer("0").build())
     			.superclass(pane)
+    			.addSuperinterface(ParameterizedTypeName.get(eventHandler, mouseEvent))
     			.addMethod(constructor)
     			.addMethod(initializeActionDescription)
     			.addMethod(initializeTriggerList)

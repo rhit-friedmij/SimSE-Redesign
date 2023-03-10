@@ -14,6 +14,7 @@ import simse.modelbuilder.ModelOptions;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Vector;
 
@@ -28,6 +29,7 @@ import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.TypeSpec;
+import com.sun.org.apache.xerces.internal.xs.StringList;
 
 public class ActionGraphGenerator implements CodeGeneratorConstants {
   private File directory; // directory to save generated code into
@@ -79,10 +81,18 @@ public class ActionGraphGenerator implements CodeGeneratorConstants {
   	  ClassName mouseButton = ClassName.get("javafx.scene.input", "MouseButton");
   	  ClassName chartEntity = ClassName.get("org.jfree.chart.entity", "ChartEntity");
   	  ClassName xyItemEntity = ClassName.get("org.jfree.chart.entity", "XYItemEntity");
+  	  ClassName eventHandlerClass = ClassName.get("javafx.event", "EventHandler");
+  	  ClassName actionEvent = ClassName.get("javafx.event", "ActionEvent");
   	  ClassName actionInfoWindow = ClassName.get("simse.explanatorytool", "ActionInfoWindow");
-  	 ClassName abstractXYItemLabelGenerator = ClassName.get("org.jfree.chart.labels", "AbstractXYItemLabelGenerator");
-     ClassName xyToolTipGenerator = ClassName.get("org.jfree.chart.labels", "XYToolTipGenerator");
-      ArrayTypeName stringArray = ArrayTypeName.of(String.class);
+  	  ClassName abstractXYItemLabelGenerator = ClassName.get("org.jfree.chart.labels", "AbstractXYItemLabelGenerator");
+  	  ClassName xyToolTipGenerator = ClassName.get("org.jfree.chart.labels", "XYToolTipGenerator");
+  	  ClassName clock = ClassName.get("simse.state", "Clock");
+  	  ClassName textInputDialog = ClassName.get("javafx.scene.control", "TextInputDialog");
+  	  ClassName optional = ClassName.get("java.util", "Optional");  
+  	  ClassName object = ClassName.get("java.lang", "Object");
+  	  ClassName logger = ClassName.get("simse.state.logger", "Logger");
+  	  ClassName simse = ClassName.get("simse", "SimSE");
+  	  ArrayTypeName stringArray = ArrayTypeName.of(String.class);
       
      
       
@@ -109,19 +119,22 @@ public class ActionGraphGenerator implements CodeGeneratorConstants {
     		  .build();
       
 
-      String actionFields = "";
+      
+      ArrayList<FieldSpec> actionFields = new ArrayList<>();
       
       // generate an index and an indices array list for each type of action:
       Vector<ActionType> actions = actTypes.getAllActionTypes();
       for (int i = 0; i < actions.size(); i++) {
         ActionType act = actions.get(i);
         if (act.isVisibleInExplanatoryTool()) {
+        	
           String lCaseName = act.getName().toLowerCase();
-          actionFields += "private int " + lCaseName
-                  + "Index = 1; // index to be used for labeling multiple actions of the same type\n";
-          actionFields += "private ArrayList<Integer> " + lCaseName
-                  + "Indices = new ArrayList<Integer>(); // an ArrayList to map indices for "
-                  + act.getName() + " Action labels to action ids\n";
+          actionFields.add(FieldSpec.builder(int.class, lCaseName + "Index", Modifier.PRIVATE).initializer("1 // index to be used for labeling multiple actions of the same type\\").build());
+          actionFields.add(FieldSpec.builder(ParameterizedTypeName.get(arrayList, integer), lCaseName + "Indices", Modifier.PRIVATE).initializer("new ArrayList<Integer>() // an ArrayList to map indices for "
+                  + act.getName() + " Action labels to action ids\n").build());
+          
+          
+          
         }
       }
       
@@ -150,17 +163,17 @@ public class ActionGraphGenerator implements CodeGeneratorConstants {
           } else {
             writeElse = true;
           }
-          actionBlock += "if (actionNames[i].equals(\"" + uCaseName + "\"))\n";
+          actionBlock += "if (actionNames[i].equals(\"" + uCaseName + "\")) {\n";
           actionBlock += "// go through the " + uCaseName
                   + "ActionStateRepository for each clock tick:\n";
-          actionBlock += "for (int j = 0; j < log.size(); j++)\n";
+          actionBlock += "for (int j = 0; j < log.size(); j++) {\n";
           actionBlock += "State state = log.get(j);\n";
           actionBlock += "Vector<" + uCaseName + "Action> " + lCaseName
                   + "Actions = state.getActionStateRepository().get" + uCaseName
                   + "ActionStateRepository().getAllActions();\n\n";
           actionBlock += "// go through each " + uCaseName + "Action:\n";
           actionBlock += "for (int k = 0; k < " + lCaseName
-                  + "Actions.size(); k++)\n";
+                  + "Actions.size(); k++) {\n";
           actionBlock += uCaseName + "Action action = " + lCaseName + "Actions.get(k);\n\n";
           actionBlock += "// update series:\n";
           actionBlock += "updateSeries(action, j);\n";
@@ -219,6 +232,10 @@ public class ActionGraphGenerator implements CodeGeneratorConstants {
       
       
       MethodSpec constructor = MethodSpec.constructorBuilder()
+    		  .addParameter(ParameterizedTypeName.get(arrayList, state), "log")
+    		  .addParameter(stringArray, "actionNames")
+    		  .addParameter(boolean.class, "showChart")
+    		  .addParameter(branch, "branch")
     		  .addStatement("super()")
     		  .addStatement("$T title = \"Action Graph\"", String.class)
     		  .beginControlFlow("if (branch.getName() != null)")
@@ -256,11 +273,11 @@ public class ActionGraphGenerator implements CodeGeneratorConstants {
         String lCaseName = act.getName().toLowerCase();
         if (act.isVisibleInExplanatoryTool()) {
           if (writeElse2) {
-            ifStatementActionBlock += "else ";
+            ifStatementActionBlock += "else { ";
           } else {
             writeElse2 = true;
           }
-          ifStatementActionBlock += "if (action instanceof \" + uCaseName + \"Action) {\n";
+          ifStatementActionBlock += "if (action instanceof " + uCaseName + "Action) {\n";
           ifStatementActionBlock += "newSeriesName = \"" + uCaseName + "Action-\" + "
                   + lCaseName + "Index;\n";
           ifStatementActionBlock += "newSeries = new XYSeries(newSeriesName);\n";
@@ -282,7 +299,7 @@ public class ActionGraphGenerator implements CodeGeneratorConstants {
         String lCaseName = act.getName().toLowerCase();
         if (act.isVisibleInExplanatoryTool()) {
           if (writeElse3) {
-            elseStatementCodeBlock += "else ";
+            elseStatementCodeBlock += "else {";
           } else {
             writeElse3 = true;
           }
@@ -291,7 +308,7 @@ public class ActionGraphGenerator implements CodeGeneratorConstants {
                   + "Indices.indexOf(new Integer(action.getId()));\n\n";
           elseStatementCodeBlock += "// add the data value to the series:\n"; 
           elseStatementCodeBlock += "oldSeries.add(clockTick, indices.indexOf(\""
-                  + uCaseName + "Action-\" + index));\n";
+                  + uCaseName + "\"Action-\" + index));\n";
           elseStatementCodeBlock += "}\n";
         }
       }
@@ -441,6 +458,32 @@ public class ActionGraphGenerator implements CodeGeneratorConstants {
     		.endControlFlow()
     		.endControlFlow()
       		.build();
+      
+  	MethodSpec handle = MethodSpec.methodBuilder("handle")
+			.addParameter(actionEvent, "event")
+			.addStatement("$T source = event.getSource()", object)
+			.beginControlFlow("if (source == newBranchItem)")
+			.addStatement("$T td = new $T()", textInputDialog, textInputDialog)
+			.addStatement("td.setTitle(\"Name New Branch\")")
+			.addStatement("td.setContentText(\"Please name this new game:\")")
+			.addStatement("td.setHeaderText(null)")
+			.addStatement("$T<$T> result = td.showAndWait()", optional, String.class)
+			.addStatement("result.ifPresent(name -> { this.newBranchName = name; })")
+			.beginControlFlow("if (newBranchName != null)")
+			.addStatement("$T tempState = ($T) objGraph.getLog().get(lastRightClickedX).clone()", state, state)
+			.addStatement("$T tempLogger = new $T(tempState, new $T<$T>(objGraph.getLog().subList(0, lastRightClickedX)))", logger, logger, arrayList, state)
+			.addStatement("$T tempClock = new $T(tempLogger, lastRightClickedX)", clock, clock)
+			.addStatement("tempState.setClock(tempClock)")
+			.addStatement("tempState.setLogger(tempLogger)")
+			.addStatement("$T.startNewBranch(tempState, new Branch(newBranchName, lastRightClickedX, tempClock.getTime(), branch, null))", simse)
+			.endControlFlow()
+			.endControlFlow()
+			.build();
+      
+  	TypeSpec anonHandleClass = TypeSpec.anonymousClassBuilder("")
+    		  .addField(String.class, "newBranchName")
+              .addMethod(handle)
+              .build();
     		  
       
       TypeSpec actionGraph = TypeSpec.classBuilder("ActionGraph")
@@ -456,7 +499,15 @@ public class ActionGraphGenerator implements CodeGeneratorConstants {
     		  .addField(xySeriesCollection, "dataset")
     		  .addField(branch, "branch")
     		  .addField(ParameterizedTypeName.get(hashTable, integer, xySeries), "series")
-    		  .addStaticBlock(CodeBlock.builder().add(actionFields).build())
+			.addField(FieldSpec.builder(ParameterizedTypeName.get(eventHandlerClass, actionEvent), "menuEvent", Modifier.PRIVATE)
+					.initializer(CodeBlock.builder()
+							  .addStatement("new $T<$T>() $L",
+						                eventHandlerClass,
+						                actionEvent,
+						                eventHandlerClass,
+						                actionEvent,
+						                anonHandleClass).build()).build())
+			.addFields(actionFields)
     		  .addMethod(constructor)
     		  .addMethod(createDataset)
     		  .addMethod(setChartColors)

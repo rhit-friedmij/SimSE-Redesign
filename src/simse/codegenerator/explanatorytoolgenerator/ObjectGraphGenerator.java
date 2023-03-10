@@ -28,6 +28,7 @@ import javax.swing.JOptionPane;
 import com.squareup.javapoet.ArrayTypeName;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.CodeBlock;
+import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.ParameterizedTypeName;
@@ -66,6 +67,8 @@ public class ObjectGraphGenerator implements CodeGeneratorConstants {
       ClassName branch = ClassName.get("simse.explanatorytool", "Branch");
       ClassName eventHandlerClass = ClassName.get("javafx.event", "EventHandler");
       ClassName actionEvent = ClassName.get("javafx.event", "ActionEvent");
+      ClassName stage = ClassName.get("javafx.stage", "Stage");
+      ClassName chartMouseListenerFX = ClassName.get("org.jfree.chart.fx.interaction", "ChartMouseListenerFX");
       ArrayTypeName stringArray = ArrayTypeName.of(String.class);
       ArrayTypeName xySeriesArray = ArrayTypeName.of(xySeries);
 
@@ -364,17 +367,6 @@ public class ObjectGraphGenerator implements CodeGeneratorConstants {
                 		  .endControlFlow()
                 		  .build())
                   .build();
-    	
-    	TypeSpec eventHandler = TypeSpec.classBuilder("menuEvent")
-    		            .addModifiers(Modifier.PRIVATE)
-    		            .addStaticBlock(CodeBlock.builder()	
-    		            .addStatement("private $T<$T> menuEvent = new $T<$T>() $L",
-    		                          eventHandlerClass,
-    		                          actionEvent,
-    		                          eventHandlerClass,
-    		                          actionEvent,
-    		                          anonHandleClass).build())
-    		            .build();
 
     		            
     	
@@ -403,7 +395,12 @@ public class ObjectGraphGenerator implements CodeGeneratorConstants {
     		  .addStatement("chartViewer.backgroundProperty().set($T.createBackgroundColor($T.WHITE))", javaFXHelpers, color)
     		  .build();
       
+      
+      
+      
       TypeSpec objectGraph = TypeSpec.classBuilder("ObjectGraph")
+    		  .superclass(stage)
+    		  .addSuperinterface(chartMouseListenerFX)
 			  .addField(ParameterizedTypeName.get(arrayList, state), "log", Modifier.PRIVATE)
 			  .addField(String.class, "objTypeType", Modifier.PRIVATE)
 			  .addField(String.class, "objType", Modifier.PRIVATE)
@@ -426,7 +423,12 @@ public class ObjectGraphGenerator implements CodeGeneratorConstants {
 			  .addMethod(getChartTitle)
 			  .addMethod(getLog)
 			  .addMethod(chartMouseClicked)
-			  .addType(eventHandler)
+				.addField(FieldSpec.builder(ParameterizedTypeName.get(eventHandlerClass, actionEvent), "menuEvent", Modifier.PRIVATE)
+						.initializer(CodeBlock.builder()
+								  .addStatement("new $T<$T>() $L",
+							                eventHandlerClass,
+							                actionEvent,
+							                anonHandleClass).build()).build())
     		  .build();
       
 

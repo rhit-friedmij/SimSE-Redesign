@@ -43,6 +43,8 @@ import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.TypeSpec;
 
+import jdk.internal.reflect.ConstructorAccessor;
+
 public class ExplanatoryToolGenerator implements CodeGeneratorConstants {
   private ModelOptions options;
   private DefinedObjectTypes objTypes;
@@ -163,12 +165,12 @@ public class ExplanatoryToolGenerator implements CodeGeneratorConstants {
       ClassName toolTip = ClassName.get("javafx.scene.control", "Tooltip");
       ClassName eventHandler = ClassName.get("javafx.event", "EventHandler");
       ClassName actionEvent = ClassName.get("javafx.event", "ActionEvent");
-
+      ClassName chartMouseListenerFX = ClassName.get("org.jfree.chart.fx.interaction", "ChartMouseListenerFX");
       
 
 
      
-      String constructorObj = "";
+      String constructorObj = "ObservableList<String> objects = FXCollections.observableArrayList(";
       
       Vector<SimSEObject> objects = objs.getAllObjects();
       for (int i = 0; i < objects.size(); i++) {
@@ -181,11 +183,13 @@ public class ExplanatoryToolGenerator implements CodeGeneratorConstants {
         						obj.getKey().getValue().toString() + "\",\n";
       }
       
+      constructorObj += ");";
+      
 
       
     
       
-      String construtorActions = "";
+      String construtorActions = "ObservableList<String> actions = FXCollections.observableArrayList(";
       
       Vector<ActionType> actions = acts.getAllActionTypes();
       for (int i = 0; i < actions.size(); i++) {
@@ -195,6 +199,8 @@ public class ExplanatoryToolGenerator implements CodeGeneratorConstants {
             		CodeGeneratorUtils.getUpperCaseLeading(act.getName()) + "\",\n";
         }
       }
+      
+      construtorActions += ");";
       
       String refreshAttributeListObjectTypes = "";
       
@@ -460,7 +466,7 @@ public class ExplanatoryToolGenerator implements CodeGeneratorConstants {
     		  .endControlFlow()
     		  .beginControlFlow("else if (source == generateObjGraphButton)")
     		  .addStatement("$T selectedObj = ($T) objectList.getSelectionModel().getSelectedItem()", String.class, String.class)
-    		  .addStatement("$T words = selectedObj.split(\"\\s\")", stringArray)
+    		  .addStatement("$T words = selectedObj.split(\"\\\\s\")", stringArray)
     		  .addStatement("$T title = selectedObj + \" Attributes\"", String.class)
     		  .addStatement("$T objType = words[0]", String.class)
     		  .addStatement("$T objTypeType = words[1]", String.class)
@@ -678,6 +684,7 @@ public class ExplanatoryToolGenerator implements CodeGeneratorConstants {
     		  .addParameter(String.class, "ruleName")
     		  .beginControlFlow("if (ruleName != null)")
     		  .addStatement("$T text = $T.getRuleMapping(ruleName)", String.class, ruleCategories)
+    		  .endControlFlow()
     		  .addCode(actionBlock)
     		  .addStatement("descriptionArea.setText(text)")
     		  .addStatement("descriptionArea.positionCaret(0)")
@@ -690,6 +697,8 @@ public class ExplanatoryToolGenerator implements CodeGeneratorConstants {
     		  .build();
       
       TypeSpec explanatoryTool = TypeSpec.classBuilder("ExplanatoryTool")
+    		  .superclass(stage)
+    		  .addSuperinterface(chartMouseListenerFX)
     		  .addField(ParameterizedTypeName.get(arrayList, state), "log")
     		  .addField(ParameterizedTypeName.get(arrayList, stage), "visibleGraphs")
     		  .addField(multipleTimelinesBrowser, "timelinesBrowser")
