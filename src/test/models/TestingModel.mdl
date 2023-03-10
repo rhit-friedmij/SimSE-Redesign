@@ -3040,12 +3040,12 @@ Rose.png
 Artifact
 Vine
 5
-
+5.png
 
 Artifact
 Vine
 30
-
+30.png
 
 Tool
 SharpTool
@@ -3055,12 +3055,12 @@ Shears.png
 Tool
 SoilTool
 Shovel
-
+Shovel.png
 
 Tool
 SoilTool
 Rake
-
+Rake.png
 
 Project
 Garden
@@ -3070,7 +3070,7 @@ Garden.png
 Project
 SecondaryProj
 Forest
-
+Forest.png
 
 Customer
 Owner
@@ -3080,12 +3080,12 @@ Morticia.png
 Customer
 Investor
 1
-
+1.png
 
 Customer
 Investor
 2
-
+2.png
 
 <endGraphics>
 <beginMap>
@@ -3096,17 +3096,17 @@ true
 7
 1
 
-- Employee - Unobsessed - Wednesday
-true
-true
-1
-1
-
 - Employee - Unobsessed - Thing
 true
 true
 4
 2
+
+- Employee - Unobsessed - Wednesday
+true
+true
+1
+1
 
 <endSOPUsers>
 605
