@@ -130,7 +130,7 @@ public class RepositoryGenerator implements CodeGeneratorConstants {
     
     for (int i = 0; i < acts.size(); i++) {
         ActionType tempAct = acts.elementAt(i);
-        getAllActionsBuilder1.addStatement("all.addAll($L.getAllActions()",
+        getAllActionsBuilder1.addStatement("all.addAll($L.getAllActions())",
         		tempAct.getName().substring(0, 1).toLowerCase() + i);
       }
     
@@ -211,11 +211,11 @@ public class RepositoryGenerator implements CodeGeneratorConstants {
     		.build();
     
     MethodSpec.Builder refetchParticipantsBuilder = MethodSpec.methodBuilder("refetchParticipants")
-    		.addComment("Replaces all the participants in each action with their equivalent\n"
-    				+ "objects in the current state. Calling this function solves the problem\n"
-    				+ "that happens when you clone actions -- their hashtables point to\n"
-    				+ "participant objects that were part of the previous, non-cloned state.\n"
-    				+ "Hence, this function should be called after this object is cloned.")
+    		.addComment("Replaces all the participants in this action with their equivalent")
+			.addComment("objects in the current state. Calling this function solves the problem")
+			.addComment("that happens when you clone actions -- their hashtables point to")
+			.addComment("participant objects that were part of the previous, non-cloned state.")
+			.addComment("Hence, this function should be called after this object is cloned.")
     		.addModifiers(Modifier.PUBLIC)
     		.returns(void.class)
     		.addParameter(artifactStateRepoClass, "artifactRep")
@@ -274,13 +274,17 @@ public class RepositoryGenerator implements CodeGeneratorConstants {
     		.addMethod(refetchParticipants)
     		.build();
     
-	JavaFile javaFile = JavaFile.builder("simse.state.ActionStateRepository", actionRepo)
+	JavaFile javaFile = JavaFile.builder("", actionRepo)
 		    .build();
     
     try {
     	FileWriter writer = new FileWriter(asrFile);
-    	
-    	javaFile.writeTo(writer);
+  	  String toAppend = "package simse.state;\n"
+  	  		+ "\n"
+  	  		+ "import simse.adts.actions.*;\n"
+  	  		+ "import simse.adts.objects.*;\n";
+  	  
+        writer.write(toAppend + javaFile.toString());
     	writer.close();
     } catch (IOException e) {
         JOptionPane.showMessageDialog(null, ("Error writing file "
@@ -304,10 +308,13 @@ public class RepositoryGenerator implements CodeGeneratorConstants {
     }
     
     MethodSpec constructor = MethodSpec.constructorBuilder()
+    		.addModifiers(Modifier.PUBLIC)
     		.addStatement("$Ls = new $T()", lCaseName, objVector)
     		.build();
     
     MethodSpec clone = MethodSpec.methodBuilder("clone")
+    		.addModifiers(Modifier.PUBLIC)
+    		.returns(objRepo)
     		.beginControlFlow("try")
     		.addStatement("$T cl = ($T) super.clone()", objRepo, objRepo)
     		.addStatement("$T cloned$Ls = new $T()", objVector, lCaseName, objVector)
@@ -401,7 +408,7 @@ public class RepositoryGenerator implements CodeGeneratorConstants {
     TypeSpec repStateRepo = TypeSpec.classBuilder(uCaseName + "StateRepository")
     		.addModifiers(Modifier.PUBLIC)
     		.addSuperinterface(Cloneable.class)
-    		.addField(objVector, lCaseName)
+    		.addField(objVector, lCaseName + "s")
     		.addMethod(constructor)
     		.addMethod(clone)
     		.addMethod(add)
@@ -410,7 +417,7 @@ public class RepositoryGenerator implements CodeGeneratorConstants {
     		.addMethod(remove)
     		.build();
     
-    JavaFile javaFile = JavaFile.builder("simse.state." + uCaseName + "StateRepository", repStateRepo)
+    JavaFile javaFile = JavaFile.builder("simse.state", repStateRepo)
 		    .build();
     
     try {
@@ -522,7 +529,7 @@ public class RepositoryGenerator implements CodeGeneratorConstants {
     
     TypeSpec repStateRepo = repStateRepoBuilder.build();
     
-    JavaFile javaFile = JavaFile.builder("simse.state." + typeName + "StateRepository", repStateRepo)
+    JavaFile javaFile = JavaFile.builder("simse.state", repStateRepo)
 		    .build();
     
     try {
@@ -675,11 +682,11 @@ public class RepositoryGenerator implements CodeGeneratorConstants {
     		.build();
     
     MethodSpec refetchParticipants = MethodSpec.methodBuilder("refetchParticipants")
-    		.addComment("Replaces all the participants in each action with their equivalent\n"
-    				+ "objects in the current state. Calling this function solves the problem\n"
-    				+ "that happens when you clone actions -- their hashtables point to\n"
-    				+ "participant objects that were part of the previous, non-cloned state.\n"
-    				+ "Hence, this function should be called after this object is cloned.")
+    		.addComment("Replaces all the participants in this action with their equivalent")
+			.addComment("objects in the current state. Calling this function solves the problem")
+			.addComment("that happens when you clone actions -- their hashtables point to")
+			.addComment("participant objects that were part of the previous, non-cloned state.")
+			.addComment("Hence, this function should be called after this object is cloned.")
     		.addModifiers(Modifier.PUBLIC)
     		.returns(void.class)
     		.addParameter(artifactStateRepoClass, "artifactRep")
@@ -690,7 +697,7 @@ public class RepositoryGenerator implements CodeGeneratorConstants {
     		.beginControlFlow("for (int i = 0; i < $N.size(); i++)", "actions")
     		.addStatement("$T act = $N.elementAt(i)", actionClass, "actions")
     		.addStatement("act.refetchParticipants(artifactRep, customerRep, employeeRep,"
-    				+ " projectRep, toolRep")
+    				+ " projectRep, toolRep)")
     		.endControlFlow()
     		.build();
     
@@ -710,7 +717,7 @@ public class RepositoryGenerator implements CodeGeneratorConstants {
     		.addMethod(refetchParticipants)
     		.build();
     
-    JavaFile javaFile = JavaFile.builder("simse.state." + uCaseName + "ActionStateRepository", repStateRepo)
+    JavaFile javaFile = JavaFile.builder("simse.state", repStateRepo)
 		    .build();
     
     try {
@@ -736,7 +743,7 @@ public class RepositoryGenerator implements CodeGeneratorConstants {
           		tempAct.getName().substring(0, 1).toLowerCase() + i + 
           		".getAllActions();\n";
           actions += "for(int i=0; i<" + tempAct.getName().toLowerCase()
-              + "actions.size(); i++)\n{\n";
+              + "actions.size(); i++){\n";
           actions += uCaseTempActName + "Action b = " + 
           		tempAct.getName().toLowerCase() + "actions.elementAt(i);\n";
           // go through all participants:
@@ -746,7 +753,7 @@ public class RepositoryGenerator implements CodeGeneratorConstants {
             ActionTypeParticipant part = participants.elementAt(j);
             actions += "if(a instanceof "
                 + SimSEObjectTypeTypes.getText(part.getSimSEObjectTypeType())
-                + ")\n{\n";
+                + "){\n";
             actions += "b.remove" + part.getName() + "(("
                 + SimSEObjectTypeTypes.getText(part.getSimSEObjectTypeType())
                 + ")a);\n}\n";
