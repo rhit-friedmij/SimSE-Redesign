@@ -359,14 +359,14 @@ public class RepositoryGenerator implements CodeGeneratorConstants {
     Attribute keyAtt = objType.getKey();
     Class attType;
     if (keyAtt.getType() == AttributeTypes.INTEGER) {
-      attType = int.class;
-    } else if (keyAtt.getType() == AttributeTypes.DOUBLE) {
-      attType = double.class;
-    } else if (keyAtt.getType() == AttributeTypes.BOOLEAN) {
-      attType = boolean.class;
-    } else { //(keyAtt.getType() == AttributeTypes.STRING)
-      attType = String.class;
-    }
+        attType = int.class;
+	  } else if (keyAtt.getType() == AttributeTypes.DOUBLE) {
+	    attType = double.class;
+	  } else if (keyAtt.getType() == AttributeTypes.BOOLEAN) {
+	    attType = boolean.class;
+	  } else { //(keyAtt.getType() == AttributeTypes.STRING)
+	    attType = String.class;
+	  }
     
     
     MethodSpec.Builder getBuilder = MethodSpec.methodBuilder("get")

@@ -319,7 +319,7 @@ public class RuleExecutorGenerator implements CodeGeneratorConstants {
 					
 					methodBody.beginControlFlow("if (response != null)");
 					methodBody.beginControlFlow("try");
-					methodBody.addStatement("$T temp = new $T(response)", inputType, inputType);
+					methodBody.addStatement("$L temp = new $L(response)", inputType, inputType);
 					
 					String tempTypeStr = new String();
 					if (input.getType().equals(InputType.INTEGER)) {
@@ -333,7 +333,7 @@ public class RuleExecutorGenerator implements CodeGeneratorConstants {
 								, input.getCondition().getGuard(), input.getCondition().getValue());
 					}
 					
-					methodBody.addStatement("$T = (double) (temp.$LValue())", inputName, tempTypeStr);
+					methodBody.addStatement("$L = (double) (temp.$LValue())", inputName, tempTypeStr);
 					methodBody.addStatement("gotValidInput$L = true", j);
 							
 					if (input.getCondition().isConstrained()) {
@@ -350,7 +350,7 @@ public class RuleExecutorGenerator implements CodeGeneratorConstants {
 					
 					
 					if (input.isCancelable()) {
-						methodBody.addStatement("state.getActionStateRepository().get$LStateRepository().remove($T)"
+						methodBody.addStatement("state.getActionStateRepository().get$LStateRepository().remove($L)"
 								, uCaseActionName, oneActTypeVar);
 						methodBody.addStatement("cancel = true");
 						methodBody.addStatement("break");

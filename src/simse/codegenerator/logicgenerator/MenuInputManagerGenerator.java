@@ -20,8 +20,10 @@ import simse.modelbuilder.actionbuilder.ActionTypeParticipantTrigger;
 import simse.modelbuilder.actionbuilder.ActionTypeTrigger;
 import simse.modelbuilder.actionbuilder.AttributeGuard;
 import simse.modelbuilder.actionbuilder.DefinedActionTypes;
+import simse.modelbuilder.actionbuilder.TimedActionTypeDestroyer;
 import simse.modelbuilder.actionbuilder.UserActionTypeDestroyer;
 import simse.modelbuilder.actionbuilder.UserActionTypeTrigger;
+import simse.modelbuilder.objectbuilder.Attribute;
 import simse.modelbuilder.objectbuilder.AttributeTypes;
 import simse.modelbuilder.objectbuilder.DefinedObjectTypes;
 import simse.modelbuilder.objectbuilder.SimSEObjectType;
@@ -137,7 +139,7 @@ public class MenuInputManagerGenerator implements CodeGeneratorConstants {
 				.endControlFlow()
 				.addComment("update all employees' menus:")
 				.addStatement("$T allEmps = state.getEmployeeStateRepository().getAll()", allEmps)
-				.beginControlFlow("for (int i = 0; i < allEmps.size(); i++) {")
+				.beginControlFlow("for (int i = 0; i < allEmps.size(); i++)")
 				.addStatement("allEmps.elementAt(i).clearMenu()")
 				.endControlFlow()
 				.addComment("update trigger checker:")
@@ -660,6 +662,53 @@ public class MenuInputManagerGenerator implements CodeGeneratorConstants {
 
 			effectCode1.endControlFlow();
 			effectCode1.addStatement("new $T(parent, b, selectedEmp, state, $S, ruleExec)", chooseActionToJoinDialog, outerTrig.getMenuText());
+			// TODO: Figure out how to add Employees but only when it's a join conditional and a continuous action so not
+			// game-ending or instant things like firing or changing pay rates
+			// Go back through triggers?
+			if (!act.hasGameEndingTrigger() && !act.hasGameEndingDestroyer()) {
+				boolean instantAct = false;
+				if (act.hasDestroyerOfType(ActionTypeDestroyer.TIMED)) {
+					Vector<ActionTypeDestroyer> dests = act.getAllDestroyers();
+					for (int j = 0; j < dests.size(); j++) {
+						ActionTypeDestroyer currDest = dests.elementAt(j);
+						if (currDest instanceof TimedActionTypeDestroyer) {
+							if (((TimedActionTypeDestroyer) currDest).getTime() < 2) {
+								instantAct = true;
+								break;
+							}
+						}
+					}
+				}
+				if (!instantAct) {
+					for (int j = 0; j < triggers.size(); j++) {
+						ActionTypeParticipantTrigger trig = triggers.elementAt(j);
+						ActionTypeParticipant tempPart = trig.getParticipant();
+						Vector<SimSEObjectType> objTypes = tempPart.getAllSimSEObjectTypes();
+						int objMetaType = tempPart.getSimSEObjectTypeType();
+						
+						if (objMetaType == SimSEObjectTypeTypes.EMPLOYEE) { 
+							for (int k = 0; k < objTypes.size(); k++) {
+								SimSEObjectType sObjType = objTypes.get(k);
+								String currObjTypeName = sObjType.getName();
+								String uCaseObjTypeName = CodeGeneratorUtils.getUpperCaseLeading(currObjTypeName);
+								ClassName currObjType = ClassName.get("simse.adts.objects", uCaseObjTypeName);
+								if (k == 0) {
+									effectCode1.beginControlFlow("if (selectedEmp instanceof $T)", currObjType);
+								} else {
+									effectCode1.nextControlFlow("else if (selectedEmp instanceof $T)", currObjType);
+								}
+								
+								Attribute keyAttribute = sObjType.getKey();
+								String keyName = keyAttribute.getName();
+								effectCode1.addStatement("mello.addEmployeeToTask($S, (($T)selectedEmp).get$L())", actType, currObjType, keyName);
+								if (k == objTypes.size() - 1) {
+									effectCode1.endControlFlow();
+								}
+							}
+						}
+					}
+				}
+			}
 			effectCode.add(effectCode1.build());
 		}
 		
@@ -672,7 +721,11 @@ public class MenuInputManagerGenerator implements CodeGeneratorConstants {
 	    	ClassName actName = ClassName.get("simse.adts.actions", actTypeName);
 	    	TypeName vectorOfActTypes = ParameterizedTypeName.get(vector, actName);
 			
-			effectCode.nextControlFlow("else if (itemText.equals($S))", outerDest.getMenuText());
+			if (userTrigs.size() == 0) {
+				effectCode.beginControlFlow("if (itemText.equals($S))", outerDest.getMenuText());
+			} else {
+				effectCode.nextControlFlow("else if (itemText.equals($S))", outerDest.getMenuText());
+			}
 			effectCode.addStatement("$T allActions = state.getActionStateRepository().get"
 					+ actTypeName + "StateRepository().getAllActions()", vectorOfActTypes);
 			effectCode.addStatement("int a = 0");
@@ -682,7 +735,7 @@ public class MenuInputManagerGenerator implements CodeGeneratorConstants {
 			effectCode.addStatement("a++");
 			effectCode.endControlFlow();
 			effectCode.endControlFlow();
-			effectCode.beginControlFlow("if (a == 1) {");
+			effectCode.beginControlFlow("if (a == 1)");
 			effectCode.beginControlFlow("for (int i = 0; i < allActions.size(); i++)");
 			effectCode.addStatement("$T b = allActions.elementAt(i)", actName);
 			
@@ -699,7 +752,32 @@ public class MenuInputManagerGenerator implements CodeGeneratorConstants {
 				if (objMetaType == SimSEObjectTypeTypes.EMPLOYEE) { 
 					// participant is of employee type
 					// TODO: Figure out how to get the key attribute for each employee type, this should be objType not MetaType
-					effectCode.addStatement("mello.removeEmployeeFromTask($S, (($T)selectedEmp).getName())", actType, metaType);
+					// ActionTypeParticipant has Vector<SimSEObjectType>
+					// SimSEObjectType has getKeyAttribute
+					// Attribute has getName
+					// Need to figure out which SimSEObjectType is the current participant
+					
+					Vector<SimSEObjectType> objTypes = tempPart.getAllSimSEObjectTypes();
+					String objTypeName = "";
+					for (int i = 0; i < objTypes.size(); i++) {
+						SimSEObjectType sObjType = objTypes.get(i);
+						String currObjTypeName = sObjType.getName();
+						String uCaseObjTypeName = CodeGeneratorUtils.getUpperCaseLeading(currObjTypeName);
+						ClassName currObjType = ClassName.get("simse.adts.objects", uCaseObjTypeName);
+						if (i == 0) {
+							effectCode.beginControlFlow("if (selectedEmp instanceof $T)", currObjType);
+						} else {
+							effectCode.nextControlFlow("else if (selectedEmp instanceof $T)", currObjType);
+						}
+						
+						Attribute keyAttribute = sObjType.getKey();
+						String keyName = keyAttribute.getName();
+						effectCode.addStatement("mello.removeEmployeeFromTask($S, (($T)selectedEmp).get$L())", actType, currObjType, keyName);
+						if (i == objTypes.size() - 1) {
+							effectCode.endControlFlow();
+						}
+					}
+					
 					effectCode.beginControlFlow("if (b.getAll" + objName + "s().contains(selectedEmp))");
 
 					// execute all destroyer rules that have executeOnJoins == true:
@@ -734,7 +812,7 @@ public class MenuInputManagerGenerator implements CodeGeneratorConstants {
 						effectCode.addStatement("(($T) d).setOverheadText($S)", employee, outerDest.getDestroyerText());
 					}
 					
-					effectCode.addStatement("else if (d instanceof $T)", customer);
+					effectCode.nextControlFlow("else if (d instanceof $T)", customer);
 					if ((outerDest.getDestroyerText() != null) && (outerDest.getDestroyerText().length() > 0)) {
 						effectCode.addStatement("(($T) d).setOverheadText($S)", customer, outerDest.getDestroyerText());
 					}
@@ -808,7 +886,7 @@ public class MenuInputManagerGenerator implements CodeGeneratorConstants {
 					effectCode.endControlFlow();
 				}
 			}
-			
+			effectCode.endControlFlow();
 			effectCode.nextControlFlow("else");
 			effectCode.addStatement("$T b = new $T()", vectorOfActTypes, vectorOfActTypes);
 			effectCode.beginControlFlow("for (int i = 0; i < allActions.size(); i++)");
@@ -828,6 +906,9 @@ public class MenuInputManagerGenerator implements CodeGeneratorConstants {
 			effectCode.endControlFlow();
 			effectCode.addStatement("new $T(parent, b, state, selectedEmp, ruleExec, itemText)", chooseActionToDestroyDialog);
 			effectCode.endControlFlow();
+			
+		}
+		if (userTrigs.size() != 0 || userDests.size() != 0) {
 			effectCode.endControlFlow();
 		}
 		

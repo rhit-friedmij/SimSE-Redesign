@@ -233,6 +233,7 @@ public class ParticipantSelectionDialogsDriverGenerator implements
 	            "Action){\n";
 	        actions += "Vector<SSObject> participants = action.getAllParticipants();\n";
 	        actions += "Vector<Object> keys = new Vector<Object>();\n";
+
 	        actions += "for(int i=0; i<participants.size(); i++){\n";
 	        actions += "SSObject obj = participants.elementAt(i);\n";
 	        actions += "if(obj instanceof Employee){\n";
@@ -313,6 +314,7 @@ public class ParticipantSelectionDialogsDriverGenerator implements
 	        actions += "destChecker.update(false, parent);\n";
 	        actions += "mello.addTaskInProgress(\"" + 
 	        		CodeGeneratorUtils.getUpperCaseLeading(tempAct.getName())
+
 	        		+ "\", keys);\n";
 	        
 

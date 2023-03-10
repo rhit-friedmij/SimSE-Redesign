@@ -741,7 +741,7 @@ public class ExplanatoryToolGenerator implements CodeGeneratorConstants {
   private void copyJFreeChartJars() {
     try {
       ZipInputStream zis = new ZipInputStream(ExplanatoryToolGenerator.class
-          .getResourceAsStream("res/jfreechart.zip"));
+          .getResourceAsStream("res/libraries.zip"));
       while (true) {
         ZipEntry ze = zis.getNextEntry();
         if (ze == null) {
