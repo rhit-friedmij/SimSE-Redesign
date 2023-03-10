@@ -15,6 +15,9 @@ import simse.modelbuilder.actionbuilder.ActionTypeTrigger;
 import simse.modelbuilder.actionbuilder.DefinedActionTypes;
 import simse.modelbuilder.actionbuilder.UserActionTypeTrigger;
 import simse.modelbuilder.objectbuilder.AttributeTypes;
+import simse.modelbuilder.objectbuilder.DefinedObjectTypes;
+import simse.modelbuilder.objectbuilder.SimSEObjectType;
+import simse.modelbuilder.objectbuilder.SimSEObjectTypeTypes;
 import simse.modelbuilder.rulebuilder.Rule;
 
 import java.io.File;
@@ -44,11 +47,13 @@ public class ParticipantSelectionDialogsDriverGenerator implements
   private File directory; // directory to generate into
   private File psddFile; // file to generate
   private DefinedActionTypes actTypes; // holds all of the defined action types
-
+  private DefinedObjectTypes objTypes; // holds all of the defined object types
+  
   public ParticipantSelectionDialogsDriverGenerator(DefinedActionTypes actTypes,
-      File directory) {
+		  DefinedObjectTypes objTypes, File directory) {
     this.directory = directory;
     this.actTypes = actTypes;
+    this.objTypes = objTypes;
   }
 
   public void generate() {
@@ -85,6 +90,7 @@ public class ParticipantSelectionDialogsDriverGenerator implements
           }
         }
       }
+	  Vector<SimSEObjectType> objs = objTypes.getAllObjectTypes();
 	  
 	  MethodSpec participantConstructor = MethodSpec.constructorBuilder()
 			  .addModifiers(Modifier.PUBLIC)
@@ -169,7 +175,7 @@ public class ParticipantSelectionDialogsDriverGenerator implements
 			  .endControlFlow()
 			  .endControlFlow()
 			  .beginControlFlow("if (actionValid) ")
-			  .addCode(handleActions(userActs))
+			  .addCode(handleActions(userActs, objs))
 			  .endControlFlow()
 			  .build();
 	  
@@ -215,7 +221,7 @@ public class ParticipantSelectionDialogsDriverGenerator implements
       }
   }
   
-  private String handleActions(Vector<ActionType> userActs) {
+  private String handleActions(Vector<ActionType> userActs, Vector<SimSEObjectType> objs) {
 	  String actions = "";
 	  for (int i = 0; i < userActs.size(); i++) {
 	        ActionType tempAct = userActs.elementAt(i);
@@ -226,6 +232,8 @@ public class ParticipantSelectionDialogsDriverGenerator implements
 	            + CodeGeneratorUtils.getUpperCaseLeading(tempAct.getName()) + 
 	            "Action){\n";
 	        actions += "Vector<SSObject> participants = action.getAllParticipants();\n";
+	        actions += "Vector<Object> keys = new Vector<Object>();\n";
+
 	        actions += "for(int i=0; i<participants.size(); i++){\n";
 	        actions += "SSObject obj = participants.elementAt(i);\n";
 	        actions += "if(obj instanceof Employee){\n";
@@ -247,6 +255,17 @@ public class ParticipantSelectionDialogsDriverGenerator implements
 	                + ((UserActionTypeTrigger) tempTrig).getMenuText() + "\")){\n";
 	            actions += "((Employee)obj).setOverheadText(\""
 	                + tempTrig.getTriggerText() + "\");\n}\n";
+	            for (SimSEObjectType obj : objs) {
+	            	if (obj.getType() == SimSEObjectTypeTypes.EMPLOYEE) {
+	            		actions += "if (obj instanceof ";
+	            		actions += obj.getName();
+	            		actions += ")\n keys.add(((";
+	            		actions += obj.getName();
+	            		actions += ")obj).get";
+	            		actions += obj.getKey().getName();
+	            		actions += "());\n";
+	            	}
+	            }
 	          }
 	        }
 	        actions += "}else if(obj instanceof Customer){\n";
@@ -267,6 +286,17 @@ public class ParticipantSelectionDialogsDriverGenerator implements
 	                + ((UserActionTypeTrigger) tempTrig).getMenuText() + "\")){\n";
 	            actions += "((Customer)obj).setOverheadText(\""
 	                + tempTrig.getTriggerText() + "\");\n}\n";
+	            for (SimSEObjectType obj : objs) {
+	            	if (obj.getType() == SimSEObjectTypeTypes.CUSTOMER) {
+	            		actions += "if (obj instanceof ";
+	            		actions += obj.getName();
+	            		actions += ")\n keys.add(((";
+	            		actions += obj.getName();
+	            		actions += ")obj).get";
+	            		actions += obj.getKey().getName();
+	            		actions += "());\n";
+	            	}
+	            }
 	          }
 	        }
 	        actions += "}\n}\nstate.getActionStateRepository().get"
@@ -284,7 +314,8 @@ public class ParticipantSelectionDialogsDriverGenerator implements
 	        actions += "destChecker.update(false, parent);\n";
 	        actions += "mello.addTaskInProgress(\"" + 
 	        		CodeGeneratorUtils.getUpperCaseLeading(tempAct.getName())
-	        		+ "\", names)\n";
+
+	        		+ "\", keys);\n";
 	        
 
 	        // game-ending:
