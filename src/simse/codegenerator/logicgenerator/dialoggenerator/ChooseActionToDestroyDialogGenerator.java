@@ -177,6 +177,7 @@ public class ChooseActionToDestroyDialogGenerator implements
 			  .build();
 	  
 	  TypeSpec destroyDialog = TypeSpec.classBuilder("ChooseActionToDestroyDialog")
+			  .addModifiers(Modifier.PUBLIC)
   			.superclass(dialogClass)
   			.addSuperinterface(mouseHandler)
   			.addField(actionsType, "actions", Modifier.PRIVATE)
@@ -192,8 +193,7 @@ public class ChooseActionToDestroyDialogGenerator implements
   			.addMethod(handle)
   			.build();
 	  
-	  ClassName actions = ClassName.get("simse.adts", "actions");
-	  JavaFile javaFile = JavaFile.builder("simse.logic.dialogs", destroyDialog)
+	  JavaFile javaFile = JavaFile.builder("", destroyDialog)
 			  .build();
 	  
     try {
@@ -208,9 +208,10 @@ public class ChooseActionToDestroyDialogGenerator implements
 	  String toAppend = "package simse.logic.dialogs;\n"
 	  		+ "\n"
 	  		+ "import simse.adts.actions.*;\n"
-	  		+ "import simse.adts.objects.*;\n";
+	  		+ "import simse.adts.objects.*;\n"
+	  		+ "import javafx.scene.layout.BorderPane;\n";
 	  
-      writer.write(String.join(toAppend, javaFile.toString()));
+      writer.write(toAppend + javaFile.toString());
       writer.close();
 
     } catch (IOException e) {

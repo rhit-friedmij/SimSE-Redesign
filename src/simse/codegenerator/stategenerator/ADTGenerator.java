@@ -150,6 +150,7 @@ public class ADTGenerator implements CodeGeneratorConstants {
 	}
     
     MethodSpec.Builder employeeConstructorBuilder = MethodSpec.constructorBuilder()
+    		.addModifiers(Modifier.PUBLIC)
     		.addStatement("$N = new $T()", "menu", stringVector)
     		.addStatement("clearMenu()")
     		.addStatement("$N = new $T()", "overheadText", String.class)
@@ -392,7 +393,7 @@ public class ADTGenerator implements CodeGeneratorConstants {
     Vector<SimSEObjectType> customerTypes = new Vector<>();
     for (SimSEObjectType type: objs) {
     	if (type.getType() == SimSEObjectTypeTypes.CUSTOMER) {
-    		employeeTypes.add(type);
+    		customerTypes.add(type);
     	}
     }
     
@@ -422,6 +423,7 @@ public class ADTGenerator implements CodeGeneratorConstants {
     }
     
     MethodSpec.Builder customerConstructorBuilder = MethodSpec.constructorBuilder()
+    		.addModifiers(Modifier.PUBLIC)
     		.addStatement("$N = new $T()", "overheadText", String.class)
     		.addStatement("$N = $T.getInstance()", "track", trackClass);
     
@@ -502,11 +504,12 @@ public class ADTGenerator implements CodeGeneratorConstants {
     	customerBuilder.addMethod(MethodSpec.methodBuilder("get" + compare.getName())
     			.addModifiers(Modifier.PUBLIC)
     			.returns(getTypeAsClass(compare))
-    			.addStatement("return $N", compare.getName())
+    			.addStatement("return $N", compare.getName().toLowerCase())
     			.build());
     	
     	MethodSpec.Builder tempSetBuilder = MethodSpec.methodBuilder("set" + compare.getName())
     			.addModifiers(Modifier.PUBLIC)
+    			.addParameter(getTypeAsClass(compare), "a")
     			.returns(void.class);
     	
     	if ((compare instanceof NumericalAttribute)
@@ -727,10 +730,11 @@ public class ADTGenerator implements CodeGeneratorConstants {
     	}
 	}
     
-    MethodSpec.Builder constructorBuilder = MethodSpec.constructorBuilder();
+    MethodSpec.Builder constructorBuilder = MethodSpec.constructorBuilder()
+    		.addModifiers(Modifier.PUBLIC);
     
     for (Attribute compare: compareAttributes) {
-    	constructorBuilder.addParameter(getTypeAsClass(compare), compare.getName())
+    	constructorBuilder.addParameter(getTypeAsClass(compare), compare.getName().toLowerCase())
     			.addStatement("this.$N = $N", compare.getName().toLowerCase(),
     					compare.getName().toLowerCase());
     }
@@ -878,7 +882,8 @@ public class ADTGenerator implements CodeGeneratorConstants {
     	}
 	}
     
-    MethodSpec.Builder constructorBuilder = MethodSpec.constructorBuilder();
+    MethodSpec.Builder constructorBuilder = MethodSpec.constructorBuilder()
+    		.addModifiers(Modifier.PUBLIC);
 
     Vector<String> superConstructorAtts = new Vector<>();
     for (int i = 0; i < attributes.size(); i++) {
@@ -1091,7 +1096,8 @@ public class ADTGenerator implements CodeGeneratorConstants {
       }
     }
     
-    MethodSpec.Builder constructorBuilder = MethodSpec.constructorBuilder();
+    MethodSpec.Builder constructorBuilder = MethodSpec.constructorBuilder()
+    		.addModifiers(Modifier.PUBLIC);
 
     for (int i = 0; i < participants.size(); i++) {
         ActionTypeParticipant tempPart = participants.elementAt(i);
@@ -1395,10 +1401,9 @@ public class ADTGenerator implements CodeGeneratorConstants {
     			+ "import java.util.Iterator;\n"
     			+ "import java.util.Map;\n"
     			+ "import simse.adts.objects.*;\n";
-    	String fileText = javaFile.toString();
     	FileWriter writer = new FileWriter(adtFile);
     	
-        writer.write(String.join(toAppend, fileText));
+        writer.write(toAppend + javaFile.toString());
         writer.close();
     } catch (IOException e) {
         JOptionPane.showMessageDialog(null, ("Error writing file "

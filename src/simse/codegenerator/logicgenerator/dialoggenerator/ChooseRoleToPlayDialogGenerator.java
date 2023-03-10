@@ -155,6 +155,7 @@ public class ChooseRoleToPlayDialogGenerator implements CodeGeneratorConstants {
 			  .build();
 	  
 	  TypeSpec roleDialog = TypeSpec.classBuilder("ChooseRoleToPlayDialog")
+			  .addModifiers(Modifier.PUBLIC)
 			  .superclass(dialogClass)
 			  .addSuperinterface(mouseHandler)
 			  .addField(stageClass, "gui", Modifier.PRIVATE)
@@ -170,9 +171,7 @@ public class ChooseRoleToPlayDialogGenerator implements CodeGeneratorConstants {
 			  .addMethod(onlyOneRole)
 			  .build();
 	  
-
-	  ClassName actions = ClassName.get("simse.adts", "actions");
-	  JavaFile javaFile = JavaFile.builder("simse.logic.dialogs", roleDialog)
+	  JavaFile javaFile = JavaFile.builder("", roleDialog)
 			  .build();
 	  
 	  
@@ -189,7 +188,7 @@ public class ChooseRoleToPlayDialogGenerator implements CodeGeneratorConstants {
 		  		+ "import simse.adts.actions.*;\n"
 		  		+ "import simse.adts.objects.*;\n";
 		  
-	      writer.write(String.join(toAppend, javaFile.toString()));
+	      writer.write(toAppend + javaFile.toString());
       writer.close();
     } catch (IOException e) {
         JOptionPane.showMessageDialog(null, ("Error writing file "

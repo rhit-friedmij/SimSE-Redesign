@@ -227,7 +227,7 @@ public class RepositoryGenerator implements CodeGeneratorConstants {
     for (int i = 0; i < acts.size(); i++) {
         ActionType tempAct = acts.elementAt(i);
         refetchParticipantsBuilder.addStatement("$L.refetchParticipants(artifactRep,"
-        		+ " customerRep, employeeRep, projectRep, toolRep))", 
+        		+ " customerRep, employeeRep, projectRep, toolRep)", 
         		tempAct.getName().substring(0, 1).toLowerCase() + i);
       }
     
@@ -274,13 +274,17 @@ public class RepositoryGenerator implements CodeGeneratorConstants {
     		.addMethod(refetchParticipants)
     		.build();
     
-	JavaFile javaFile = JavaFile.builder("simse.state", actionRepo)
+	JavaFile javaFile = JavaFile.builder("", actionRepo)
 		    .build();
     
     try {
     	FileWriter writer = new FileWriter(asrFile);
-    	
-    	javaFile.writeTo(writer);
+  	  String toAppend = "package simse.state;\n"
+  	  		+ "\n"
+  	  		+ "import simse.adts.actions.*;\n"
+  	  		+ "import simse.adts.objects.*;\n";
+  	  
+        writer.write(toAppend + javaFile.toString());
     	writer.close();
     } catch (IOException e) {
         JOptionPane.showMessageDialog(null, ("Error writing file "

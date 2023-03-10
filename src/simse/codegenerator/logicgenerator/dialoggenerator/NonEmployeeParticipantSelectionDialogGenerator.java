@@ -280,6 +280,7 @@ public class NonEmployeeParticipantSelectionDialogGenerator implements
 			  .build();
 	  
 	  TypeSpec nonEmployeeDialog = TypeSpec.classBuilder("NonEmployeeParticipantSelectionDialog")
+			  .addModifiers(Modifier.PUBLIC)
 			  .superclass(actionDialog)
 			  .addSuperinterface(mouseHandler)
 			  .addType(exitListener)
@@ -304,9 +305,7 @@ public class NonEmployeeParticipantSelectionDialogGenerator implements
 			  .addMethod(actionCancelled)
 			  .build();
 	  
-
-	  ClassName actions = ClassName.get("simse.adts", "actions");
-	  JavaFile javaFile = JavaFile.builder("simse.logic.dialogs", nonEmployeeDialog)
+	  JavaFile javaFile = JavaFile.builder("", nonEmployeeDialog)
 			  .build();
 	  
     try {
@@ -322,7 +321,7 @@ public class NonEmployeeParticipantSelectionDialogGenerator implements
 		  		+ "import simse.adts.actions.*;\n"
 		  		+ "import simse.adts.objects.*;\n";
 		  
-	      writer.write(String.join(toAppend, javaFile.toString()));
+	      writer.write(toAppend + javaFile.toString());
       writer.close();
       
     } catch (IOException e) {

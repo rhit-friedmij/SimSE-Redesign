@@ -34,6 +34,7 @@ import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
+import com.squareup.javapoet.WildcardTypeName;
 
 import javafx.geometry.Point2D;
 import javafx.scene.control.Alert;
@@ -86,7 +87,8 @@ public class ChooseActionToJoinDialogGenerator implements
 	  ClassName toggleGroupClass = ClassName.get("javafx.scene.control", "ToggleGroup");
 	  ClassName radioButtonClass = ClassName.get("javafx.scene.control", "RadioButton");
 	  TypeName mouseHandler = ParameterizedTypeName.get(eventHandler, mouseEvent);
-	  TypeName actionsVector = ParameterizedTypeName.get(vector, actionClass);
+	  TypeName actionWildcard = WildcardTypeName.subtypeOf(actionClass);
+	  TypeName actionsVectorWildcard = ParameterizedTypeName.get(vector, actionWildcard);
 	  TypeName radioVector = ParameterizedTypeName.get(vector, radioButton);
 	  TypeName stringVector = ParameterizedTypeName.get(vector, stringClass);
 	  
@@ -108,7 +110,7 @@ public class ChooseActionToJoinDialogGenerator implements
       MethodSpec joinConstructor = MethodSpec.constructorBuilder()
 			  .addModifiers(Modifier.PUBLIC)
 			  .addParameter(stageClass, "parent")
-			  .addParameter(actionsVector, "acts")
+			  .addParameter(actionsVectorWildcard, "acts")
 			  .addParameter(employeeClass, "e")
 			  .addParameter(stateClass, "s")
 			  .addParameter(String.class, "menText")
@@ -208,10 +210,11 @@ public class ChooseActionToJoinDialogGenerator implements
 			  .build();
 	  
 	  TypeSpec joinDialog = TypeSpec.classBuilder("ChooseActionToJoinDialog")
+			  .addModifiers(Modifier.PUBLIC)
 			  .superclass(dialogClass)
 			  .addSuperinterface(mouseHandler)
 			  .addField(stageClass, "gui", Modifier.PRIVATE)
-			  .addField(actionsVector, "actions", Modifier.PRIVATE)
+			  .addField(actionsVectorWildcard, "actions", Modifier.PRIVATE)
 			  .addField(stateClass, "state", Modifier.PRIVATE)
 			  .addField(employeeClass, "emp", Modifier.PRIVATE)
 			  .addField(radioVector, "radioButtons", Modifier.PRIVATE)
@@ -225,8 +228,7 @@ public class ChooseActionToJoinDialogGenerator implements
 			  .addMethod(onlyOneChoice)
 			  .build();
 
-	  ClassName actions = ClassName.get("simse.adts", "actions");
-	  JavaFile javaFile = JavaFile.builder("simse.logic.dialogs", joinDialog)
+	  JavaFile javaFile = JavaFile.builder("", joinDialog)
 			  .build();
 	  
     try {
@@ -240,9 +242,10 @@ public class ChooseActionToJoinDialogGenerator implements
 	  String toAppend = "package simse.logic.dialogs;\n"
 		  		+ "\n"
 		  		+ "import simse.adts.actions.*;\n"
-		  		+ "import simse.adts.objects.*;\n";
+		  		+ "import simse.adts.objects.*;\n"
+		  		+ "import javafx.scene.layout.BorderPane;\n";
 		  
-	      writer.write(String.join(toAppend, javaFile.toString()));
+	      writer.write(toAppend + javaFile.toString());
       writer.close();
       
     } catch (IOException e) {
@@ -329,7 +332,7 @@ public class ChooseActionToJoinDialogGenerator implements
           actions += "tempRadioButton.setToggleGroup(radioButtonGroup);\n";
           actions += "tempPane.setLeft(tempRadioButton);\n";
           actions += "radioButtons.add(tempRadioButton);\n";
-          actions += "middlePane.getChildren.add(tempPane);\n}\n}\n";
+          actions += "middlePane.getChildren().add(tempPane);\n}\n}\n";
         }
       
       return actions;

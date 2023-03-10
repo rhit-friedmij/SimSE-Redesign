@@ -174,6 +174,7 @@ public class ParticipantSelectionDialogsDriverGenerator implements
 			  .build();
 	  
 	  TypeSpec participantDialog = TypeSpec.classBuilder("ParticipantSelectionDialogsDriver")
+			  .addModifiers(Modifier.PUBLIC)
 			  .addField(stringVector, "partNames", Modifier.PRIVATE)
 			  .addField(nestedSSVector, "partsVector", Modifier.PRIVATE)
 			  .addField(actionClass, "action", Modifier.PRIVATE)
@@ -186,10 +187,7 @@ public class ParticipantSelectionDialogsDriverGenerator implements
 			  .addMethod(participantConstructor)
 			  .build();
 	  
-
-	  ClassName actions = ClassName.get("simse.adts", "actions");
-	  JavaFile javaFile = JavaFile.builder("simse.logic.dialogs", participantDialog)
-			  .addStaticImport(actions, "*")  
+	  JavaFile javaFile = JavaFile.builder("", participantDialog)
 			  .build();
 	  
     try {
@@ -203,9 +201,12 @@ public class ParticipantSelectionDialogsDriverGenerator implements
 	  String toAppend = "package simse.logic.dialogs;\n"
 		  		+ "\n"
 		  		+ "import simse.adts.actions.*;\n"
-		  		+ "import simse.adts.objects.*;\n";
+		  		+ "import simse.adts.objects.*;\n"
+		  		+ "import simse.gui.SimSEGUI;\n"
+		  		+ "import javafx.scene.control.Alert.*;\n"
+		  		+ "import javafx.scene.control.Alert;\n";
 		  
-      writer.write(String.join(toAppend, javaFile.toString()));
+      writer.write(toAppend + javaFile.toString());
       writer.close();
     } catch (IOException e) {
         JOptionPane.showMessageDialog(null, ("Error writing file "
@@ -223,11 +224,11 @@ public class ParticipantSelectionDialogsDriverGenerator implements
 	        }
 	        actions += "if(action instanceof "
 	            + CodeGeneratorUtils.getUpperCaseLeading(tempAct.getName()) + 
-	            "Action)\n{\n";
+	            "Action){\n";
 	        actions += "Vector<SSObject> participants = action.getAllParticipants();\n";
-	        actions += "for(int i=0; i<participants.size(); i++)\n{\n";
+	        actions += "for(int i=0; i<participants.size(); i++){\n";
 	        actions += "SSObject obj = participants.elementAt(i);\n";
-	        actions += "if(obj instanceof Employee)\n{\n";
+	        actions += "if(obj instanceof Employee){\n";
 
 	        // generate conditions for each user trigger:
 	        Vector<ActionTypeTrigger> allTrigs = tempAct.getAllTriggers();
@@ -243,12 +244,12 @@ public class ParticipantSelectionDialogsDriverGenerator implements
 	              putElse9 = true;
 	            }
 	            actions += "if(menuText.equals(\""
-	                + ((UserActionTypeTrigger) tempTrig).getMenuText() + "\"))\n{\n";
+	                + ((UserActionTypeTrigger) tempTrig).getMenuText() + "\")){\n";
 	            actions += "((Employee)obj).setOverheadText(\""
 	                + tempTrig.getTriggerText() + "\");\n}\n";
 	          }
 	        }
-	        actions += "}\nelse if(obj instanceof Customer)\n{\n";
+	        actions += "}else if(obj instanceof Customer){\n";
 
 	        // generate conditions for each user trigger:
 	        boolean putElse8 = false;
@@ -263,7 +264,7 @@ public class ParticipantSelectionDialogsDriverGenerator implements
 	              putElse8 = true;
 	            }
 	            actions += "if(menuText.equals(\""
-	                + ((UserActionTypeTrigger) tempTrig).getMenuText() + "\"))\n{\n";
+	                + ((UserActionTypeTrigger) tempTrig).getMenuText() + "\")){\n";
 	            actions += "((Customer)obj).setOverheadText(\""
 	                + tempTrig.getTriggerText() + "\");\n}\n";
 	          }
@@ -281,6 +282,10 @@ public class ParticipantSelectionDialogsDriverGenerator implements
 	              + tRule.getName() + "\", action);\n";
 	        }
 	        actions += "destChecker.update(false, parent);\n";
+	        actions += "mello.addTaskInProgress(\"" + 
+	        		CodeGeneratorUtils.getUpperCaseLeading(tempAct.getName())
+	        		+ "\", names)\n";
+	        
 
 	        // game-ending:
 	        if (tempAct.hasGameEndingTrigger()) {
@@ -357,7 +362,7 @@ public class ParticipantSelectionDialogsDriverGenerator implements
 	                    + scoringAttConst.getAttribute().getName() + "();\n";
 	                actions += "state.getClock().stop();\n";
 	                actions += "state.setScore(v);\n";
-	                actions += "((SimSEGUI)gui).update();\n";
+	                actions += "((SimSEGUI)parent).update();\n";
 	                actions += "Alert d = new Alert(AlertType.INFORMATION);\n";
 	                actions += "d.setContentText((\"Your score is \" + v));\n";
 	                actions += "d.setTitle(\"Game over!\");\n";

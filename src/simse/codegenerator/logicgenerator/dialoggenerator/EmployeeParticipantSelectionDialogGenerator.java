@@ -132,7 +132,7 @@ public class EmployeeParticipantSelectionDialogGenerator implements
 			  .addStatement("$N = false", "dialogAccepted")
 			  .addStatement("setMinAndMax()")
 			  .beginControlFlow("if ((($N != null) && ($N > 0) && "
-			  		+ "($N.size() > 0 || (($N == null) && "
+			  		+ "($N.size() > 0)) || (($N == null) && "
 			  		+ "($N.size() > $N))) ", "selectedEmp", "maxNumParts",
 			  		"participants", "selectedEmp", "participants", "minNumParts")
 			  .addStatement("$N = new $T()", "checkBoxes", checkboxVector)
@@ -299,6 +299,7 @@ public class EmployeeParticipantSelectionDialogGenerator implements
 			  .build();
 	  
 	  TypeSpec employeeDialog = TypeSpec.classBuilder("EmployeeParticipantSelectionDialog")
+			  .addModifiers(Modifier.PUBLIC)
 	  			.superclass(dialogAction)
 	  			.addSuperinterface(mouseHandler)
 	  			.addType(exitListener)
@@ -324,9 +325,7 @@ public class EmployeeParticipantSelectionDialogGenerator implements
 	  			.addMethod(actionCancelled)
 	  			.build();
 		  
-
-	  ClassName actions = ClassName.get("simse.adts", "actions");
-	  JavaFile javaFile = JavaFile.builder("simse.logic.dialogs", employeeDialog)   
+	  JavaFile javaFile = JavaFile.builder("", employeeDialog)   
 			  .build();
 	  
     try {
@@ -342,7 +341,7 @@ public class EmployeeParticipantSelectionDialogGenerator implements
 		  		+ "import simse.adts.actions.*;\n"
 		  		+ "import simse.adts.objects.*;\n";
 		  
-	  writer.write(String.join(toAppend, javaFile.toString()));
+	  writer.write(toAppend + javaFile.toString());
       writer.close();
       
     } catch (IOException e) {
