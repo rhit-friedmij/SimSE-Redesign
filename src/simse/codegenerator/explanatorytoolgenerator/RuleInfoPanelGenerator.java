@@ -213,6 +213,7 @@ public class RuleInfoPanelGenerator implements CodeGeneratorConstants {
     }
   	
   	MethodSpec initalizeRuleList = MethodSpec.methodBuilder("initalizeRuleLists")
+  			.addModifiers(Modifier.PRIVATE)
   			.addCode(initalizeRuleListCodeBlock)
   			.build();
   			
@@ -221,6 +222,7 @@ public class RuleInfoPanelGenerator implements CodeGeneratorConstants {
       // "valueChanged" method:
       
       MethodSpec handle = MethodSpec.methodBuilder("handle")
+    		  .addModifiers(Modifier.PUBLIC)
     		  .addParameter(mouseEvent, "event")
     		  .beginControlFlow("if ((event.getSource() == triggerRuleList && !triggerRuleList.getSelectionModel().isEmpty()))")
     		  .addStatement("destroyerRuleList.getSelectionModel().clearSelection()")
@@ -279,6 +281,7 @@ public class RuleInfoPanelGenerator implements CodeGeneratorConstants {
         }
       }
       MethodSpec refreshDescriptionArea = MethodSpec.methodBuilder("refreshDescriptionArea")
+    		  .addModifiers(Modifier.PRIVATE)
     		  .addStatement("$T name = null", string)
     		  .beginControlFlow("if (!triggerRuleList.getSelectionModel().isEmpty())")
     		  .addStatement("name = ($T) triggerRuleList.getSelectionModel().getSelectedItem()", string)
@@ -298,6 +301,7 @@ public class RuleInfoPanelGenerator implements CodeGeneratorConstants {
     		  .build();
       
 	  TypeSpec ruleInfoPanel = TypeSpec.classBuilder("RuleInfoPanel")
+			  .addModifiers(Modifier.PUBLIC)
 			  .superclass(stage)
 			  .addField(actionClass, "action", Modifier.PRIVATE)
 			  .addField(ParameterizedTypeName.get(listView, string), "triggerRuleList", Modifier.PRIVATE)

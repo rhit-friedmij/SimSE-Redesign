@@ -22,6 +22,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Vector;
 
+import javax.lang.model.element.Modifier;
 import javax.swing.JOptionPane;
 
 import com.squareup.javapoet.ClassName;
@@ -91,6 +92,7 @@ public class ActionInfoPanelGenerator implements CodeGeneratorConstants {
 
       
       MethodSpec initializeActionDescription = MethodSpec.methodBuilder("initializeActionDescription")
+    		  .addModifiers(Modifier.PRIVATE)
     		  .addStatement("String text = \"\"")
     		  .addCode(initalizeActionDescriptionActions)
     		  .addStatement("actionDescriptionArea.setText(text)")
@@ -123,6 +125,7 @@ public class ActionInfoPanelGenerator implements CodeGeneratorConstants {
       }
       
       MethodSpec initializeDestroyerList = MethodSpec.methodBuilder("initializeDestroyerList")
+    		  .addModifiers(Modifier.PRIVATE)
     		  .addStatement("String actionName = action.getActionName()")
     		  .addCode(initalizeDestroyerListBlock)
     		  .build();
@@ -143,7 +146,7 @@ public class ActionInfoPanelGenerator implements CodeGeneratorConstants {
             writeElse = true;
           }
           initalizeTriggerListBlock += "if (action instanceof " + uCaseName + "Action) {\n";
-          initalizeTriggerListBlock += "String [] list = {\"\n";
+          initalizeTriggerListBlock += "String [] list = {\n";
           Vector<ActionTypeTrigger> triggers = act.getAllTriggers();
           for (ActionTypeTrigger trigger : triggers) {
         	  initalizeTriggerListBlock += "\"" + trigger.getName() + "\",\n";
@@ -155,6 +158,7 @@ public class ActionInfoPanelGenerator implements CodeGeneratorConstants {
       }
       
       MethodSpec initializeTriggerList = MethodSpec.methodBuilder("initializeTriggerList")
+    		  .addModifiers(Modifier.PRIVATE)
     		  .addStatement("String actionName = action.getActionName()")
     		  .addCode(initalizeTriggerListBlock)
     		  .build();
@@ -250,6 +254,7 @@ public class ActionInfoPanelGenerator implements CodeGeneratorConstants {
       }
       
       MethodSpec createParticipantsTable = MethodSpec.methodBuilder("createParticipantsTable")
+    		  .addModifiers(Modifier.PRIVATE)
     		  .returns(ParameterizedTypeName.get(tableView, participant))
     		  .addStatement("TableView<Participant> newView = new TableView<Participant>()")
     		  .addStatement("TableColumn<Participant, String> name = new TableColumn<>(\"Participant Name\")")
@@ -264,6 +269,7 @@ public class ActionInfoPanelGenerator implements CodeGeneratorConstants {
     		  .build();
       
       MethodSpec constructor = MethodSpec.constructorBuilder()
+    		  .addModifiers(Modifier.PUBLIC)
     		  .addParameter(action, "action")
     		  .addStatement("this.action = action")
     		  .addStatement("$T mainPane = new $T()", vBox, vBox)
@@ -398,6 +404,7 @@ public class ActionInfoPanelGenerator implements CodeGeneratorConstants {
       }
       
       MethodSpec refreshDescriptionArea = MethodSpec.methodBuilder("refreshDescriptionArea")
+    		  .addModifiers(Modifier.PRIVATE)
     		  .addParameter(int.class, "trigOrDest")
     		  .addStatement("$T name = trigOrDest == TRIGGER ? ($T) triggerList.getSelectionModel().getSelectedItem() : ($T) destroyerList.getSelectionModel().getSelectedItem()", String.class, String.class, String.class)
     		  .beginControlFlow("if (name != null)")
@@ -408,6 +415,7 @@ public class ActionInfoPanelGenerator implements CodeGeneratorConstants {
     		  .build();
       
       MethodSpec handle = MethodSpec.methodBuilder("handle")
+    		  .addModifiers(Modifier.PUBLIC)
     		  .addParameter(mouseEvent, "event")
     		  .beginControlFlow("if (event.getSource() == triggerList && triggerList.getSelectionModel().getSelectedIndex() >= 0)")
     		  .addStatement("$N(TRIGGER)", refreshDescriptionArea)
@@ -420,6 +428,7 @@ public class ActionInfoPanelGenerator implements CodeGeneratorConstants {
     		  .build();
       
     	TypeSpec actionInfoPanel = TypeSpec.classBuilder("ActionInfoPanel")
+    			.addModifiers(Modifier.PUBLIC)
     			.addField(action, "action")
     			.addField(ParameterizedTypeName.get(tableView, participant), "table")
     			.addField(ParameterizedTypeName.get(listView, string), "triggerList")

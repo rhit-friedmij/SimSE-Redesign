@@ -34,6 +34,7 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 
+import javax.lang.model.element.Modifier;
 import javax.swing.JOptionPane;
 
 import com.squareup.javapoet.ArrayTypeName;
@@ -71,6 +72,7 @@ public class ExplanatoryToolGenerator implements CodeGeneratorConstants {
 	private MultipleTimelinesBrowserGenerator browserGen; // generates the
 																												 // MulitpleTimelinesBrowser
 																												 // class
+	private ParticipantGenerator partcipantGen;
 
   public ExplanatoryToolGenerator(ModelOptions options, 
       DefinedObjectTypes objTypes, CreatedObjects objs, 
@@ -101,6 +103,7 @@ public class ExplanatoryToolGenerator implements CodeGeneratorConstants {
     		options.getCodeGenerationDestinationDirectory());
     browserGen = new MultipleTimelinesBrowserGenerator(
     		options.getCodeGenerationDestinationDirectory());
+    partcipantGen = new ParticipantGenerator(options.getCodeGenerationDestinationDirectory()); 
   }
 
 /*
@@ -121,6 +124,7 @@ public class ExplanatoryToolGenerator implements CodeGeneratorConstants {
     ruleDescGen.generate();
     branchGen.generate();
     browserGen.generate();
+    partcipantGen.generate();
     generateExplanatoryTool();
   }
 
@@ -242,12 +246,14 @@ public class ExplanatoryToolGenerator implements CodeGeneratorConstants {
       refreshAttributeListObjectTypes += "}\n\n";
       
       MethodSpec refreshAttributeList = MethodSpec.methodBuilder("refreshAttributeList")
+    		  .addModifiers(Modifier.PRIVATE)
     		  .addStatement("attributeList.getItems().removeAll()")
     		  .addStatement("$T selectedObject = ($T) objectList.getSelectionModel().getSelectedItem()", String.class, String.class)
     		  .addCode(refreshAttributeListObjectTypes)
     		  .build();
       
       MethodSpec refreshButtons = MethodSpec.methodBuilder("refreshButtons")
+    		  .addModifiers(Modifier.PRIVATE)
     		  .beginControlFlow("if (attributeList.getSelectionModel().isEmpty())")
     		  .addStatement("generateObjGraphButton.setDisable(true)")
     		  .addStatement("generateCompGraphButton.setDisable(true)")
@@ -268,6 +274,7 @@ public class ExplanatoryToolGenerator implements CodeGeneratorConstants {
     		  .build();
       
       MethodSpec constructor = MethodSpec.constructorBuilder()
+    		  .addModifiers(Modifier.PUBLIC)
     		  .addParameter(ParameterizedTypeName.get(arrayList, state), "log")
     		  .addParameter(branch, "branch")
     		  .addParameter(multipleTimelinesBrowser, "browser")
@@ -455,6 +462,7 @@ public class ExplanatoryToolGenerator implements CodeGeneratorConstants {
       
       
       MethodSpec handle = MethodSpec.methodBuilder("handle")
+    		  .addModifiers(Modifier.PUBLIC)
     		  .addParameter(mouseEvent, "evt")
     		  .addStatement("$T source = evt.getSource()", object)
     		  .beginControlFlow("if (source == multipleTimelinesButton)")
@@ -558,6 +566,7 @@ public class ExplanatoryToolGenerator implements CodeGeneratorConstants {
      
     	
     	MethodSpec update = MethodSpec.methodBuilder("update")
+    			.addModifiers(Modifier.PUBLIC)
     			.beginControlFlow("for (int i = 0; i < visibleGraphs.size(); i++)")
     			.addStatement("$T graph = visibleGraphs.get(i)", stage)
     			.addStatement("// remove graphs whose windows have been closed from visibleGraphs:")
@@ -573,6 +582,7 @@ public class ExplanatoryToolGenerator implements CodeGeneratorConstants {
       
       
       MethodSpec setUpToolTips = MethodSpec.methodBuilder("setUpToolTips")
+    		  .addModifiers(Modifier.PRIVATE)
     		  .addStatement("objectList.setTooltip(new $T(\"Choose an object to graph\"))", toolTip)
     		  .addStatement("attributeList.setTooltip(new $T(\"Choose which attributes to graph\"))", toolTip)
     		  .addStatement("actionList.setTooltip(new $T(\"Choose which actions to graph\"))", toolTip)
@@ -643,6 +653,7 @@ public class ExplanatoryToolGenerator implements CodeGeneratorConstants {
       }
 
       MethodSpec refreshRuleLists = MethodSpec.methodBuilder("refreshRuleLists")
+    		  .addModifiers(Modifier.PRIVATE)
     		  .addParameter(String.class, "actionName")
     		  .addStatement("triggerRuleList.getItems().setAll(new $T<$T>())", Vector.class, String.class)
     		  .addStatement("destroyerRuleList.getItems().setAll(new $T<$T>())", Vector.class, String.class)
@@ -681,6 +692,7 @@ public class ExplanatoryToolGenerator implements CodeGeneratorConstants {
       ClassName ruleCategories = ClassName.get("simse.util", "RuleCategories");
 
       MethodSpec refreshDescriptionArea = MethodSpec.methodBuilder("refreshDescriptionArea")
+    		  .addModifiers(Modifier.PRIVATE)
     		  .addParameter(String.class, "ruleName")
     		  .beginControlFlow("if (ruleName != null)")
     		  .addStatement("$T text = $T.getRuleMapping(ruleName)", String.class, ruleCategories)
@@ -692,31 +704,33 @@ public class ExplanatoryToolGenerator implements CodeGeneratorConstants {
     		  .build();
       
       MethodSpec getLog = MethodSpec.methodBuilder("getLog")
+    		  .addModifiers(Modifier.PUBLIC)
     		  .returns(ParameterizedTypeName.get(arrayList, state))
     		  .addStatement("return this.log")
     		  .build();
       
       TypeSpec explanatoryTool = TypeSpec.classBuilder("ExplanatoryTool")
+    		  .addModifiers(Modifier.PUBLIC)
     		  .superclass(stage)
     		  .addSuperinterface(chartMouseListenerFX)
-    		  .addField(ParameterizedTypeName.get(arrayList, state), "log")
-    		  .addField(ParameterizedTypeName.get(arrayList, stage), "visibleGraphs")
-    		  .addField(multipleTimelinesBrowser, "timelinesBrowser")
-    		  .addField(button, "multipleTimelinesButton")
-    		  .addField(ParameterizedTypeName.get(comboBox, string), "objectList")
-    		  .addField(ParameterizedTypeName.get(listView, string), "attributeList")
-    		  .addField(ParameterizedTypeName.get(listView, string), "actionList")
-    		  .addField(button, "generateObjGraphButton")
-    		  .addField(button, "generateActGraphButton")
-    		  .addField(button, "generateCompGraphButton")
-    		  .addField(ParameterizedTypeName.get(comboBox, string), "actionComboBox")
-    		  .addField(ParameterizedTypeName.get(listView, string), "triggerRuleList")
-    		  .addField(ParameterizedTypeName.get(listView, string), "destroyerRuleList")
-    		  .addField(ParameterizedTypeName.get(listView, string), "intermediateRuleList")
-    		  .addField(textArea, "descriptionArea")
-    		  .addField(button, "closeButton")
-    		  .addField(gridPane, "mainPane")
-    		  .addField(branch, "branch")
+    		  .addField(ParameterizedTypeName.get(arrayList, state), "log", Modifier.PRIVATE)
+    		  .addField(ParameterizedTypeName.get(arrayList, stage), "visibleGraphs", Modifier.PRIVATE)
+    		  .addField(multipleTimelinesBrowser, "timelinesBrowser", Modifier.PRIVATE)
+    		  .addField(button, "multipleTimelinesButton", Modifier.PRIVATE)
+    		  .addField(ParameterizedTypeName.get(comboBox, string), "objectList", Modifier.PRIVATE)
+    		  .addField(ParameterizedTypeName.get(listView, string), "attributeList", Modifier.PRIVATE)
+    		  .addField(ParameterizedTypeName.get(listView, string), "actionList", Modifier.PRIVATE)
+    		  .addField(button, "generateObjGraphButton", Modifier.PRIVATE)
+    		  .addField(button, "generateActGraphButton", Modifier.PRIVATE)
+    		  .addField(button, "generateCompGraphButton", Modifier.PRIVATE)
+    		  .addField(ParameterizedTypeName.get(comboBox, string), "actionComboBox", Modifier.PRIVATE)
+    		  .addField(ParameterizedTypeName.get(listView, string), "triggerRuleList", Modifier.PRIVATE)
+    		  .addField(ParameterizedTypeName.get(listView, string), "destroyerRuleList", Modifier.PRIVATE)
+    		  .addField(ParameterizedTypeName.get(listView, string), "intermediateRuleList", Modifier.PRIVATE)
+    		  .addField(textArea, "descriptionArea", Modifier.PRIVATE)
+    		  .addField(button, "closeButton", Modifier.PRIVATE)
+    		  .addField(gridPane, "mainPane", Modifier.PRIVATE)
+    		  .addField(branch, "branch", Modifier.PRIVATE)
     		  .addMethod(constructor)
     		  .addMethod(handle)
     		  .addMethod(update)

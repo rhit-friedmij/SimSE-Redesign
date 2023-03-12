@@ -13,7 +13,7 @@ public class CharacterWalkBackGenerator {
 		this.dir = dir;
 	}
 
-	private void generate() throws IOException {
+	public void generate() {
 		// TODO Auto-generated method stub
 	    File characterWalkBackFile = new File(dir,
 	            ("animations\\CharacterWalkBack.java"));

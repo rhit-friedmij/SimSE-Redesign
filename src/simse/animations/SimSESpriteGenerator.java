@@ -13,7 +13,7 @@ public class SimSESpriteGenerator {
 		this.dir = dir;
 	}
 
-	private void generate() {
+	public void generate() {
 		// TODO Auto-generated method stub
 	    File simSESpriteFile = new File(dir,
 	            ("animations\\SimSESprite.java"));

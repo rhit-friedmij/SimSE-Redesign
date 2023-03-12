@@ -5,15 +5,15 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 
-public class CharacterWalForwardGenerator {
+public class CharacterWalkForwardGenerator {
 
 	private File dir;
 	
-	public CharacterWalForwardGenerator(File dir) {
+	public CharacterWalkForwardGenerator(File dir) {
 		this.dir = dir;
 	}
 
-	private void generate() {
+	public void generate() {
 		// TODO Auto-generated method stub
 	    File characterWalkForwardFile = new File(dir,
 	            ("animations\\CharacterWalkForward.java"));

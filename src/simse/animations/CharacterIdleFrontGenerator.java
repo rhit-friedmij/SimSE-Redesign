@@ -14,7 +14,7 @@ public class CharacterIdleFrontGenerator {
 
 	}
 
-	private void generate() {
+	public void generate() {
 		// TODO Auto-generated method stub
 	    File characterIdleFrontFile = new File(dir,
 	            ("animations\\CharacterIdleFront.java"));

@@ -147,6 +147,7 @@ public class ObjectGraphGenerator implements CodeGeneratorConstants {
       }
       
       MethodSpec createDataset = MethodSpec.methodBuilder("createDataset")
+    		  .addModifiers(Modifier.PRIVATE)
     		  .returns(xyDataset)
     		  .addStatement("series = new XYSeries[attributes.length]")
     		  .beginControlFlow("for (int i = 0; i < attributes.length; i++)")
@@ -164,6 +165,7 @@ public class ObjectGraphGenerator implements CodeGeneratorConstants {
     		  .build();
       
       MethodSpec createChart = MethodSpec.methodBuilder("createChart")
+    		  .addModifiers(Modifier.PRIVATE)
     		  .returns(jFreeChart)
     		  .addParameter(xyDataset, "dataset")
     		  .addStatement("JFreeChart chart = ChartFactory.createXYLineChart(this.getTitle(), \"Clock Ticks\", null, dataset,\r\n" + 
@@ -182,6 +184,7 @@ public class ObjectGraphGenerator implements CodeGeneratorConstants {
     		  .build();
       
       MethodSpec constructor = MethodSpec.constructorBuilder()
+    		  .addModifiers(Modifier.PUBLIC)
     		  .addParameter(String.class, "title")
     		  .addParameter(ParameterizedTypeName.get(arrayList, state), "log")
     		  .addParameter(String.class, "objTypeType")
@@ -288,6 +291,7 @@ public class ObjectGraphGenerator implements CodeGeneratorConstants {
       }
       
       MethodSpec update = MethodSpec.methodBuilder("update")
+    		  .addModifiers(Modifier.PUBLIC)
     		  .beginControlFlow("if ((log.size() > 0) && (log.get(log.size() - 1) != null))")
     		  .beginControlFlow("for (int j = 0; j < attributes.length; j++)")
     		  .addCode(updateCodeBlock)
@@ -331,6 +335,7 @@ public class ObjectGraphGenerator implements CodeGeneratorConstants {
     	ClassName mouseEvent = ClassName.get("javafx.scene.input", "MouseEvent");
     	
     	MethodSpec chartMouseClicked = MethodSpec.methodBuilder("chartMouseClicked")
+    			.addModifiers(Modifier.PUBLIC)
     			.addStatement("$T event = me.getTrigger()", mouseEvent)
     			.addCode(chartMouseClickedBlock)
     			.build();
@@ -344,8 +349,8 @@ public class ObjectGraphGenerator implements CodeGeneratorConstants {
     	ClassName javaFXHelpers = ClassName.get("simse.gui.util", "JavaFXHelpers");
     	ClassName color = ClassName.get("javafx.scene.paint", "Color");
 
-		TypeSpec anonHandleClass = TypeSpec.anonymousClassBuilder("")
-        		  .addField(String.class, "newBranchName")
+		TypeSpec anonHandleClass = TypeSpec.anonymousClassBuilder("new $T<$T>()", eventHandlerClass, actionEvent)
+        		  .addField(String.class, "newBranchName", Modifier.PRIVATE)
                   .addMethod(MethodSpec.methodBuilder("handle")
                 		  .addParameter(actionEvent, "event")
                 		  .addStatement("$T source = event.getSource()", object)
@@ -372,26 +377,31 @@ public class ObjectGraphGenerator implements CodeGeneratorConstants {
     	
       
       MethodSpec getXYPlot = MethodSpec.methodBuilder("getXYPlot")
+    		  .addModifiers(Modifier.PUBLIC)
     		  .returns(xyPlot)
     		  .addStatement("return chart.getXYPlot()")
     		  .build();
 
       MethodSpec getChart = MethodSpec.methodBuilder("getChart")
+    		  .addModifiers(Modifier.PUBLIC)
     		  .returns(jFreeChart)
     		  .addStatement("return chart")
     		  .build();
       
       MethodSpec getChartTitle = MethodSpec.methodBuilder("getChartTitle")
+    		  .addModifiers(Modifier.PUBLIC)
     		  .returns(String.class)
     		  .addStatement("return this.getTitle()")
     		  .build();
       
       MethodSpec getLog = MethodSpec.methodBuilder("getLog")
+    		  .addModifiers(Modifier.PUBLIC)
     		  .returns(ParameterizedTypeName.get(arrayList, state))
     		  .addStatement("return log")
     		  .build();
       
       MethodSpec setChartColor = MethodSpec.methodBuilder("setChartColor")
+    		  .addModifiers(Modifier.PRIVATE)
     		  .addStatement("chartViewer.backgroundProperty().set($T.createBackgroundColor($T.WHITE))", javaFXHelpers, color)
     		  .build();
       
@@ -399,6 +409,7 @@ public class ObjectGraphGenerator implements CodeGeneratorConstants {
       
       
       TypeSpec objectGraph = TypeSpec.classBuilder("ObjectGraph")
+    		  .addModifiers(Modifier.PUBLIC)
     		  .superclass(stage)
     		  .addSuperinterface(chartMouseListenerFX)
 			  .addField(ParameterizedTypeName.get(arrayList, state), "log", Modifier.PRIVATE)
@@ -425,9 +436,7 @@ public class ObjectGraphGenerator implements CodeGeneratorConstants {
 			  .addMethod(chartMouseClicked)
 				.addField(FieldSpec.builder(ParameterizedTypeName.get(eventHandlerClass, actionEvent), "menuEvent", Modifier.PRIVATE)
 						.initializer(CodeBlock.builder()
-								  .addStatement("new $T<$T>() $L",
-							                eventHandlerClass,
-							                actionEvent,
+								  .addStatement("$L",
 							                anonHandleClass).build()).build())
     		  .build();
       

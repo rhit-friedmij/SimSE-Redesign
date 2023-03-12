@@ -126,19 +126,21 @@ public class TriggerDescriptionsGenerator implements CodeGeneratorConstants {
             
             actionFields.add(FieldSpec.builder(String.class, 
             		act.getName().toUpperCase()
-                    + "_" + trigger.getName().toUpperCase(), Modifier.STATIC).initializer(initalization).build());
+                    + "_" + trigger.getName().toUpperCase(), Modifier.STATIC, Modifier.PUBLIC, Modifier.FINAL).initializer(initalization + ";").build());
           }
         }
       }
       
       TypeSpec triggerDescriptions = TypeSpec.classBuilder("TriggerDescriptions")
+    		  .addModifiers(Modifier.PUBLIC)
     		  .addFields(actionFields)
     		  .build();
       
       JavaFile javaFile = JavaFile.builder("simse.util", triggerDescriptions).build();
       
       try {
-		javaFile.writeTo(trigDescFile);
+      	FileWriter writer = new FileWriter(trigDescFile);
+  		javaFile.writeTo(writer);
 	} catch (IOException e) {
 		// TODO Auto-generated catch block
 		e.printStackTrace();

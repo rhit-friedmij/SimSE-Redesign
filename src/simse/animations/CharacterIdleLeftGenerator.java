@@ -13,7 +13,7 @@ public class CharacterIdleLeftGenerator {
 		this.dir = dir;
 	}
 
-	private void generate() {
+	public void generate() {
 		// TODO Auto-generated method stub
 	    File characterIdleLeftFile = new File(dir,
 	            ("animations\\CharacterIdleLeft.java"));

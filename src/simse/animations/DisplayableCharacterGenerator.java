@@ -13,7 +13,7 @@ public class DisplayableCharacterGenerator {
 		this.dir = dir;
 	}
 
-	private void generate() {
+	public void generate() {
 		// TODO Auto-generated method stub
 	    File displayableCharacterFile = new File(dir,
 	            ("animations\\DisplayableCharacter.java"));

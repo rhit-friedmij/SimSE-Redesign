@@ -97,6 +97,7 @@ public class ActionGraphGenerator implements CodeGeneratorConstants {
      
       
       MethodSpec toolTipConstructor = MethodSpec.constructorBuilder()
+    		  .addModifiers(Modifier.PUBLIC)
     		  .addStatement("super()")
     		  .build();
       
@@ -129,8 +130,8 @@ public class ActionGraphGenerator implements CodeGeneratorConstants {
         if (act.isVisibleInExplanatoryTool()) {
         	
           String lCaseName = act.getName().toLowerCase();
-          actionFields.add(FieldSpec.builder(int.class, lCaseName + "Index", Modifier.PRIVATE).initializer("1 // index to be used for labeling multiple actions of the same type\\").build());
-          actionFields.add(FieldSpec.builder(ParameterizedTypeName.get(arrayList, integer), lCaseName + "Indices", Modifier.PRIVATE).initializer("new ArrayList<Integer>() // an ArrayList to map indices for "
+          actionFields.add(FieldSpec.builder(int.class, lCaseName + "Index", Modifier.PRIVATE).initializer("1; // index to be used for labeling multiple actions of the same type\\").build());
+          actionFields.add(FieldSpec.builder(ParameterizedTypeName.get(arrayList, integer), lCaseName + "Indices", Modifier.PRIVATE).initializer("new ArrayList<Integer>(); // an ArrayList to map indices for "
                   + act.getName() + " Action labels to action ids\n").build());
           
           
@@ -186,12 +187,14 @@ public class ActionGraphGenerator implements CodeGeneratorConstants {
 
       
       MethodSpec setChartColors = MethodSpec.methodBuilder("setChartColors")
+    		  .addModifiers(Modifier.PRIVATE)
     		  .addStatement("chartViewer.backgroundProperty().set($T.createBackgroundColor($T.WHITE))", javaFXHelpers, color)
     		  .build();
       
 
       
       MethodSpec createChart = MethodSpec.methodBuilder("createChart")
+    		  .addModifiers(Modifier.PRIVATE)
     		  .returns(jFreeChart)
     		  .addParameter(xyDataset, "dataset")
     		  .addStatement("// create the chart")
@@ -220,6 +223,7 @@ public class ActionGraphGenerator implements CodeGeneratorConstants {
       
       
       MethodSpec createDataset = MethodSpec.methodBuilder("createDataset")
+    		  .addModifiers(Modifier.PRIVATE)
     		  .addStatement("// add a dummy entry for index 0")
     		  .addStatement("indices.add(0, \"Action\")")
     		  .addStatement("// go through each action")
@@ -232,6 +236,7 @@ public class ActionGraphGenerator implements CodeGeneratorConstants {
       
       
       MethodSpec constructor = MethodSpec.constructorBuilder()
+    		  .addModifiers(Modifier.PUBLIC)
     		  .addParameter(ParameterizedTypeName.get(arrayList, state), "log")
     		  .addParameter(stringArray, "actionNames")
     		  .addParameter(boolean.class, "showChart")
@@ -273,7 +278,7 @@ public class ActionGraphGenerator implements CodeGeneratorConstants {
         String lCaseName = act.getName().toLowerCase();
         if (act.isVisibleInExplanatoryTool()) {
           if (writeElse2) {
-            ifStatementActionBlock += "else { ";
+            ifStatementActionBlock += "else ";
           } else {
             writeElse2 = true;
           }
@@ -299,7 +304,7 @@ public class ActionGraphGenerator implements CodeGeneratorConstants {
         String lCaseName = act.getName().toLowerCase();
         if (act.isVisibleInExplanatoryTool()) {
           if (writeElse3) {
-            elseStatementCodeBlock += "else {";
+            elseStatementCodeBlock += "else ";
           } else {
             writeElse3 = true;
           }
@@ -315,6 +320,7 @@ public class ActionGraphGenerator implements CodeGeneratorConstants {
 
       
       MethodSpec updateSeries = MethodSpec.methodBuilder("updateSeries")
+    		  .addModifiers(Modifier.PRIVATE)
     		  .addParameter(action, "action")
     		  .addParameter(int.class, "clockTick")
     		  .beginControlFlow("if (!series.containsKey(action.getId()))")
@@ -330,6 +336,7 @@ public class ActionGraphGenerator implements CodeGeneratorConstants {
     		  .addStatement("dataset.addSeries(newSeries)")
     		  .addStatement("// update the index for the next new action")
     		  .addStatement("actionIndex++")
+    		  .endControlFlow()
     		  .beginControlFlow("else ")
     		  .addStatement("$T oldSeries = series.get(action.getId())", xySeries)
     		  .addStatement("int index = 0")
@@ -338,6 +345,7 @@ public class ActionGraphGenerator implements CodeGeneratorConstants {
     		  .build();
       
       MethodSpec getIdOfActionWithSeriesName = MethodSpec.methodBuilder("getIdOfActionWithSeriesName")
+    		  .addModifiers(Modifier.PRIVATE)
     		  .addParameter(String.class, "seriesName")
     		  .returns(int.class)
     		  .addStatement("$T<$T> keys = series.keys()", Enumeration.class, Integer.class)
@@ -352,6 +360,7 @@ public class ActionGraphGenerator implements CodeGeneratorConstants {
     		  .build();
       
       MethodSpec getXYPlot = MethodSpec.methodBuilder("getXYPlot")
+    		  .addModifiers(Modifier.PUBLIC)
     		  .returns(xyPlot)
     		  .addStatement("return chart.getXYPlot()")
     		  .build();
@@ -389,7 +398,8 @@ public class ActionGraphGenerator implements CodeGeneratorConstants {
     	
     	
         MethodSpec chartMouseClicked = MethodSpec.methodBuilder("chartMouseClicked")
-      		  .addParameter(chartMouseEventFX, "me")
+      		  .addModifiers(Modifier.PUBLIC)
+        	  .addParameter(chartMouseEventFX, "me")
       		  .addStatement("$T event = me.getTrigger()", mouseEvent)
       		  .beginControlFlow("if (event.getButton() == $T.PRIMARY)", mouseButton)
       		  .addStatement("$T entity = ($T) me.getEntity()", chartEntity, chartEntity)
@@ -450,6 +460,7 @@ public class ActionGraphGenerator implements CodeGeneratorConstants {
       }
       
       MethodSpec update = MethodSpec.methodBuilder("update")
+    		  .addModifiers(Modifier.PUBLIC)
     		.beginControlFlow("if ((log.size() > 0) && (log.get(log.size() - 1) != null))")
     		.addStatement("// add a new end data point for each series:")
     		.addStatement("// go through each action:")
@@ -460,6 +471,7 @@ public class ActionGraphGenerator implements CodeGeneratorConstants {
       		.build();
       
   	MethodSpec handle = MethodSpec.methodBuilder("handle")
+  			.addModifiers(Modifier.PUBLIC)
 			.addParameter(actionEvent, "event")
 			.addStatement("$T source = event.getSource()", object)
 			.beginControlFlow("if (source == newBranchItem)")
@@ -480,34 +492,29 @@ public class ActionGraphGenerator implements CodeGeneratorConstants {
 			.endControlFlow()
 			.build();
       
-  	TypeSpec anonHandleClass = TypeSpec.anonymousClassBuilder("")
-    		  .addField(String.class, "newBranchName")
+  	TypeSpec anonHandleClass = TypeSpec.anonymousClassBuilder("new $T<$T>()", eventHandlerClass, actionEvent)
+    		  .addField(String.class, "newBranchName", Modifier.PRIVATE)
               .addMethod(handle)
               .build();
     		  
       
       TypeSpec actionGraph = TypeSpec.classBuilder("ActionGraph")
+    		  .addModifiers(Modifier.PUBLIC)
     		  .superclass(stage)
     		  .addSuperinterface(chartMouseListener)
-    		  .addField(ParameterizedTypeName.get(arrayList, state), "log")
-    		  .addField(stringArray, "actionNames")
-    		  .addField(jFreeChart, "chart")
-    		  .addField(chartViewer, "chartViewer")
-    		  .addField(menuItem, "newBranchItem")
-    		  .addField(separatorMenuItem, "separator")
-    		  .addField(int.class, "lastRightClickedX")
-    		  .addField(xySeriesCollection, "dataset")
-    		  .addField(branch, "branch")
-    		  .addField(ParameterizedTypeName.get(hashTable, integer, xySeries), "series")
-			.addField(FieldSpec.builder(ParameterizedTypeName.get(eventHandlerClass, actionEvent), "menuEvent", Modifier.PRIVATE)
-					.initializer(CodeBlock.builder()
-							  .addStatement("new $T<$T>() $L",
-						                eventHandlerClass,
-						                actionEvent,
-						                eventHandlerClass,
-						                actionEvent,
-						                anonHandleClass).build()).build())
-			.addFields(actionFields)
+    		  .addField(ParameterizedTypeName.get(arrayList, state), "log", Modifier.PRIVATE)
+    		  .addField(stringArray, "actionNames", Modifier.PRIVATE)
+    		  .addField(jFreeChart, "chart", Modifier.PRIVATE)
+    		  .addField(chartViewer, "chartViewer", Modifier.PRIVATE)
+    		  .addField(menuItem, "newBranchItem", Modifier.PRIVATE)
+    		  .addField(separatorMenuItem, "separator", Modifier.PRIVATE)
+    		  .addField(int.class, "lastRightClickedX", Modifier.PRIVATE)
+    		  .addField(xySeriesCollection, "dataset", Modifier.PRIVATE)
+    		  .addField(branch, "branch", Modifier.PRIVATE)
+    		  .addField(ParameterizedTypeName.get(hashTable, integer, xySeries), "series", Modifier.PRIVATE)
+    		  .addField(FieldSpec.builder(ParameterizedTypeName.get(eventHandlerClass, actionEvent), "menuEvent", Modifier.PRIVATE)
+					.initializer("$L", anonHandleClass).build())
+    		  .addFields(actionFields)
     		  .addMethod(constructor)
     		  .addMethod(createDataset)
     		  .addMethod(setChartColors)

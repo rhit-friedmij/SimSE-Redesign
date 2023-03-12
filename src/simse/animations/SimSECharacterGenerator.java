@@ -13,7 +13,7 @@ public class SimSECharacterGenerator {
 		this.dir = dir;
 	}
 
-	private void generate() {
+	public void generate() {
 		// TODO Auto-generated method stub
 	    File simSECharacterFile = new File(dir,
 	            ("animations\\SimSECharacter.java"));

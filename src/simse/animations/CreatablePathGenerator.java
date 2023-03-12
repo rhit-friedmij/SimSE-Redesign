@@ -13,7 +13,7 @@ public class CreatablePathGenerator {
 		this.dir = dir;
 	}
 
-	private void generate() {
+	public void generate() {
 		// TODO Auto-generated method stub
 	    File creatablePathFile = new File(dir,
 	            ("animations\\CreatablePath.java"));

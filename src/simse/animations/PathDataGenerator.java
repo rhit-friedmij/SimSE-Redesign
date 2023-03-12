@@ -13,7 +13,7 @@ public class PathDataGenerator {
 		this.dir = dir;
 	}
 
-	private void generate() {
+	public void generate() {
 		// TODO Auto-generated method stub
 	    File pathDataFile = new File(dir,
 	            ("animations\\PathData.java"));

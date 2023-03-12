@@ -65,6 +65,7 @@ public class RuleDescriptionsGenerator implements CodeGeneratorConstants {
         
       }
       TypeSpec ruleDescriptions = TypeSpec.classBuilder("RuleDescriptions")
+    		  .addModifiers(Modifier.PUBLIC)
     		  .addFields(actionFields)
     		  .build();
     		  
