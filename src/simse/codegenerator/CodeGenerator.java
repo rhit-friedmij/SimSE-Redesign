@@ -201,6 +201,16 @@ public class CodeGenerator {
 	    }
 	    gui.mkdir();
 	    
+	    File guiUtil = new File(gui, "util");
+	    // if directory already exists, delete all files in it:
+	    if (guiUtil.exists() && guiUtil.isDirectory()) {
+	      File[] files = guiUtil.listFiles();
+	      for (File f : files) {
+	        f.delete();
+	      }
+	    }
+	    guiUtil.mkdir();
+	    
 	    File expTool = new File(simse, "explanatorytool");
 	    // if directory already exists, delete all files in it:
 	    if (expTool.exists() && expTool.isDirectory()) {
@@ -237,7 +247,7 @@ public class CodeGenerator {
     	ClassName ruleCategories = ClassName.get("simse.util", "RuleCategories");
     	TypeName listOfBranches = ParameterizedTypeName.get(arrayList, branch);
     	TypeName listOfGuis = ParameterizedTypeName.get(arrayList, simSEGui);
-    	TypeName stringArray = ArrayTypeName.get(String.class);
+    	TypeName stringArray = ArrayTypeName.of(String.class);
     	
     	FieldSpec branches = FieldSpec.builder(listOfBranches, "branches")
     		    .addModifiers(Modifier.PRIVATE, Modifier.STATIC)

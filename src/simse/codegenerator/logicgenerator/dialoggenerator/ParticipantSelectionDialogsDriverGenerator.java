@@ -314,7 +314,6 @@ public class ParticipantSelectionDialogsDriverGenerator implements
 	        actions += "destChecker.update(false, parent);\n";
 	        actions += "mello.addTaskInProgress(\"" + 
 	        		CodeGeneratorUtils.getUpperCaseLeading(tempAct.getName())
-
 	        		+ "\", keys);\n";
 	        
 

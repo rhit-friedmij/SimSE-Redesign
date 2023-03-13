@@ -63,6 +63,8 @@ public class GUIGenerator implements CodeGeneratorConstants {
   private InfoScreenGenerator infoGen;
   
   private ObjectGraphPanesGenerator objGraphGen;
+  
+  private JavaFXHelpersGenerator fxHelpGen;
 
   public GUIGenerator(ModelOptions options, DefinedObjectTypes objTypes, 
       CreatedObjects objs, DefinedActionTypes acts, Hashtable<SimSEObject, 
@@ -112,6 +114,7 @@ public class GUIGenerator implements CodeGeneratorConstants {
     		options.getCodeGenerationDestinationDirectory());
     objGraphGen = new ObjectGraphPanesGenerator(objs, objTypes, 
     		options.getCodeGenerationDestinationDirectory());
+    fxHelpGen = new JavaFXHelpersGenerator(options.getCodeGenerationDestinationDirectory());
   }
 
   /*
@@ -156,6 +159,7 @@ public class GUIGenerator implements CodeGeneratorConstants {
 	    panelsGen.generate();
 	    infoGen.generate();
 	    objGraphGen.generate();
+	    fxHelpGen.generate();
 	    generateMainGUI();
 	    return true;
 	  }
