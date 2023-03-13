@@ -48,7 +48,8 @@ public class RuleTypeGenerator implements CodeGeneratorConstants {
     		    .build();
 
       try {
-  		javaFile.writeTo(ruleTypeFile);
+  		FileWriter writer = new FileWriter(ruleTypeFile);
+  		javaFile.writeTo(writer);
   	} catch (IOException e) {
   		// TODO Auto-generated catch block
   		e.printStackTrace();

@@ -423,7 +423,7 @@ public class ObjectGraphGenerator implements CodeGeneratorConstants {
 			  .addField(separatorMenuItem, "separator", Modifier.PRIVATE)
 			  .addField(int.class, "lastRightClickedX", Modifier.PRIVATE)
 			  .addField(xySeriesArray, "series", Modifier.PRIVATE)
-			  .addField(branch, "branch")
+			  .addField(branch, "branch", Modifier.PRIVATE)
 			  .addMethod(constructor)
 			  .addMethod(createDataset)
 			  .addMethod(setChartColor)
