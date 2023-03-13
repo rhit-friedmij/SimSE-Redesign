@@ -1180,6 +1180,7 @@ at least
 <beginSSObjTypeNames>
 Unobsessed
 Obsessed
+Magical
 <endSSObjTypeNames>
 <endActionTypeParticipant>
 <beginActionTypeParticipant>
@@ -1282,6 +1283,21 @@ false
 Dancing
 =
 false
+false
+<endActionTypeParticipantAttributeConstraint>
+<endActionTypeParticipantConstraint>
+<beginActionTypeParticipantConstraint>
+Magical
+<beginActionTypeParticipantAttributeConstraint>
+Power
+<
+<>
+false
+<endActionTypeParticipantAttributeConstraint>
+<beginActionTypeParticipantAttributeConstraint>
+Vibes
+<
+<>
 false
 <endActionTypeParticipantAttributeConstraint>
 <endActionTypeParticipantConstraint>
@@ -1451,6 +1467,21 @@ Dancing
 false
 <endActionTypeParticipantAttributeConstraint>
 <endActionTypeParticipantConstraint>
+<beginActionTypeParticipantConstraint>
+Magical
+<beginActionTypeParticipantAttributeConstraint>
+Power
+<
+<>
+false
+<endActionTypeParticipantAttributeConstraint>
+<beginActionTypeParticipantAttributeConstraint>
+Vibes
+<
+<>
+false
+<endActionTypeParticipantAttributeConstraint>
+<endActionTypeParticipantConstraint>
 <endActionTypeParticipantDestroyer>
 <beginActionTypeParticipantDestroyer>
 Proj
@@ -1613,6 +1644,21 @@ false
 <endActionTypeParticipantAttributeConstraint>
 <beginActionTypeParticipantAttributeConstraint>
 Dancing
+<
+<>
+false
+<endActionTypeParticipantAttributeConstraint>
+<endActionTypeParticipantConstraint>
+<beginActionTypeParticipantConstraint>
+Magical
+<beginActionTypeParticipantAttributeConstraint>
+Power
+<
+<>
+false
+<endActionTypeParticipantAttributeConstraint>
+<beginActionTypeParticipantAttributeConstraint>
+Vibes
 <
 <>
 false
@@ -2381,7 +2427,8 @@ false
 <endActionType>
 <beginActionType>
 GiveFlower
-false
+true
+Give Flower
 false
 <beginActionTypeAnnotation>
 
@@ -2729,6 +2776,19 @@ Mood
 <endParticipantAttributeRuleEffect>
 <beginParticipantAttributeRuleEffect>
 Dancing
+
+<endParticipantAttributeRuleEffect>
+<endParticipantTypeRuleEffect>
+<beginParticipantTypeRuleEffect>
+1
+Magical
+None
+<beginParticipantAttributeRuleEffect>
+Power
+
+<endParticipantAttributeRuleEffect>
+<beginParticipantAttributeRuleEffect>
+Vibes
 
 <endParticipantAttributeRuleEffect>
 <endParticipantTypeRuleEffect>
@@ -3133,17 +3193,17 @@ true
 1
 1
 
-- Employee - Obsessed - Gomez
-true
-true
-7
-1
-
 - Employee - Unobsessed - Thing
 true
 true
 4
 2
+
+- Employee - Obsessed - Gomez
+true
+true
+7
+1
 
 <endSOPUsers>
 605
