@@ -18,8 +18,10 @@ import javax.swing.JOptionPane;
 
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.CodeBlock;
+import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.MethodSpec;
+import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.TypeSpec;
 
 public class CompositeGraphGenerator implements CodeGeneratorConstants {
@@ -68,10 +70,10 @@ public class CompositeGraphGenerator implements CodeGeneratorConstants {
   	  ClassName clock = ClassName.get("simse.state", "Clock");
   	  ClassName logger = ClassName.get("simse.state.logger", "Logger");
   	  ClassName simse = ClassName.get("simse", "SimSE");
-
-     
-      
+  	  ClassName stage = ClassName.get("javafx.stage", "Stage");
+  	  
       MethodSpec constructor = MethodSpec.constructorBuilder()
+    		  .addModifiers(Modifier.PUBLIC)
     		  .addParameter(objectGraph, "objGraph")
     		  .addParameter(actionGraph, "actGraph")
     		  .addParameter(branch, "branch")
@@ -144,12 +146,14 @@ public class CompositeGraphGenerator implements CodeGeneratorConstants {
     	}
 
 	MethodSpec update = MethodSpec.methodBuilder("update")
+			.addModifiers(Modifier.PUBLIC)
 			.returns(void.class)
 			.addStatement(CodeBlock.builder().add("actGraph.update()").build())
 			.addStatement(CodeBlock.builder().add("objGraph.update()").build())
 			.build();
 	
 	MethodSpec handle = MethodSpec.methodBuilder("handle")
+			.addModifiers(Modifier.PUBLIC)
 			.addParameter(actionEvent, "event")
 			.addStatement("$T source = event.getSource()", object)
 			.beginControlFlow("if (source == newBranchItem)")
@@ -170,12 +174,13 @@ public class CompositeGraphGenerator implements CodeGeneratorConstants {
 			.endControlFlow()
 			.build();
 	
-	TypeSpec anonHandleClass = TypeSpec.anonymousClassBuilder("")
-  		  .addField(String.class, "newBranchName")
+	TypeSpec anonHandleClass = TypeSpec.anonymousClassBuilder("new $T<$T>()", eventHandlerClass, actionEvent)
+  		  .addField(String.class, "newBranchName", Modifier.PRIVATE)
             .addMethod(handle)
             .build();
 	
 	MethodSpec chartMouseClicked = MethodSpec.methodBuilder("chartMouseClicked")
+			.addModifiers(Modifier.PUBLIC)
 			.addParameter(chartMouseEventFX, "me")
 			.addStatement("MouseEvent event = me.getTrigger()")
 			.addCode(rightClickBlock)
@@ -184,27 +189,24 @@ public class CompositeGraphGenerator implements CodeGeneratorConstants {
 			.endControlFlow()
 			.build();
 	
-	TypeSpec eventHandler = TypeSpec.classBuilder("menuEvent")
-  .addModifiers(Modifier.PRIVATE)
-  .addStaticBlock(CodeBlock.builder()
-  .addStatement("private $T<$T> menuEvent = new $T<$T>() $L",
-                eventHandlerClass,
-                actionEvent,
-                eventHandlerClass,
-                actionEvent,
-                anonHandleClass).build())
-  .build();
+
 	
 	TypeSpec compositeGraph = TypeSpec.classBuilder("CompositeGraph")
-			.addField(actionGraph, "actGraph")
-			.addField(objectGraph, "objGraph")
-			.addField(jFreeChart, "chart")
-			.addField(chartViewer, "chartViewer")
-			.addField(int.class, "lastRightClickedX")
-			.addField(menuItem, "newBranchItem")
-			.addField(separatorMenuItem, "separator")
-			.addField(branch, "branch")
-			.addType(eventHandler)
+			.addModifiers(Modifier.PUBLIC)
+			.superclass(stage)
+			.addSuperinterface(chartMouseListenerFX)
+			.addField(actionGraph, "actGraph", Modifier.PRIVATE)
+			.addField(objectGraph, "objGraph", Modifier.PRIVATE)
+			.addField(jFreeChart, "chart", Modifier.PRIVATE)
+			.addField(chartViewer, "chartViewer", Modifier.PRIVATE)
+			.addField(int.class, "lastRightClickedX", Modifier.PRIVATE)
+			.addField(menuItem, "newBranchItem", Modifier.PRIVATE)
+			.addField(separatorMenuItem, "separator", Modifier.PRIVATE)
+			.addField(branch, "branch",Modifier.PRIVATE)
+			.addField(FieldSpec.builder(ParameterizedTypeName.get(eventHandlerClass, actionEvent), "menuEvent", Modifier.PRIVATE)
+					.initializer(CodeBlock.builder()
+							  .addStatement("$L",
+						                anonHandleClass).build()).build())
 			.addMethod(constructor)
 			.addMethod(update)
 			.addMethod(chartMouseClicked)

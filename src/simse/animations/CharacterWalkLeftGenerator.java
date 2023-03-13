@@ -13,7 +13,7 @@ public class CharacterWalkLeftGenerator {
 		this.dir = dir;
 	}
 
-	private void generate() {
+	public void generate() {
 		// TODO Auto-generated method stub
 	    File characterWalkLeftFile = new File(dir,
 	            ("animations\\CharacterWalkLeft.java"));

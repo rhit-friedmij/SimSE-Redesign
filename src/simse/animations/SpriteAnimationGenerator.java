@@ -13,7 +13,7 @@ public class SpriteAnimationGenerator {
 		this.dir = dir;
 	}
 
-	private void generate() {
+	public void generate() {
 		// TODO Auto-generated method stub
 	    File spriteAnimationFile = new File(dir,
 	            ("animations\\SpriteAnimation.java"));

@@ -20,11 +20,14 @@ import simse.modelbuilder.objectbuilder.AttributeTypes;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Vector;
 
+import javax.lang.model.element.Modifier;
 import javax.swing.*;
 
 import com.squareup.javapoet.CodeBlock;
+import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.TypeSpec;
 
@@ -44,17 +47,15 @@ public class DestroyerDescriptionsGenerator implements CodeGeneratorConstants {
     if (destDescFile.exists()) {
       destDescFile.delete(); // delete old version of file
     }  
-      String actionsString = "";
+      ArrayList<FieldSpec> actionFields = new ArrayList<>();
 
       // go through all actions:
       Vector<ActionType> actions = actTypes.getAllActionTypes();
       for (ActionType act : actions) {
+    	  String actionsString = "";
         if (act.isVisibleInExplanatoryTool()) {
           Vector<ActionTypeDestroyer> destroyers = act.getAllDestroyers();
           for (ActionTypeDestroyer destroyer : destroyers) {
-    	    actionsString += "static final String " + act.getName().toUpperCase()
-                      + "_" + destroyer.getName().toUpperCase() + " = ";
-            actionsString += "\n";
 
             actionsString += "\"This action stops ";
             if (destroyer instanceof TimedActionTypeDestroyer) {
@@ -115,17 +116,18 @@ public class DestroyerDescriptionsGenerator implements CodeGeneratorConstants {
                   }
                 }
               }
-            }
-            actionsString += "\";";
-            actionsString += "\n";
+              actionFields.add(FieldSpec.builder(String.class, 
+              		act.getName().toUpperCase()
+                      + "_" + destroyer.getName().toUpperCase(), Modifier.STATIC, Modifier.FINAL, Modifier.PUBLIC).initializer(actionsString).build());
+              }
+
           }
         }
       }
       
       TypeSpec destroyerDescriptions = TypeSpec.classBuilder("DestroyerDescription")
-    		  .addStaticBlock(CodeBlock.builder()
-    				  .add(actionsString)
-    				  .build())
+    		  .addModifiers(Modifier.PUBLIC)
+    		  .addFields(actionFields)
     		  .build();
       
       JavaFile javaFile = JavaFile.builder("simse.util", destroyerDescriptions).build();

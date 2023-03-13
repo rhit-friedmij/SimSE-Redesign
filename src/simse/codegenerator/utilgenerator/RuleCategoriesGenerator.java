@@ -71,6 +71,7 @@ public class RuleCategoriesGenerator implements CodeGeneratorConstants {
     		  .build();
       
       MethodSpec getAllDestRulesForAction = MethodSpec.methodBuilder("getAllDestRulesForAction")
+    		  .addModifiers(Modifier.PUBLIC)
     		  .returns(stringArray)
     		  .addParameter(String.class, "actionName")
     		  .addStatement("$T rules = getDestRulesForAction(actionName)", stringArray)
@@ -84,6 +85,7 @@ public class RuleCategoriesGenerator implements CodeGeneratorConstants {
     		  .build();
       
       MethodSpec getAllTrigRulesForAction = MethodSpec.methodBuilder("getAllTrigRulesForAction")
+    		  .addModifiers(Modifier.PUBLIC)
     		  .returns(stringArray)
     		  .addParameter(String.class, "actionName")
     		  .addStatement("$T rules = getTrigRulesForAction(actionName)", stringArray)
@@ -97,6 +99,7 @@ public class RuleCategoriesGenerator implements CodeGeneratorConstants {
     		  .build();
       
       MethodSpec getAllRuleMappings = MethodSpec.methodBuilder("getAllRuleMappings")
+    		  .addModifiers(Modifier.PUBLIC)
     		  .returns(String.class)
     		  .addModifiers(Modifier.STATIC)
     		  .addParameter(String.class, "actionName")
@@ -109,6 +112,7 @@ public class RuleCategoriesGenerator implements CodeGeneratorConstants {
     		  .build();
       
       MethodSpec getBackendDestRulesForAction = MethodSpec.methodBuilder("getBackendDestRulesForAction")
+    		  .addModifiers(Modifier.PUBLIC)
     		  .returns(stringArray)
     		  .addModifiers(Modifier.STATIC)
     		  .addParameter(String.class, "actionName")
@@ -120,6 +124,7 @@ public class RuleCategoriesGenerator implements CodeGeneratorConstants {
     		  .build();
       
       MethodSpec getBackendTrigRulesForAction = MethodSpec.methodBuilder("getBackendTrigRulesForAction")
+    		  .addModifiers(Modifier.PUBLIC)
     		  .returns(stringArray)
     		  .addModifiers(Modifier.STATIC)
     		  .addParameter(String.class, "actionName")
@@ -131,6 +136,7 @@ public class RuleCategoriesGenerator implements CodeGeneratorConstants {
     		  .build();
       
       MethodSpec getDestRulesForAction = MethodSpec.methodBuilder("getDestRulesForAction")
+    		  .addModifiers(Modifier.PUBLIC)
     		  .returns(stringArray)
     		  .addModifiers(Modifier.STATIC)
     		  .addParameter(String.class, "actionName")
@@ -142,6 +148,7 @@ public class RuleCategoriesGenerator implements CodeGeneratorConstants {
     		  .build();
       
       MethodSpec getTrigRulesForAction = MethodSpec.methodBuilder("getTrigRulesForAction")
+    		  .addModifiers(Modifier.PUBLIC)
     		  .returns(stringArray)
     		  .addModifiers(Modifier.STATIC)
     		  .addParameter(String.class, "actionName")
@@ -153,6 +160,7 @@ public class RuleCategoriesGenerator implements CodeGeneratorConstants {
     		  .build();
       
       MethodSpec getIntRulesForAction = MethodSpec.methodBuilder("getIntRulesForAction")
+    		  .addModifiers(Modifier.PUBLIC)
     		  .returns(stringArray)
     		  .addModifiers(Modifier.STATIC)
     		  .addParameter(String.class, "actionName")
@@ -164,6 +172,7 @@ public class RuleCategoriesGenerator implements CodeGeneratorConstants {
     		  .build();
       
       MethodSpec getBackendRuleMappings = MethodSpec.methodBuilder("getBackendRuleMappings")
+    		  .addModifiers(Modifier.PUBLIC)
     		  .returns(String.class)
     		  .addModifiers(Modifier.STATIC)
     		  .addParameter(String.class, "actionName")
@@ -176,6 +185,7 @@ public class RuleCategoriesGenerator implements CodeGeneratorConstants {
     		  .build();
       
       MethodSpec getRuleMapping = MethodSpec.methodBuilder("getRuleMapping")
+    		  .addModifiers(Modifier.PUBLIC)
     		  .returns(String.class)
     		  .addModifiers(Modifier.STATIC)
     		  .addParameter(String.class, "ruleName")
@@ -187,6 +197,7 @@ public class RuleCategoriesGenerator implements CodeGeneratorConstants {
     		  .build();
       
       MethodSpec makeRuleMappingTable = MethodSpec.methodBuilder("makeRuleMappingTable")
+    		  .addModifiers(Modifier.PUBLIC)
     		  .returns(doubleStringHashTable)
     		  .addModifiers(Modifier.STATIC)
     		  .addParameter(stringArray, "rules")
@@ -236,6 +247,7 @@ public class RuleCategoriesGenerator implements CodeGeneratorConstants {
       intRuleDescriptionBlock += "};\n";
       
       MethodSpec initializeIntRules = MethodSpec.methodBuilder("initializeRuleMapping")
+    		  .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
     		  .addStatement("destRules = new $T<>()", hashTable)
     		  .addCode(intRuleDescriptionBlock)
     		  .beginControlFlow("if (actions.length == actionRules.length)")
@@ -266,6 +278,7 @@ public class RuleCategoriesGenerator implements CodeGeneratorConstants {
       trigRuleDescriptionBlock += "};\n";
       
       MethodSpec initializeTrigRules = MethodSpec.methodBuilder("initializeTrigRules")
+    		  .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
     		  .addStatement("trigRules = new $T<>()", hashTable)
     		  .addCode(trigRuleDescriptionBlock)
     		  .beginControlFlow("if (actions.length == actionRules.length)")
@@ -296,6 +309,7 @@ public class RuleCategoriesGenerator implements CodeGeneratorConstants {
       destRuleDescriptionBlock += "};\n";
       
       MethodSpec initializeDestRules = MethodSpec.methodBuilder("initializeDestRules")
+    		  .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
     		  .addStatement("destRules = new $T<>()", hashTable)
     		  .addCode(destRuleDescriptionBlock)
     		  .beginControlFlow("if (actions.length == actionRules.length)")
@@ -354,6 +368,7 @@ public class RuleCategoriesGenerator implements CodeGeneratorConstants {
       backendRuleBlock += "};\n";
       
       MethodSpec initializeBackendRuleMapping = MethodSpec.methodBuilder("initializeRuleMapping")
+    		  .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
     		  .addStatement("backendRuleMapping = new $T<>()", hashTable)
     		  .addCode(backendRuleBlock)
     		  .build();
@@ -379,6 +394,7 @@ public class RuleCategoriesGenerator implements CodeGeneratorConstants {
       backendTrigRuleDescriptionBlock += "};\n";
       
       MethodSpec initializeBackendTrigRules = MethodSpec.methodBuilder("initializeRuleMapping")
+    		  .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
     		  .addStatement("trigBackendRules = new $T<>()", hashTable)
     		  .addCode(backendTrigRuleDescriptionBlock)
     		  .build();
@@ -404,11 +420,13 @@ public class RuleCategoriesGenerator implements CodeGeneratorConstants {
       backendDestRuleDescriptionBlock += "};\n";
       
       MethodSpec initializeBackendDestRules = MethodSpec.methodBuilder("initializeRuleMapping")
+    		  .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
     		  .addStatement("destBackendRules = new $T<>()", hashTable)
     		  .addCode(backendDestRuleDescriptionBlock)
     		  .build();
       
       MethodSpec initializeRuleCategories = MethodSpec.methodBuilder("initializeRuleCategories")
+    		  .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
     		  .addStatement("$N()", initalizeRuleMapping)
     		  .addStatement("$N()", initializeIntRules)
     		  .addStatement("$N()", initializeTrigRules)
@@ -421,13 +439,13 @@ public class RuleCategoriesGenerator implements CodeGeneratorConstants {
       
       TypeSpec ruleCategories = TypeSpec.classBuilder("RuleCategories")
     		  .addModifiers(Modifier.PUBLIC)
-    		  .addField(doubleStringHashTable, "ruleMapping")
-    		  .addField(stringStringArrayHashTable, "intRules")
-    		  .addField(stringStringArrayHashTable, "trigRules")
-    		  .addField(stringStringArrayHashTable, "trigBackendRules")
-    		  .addField(stringStringArrayHashTable, "destBackendRules")
-    		  .addField(stringdoubleStringHashTable, "backendRuleMapping")
-    		  .addField(FieldSpec.builder(stringArray, "actions", Modifier.STATIC).initializer(actionArray).build())
+    		  .addField(doubleStringHashTable, "ruleMapping", Modifier.STATIC, Modifier.PRIVATE)
+    		  .addField(stringStringArrayHashTable, "intRules", Modifier.STATIC, Modifier.PRIVATE)
+    		  .addField(stringStringArrayHashTable, "trigRules", Modifier.STATIC, Modifier.PRIVATE)
+    		  .addField(stringStringArrayHashTable, "trigBackendRules", Modifier.STATIC, Modifier.PRIVATE)
+    		  .addField(stringStringArrayHashTable, "destBackendRules", Modifier.STATIC, Modifier.PRIVATE)
+    		  .addField(stringdoubleStringHashTable, "backendRuleMapping", Modifier.STATIC, Modifier.PRIVATE)
+    		  .addField(FieldSpec.builder(stringArray, "actions", Modifier.STATIC, Modifier.PRIVATE).initializer(actionArray).build())
     		  .addMethod(initializeRuleCategories)
     		  .addMethod(initalizeRuleMapping)
     		  .addMethod(initializeIntRules)
