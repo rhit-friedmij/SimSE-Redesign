@@ -654,9 +654,10 @@ public class MenuInputManagerGenerator implements CodeGeneratorConstants {
 				ActionTypeParticipantTrigger trig = triggers.elementAt(j);
 				ActionTypeParticipant tempPart = trig.getParticipant();
 				if (tempPart.getSimSEObjectTypeType() == SimSEObjectTypeTypes.EMPLOYEE) {
-					effectCode1.addStatement("if ((c.getAll$Ls().contains(selectedEmp) == false) "
+					effectCode1.beginControlFlow("if ((c.getAll$Ls().contains(selectedEmp) == false) "
 							+ "&& (b.contains(c) == false))", tempPart.getName());
 					effectCode1.addStatement("b.add(c)");
+					effectCode1.endControlFlow();
 				}
 			}
 
