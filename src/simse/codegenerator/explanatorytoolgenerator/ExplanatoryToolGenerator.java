@@ -35,7 +35,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 import javax.lang.model.element.Modifier;
-import javax.swing.JOptionPane;
 
 import com.squareup.javapoet.ArrayTypeName;
 import com.squareup.javapoet.ClassName;

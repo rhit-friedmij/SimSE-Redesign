@@ -24,7 +24,7 @@ public class CharacterWalkLeftGenerator {
 		
 	    try {
 		
-		FileReader reader = new FileReader("C:\\Users\\localmgr\\git\\simse-redesign\\simse-redesign\\res\\static\\animations\\CharacterWalkLeft.txt");
+		FileReader reader = new FileReader("res\\static\\animations\\CharacterWalkLeft.txt");
 		FileWriter writer = new FileWriter(characterWalkLeftFile);
 	
 		String fileContents = "";

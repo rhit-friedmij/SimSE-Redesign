@@ -24,7 +24,7 @@ public class SimSECharacterGenerator {
 		
 		try {
 	        
-		FileReader reader = new FileReader("C:\\Users\\localmgr\\git\\simse-redesign\\simse-redesign\\res\\static\\animations\\SimSECharacter.txt");
+		FileReader reader = new FileReader("res\\static\\animations\\SimSECharacter.txt");
 		FileWriter writer = new FileWriter(simSECharacterFile);
 	
 		String fileContents = "";

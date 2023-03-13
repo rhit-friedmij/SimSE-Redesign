@@ -24,7 +24,7 @@ public class CharacterIdleBackGenerator {
 		
 		try {
 			
-		FileReader reader = new FileReader("C:\\Users\\localmgr\\git\\simse-redesign\\simse-redesign\\res\\static\\animations\\CharacterIdleBack.txt");
+		FileReader reader = new FileReader("res\\static\\animations\\CharacterIdleBack.txt");
 		FileWriter writer = new FileWriter(characterIdleBackFile);
 	
 		String fileContents = "";

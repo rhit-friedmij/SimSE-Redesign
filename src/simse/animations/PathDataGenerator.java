@@ -24,7 +24,7 @@ public class PathDataGenerator {
 		
 		try {
 	        
-		FileReader reader = new FileReader("C:\\Users\\localmgr\\git\\simse-redesign\\simse-redesign\\res\\static\\animations\\PathData.txt");
+		FileReader reader = new FileReader("res\\static\\animations\\PathData.txt");
 		FileWriter writer = new FileWriter(pathDataFile);
 	
 		String fileContents = "";
