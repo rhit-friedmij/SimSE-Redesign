@@ -24,7 +24,7 @@ public class CharacterWalkForwardGenerator {
 		
 		try { 
 			
-		FileReader reader = new FileReader("C:\\Users\\localmgr\\git\\simse-redesign\\simse-redesign\\res\\static\\animations\\CharacterWalkForward.txt");
+		FileReader reader = new FileReader("res\\static\\animations\\CharacterWalkForward.txt");
 		FileWriter writer = new FileWriter(characterWalkForwardFile);
 	
 		String fileContents = "";

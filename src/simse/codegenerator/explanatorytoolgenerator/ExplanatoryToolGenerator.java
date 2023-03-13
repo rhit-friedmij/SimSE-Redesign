@@ -35,7 +35,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 import javax.lang.model.element.Modifier;
-import javax.swing.JOptionPane;
 
 import com.squareup.javapoet.ArrayTypeName;
 import com.squareup.javapoet.ClassName;
@@ -43,8 +42,6 @@ import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.TypeSpec;
-
-import jdk.internal.reflect.ConstructorAccessor;
 
 public class ExplanatoryToolGenerator implements CodeGeneratorConstants {
   private ModelOptions options;

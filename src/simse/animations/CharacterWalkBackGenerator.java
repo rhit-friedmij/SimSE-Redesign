@@ -24,7 +24,7 @@ public class CharacterWalkBackGenerator {
 		
 	    try {
 		
-		FileReader reader = new FileReader("C:\\Users\\localmgr\\git\\simse-redesign\\simse-redesign\\res\\static\\animations\\CharacterWalkBack.txt");
+		FileReader reader = new FileReader("res\\static\\animations\\CharacterWalkBack.txt");
 		FileWriter writer = new FileWriter(characterWalkBackFile);
 	
 		String fileContents = "";

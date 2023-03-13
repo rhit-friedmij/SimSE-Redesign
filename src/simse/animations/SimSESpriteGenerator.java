@@ -24,7 +24,7 @@ public class SimSESpriteGenerator {
 		
 		try {
 	        
-		FileReader reader = new FileReader("C:\\Users\\localmgr\\git\\simse-redesign\\simse-redesign\\res\\static\\animations\\SimSESprite.txt");
+		FileReader reader = new FileReader("res\\static\\animations\\SimSESprite.txt");
 		FileWriter writer = new FileWriter(simSESpriteFile);
 	
 		String fileContents = "";

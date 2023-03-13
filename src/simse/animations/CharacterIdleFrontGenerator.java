@@ -26,7 +26,7 @@ public class CharacterIdleFrontGenerator {
 	    
 		try {
 		
-		FileReader reader = new FileReader("C:\\Users\\localmgr\\git\\simse-redesign\\simse-redesign\\res\\static\\animations\\CharacterIdleFront.txt");
+		FileReader reader = new FileReader("res\\static\\animations\\CharacterIdleFront.txt");
 		FileWriter writer = new FileWriter(characterIdleFrontFile);
 	
 		String fileContents = "";
