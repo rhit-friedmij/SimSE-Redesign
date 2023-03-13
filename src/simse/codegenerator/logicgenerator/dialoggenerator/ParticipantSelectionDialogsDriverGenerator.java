@@ -232,7 +232,7 @@ public class ParticipantSelectionDialogsDriverGenerator implements
 	            + CodeGeneratorUtils.getUpperCaseLeading(tempAct.getName()) + 
 	            "Action){\n";
 	        actions += "Vector<SSObject> participants = action.getAllParticipants();\n";
-	        actions += "Vector<Object> keys = new Vector<Object>();\n";
+	        actions += "Vector<Object> people = new Vector<Object>();\n";
 
 	        actions += "for(int i=0; i<participants.size(); i++){\n";
 	        actions += "SSObject obj = participants.elementAt(i);\n";
@@ -257,13 +257,7 @@ public class ParticipantSelectionDialogsDriverGenerator implements
 	                + tempTrig.getTriggerText() + "\");\n}\n";
 	            for (SimSEObjectType obj : objs) {
 	            	if (obj.getType() == SimSEObjectTypeTypes.EMPLOYEE) {
-	            		actions += "if (obj instanceof ";
-	            		actions += obj.getName();
-	            		actions += ")\n keys.add(((";
-	            		actions += obj.getName();
-	            		actions += ")obj).get";
-	            		actions += obj.getKey().getName();
-	            		actions += "());\n";
+	            		actions += "people.add(obj);\n";
 	            	}
 	            }
 	          }
@@ -288,13 +282,7 @@ public class ParticipantSelectionDialogsDriverGenerator implements
 	                + tempTrig.getTriggerText() + "\");\n}\n";
 	            for (SimSEObjectType obj : objs) {
 	            	if (obj.getType() == SimSEObjectTypeTypes.CUSTOMER) {
-	            		actions += "if (obj instanceof ";
-	            		actions += obj.getName();
-	            		actions += ")\n keys.add(((";
-	            		actions += obj.getName();
-	            		actions += ")obj).get";
-	            		actions += obj.getKey().getName();
-	            		actions += "());\n";
+	            		actions += "people.add(obj);";
 	            	}
 	            }
 	          }
@@ -314,7 +302,7 @@ public class ParticipantSelectionDialogsDriverGenerator implements
 	        actions += "destChecker.update(false, parent);\n";
 	        actions += "mello.addTaskInProgress(\"" + 
 	        		CodeGeneratorUtils.getUpperCaseLeading(tempAct.getName())
-	        		+ "\", keys);\n";
+	        		+ "\", people);\n";
 	        
 
 	        // game-ending:
