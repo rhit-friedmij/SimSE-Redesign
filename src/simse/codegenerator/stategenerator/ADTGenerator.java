@@ -157,7 +157,7 @@ public class ADTGenerator implements CodeGeneratorConstants {
     		.addStatement("$N = $T.getInstance()", "track", trackClass);
     
     for (Attribute compare: compareAttributes) {
-    	employeeConstructorBuilder.addParameter(getTypeAsClass(compare), compare.getName())
+    	employeeConstructorBuilder.addParameter(getTypeAsClass(compare), compare.getName().toLowerCase())
     			.addStatement("this.$N = $N", compare.getName().toLowerCase(),
     					compare.getName().toLowerCase());
     }
