@@ -15,9 +15,9 @@ Unobsessed
 <beginAttribute>
 Name
 1
-0
 1
-0
+1
+1
 <endAttribute>
 <beginAttribute>
 Energy
@@ -51,9 +51,9 @@ Obsessed
 <beginAttribute>
 Name
 1
-0
 1
-0
+1
+1
 <endAttribute>
 <beginAttribute>
 Energy
@@ -82,14 +82,34 @@ Dancing
 <endAttribute>
 <endObjectType>
 <beginObjectType>
+1
+Magical
+<beginAttribute>
+Power
+3
+1
+1
+1
+0
+10
+<endAttribute>
+<beginAttribute>
+Vibes
+1
+1
+0
+1
+<endAttribute>
+<endObjectType>
+<beginObjectType>
 2
 Flower
 <beginAttribute>
 Name
 1
-0
 1
-0
+1
+1
 <endAttribute>
 <beginAttribute>
 ResearchCompleted
@@ -174,9 +194,9 @@ SharpTool
 <beginAttribute>
 Name
 1
-0
 1
-0
+1
+1
 <endAttribute>
 <beginAttribute>
 Sharp
@@ -244,9 +264,9 @@ Garden
 <beginAttribute>
 Name
 1
-0
 1
-0
+1
+1
 <endAttribute>
 <beginAttribute>
 Budget
@@ -351,9 +371,9 @@ Owner
 <beginAttribute>
 Name
 1
-0
 1
-0
+1
+1
 <endAttribute>
 <beginAttribute>
 Mood
@@ -450,6 +470,18 @@ Mood
 <beginInstantiatedAttribute>
 Dancing
 false
+<endInstantiatedAttribute>
+<endObject>
+<beginObject>
+1
+Magical
+<beginInstantiatedAttribute>
+Power
+5
+<endInstantiatedAttribute>
+<beginInstantiatedAttribute>
+Vibes
+<>
 <endInstantiatedAttribute>
 <endObject>
 <beginObject>
@@ -3032,6 +3064,11 @@ Unobsessed
 Wednesday
 Wednesday.png
 
+Employee
+Magical
+5
+
+
 Artifact
 Flower
 Rose
@@ -3090,6 +3127,12 @@ Investor
 <endGraphics>
 <beginMap>
 <beginSOPUsers>
+- Employee - Unobsessed - Wednesday
+true
+true
+1
+1
+
 - Employee - Obsessed - Gomez
 true
 true
@@ -3101,12 +3144,6 @@ true
 true
 4
 2
-
-- Employee - Unobsessed - Wednesday
-true
-true
-1
-1
 
 <endSOPUsers>
 605
