@@ -12,9 +12,9 @@ import simse.gui.util.JavaFXHelpers;
 public class MelloItem extends Pane{
 	
 	String task;
-	Vector<String> employees;
+	Vector<Object> employees;
 	
-	public MelloItem(String item, Vector<String> workers) {
+	public MelloItem(String item, Vector<Object> workers) {
 		this.task = item;
 		this.employees = workers;
 		HBox box = new HBox();
@@ -25,11 +25,9 @@ public class MelloItem extends Pane{
 		
 		box.getChildren().add(textBox);
 		
-		for (String employee : employees) {
-			ImageView img = JavaFXHelpers.createImageView("src/simse/gui/icons/" + employee + ".gif");
-			if (img == null) {
-				img = JavaFXHelpers.createImageView("src/simse/gui/icons/alex.gif");
-			}
+		for (Object worker : workers) {
+			String imgName = TabPanel.getImage(worker);
+			ImageView img = JavaFXHelpers.createImageView(imgName);
 			box.getChildren().add(img);
 		}
 		
@@ -38,7 +36,7 @@ public class MelloItem extends Pane{
 	
 	public MelloItem(String item) {
 		this.task = item;
-		this.employees = new Vector<String>();
+		this.employees = new Vector<Object>();
 		HBox box = new HBox();
 		
 		HBox textBox = new HBox();

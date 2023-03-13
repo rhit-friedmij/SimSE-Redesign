@@ -66,6 +66,7 @@ public class ChooseRoleToPlayDialogGenerator implements CodeGeneratorConstants {
 	  ClassName labelClass = ClassName.get("javafx.scene.control", "Label");
 	  ClassName paneClass = ClassName.get("javafx.scene.layout", "Pane");
 	  ClassName point2DClass = ClassName.get("javafx.geometry", "Point2D");
+	  ClassName fxCollectionsClass = ClassName.get("javafx.collections", "FXCollections");
 	  ClassName comboBoxClass = ClassName.get("javafx.scene.control", "ComboBox");
 	  ClassName stringClass = ClassName.get(String.class);
 	  TypeName mouseHandler = ParameterizedTypeName.get(eventHandler, mouseEvent);
@@ -83,13 +84,13 @@ public class ChooseRoleToPlayDialogGenerator implements CodeGeneratorConstants {
 			  .addStatement("$N = e", "emp")
 			  .addStatement("$N = act", "action")
 			  .addStatement("$N = menText", "menuText")
-			  .addStatement("4N = re", "ruleExec")
+			  .addStatement("$N = re", "ruleExec")
 			  .addStatement("setTitle($S)", "Choose Action Role")
 			  .addStatement("$T mainPane = new $T()", vBoxClass, vBoxClass)
 			  .addStatement("$T topPane = new $T()", paneClass, paneClass)
 			  .addStatement("topPane.getChildren().add(new $T($S))", labelClass, "Choose role to play:")
 			  .addStatement("$T middlePane = new $T()", paneClass, paneClass)
-			  .addStatement("$N = new $T(FXCollections.observableList(partNames))", "partNameList", comboBoxClass)
+			  .addStatement("$N = new $T($T.observableList(partNames))", "partNameList", comboBoxClass, fxCollectionsClass)
 			  .addStatement("middlePane.getChildren().add(partNameList)")
 			  .addStatement("$T bottomPane = new $T()", paneClass, paneClass)
 			  .addStatement("$N = new $T($S)", "okButton", buttonClass, "OK")
@@ -101,15 +102,15 @@ public class ChooseRoleToPlayDialogGenerator implements CodeGeneratorConstants {
 			  .addStatement("mainPane.getChildren().addAll(topPane, middlePane, bottomPane)")
 			  .addStatement("$T ownerLoc = new $T(owner.getX(), owner.getY())", point2DClass, point2DClass)
 			  .addStatement("$T thisLoc = new $T((ownerLoc.getX() + (owner.getWidth() / 2)"
-			  		+ " - (this.getWidth() / 2))", point2DClass, point2DClass)
-			  .addStatement("(ownerLoc.getY() + (owner.getHeight() / 2) - (this.getHeight() / 2)))")
+			  		+ " - (this.getWidth() / 2)),\n (ownerLoc.getY() + (owner.getHeight() / 2)"
+			  		+ " - (this.getHeight() / 2)))", point2DClass, point2DClass)
 			  .addStatement("this.setX(thisLoc.getX())")
 			  .addStatement("this.setY(thisLoc.getY())")
-			  .addStatement("if (partNames.size() == 1) ")
+			  .beginControlFlow("if (partNames.size() == 1) ")
 			  .addStatement("onlyOneRole()")
-			  .addStatement("} else ")
+			  .nextControlFlow(" else")
 			  .addStatement("show()")
-			  .addStatement("")
+			  .endControlFlow()
 			  .build();
 	  
       // make a Vector of all the action types with user triggers:
@@ -137,7 +138,7 @@ public class ChooseRoleToPlayDialogGenerator implements CodeGeneratorConstants {
 			  .beginControlFlow("if (source == $N)", "cancelButton")
 			  .addStatement("close()")
 			  .nextControlFlow("else if (source == $N)", "okButton")
-			  .addStatement("$T partName = ($T)($N.getSelectedItem())", 
+			  .addStatement("$T partName = ($T)($N.getSelectionModel().getSelectedItem())", 
 					  String.class, String.class, "partNameList")
 			  .addCode(generateActionHandle(userTrigActs))
 			  .addStatement("close()")
@@ -147,13 +148,14 @@ public class ChooseRoleToPlayDialogGenerator implements CodeGeneratorConstants {
 	  MethodSpec onlyOneRole = MethodSpec.methodBuilder("onlyOneRole")
 			  .addModifiers(Modifier.PUBLIC)
 			  .returns(void.class)
-			  .addStatement("$T partName = ($T) ($N.getitems().get(0))", 
+			  .addStatement("$T partName = ($T) ($N.getItems().get(0))", 
 					  String.class, String.class, "partNameList")
 			  .addCode(generateActionOnlyOneRole(userTrigActs))
 			  .addStatement("close()")
 			  .build();
 	  
 	  TypeSpec roleDialog = TypeSpec.classBuilder("ChooseRoleToPlayDialog")
+			  .addModifiers(Modifier.PUBLIC)
 			  .superclass(dialogClass)
 			  .addSuperinterface(mouseHandler)
 			  .addField(stageClass, "gui", Modifier.PRIVATE)
@@ -169,10 +171,7 @@ public class ChooseRoleToPlayDialogGenerator implements CodeGeneratorConstants {
 			  .addMethod(onlyOneRole)
 			  .build();
 	  
-
-	  ClassName actions = ClassName.get("simse.adts", "actions");
-	  JavaFile javaFile = JavaFile.builder("simse.logic.dialogs", roleDialog)
-			  .addStaticImport(actions, "*")  
+	  JavaFile javaFile = JavaFile.builder("", roleDialog)
 			  .build();
 	  
 	  
@@ -184,8 +183,12 @@ public class ChooseRoleToPlayDialogGenerator implements CodeGeneratorConstants {
       }
       
       FileWriter writer = new FileWriter(crtpdFile);
-      
-      javaFile.writeTo(writer);
+	  String toAppend = "package simse.logic.dialogs;\n"
+		  		+ "\n"
+		  		+ "import simse.adts.actions.*;\n"
+		  		+ "import simse.adts.objects.*;\n";
+		  
+	      writer.write(toAppend + javaFile.toString());
       writer.close();
     } catch (IOException e) {
         JOptionPane.showMessageDialog(null, ("Error writing file "

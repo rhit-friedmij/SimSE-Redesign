@@ -15,6 +15,9 @@ import simse.modelbuilder.actionbuilder.ActionTypeTrigger;
 import simse.modelbuilder.actionbuilder.DefinedActionTypes;
 import simse.modelbuilder.actionbuilder.UserActionTypeTrigger;
 import simse.modelbuilder.objectbuilder.AttributeTypes;
+import simse.modelbuilder.objectbuilder.DefinedObjectTypes;
+import simse.modelbuilder.objectbuilder.SimSEObjectType;
+import simse.modelbuilder.objectbuilder.SimSEObjectTypeTypes;
 import simse.modelbuilder.rulebuilder.Rule;
 
 import java.io.File;
@@ -35,6 +38,8 @@ import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
 import com.squareup.javapoet.WildcardTypeName;
 
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.stage.Stage;
 
 public class ParticipantSelectionDialogsDriverGenerator implements
@@ -42,11 +47,13 @@ public class ParticipantSelectionDialogsDriverGenerator implements
   private File directory; // directory to generate into
   private File psddFile; // file to generate
   private DefinedActionTypes actTypes; // holds all of the defined action types
-
+  private DefinedObjectTypes objTypes; // holds all of the defined object types
+  
   public ParticipantSelectionDialogsDriverGenerator(DefinedActionTypes actTypes,
-      File directory) {
+		  DefinedObjectTypes objTypes, File directory) {
     this.directory = directory;
     this.actTypes = actTypes;
+    this.objTypes = objTypes;
   }
 
   public void generate() {
@@ -62,24 +69,7 @@ public class ParticipantSelectionDialogsDriverGenerator implements
 	  ClassName ssObjectClass = ClassName.get("simse.adts.objects", "SSObject");
 	  ClassName empPartDialog = ClassName.get("simse.logic.dialogs", "EmployeeParticipantSelectionDialog");
 	  ClassName nonEmpPartDialog = ClassName.get("simse.logic.dialogs", "NonEmployeeParticipantSelectionDialog");
-	  ClassName windowEvent = ClassName.get("javafx.stage", "WindowEvent");
-	  ClassName buttonClass = ClassName.get("javafx.scene.control", "Button");
 	  ClassName stageClass = ClassName.get("javafx.stage", "Stage");
-	  ClassName vBoxClass = ClassName.get("javafx.scene.layout", "VBox");
-	  ClassName labelClass = ClassName.get("javafx.scene.control", "Label");
-	  ClassName paneClass = ClassName.get("javafx.scene.layout", "Pane");
-	  ClassName gridPaneClass = ClassName.get("javafx.scene.layout", "GridPane");
-	  ClassName point2DClass = ClassName.get("javafx.geometry", "Point2D");
-	  ClassName alertClass = ClassName.get("javafx.scene.control", "Alert");
-	  ClassName alertTypeClass = ClassName.get("javafx.scene.control.Alert", "AlertType");
-	  ClassName toggleGroupClass = ClassName.get("javafx.scene.control", "ToggleGroup");
-	  ClassName radioButtonClass = ClassName.get("javafx.scene.control", "RadioButton");
-	  ClassName comboBoxClass = ClassName.get("javafx.scene.control", "ComboBox");
-	  ClassName hBoxClass = ClassName.get("javafx.scene.layout", "HBox");
-	  ClassName separatorClass = ClassName.get("javafx.scene.control", "Separator");
-	  ClassName borderPaneClass = ClassName.get("javafx.scene.layout", "BorderPane");
-	  ClassName imageViewClass = ClassName.get("javafx.scene.image", "ImageView");
-	  ClassName windowClass = ClassName.get("javafx.stage", "Window");
 	  TypeName stringVector = ParameterizedTypeName.get(vector, stringClass);
 	  TypeName ssObjectWildcard = WildcardTypeName.subtypeOf(ssObjectClass);
 	  TypeName ssWildcardVector = ParameterizedTypeName.get(vector, ssObjectWildcard);
@@ -100,6 +90,7 @@ public class ParticipantSelectionDialogsDriverGenerator implements
           }
         }
       }
+	  Vector<SimSEObjectType> objs = objTypes.getAllObjectTypes();
 	  
 	  MethodSpec participantConstructor = MethodSpec.constructorBuilder()
 			  .addModifiers(Modifier.PUBLIC)
@@ -166,7 +157,7 @@ public class ParticipantSelectionDialogsDriverGenerator implements
 			  .addStatement("actionValid = false")
 			  .addStatement("break")
 			  .endControlFlow()
-			  .nextControlFlow(" else // pass null in instead of selectedEm")
+			  .nextControlFlow(" else ")
 			  .addStatement("$T psd = new $T(parent, participantName, new $T(participants), $N,"
 			  		+ " $N, null)", empPartDialog, empPartDialog, ssObjectVector, "action", "state")
 			  .beginControlFlow("if (psd.actionCancelled()) ")
@@ -184,11 +175,12 @@ public class ParticipantSelectionDialogsDriverGenerator implements
 			  .endControlFlow()
 			  .endControlFlow()
 			  .beginControlFlow("if (actionValid) ")
-			  .addCode(handleActions(userActs))
+			  .addCode(handleActions(userActs, objs))
 			  .endControlFlow()
 			  .build();
 	  
 	  TypeSpec participantDialog = TypeSpec.classBuilder("ParticipantSelectionDialogsDriver")
+			  .addModifiers(Modifier.PUBLIC)
 			  .addField(stringVector, "partNames", Modifier.PRIVATE)
 			  .addField(nestedSSVector, "partsVector", Modifier.PRIVATE)
 			  .addField(actionClass, "action", Modifier.PRIVATE)
@@ -201,10 +193,7 @@ public class ParticipantSelectionDialogsDriverGenerator implements
 			  .addMethod(participantConstructor)
 			  .build();
 	  
-
-	  ClassName actions = ClassName.get("simse.adts", "actions");
-	  JavaFile javaFile = JavaFile.builder("simse.logic.dialogs", participantDialog)
-			  .addStaticImport(actions, "*")  
+	  JavaFile javaFile = JavaFile.builder("", participantDialog)
 			  .build();
 	  
     try {
@@ -215,8 +204,15 @@ public class ParticipantSelectionDialogsDriverGenerator implements
       }
       
       FileWriter writer = new FileWriter(psddFile);
-      
-      javaFile.writeTo(writer);
+	  String toAppend = "package simse.logic.dialogs;\n"
+		  		+ "\n"
+		  		+ "import simse.adts.actions.*;\n"
+		  		+ "import simse.adts.objects.*;\n"
+		  		+ "import simse.gui.SimSEGUI;\n"
+		  		+ "import javafx.scene.control.Alert.*;\n"
+		  		+ "import javafx.scene.control.Alert;\n";
+		  
+      writer.write(toAppend + javaFile.toString());
       writer.close();
     } catch (IOException e) {
         JOptionPane.showMessageDialog(null, ("Error writing file "
@@ -225,7 +221,7 @@ public class ParticipantSelectionDialogsDriverGenerator implements
       }
   }
   
-  private String handleActions(Vector<ActionType> userActs) {
+  private String handleActions(Vector<ActionType> userActs, Vector<SimSEObjectType> objs) {
 	  String actions = "";
 	  for (int i = 0; i < userActs.size(); i++) {
 	        ActionType tempAct = userActs.elementAt(i);
@@ -234,11 +230,13 @@ public class ParticipantSelectionDialogsDriverGenerator implements
 	        }
 	        actions += "if(action instanceof "
 	            + CodeGeneratorUtils.getUpperCaseLeading(tempAct.getName()) + 
-	            "Action)\n{\n";
+	            "Action){\n";
 	        actions += "Vector<SSObject> participants = action.getAllParticipants();\n";
-	        actions += "for(int i=0; i<participants.size(); i++)\n{\n";
+	        actions += "Vector<Object> people = new Vector<Object>();\n";
+
+	        actions += "for(int i=0; i<participants.size(); i++){\n";
 	        actions += "SSObject obj = participants.elementAt(i);\n";
-	        actions += "if(obj instanceof Employee)\n{\n";
+	        actions += "if(obj instanceof Employee){\n";
 
 	        // generate conditions for each user trigger:
 	        Vector<ActionTypeTrigger> allTrigs = tempAct.getAllTriggers();
@@ -254,12 +252,17 @@ public class ParticipantSelectionDialogsDriverGenerator implements
 	              putElse9 = true;
 	            }
 	            actions += "if(menuText.equals(\""
-	                + ((UserActionTypeTrigger) tempTrig).getMenuText() + "\"))\n{\n";
+	                + ((UserActionTypeTrigger) tempTrig).getMenuText() + "\")){\n";
 	            actions += "((Employee)obj).setOverheadText(\""
 	                + tempTrig.getTriggerText() + "\");\n}\n";
+	            for (SimSEObjectType obj : objs) {
+	            	if (obj.getType() == SimSEObjectTypeTypes.EMPLOYEE) {
+	            		actions += "people.add(obj);\n";
+	            	}
+	            }
 	          }
 	        }
-	        actions += "}\nelse if(obj instanceof Customer)\n{\n";
+	        actions += "}else if(obj instanceof Customer){\n";
 
 	        // generate conditions for each user trigger:
 	        boolean putElse8 = false;
@@ -274,9 +277,14 @@ public class ParticipantSelectionDialogsDriverGenerator implements
 	              putElse8 = true;
 	            }
 	            actions += "if(menuText.equals(\""
-	                + ((UserActionTypeTrigger) tempTrig).getMenuText() + "\"))\n{\n";
+	                + ((UserActionTypeTrigger) tempTrig).getMenuText() + "\")){\n";
 	            actions += "((Customer)obj).setOverheadText(\""
 	                + tempTrig.getTriggerText() + "\");\n}\n";
+	            for (SimSEObjectType obj : objs) {
+	            	if (obj.getType() == SimSEObjectTypeTypes.CUSTOMER) {
+	            		actions += "people.add(obj);";
+	            	}
+	            }
 	          }
 	        }
 	        actions += "}\n}\nstate.getActionStateRepository().get"
@@ -291,7 +299,11 @@ public class ParticipantSelectionDialogsDriverGenerator implements
 	          actions += "ruleExec.update(gui, RuleExecutor.UPDATE_ONE, \""
 	              + tRule.getName() + "\", action);\n";
 	        }
-	        actions += "destChecker.update(false, gui);\n";
+	        actions += "destChecker.update(false, parent);\n";
+	        actions += "mello.addTaskInProgress(\"" + 
+	        		CodeGeneratorUtils.getUpperCaseLeading(tempAct.getName())
+	        		+ "\", people);\n";
+	        
 
 	        // game-ending:
 	        if (tempAct.hasGameEndingTrigger()) {
@@ -368,10 +380,12 @@ public class ParticipantSelectionDialogsDriverGenerator implements
 	                    + scoringAttConst.getAttribute().getName() + "();\n";
 	                actions += "state.getClock().stop();\n";
 	                actions += "state.setScore(v);\n";
-	                actions += "((SimSEGUI)gui).update();\n";
-	                actions += "JOptionPane.showMessageDialog(null, "
-	                		+ "(\"Your score is \" + v), \"Game over!\", "
-	                		+ "JOptionPane.INFORMATION_MESSAGE);\n}\n}\n}\n";
+	                actions += "((SimSEGUI)parent).update();\n";
+	                actions += "Alert d = new Alert(AlertType.INFORMATION);\n";
+	                actions += "d.setContentText((\"Your score is \" + v));\n";
+	                actions += "d.setTitle(\"Game over!\");\n";
+	                actions += "d.setHeaderText(null);\n";
+	                actions += "d.showAndWait();\n}\n}\n}\n";
 	              }
 	            }
 	          }
