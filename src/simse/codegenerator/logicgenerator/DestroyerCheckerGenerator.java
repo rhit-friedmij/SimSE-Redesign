@@ -181,7 +181,7 @@ public class DestroyerCheckerGenerator implements CodeGeneratorConstants {
 
 				// game-ending:
 				if (tempDest.isGameEndingDestroyer()) {
-					conditions.add("// stop game and give score:");
+					conditions.add("// stop game and give score:\n");
 					conditions.addStatement("$T t111 = (" + actTypeName + ")tempAct", actName);
 					// find the scoring attribute:
 					ActionTypeParticipantDestroyer scoringPartDest = null;
@@ -367,7 +367,7 @@ public class DestroyerCheckerGenerator implements CodeGeneratorConstants {
 
 					// game-ending:
 					if (tempDest.isGameEndingDestroyer()) {
-						conditions.add("// stop game and give score:");
+						conditions.add("// stop game and give score:\n");
 						conditions.addStatement("$T t111 = (" + actTypeName + ")tempAct", actName);
 						
 						// find the scoring attribute:
