@@ -390,15 +390,15 @@ public class MenuInputManagerGenerator implements CodeGeneratorConstants {
 							lambda.addStatement("$T t$L = ($T)(t111$L.getAll" + scoringPartVarName + "().elementAt(0))"
 									, scoringPartConstObjName, j, scoringPartConstObjName, j);
 							lambda.beginControlFlow("if (t$L != null)", j);
-							ClassName scoreType = null;
+							Class scoreType = null;
 							if (scoringAttConst.getAttribute().getType() == AttributeTypes.INTEGER) {
-								scoreType = ClassName.get(int.class);
+								scoreType = int.class;
 							} else if (scoringAttConst.getAttribute().getType() == AttributeTypes.DOUBLE) {
-								scoreType = ClassName.get(double.class);
+								scoreType = double.class;
 							} else if (scoringAttConst.getAttribute().getType() == AttributeTypes.STRING) {
-								scoreType = ClassName.get(String.class);
+								scoreType = String.class;
 							} else if (scoringAttConst.getAttribute().getType() == AttributeTypes.BOOLEAN) {
-								scoreType = ClassName.get(boolean.class);
+								scoreType = boolean.class;
 							}
 							lambda.addStatement("$T v$L = t$L.get" + scoringAttConst.getAttribute().getName() + "()", scoreType, j, j);
 							lambda.addStatement("state.getClock().stop()");
@@ -860,15 +860,15 @@ public class MenuInputManagerGenerator implements CodeGeneratorConstants {
 									, scoringPartConstObjName, scoringPartConstObjName);
 							effectCode.beginControlFlow("if (t != null)");
 							
-							ClassName scoreType = null;
+							Class scoreType = null;
 							if (scoringAttConst.getAttribute().getType() == AttributeTypes.INTEGER) {
-								scoreType = ClassName.get(int.class);
+								scoreType = int.class;
 							} else if (scoringAttConst.getAttribute().getType() == AttributeTypes.DOUBLE) {
-								scoreType = ClassName.get(double.class);
+								scoreType = double.class;
 							} else if (scoringAttConst.getAttribute().getType() == AttributeTypes.STRING) {
-								scoreType = ClassName.get(String.class);
+								scoreType = String.class;
 							} else if (scoringAttConst.getAttribute().getType() == AttributeTypes.BOOLEAN) {
-								scoreType = ClassName.get(boolean.class);
+								scoreType = boolean.class;
 							}
 							effectCode.addStatement("$T v = t.get" + scoringAttConst.getAttribute().getName() + "()", scoreType);
 							effectCode.addStatement("state.getClock().stop()");

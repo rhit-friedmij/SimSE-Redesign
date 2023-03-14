@@ -372,15 +372,15 @@ public class TriggerCheckerGenerator implements CodeGeneratorConstants {
 					checker.addStatement("$T t = ($T)(t111.getAll" + scoringPartVarName + "().elementAt(0))"
 							, scoringPartConstObjName, scoringPartConstObjName);
 					checker.beginControlFlow("if (t != null)");
-					ClassName scoreType = null;
+					Class scoreType = null;
 					if (scoringAttConst.getAttribute().getType() == AttributeTypes.INTEGER) {
-						scoreType = ClassName.get(int.class);
+						scoreType = int.class;
 					} else if (scoringAttConst.getAttribute().getType() == AttributeTypes.DOUBLE) {
-						scoreType = ClassName.get(double.class);
+						scoreType = double.class;
 					} else if (scoringAttConst.getAttribute().getType() == AttributeTypes.STRING) {
-						scoreType = ClassName.get(String.class);
+						scoreType = String.class;
 					} else if (scoringAttConst.getAttribute().getType() == AttributeTypes.BOOLEAN) {
-						scoreType = ClassName.get(boolean.class);
+						scoreType = boolean.class;
 					}
 					checker.addStatement("$T v = t.get" + scoringAttConst.getAttribute().getName() + "()", scoreType);
 					checker.addStatement("state.getClock().stop()");
