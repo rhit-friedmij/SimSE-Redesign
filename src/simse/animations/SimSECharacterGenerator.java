@@ -16,7 +16,7 @@ public class SimSECharacterGenerator {
 	public void generate() {
 		// TODO Auto-generated method stub
 	    File simSECharacterFile = new File(dir,
-	            ("animations\\SimSECharacter.java"));
+	            ("simse\\animations\\SimSECharacter.java"));
 	    
 	        if (simSECharacterFile.exists()) {
 	        	simSECharacterFile.delete(); // delete old version of file

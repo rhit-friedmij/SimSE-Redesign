@@ -16,7 +16,7 @@ public class CreatablePathGenerator {
 	public void generate() {
 		// TODO Auto-generated method stub
 	    File creatablePathFile = new File(dir,
-	            ("animations\\CreatablePath.java"));
+	            ("simse\\animations\\CreatablePath.java"));
 	    
 	        if (creatablePathFile.exists()) {
 	        	creatablePathFile.delete(); // delete old version of file

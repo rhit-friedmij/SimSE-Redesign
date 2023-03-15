@@ -1,4 +1,4 @@
-package animations;
+package simse.animations;
 
 public class CharacterIdleLeft extends SimSESprite{
 	

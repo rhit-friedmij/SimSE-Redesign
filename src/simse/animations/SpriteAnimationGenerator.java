@@ -16,7 +16,7 @@ public class SpriteAnimationGenerator {
 	public void generate() {
 		// TODO Auto-generated method stub
 	    File spriteAnimationFile = new File(dir,
-	            ("animations\\SpriteAnimation.java"));
+	            ("simse\\animations\\SpriteAnimation.java"));
 	    
 	        if (spriteAnimationFile.exists()) {
 	        	spriteAnimationFile.delete(); // delete old version of file

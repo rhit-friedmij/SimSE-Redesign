@@ -16,7 +16,7 @@ public class CharacterIdleLeftGenerator {
 	public void generate() {
 		// TODO Auto-generated method stub
 	    File characterIdleLeftFile = new File(dir,
-	            ("animations\\CharacterIdleLeft.java"));
+	            ("simse\\animations\\CharacterIdleLeft.java"));
 	    
 	        if (characterIdleLeftFile.exists()) {
 	        	characterIdleLeftFile.delete(); // delete old version of file

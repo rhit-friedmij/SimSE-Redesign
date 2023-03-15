@@ -1,4 +1,4 @@
-package animations;
+package simse.animations;
 
 import javafx.scene.shape.Path;
 

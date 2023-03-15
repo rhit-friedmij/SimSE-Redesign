@@ -16,7 +16,7 @@ public class SimSESpriteGenerator {
 	public void generate() {
 		// TODO Auto-generated method stub
 	    File simSESpriteFile = new File(dir,
-	            ("animations\\SimSESprite.java"));
+	            ("simse\\animations\\SimSESprite.java"));
 	    
 	        if (simSESpriteFile.exists()) {
 	        	simSESpriteFile.delete(); // delete old version of file
