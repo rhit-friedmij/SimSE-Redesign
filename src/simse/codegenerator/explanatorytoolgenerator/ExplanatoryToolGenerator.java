@@ -43,6 +43,8 @@ import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.TypeSpec;
 
+import jdk.internal.reflect.ConstructorAccessor;
+
 public class ExplanatoryToolGenerator implements CodeGeneratorConstants {
   private ModelOptions options;
   private DefinedObjectTypes objTypes;

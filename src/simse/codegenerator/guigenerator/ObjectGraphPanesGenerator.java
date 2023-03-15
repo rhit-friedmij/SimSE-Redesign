@@ -58,7 +58,7 @@ public class ObjectGraphPanesGenerator {
 	      ClassName simsegui = ClassName.get("simse.gui", "SimSEGUI");
 	      ClassName panels = ClassName.get("simse.gui", "Panels");
 	      ClassName objectgraphpane = ClassName.get("simse.gui", "ObjectGraphPane");
-	      ClassName simsepanel = ClassName.get("sim.gui", "SimSEPanel");
+	      ClassName simsepanel = ClassName.get("simse.gui", "SimSEPanel");
 	      TypeName mousehandler = ParameterizedTypeName.get(eventhandler, mouseevent);
 	      
 	      SimSEObject proj = getProj();
@@ -328,7 +328,7 @@ public class ObjectGraphPanesGenerator {
 		    		  .addField(branch, "branch", Modifier.PRIVATE)
 		    		  .addField(objectgraph, "objGraph", Modifier.PRIVATE)
 		    		  .addField(simsegui, "gui", Modifier.PRIVATE)
-		    		  .addField(FieldSpec.builder(String.class, "title", Modifier.PRIVATE)
+		    		  .addField(FieldSpec.builder(actionHandler, "menuEvent", Modifier.PRIVATE)
 		    				  .initializer("$L", anon)
 		    				  .build())
 		    		  .addMethod(constructor)

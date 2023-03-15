@@ -15,7 +15,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
-import simse.adts.objects.SoftwareEngineer;
 import simse.logic.Logic;
 import simse.state.State;
 import simse.util.RuleType;
@@ -96,9 +95,9 @@ public class EmployeesOverviewScreen extends Stage implements EventHandler<Mouse
 		} else if (source == customerTab) {
 			update(false);
 		} else if (source == moreDetail) {
-			SoftwareEngineer selected = null;
+			Employee selected = null;
 			try {
-				selected =(SoftwareEngineer) table.getSelectionModel().getSelectedItem();
+				selected =(Employee) table.getSelectionModel().getSelectedItem();
 			} catch (ClassCastException ex) {}
 			
 			if (selected == null) {
@@ -117,7 +116,7 @@ public class EmployeesOverviewScreen extends Stage implements EventHandler<Mouse
 	public void update(boolean isEmployee) {
 		mainPane.getChildren().remove(tablePane);
 		if (isEmployee) {
-			tableModel = new SoftwareEngineerTableModel(state);
+			tableModel = new EmployeeTableModel(state);
 			if (!mainPane.getChildren().contains(buttonPaneEmp)) {
 				mainPane.getChildren().add(buttonPaneEmp);
 			}

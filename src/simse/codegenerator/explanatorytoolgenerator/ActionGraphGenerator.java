@@ -27,6 +27,7 @@ import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.TypeSpec;
+import com.sun.org.apache.xerces.internal.xs.StringList;
 
 public class ActionGraphGenerator implements CodeGeneratorConstants {
   private File directory; // directory to save generated code into

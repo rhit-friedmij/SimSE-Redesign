@@ -85,7 +85,6 @@ public class TableModelGenerator implements CodeGeneratorConstants {
 	 File etmFile = new File(directory, ("simse\\gui\\EmployeeTableModel.java")); 
 	 
 	 MethodSpec constructor = MethodSpec.constructorBuilder()
-			 .addAnnotation(Override.class)
 			 .addModifiers(Modifier.PUBLIC)
 			 .addParameter(state, "s")
 			 .addStatement("super(s)")
@@ -98,6 +97,17 @@ public class TableModelGenerator implements CodeGeneratorConstants {
 			 .build();
 	 
 	 Vector<Attribute> common = getSharedVisibleAttributes(SimSEObjectTypeTypes.EMPLOYEE);
+	 
+	 String initCol = "";
+	 for (int i=0; i<common.size(); i++) {
+		 initCol.concat("columnNames.add(\""+common.get(i).getName() + "\");\n");
+	 }
+	 
+	 MethodSpec initCols = MethodSpec.methodBuilder("initColNames")
+			 .addAnnotation(Override.class)
+			 .returns(void.class)
+			 .addCode(initCol)
+			 .build();
 	 
 	 String getVal = "";
 	 getVal.concat("switch(row) {\n");
@@ -141,6 +151,7 @@ public class TableModelGenerator implements CodeGeneratorConstants {
 			 .addModifiers(Modifier.PUBLIC)
 			 .superclass(tOfE)
 			 .addMethod(constructor)
+			 .addMethod(initCols)
 			 .addMethod(getRepo)
 			 .addMethod(getValue)
 			 .addMethod(setValue)
@@ -172,7 +183,6 @@ public class TableModelGenerator implements CodeGeneratorConstants {
 		 File atmFile = new File(directory, ("simse\\gui\\ArtifactTableModel.java")); 
 		 
 		 MethodSpec constructor = MethodSpec.constructorBuilder()
-				 .addAnnotation(Override.class)
 				 .addModifiers(Modifier.PUBLIC)
 				 .addParameter(state, "s")
 				 .addStatement("super(s)")
@@ -185,6 +195,17 @@ public class TableModelGenerator implements CodeGeneratorConstants {
 				 .build();
 		 
 		 Vector<Attribute> common = getSharedVisibleAttributes(SimSEObjectTypeTypes.ARTIFACT);
+		 
+		 String initCol = "";
+		 for (int i=0; i<common.size(); i++) {
+			 initCol.concat("columnNames.add(\""+common.get(i).getName() + "\");\n");
+		 }
+		 
+		 MethodSpec initCols = MethodSpec.methodBuilder("initColNames")
+				 .addAnnotation(Override.class)
+				 .returns(void.class)
+				 .addCode(initCol)
+				 .build();
 		 
 		 String getVal = "";
 		 getVal.concat("switch(row) {\n");
@@ -228,6 +249,7 @@ public class TableModelGenerator implements CodeGeneratorConstants {
 				 .addModifiers(Modifier.PUBLIC)
 				 .superclass(tOfA)
 				 .addMethod(constructor)
+				 .addMethod(initCols)
 				 .addMethod(getRepo)
 				 .addMethod(getValue)
 				 .addMethod(setValue)
@@ -258,10 +280,22 @@ public class TableModelGenerator implements CodeGeneratorConstants {
 		 File ttmFile = new File(directory, ("simse\\gui\\ToolTableModel.java")); 
 		 
 		 MethodSpec constructor = MethodSpec.constructorBuilder()
-				 .addAnnotation(Override.class)
 				 .addModifiers(Modifier.PUBLIC)
 				 .addParameter(state, "s")
 				 .addStatement("super(s)")
+				 .build();
+		 
+		 Vector<Attribute> common = getSharedVisibleAttributes(SimSEObjectTypeTypes.TOOL);
+		 
+		 String initCol = "";
+		 for (int i=0; i<common.size(); i++) {
+			 initCol.concat("columnNames.add(\""+common.get(i).getName() + "\");\n");
+		 }
+		 
+		 MethodSpec initCols = MethodSpec.methodBuilder("initColNames")
+				 .addAnnotation(Override.class)
+				 .returns(void.class)
+				 .addCode(initCol)
 				 .build();
 		 
 		 MethodSpec getRepo = MethodSpec.methodBuilder("getRepository")
@@ -269,8 +303,6 @@ public class TableModelGenerator implements CodeGeneratorConstants {
 				 .returns(vOfT)
 				 .addStatement("return state.getToolStateRepository().getAll()")
 				 .build();
-		 
-		 Vector<Attribute> common = getSharedVisibleAttributes(SimSEObjectTypeTypes.TOOL);
 		 
 		 String getVal = "";
 		 getVal.concat("switch(row) {\n");
@@ -314,6 +346,7 @@ public class TableModelGenerator implements CodeGeneratorConstants {
 				 .addModifiers(Modifier.PUBLIC)
 				 .superclass(tOfT)
 				 .addMethod(constructor)
+				 .addMethod(initCols)
 				 .addMethod(getRepo)
 				 .addMethod(getValue)
 				 .addMethod(setValue)
@@ -344,7 +377,6 @@ public class TableModelGenerator implements CodeGeneratorConstants {
 		 File ctmFile = new File(directory, ("simse\\gui\\CustomerTableModel.java")); 
 		 
 		 MethodSpec constructor = MethodSpec.constructorBuilder()
-				 .addAnnotation(Override.class)
 				 .addModifiers(Modifier.PUBLIC)
 				 .addParameter(state, "s")
 				 .addStatement("super(s)")
@@ -357,6 +389,17 @@ public class TableModelGenerator implements CodeGeneratorConstants {
 				 .build();
 		 
 		 Vector<Attribute> common = getSharedVisibleAttributes(SimSEObjectTypeTypes.CUSTOMER);
+		 
+		 String initCol = "";
+		 for (int i=0; i<common.size(); i++) {
+			 initCol.concat("columnNames.add(\""+common.get(i).getName() + "\");\n");
+		 }
+		 
+		 MethodSpec initCols = MethodSpec.methodBuilder("initColNames")
+				 .addAnnotation(Override.class)
+				 .returns(void.class)
+				 .addCode(initCol)
+				 .build();
 		 
 		 String getVal = "";
 		 getVal.concat("switch(row) {\n");
@@ -400,6 +443,7 @@ public class TableModelGenerator implements CodeGeneratorConstants {
 				 .addModifiers(Modifier.PUBLIC)
 				 .superclass(tOfC)
 				 .addMethod(constructor)
+				 .addMethod(initCols)
 				 .addMethod(getRepo)
 				 .addMethod(getValue)
 				 .addMethod(setValue)
@@ -430,7 +474,6 @@ public class TableModelGenerator implements CodeGeneratorConstants {
 		 File ptmFile = new File(directory, ("simse\\gui\\ProjectTableModel.java")); 
 		 
 		 MethodSpec constructor = MethodSpec.constructorBuilder()
-				 .addAnnotation(Override.class)
 				 .addModifiers(Modifier.PUBLIC)
 				 .addParameter(state, "s")
 				 .addStatement("super(s)")
@@ -443,6 +486,17 @@ public class TableModelGenerator implements CodeGeneratorConstants {
 				 .build();
 		 
 		 Vector<Attribute> common = getSharedVisibleAttributes(SimSEObjectTypeTypes.PROJECT);
+		 
+		 String initCol = "";
+		 for (int i=0; i<common.size(); i++) {
+			 initCol.concat("columnNames.add(\""+common.get(i).getName() + "\");\n");
+		 }
+		 
+		 MethodSpec initCols = MethodSpec.methodBuilder("initColNames")
+				 .addAnnotation(Override.class)
+				 .returns(void.class)
+				 .addCode(initCol)
+				 .build();
 		 
 		 String getVal = "";
 		 getVal.concat("switch(row) {\n");
@@ -486,6 +540,7 @@ public class TableModelGenerator implements CodeGeneratorConstants {
 				 .addModifiers(Modifier.PUBLIC)
 				 .superclass(tOfP)
 				 .addMethod(constructor)
+				 .addMethod(initCols)
 				 .addMethod(getRepo)
 				 .addMethod(getValue)
 				 .addMethod(setValue)
