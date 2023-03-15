@@ -174,8 +174,9 @@ public class CompositeGraphGenerator implements CodeGeneratorConstants {
 			.endControlFlow()
 			.build();
 	
-	TypeSpec anonHandleClass = TypeSpec.anonymousClassBuilder("new $T<$T>()", eventHandlerClass, actionEvent)
-  		  .addField(String.class, "newBranchName", Modifier.PRIVATE)
+	TypeSpec anonHandleClass = TypeSpec.anonymousClassBuilder("", eventHandlerClass, actionEvent)
+			.addSuperinterface(ParameterizedTypeName.get(eventHandlerClass, actionEvent))
+			.addField(String.class, "newBranchName", Modifier.PRIVATE)
             .addMethod(handle)
             .build();
 	
@@ -204,9 +205,7 @@ public class CompositeGraphGenerator implements CodeGeneratorConstants {
 			.addField(separatorMenuItem, "separator", Modifier.PRIVATE)
 			.addField(branch, "branch",Modifier.PRIVATE)
 			.addField(FieldSpec.builder(ParameterizedTypeName.get(eventHandlerClass, actionEvent), "menuEvent", Modifier.PRIVATE)
-					.initializer(CodeBlock.builder()
-							  .addStatement("$L",
-						                anonHandleClass).build()).build())
+					.initializer("$L", anonHandleClass).build())
 			.addMethod(constructor)
 			.addMethod(update)
 			.addMethod(chartMouseClicked)
