@@ -16,7 +16,7 @@ public class PathDataGenerator {
 	public void generate() {
 		// TODO Auto-generated method stub
 	    File pathDataFile = new File(dir,
-	            ("simse\\animations\\PathData.java"));
+	            ("simse\\animation\\PathData.java"));
 	    
 	        if (pathDataFile.exists()) {
 	        	pathDataFile.delete(); // delete old version of file

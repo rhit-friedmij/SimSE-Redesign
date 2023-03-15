@@ -16,7 +16,7 @@ public class CharacterWalkRightGenerator {
 	public void generate() {
 		// TODO Auto-generated method stub
 	    File characterWalkRightFile = new File(dir,
-	            ("simse\\animations\\CharacterWalkRight.java"));
+	            ("simse\\animation\\CharacterWalkRight.java"));
 	    
 	        if (characterWalkRightFile.exists()) {
 	        	characterWalkRightFile.delete(); // delete old version of file

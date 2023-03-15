@@ -16,7 +16,7 @@ public class CharacterWalkLeftGenerator {
 	public void generate() {
 		// TODO Auto-generated method stub
 	    File characterWalkLeftFile = new File(dir,
-	            ("simse\\animations\\CharacterWalkLeft.java"));
+	            ("simse\\animation\\CharacterWalkLeft.java"));
 	    
 	        if (characterWalkLeftFile.exists()) {
 	        	characterWalkLeftFile.delete(); // delete old version of file

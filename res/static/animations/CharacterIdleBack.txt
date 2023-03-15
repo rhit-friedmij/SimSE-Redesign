@@ -1,4 +1,4 @@
-package simse.animations;
+package simse.animation;
 
 public class CharacterIdleBack extends SimSESprite{
 	

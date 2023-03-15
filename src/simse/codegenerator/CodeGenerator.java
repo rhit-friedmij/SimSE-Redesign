@@ -279,6 +279,16 @@ public class CodeGenerator {
 	      }
 	    }
 	    util.mkdir();
+	    
+	    File animation = new File(simse, "animation");
+	    // if directory already exists, delete all files in it:
+	    if (animation.exists() && animation.isDirectory()) {
+	    	File[] files = animation.listFiles();
+	    	for (File f : files) {
+	    		f.delete();
+	    	}
+	    }
+	    animation.mkdir();
 	
 	    // generate main SimSE component:
 	    File ssFile = new File(options.getCodeGenerationDestinationDirectory(), 

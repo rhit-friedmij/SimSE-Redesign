@@ -1,4 +1,4 @@
-package simse.animations;
+package simse.animation;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
