@@ -74,6 +74,8 @@ public class RuleDescriptionsGenerator implements CodeGeneratorConstants {
       try {
     	FileWriter writer = new FileWriter(ruleDescFile);
 		javaFile.writeTo(writer);
+		
+		writer.close();
 	} catch (IOException e) {
 		// TODO Auto-generated catch block
 		e.printStackTrace();

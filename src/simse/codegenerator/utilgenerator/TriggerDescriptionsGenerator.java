@@ -141,6 +141,8 @@ public class TriggerDescriptionsGenerator implements CodeGeneratorConstants {
       try {
       	FileWriter writer = new FileWriter(trigDescFile);
   		javaFile.writeTo(writer);
+  		
+  		writer.close();
 	} catch (IOException e) {
 		// TODO Auto-generated catch block
 		e.printStackTrace();
