@@ -149,7 +149,6 @@ public class ParticipantSelectionDialogsDriverGenerator implements CodeGenerator
 				.addField(String.class, "menuText", Modifier.PRIVATE)
 				.addField(melloPanelClass, "mello", Modifier.PRIVATE).addMethod(participantConstructor).build();
 
-
 		JavaFile javaFile = JavaFile.builder("", participantDialog).build();
 
 		try {
