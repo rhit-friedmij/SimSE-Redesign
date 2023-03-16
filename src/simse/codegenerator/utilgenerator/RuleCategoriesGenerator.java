@@ -353,7 +353,7 @@ public class RuleCategoriesGenerator implements CodeGeneratorConstants {
         	//Generate destroyer rules
         	String destroyerRulesBlock = "";
         	for(int i = 0; i < destroyerRules.size(); i++) {
-        		Rule destroyerRule = triggerRules.get(i);
+        		Rule destroyerRule = destroyerRules.get(i);
         		if(i == 0 || i == destroyerRules.size() - 1) {
         			destroyerRulesBlock += "TriggerDescriptions." + destroyerRule.getName().toUpperCase() + "_" + destroyerRule.getAnnotation();
         		} else {

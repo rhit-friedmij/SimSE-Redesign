@@ -385,7 +385,7 @@ public class RuleExecutorGenerator implements CodeGeneratorConstants {
 						
 						
 						if (input.isCancelable()) {
-							methodBody.addStatement("state.getActionStateRepository().get$LStateRepository().remove($T)"
+							methodBody.addStatement("state.getActionStateRepository().get$LStateRepository().remove($L)"
 									, uCaseActionName, oneActTypeVar);
 							methodBody.addStatement("cancel = true");
 							methodBody.addStatement("break");
@@ -423,7 +423,7 @@ public class RuleExecutorGenerator implements CodeGeneratorConstants {
 						methodBody.add("// action cancelled\n");
 						
 						if (input.isCancelable()) {
-							methodBody.addStatement("state.getActionStateRepository().get$LStateRepository().remove($T)"
+							methodBody.addStatement("state.getActionStateRepository().get$LStateRepository().remove($L)"
 									, uCaseActionName, oneActTypeVar);
 							methodBody.addStatement("cancel = true");
 							methodBody.addStatement("break");
