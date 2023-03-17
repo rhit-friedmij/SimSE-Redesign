@@ -2,12 +2,28 @@
 
 package simse.codegenerator;
 
+import simse.animations.CharacterIdleBackGenerator;
+import simse.animations.CharacterIdleFrontGenerator;
+import simse.animations.CharacterIdleLeftGenerator;
+import simse.animations.CharacterIdleRightGenerator;
+import simse.animations.CharacterWalkBackGenerator;
+import simse.animations.CharacterWalkForwardGenerator;
+import simse.animations.CharacterWalkLeftGenerator;
+import simse.animations.CharacterWalkRightGenerator;
+import simse.animations.CreatablePathGenerator;
+import simse.animations.DisplayableCharacterGenerator;
+import simse.animations.PathDataGenerator;
+import simse.animations.SimSECharacterGenerator;
+import simse.animations.SimSESpriteGenerator;
+import simse.animations.SpriteAnimationGenerator;
 import simse.codegenerator.enginegenerator.EngineGenerator;
 import simse.codegenerator.explanatorytoolgenerator.ExplanatoryToolGenerator;
+import simse.codegenerator.explanatorytoolgenerator.RuleTypeGenerator;
 import simse.codegenerator.guigenerator.GUIGenerator;
 import simse.codegenerator.logicgenerator.LogicGenerator;
 import simse.codegenerator.stategenerator.StateGenerator;
 import simse.codegenerator.utilgenerator.IDGeneratorGenerator;
+import simse.codegenerator.utilgenerator.RuleCategoriesGenerator;
 import simse.modelbuilder.ModelOptions;
 import simse.modelbuilder.objectbuilder.DefinedObjectTypes;
 import simse.modelbuilder.actionbuilder.DefinedActionTypes;
@@ -56,6 +72,23 @@ public class CodeGenerator {
   private ExplanatoryToolGenerator expToolGen; // generates the explanatory 
   																						 // tool
   private IDGeneratorGenerator idGen; // generates the IDGenerator
+  private RuleCategoriesGenerator ruleCateGen;
+  private RuleTypeGenerator ruleTypeGen;
+  
+  private CharacterIdleBackGenerator characterIdleBackGen;
+  private CharacterIdleFrontGenerator characterIdleFrontGen;
+  private CharacterIdleLeftGenerator characterIdleLeftGen;
+  private CharacterIdleRightGenerator characterIdleRightGen;
+  private CharacterWalkForwardGenerator characterWalkForwardGen;
+  private CharacterWalkLeftGenerator characterWalkLeftGen;
+  private CharacterWalkRightGenerator characterWalkRightGen;
+  private CharacterWalkBackGenerator characterWalkBackGen;
+  private CreatablePathGenerator creatablePathGen;
+  private DisplayableCharacterGenerator displayableCharacterGen;
+  private PathDataGenerator pathDataGen;
+  private SimSECharacterGenerator simSECharacterGen;
+  private SimSESpriteGenerator simSESpriteGen;
+  private SpriteAnimationGenerator spriteAnimGen;
 
   public CodeGenerator(ModelOptions options, DefinedObjectTypes objTypes, 
       CreatedObjects objs, DefinedActionTypes actTypes, 
@@ -71,6 +104,22 @@ public class CodeGenerator {
     expToolGen = new ExplanatoryToolGenerator(options, objTypes, objs, 
         actTypes);
     idGen = new IDGeneratorGenerator(options.getCodeGenerationDestinationDirectory());
+    ruleCateGen = new RuleCategoriesGenerator(options.getCodeGenerationDestinationDirectory(), actTypes);
+    ruleTypeGen = new RuleTypeGenerator(options.getCodeGenerationDestinationDirectory());
+    characterIdleBackGen = new CharacterIdleBackGenerator(options.getCodeGenerationDestinationDirectory());
+    characterIdleFrontGen = new CharacterIdleFrontGenerator(options.getCodeGenerationDestinationDirectory());
+    characterIdleLeftGen = new CharacterIdleLeftGenerator(options.getCodeGenerationDestinationDirectory());
+    characterIdleRightGen = new CharacterIdleRightGenerator(options.getCodeGenerationDestinationDirectory());
+    characterWalkForwardGen = new CharacterWalkForwardGenerator(options.getCodeGenerationDestinationDirectory());
+    characterWalkLeftGen = new CharacterWalkLeftGenerator(options.getCodeGenerationDestinationDirectory());
+    characterWalkRightGen = new CharacterWalkRightGenerator(options.getCodeGenerationDestinationDirectory());
+    characterWalkBackGen = new CharacterWalkBackGenerator(options.getCodeGenerationDestinationDirectory());
+    creatablePathGen = new CreatablePathGenerator(options.getCodeGenerationDestinationDirectory());
+    displayableCharacterGen = new DisplayableCharacterGenerator(options.getCodeGenerationDestinationDirectory());
+    pathDataGen = new PathDataGenerator(options.getCodeGenerationDestinationDirectory());
+    simSECharacterGen = new SimSECharacterGenerator(options.getCodeGenerationDestinationDirectory());
+    simSESpriteGen = new SimSESpriteGenerator(options.getCodeGenerationDestinationDirectory());
+    spriteAnimGen = new SpriteAnimationGenerator(options.getCodeGenerationDestinationDirectory());
   }
 
   public void setAllowHireFire(boolean b) {
@@ -380,6 +429,22 @@ public class CodeGenerator {
 	    boolean guiGenSuccess = guiGen.generate();
 	    expToolGen.generate();
 	    idGen.generate();
+	    ruleCateGen.generate();
+	    ruleTypeGen.generate();
+	    characterIdleBackGen.generate();
+	    characterIdleFrontGen.generate();
+	    characterIdleLeftGen.generate();
+	    characterIdleRightGen.generate();
+	    characterWalkForwardGen.generate();
+	    characterWalkLeftGen.generate();
+	    characterWalkRightGen.generate();
+	    characterWalkBackGen.generate();
+	    creatablePathGen.generate();
+	    displayableCharacterGen.generate();
+	    pathDataGen.generate();
+	    simSECharacterGen.generate();
+	    simSESpriteGen.generate();
+	    spriteAnimGen.generate();
 	    if (logicGenSuccess && guiGenSuccess) {
 	      JOptionPane.showMessageDialog(null, "Simulation generated!",
 	          "Generation Successful", JOptionPane.INFORMATION_MESSAGE);

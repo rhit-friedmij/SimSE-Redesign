@@ -22,13 +22,17 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Vector;
 
+import javax.lang.model.element.Modifier;
 import javax.swing.JOptionPane;
 
 import com.squareup.javapoet.ClassName;
+import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.TypeSpec;
+
+import jdk.javadoc.internal.doclets.toolkit.builders.FieldBuilder;
 
 public class ActionInfoPanelGenerator implements CodeGeneratorConstants {
   private File directory; // directory to save generated code into
@@ -62,6 +66,7 @@ public class ActionInfoPanelGenerator implements CodeGeneratorConstants {
       ClassName gridPane = ClassName.get("javafx.scene.layout", "GridPane");
       ClassName listView = ClassName.get("javafx.scene.control", "ListView");
       ClassName selectionMode = ClassName.get("javafx.scene.control", "SelectionMode");
+      ClassName string = ClassName.get("java.lang", "String");
       
       String initalizeActionDescriptionActions = "";
       
@@ -87,6 +92,7 @@ public class ActionInfoPanelGenerator implements CodeGeneratorConstants {
 
       
       MethodSpec initializeActionDescription = MethodSpec.methodBuilder("initializeActionDescription")
+    		  .addModifiers(Modifier.PRIVATE)
     		  .addStatement("String text = \"\"")
     		  .addCode(initalizeActionDescriptionActions)
     		  .addStatement("actionDescriptionArea.setText(text)")
@@ -119,6 +125,7 @@ public class ActionInfoPanelGenerator implements CodeGeneratorConstants {
       }
       
       MethodSpec initializeDestroyerList = MethodSpec.methodBuilder("initializeDestroyerList")
+    		  .addModifiers(Modifier.PRIVATE)
     		  .addStatement("String actionName = action.getActionName()")
     		  .addCode(initalizeDestroyerListBlock)
     		  .build();
@@ -139,7 +146,7 @@ public class ActionInfoPanelGenerator implements CodeGeneratorConstants {
             writeElse = true;
           }
           initalizeTriggerListBlock += "if (action instanceof " + uCaseName + "Action) {\n";
-          initalizeTriggerListBlock += "\"String [] list = {\"\n";
+          initalizeTriggerListBlock += "String [] list = {\n";
           Vector<ActionTypeTrigger> triggers = act.getAllTriggers();
           for (ActionTypeTrigger trigger : triggers) {
         	  initalizeTriggerListBlock += "\"" + trigger.getName() + "\",\n";
@@ -151,6 +158,7 @@ public class ActionInfoPanelGenerator implements CodeGeneratorConstants {
       }
       
       MethodSpec initializeTriggerList = MethodSpec.methodBuilder("initializeTriggerList")
+    		  .addModifiers(Modifier.PRIVATE)
     		  .addStatement("String actionName = action.getActionName()")
     		  .addCode(initalizeTriggerListBlock)
     		  .build();
@@ -246,6 +254,7 @@ public class ActionInfoPanelGenerator implements CodeGeneratorConstants {
       }
       
       MethodSpec createParticipantsTable = MethodSpec.methodBuilder("createParticipantsTable")
+    		  .addModifiers(Modifier.PRIVATE)
     		  .returns(ParameterizedTypeName.get(tableView, participant))
     		  .addStatement("TableView<Participant> newView = new TableView<Participant>()")
     		  .addStatement("TableColumn<Participant, String> name = new TableColumn<>(\"Participant Name\")")
@@ -260,6 +269,7 @@ public class ActionInfoPanelGenerator implements CodeGeneratorConstants {
     		  .build();
       
       MethodSpec constructor = MethodSpec.constructorBuilder()
+    		  .addModifiers(Modifier.PUBLIC)
     		  .addParameter(action, "action")
     		  .addStatement("this.action = action")
     		  .addStatement("$T mainPane = new $T()", vBox, vBox)
@@ -394,6 +404,7 @@ public class ActionInfoPanelGenerator implements CodeGeneratorConstants {
       }
       
       MethodSpec refreshDescriptionArea = MethodSpec.methodBuilder("refreshDescriptionArea")
+    		  .addModifiers(Modifier.PRIVATE)
     		  .addParameter(int.class, "trigOrDest")
     		  .addStatement("$T name = trigOrDest == TRIGGER ? ($T) triggerList.getSelectionModel().getSelectedItem() : ($T) destroyerList.getSelectionModel().getSelectedItem()", String.class, String.class, String.class)
     		  .beginControlFlow("if (name != null)")
@@ -404,6 +415,7 @@ public class ActionInfoPanelGenerator implements CodeGeneratorConstants {
     		  .build();
       
       MethodSpec handle = MethodSpec.methodBuilder("handle")
+    		  .addModifiers(Modifier.PUBLIC)
     		  .addParameter(mouseEvent, "event")
     		  .beginControlFlow("if (event.getSource() == triggerList && triggerList.getSelectionModel().getSelectedIndex() >= 0)")
     		  .addStatement("$N(TRIGGER)", refreshDescriptionArea)
@@ -416,7 +428,17 @@ public class ActionInfoPanelGenerator implements CodeGeneratorConstants {
     		  .build();
       
     	TypeSpec actionInfoPanel = TypeSpec.classBuilder("ActionInfoPanel")
+    			.addModifiers(Modifier.PUBLIC)
+    			.addField(action, "action")
+    			.addField(ParameterizedTypeName.get(tableView, participant), "table", Modifier.PRIVATE)
+    			.addField(ParameterizedTypeName.get(listView, string), "triggerList", Modifier.PRIVATE)
+    			.addField(ParameterizedTypeName.get(listView, string), "destroyerList", Modifier.PRIVATE)
+    			.addField(textArea, "descriptionArea", Modifier.PRIVATE)
+    			.addField(textArea, "actionDescriptionArea", Modifier.PRIVATE)
+    			.addField(FieldSpec.builder(int.class, "TRIGGER", Modifier.PRIVATE, Modifier.FINAL).initializer("0").build())
+    			.addField(FieldSpec.builder(int.class, "DESTROYER", Modifier.PRIVATE, Modifier.FINAL).initializer("0").build())
     			.superclass(pane)
+    			.addSuperinterface(ParameterizedTypeName.get(eventHandler, mouseEvent))
     			.addMethod(constructor)
     			.addMethod(initializeActionDescription)
     			.addMethod(initializeTriggerList)

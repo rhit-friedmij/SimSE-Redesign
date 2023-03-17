@@ -28,7 +28,7 @@ public class RuleTypeGenerator implements CodeGeneratorConstants {
 
   public void generate() {
     File ruleTypeFile = new File(directory,
-        ("simse\\explanatorytool\\RuleType.java"));
+        ("simse\\util\\RuleType.java"));
     if (ruleTypeFile.exists()) {
     	ruleTypeFile.delete(); // delete old version of file
     }
@@ -44,11 +44,12 @@ public class RuleTypeGenerator implements CodeGeneratorConstants {
     		  .addEnumConstant("PEOPLE")
     		  .build();
       
-      JavaFile javaFile = JavaFile.builder("simse.explantorytool", ruleType)
+      JavaFile javaFile = JavaFile.builder("simse.util", ruleType)
     		    .build();
 
       try {
-  		javaFile.writeTo(ruleTypeFile);
+  		FileWriter writer = new FileWriter(ruleTypeFile);
+  		javaFile.writeTo(writer);
   	} catch (IOException e) {
   		// TODO Auto-generated catch block
   		e.printStackTrace();

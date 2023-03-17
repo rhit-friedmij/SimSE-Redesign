@@ -13,7 +13,7 @@ public class SpriteAnimationGenerator {
 		this.dir = dir;
 	}
 
-	private void generate() {
+	public void generate() {
 		// TODO Auto-generated method stub
 	    File spriteAnimationFile = new File(dir,
 	            ("animations\\SpriteAnimation.java"));
@@ -24,7 +24,7 @@ public class SpriteAnimationGenerator {
 		
 		try {
 	        
-		FileReader reader = new FileReader("C:\\Users\\localmgr\\git\\simse-redesign\\simse-redesign\\res\\static\\animations\\SpriteAnimation.txt");
+		FileReader reader = new FileReader("res\\static\\animations\\SpriteAnimation.txt");
 		FileWriter writer = new FileWriter(spriteAnimationFile);
 	
 		String fileContents = "";

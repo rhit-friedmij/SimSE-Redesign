@@ -5,15 +5,15 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 
-public class CharacterWalForwardGenerator {
+public class CharacterWalkForwardGenerator {
 
 	private File dir;
 	
-	public CharacterWalForwardGenerator(File dir) {
+	public CharacterWalkForwardGenerator(File dir) {
 		this.dir = dir;
 	}
 
-	private void generate() {
+	public void generate() {
 		// TODO Auto-generated method stub
 	    File characterWalkForwardFile = new File(dir,
 	            ("animations\\CharacterWalkForward.java"));
@@ -24,7 +24,7 @@ public class CharacterWalForwardGenerator {
 		
 		try { 
 			
-		FileReader reader = new FileReader("C:\\Users\\localmgr\\git\\simse-redesign\\simse-redesign\\res\\static\\animations\\CharacterWalkForward.txt");
+		FileReader reader = new FileReader("res\\static\\animations\\CharacterWalkForward.txt");
 		FileWriter writer = new FileWriter(characterWalkForwardFile);
 	
 		String fileContents = "";

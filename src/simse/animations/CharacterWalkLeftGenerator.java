@@ -13,7 +13,7 @@ public class CharacterWalkLeftGenerator {
 		this.dir = dir;
 	}
 
-	private void generate() {
+	public void generate() {
 		// TODO Auto-generated method stub
 	    File characterWalkLeftFile = new File(dir,
 	            ("animations\\CharacterWalkLeft.java"));
@@ -24,7 +24,7 @@ public class CharacterWalkLeftGenerator {
 		
 	    try {
 		
-		FileReader reader = new FileReader("C:\\Users\\localmgr\\git\\simse-redesign\\simse-redesign\\res\\static\\animations\\CharacterWalkLeft.txt");
+		FileReader reader = new FileReader("res\\static\\animations\\CharacterWalkLeft.txt");
 		FileWriter writer = new FileWriter(characterWalkLeftFile);
 	
 		String fileContents = "";

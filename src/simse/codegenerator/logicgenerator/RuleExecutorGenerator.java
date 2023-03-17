@@ -385,7 +385,7 @@ public class RuleExecutorGenerator implements CodeGeneratorConstants {
 						
 						
 						if (input.isCancelable()) {
-							methodBody.addStatement("state.getActionStateRepository().get$LStateRepository().remove($T)"
+							methodBody.addStatement("state.getActionStateRepository().get$LStateRepository().remove($L)"
 									, uCaseActionName, oneActTypeVar);
 							methodBody.addStatement("cancel = true");
 							methodBody.addStatement("break");
@@ -423,7 +423,7 @@ public class RuleExecutorGenerator implements CodeGeneratorConstants {
 						methodBody.add("// action cancelled\n");
 						
 						if (input.isCancelable()) {
-							methodBody.addStatement("state.getActionStateRepository().get$LStateRepository().remove($T)"
+							methodBody.addStatement("state.getActionStateRepository().get$LStateRepository().remove($L)"
 									, uCaseActionName, oneActTypeVar);
 							methodBody.addStatement("cancel = true");
 							methodBody.addStatement("break");
@@ -523,11 +523,13 @@ public class RuleExecutorGenerator implements CodeGeneratorConstants {
 						Vector<ActionType> allActTypes = actTypes.getAllActionTypes();
 						for (int m = 0; m < allActTypes.size(); m++) {
 							ActionType tempActType = allActTypes.elementAt(m);
+							ClassName actTypeClass = ClassName.get("simse.adts.actions", tempActType.getName() + "Action");
+							//TODO: Probably wrong
 							if (m == 0) { 
 								// on first element
-								methodBody.beginControlFlow("if (tempAct instanceof $T)", onePartTypeVar, actClass);
+								methodBody.beginControlFlow("if (tempAct instanceof $T)", actTypeClass);
 							} else {
-								methodBody.nextControlFlow("else if (tempAct instanceof $T)", onePartTypeVar, actClass);
+								methodBody.nextControlFlow("else if (tempAct instanceof $T)", actTypeClass);
 							}
 							if (tempActType.getName().equals(actType.getName())) {
 								methodBody.beginControlFlow("if(tempAct.equals($L) == false)", oneActTypeVar);

@@ -45,7 +45,7 @@ public class RuleInfoPanelGenerator implements CodeGeneratorConstants {
       ClassName eventHandler = ClassName.get("javafx.event", "EventHandler");
       ClassName pos = ClassName.get("javafx.geometry", "Pos");
       ClassName listView = ClassName.get("javafx.scene.control", "ListView");
-      ClassName string = ClassName.get("java.lang.Object", "String");
+      ClassName string = ClassName.get("java.lang", "String");
       ClassName scrollPane = ClassName.get("javafx.scene.control", "ScrollPane");
       ClassName scrollBarPolicy = ClassName.get("javafx.scene.control.ScrollPane", "ScrollBarPolicy");
       ClassName selectionMode = ClassName.get("javafx.scene.control", "SelectionMode");
@@ -213,6 +213,7 @@ public class RuleInfoPanelGenerator implements CodeGeneratorConstants {
     }
   	
   	MethodSpec initalizeRuleList = MethodSpec.methodBuilder("initalizeRuleLists")
+  			.addModifiers(Modifier.PRIVATE)
   			.addCode(initalizeRuleListCodeBlock)
   			.build();
   			
@@ -221,6 +222,7 @@ public class RuleInfoPanelGenerator implements CodeGeneratorConstants {
       // "valueChanged" method:
       
       MethodSpec handle = MethodSpec.methodBuilder("handle")
+    		  .addModifiers(Modifier.PUBLIC)
     		  .addParameter(mouseEvent, "event")
     		  .beginControlFlow("if ((event.getSource() == triggerRuleList && !triggerRuleList.getSelectionModel().isEmpty()))")
     		  .addStatement("destroyerRuleList.getSelectionModel().clearSelection()")
@@ -279,6 +281,7 @@ public class RuleInfoPanelGenerator implements CodeGeneratorConstants {
         }
       }
       MethodSpec refreshDescriptionArea = MethodSpec.methodBuilder("refreshDescriptionArea")
+    		  .addModifiers(Modifier.PRIVATE)
     		  .addStatement("$T name = null", string)
     		  .beginControlFlow("if (!triggerRuleList.getSelectionModel().isEmpty())")
     		  .addStatement("name = ($T) triggerRuleList.getSelectionModel().getSelectedItem()", string)
@@ -297,7 +300,8 @@ public class RuleInfoPanelGenerator implements CodeGeneratorConstants {
     		  .addStatement("descriptionArea.setCaretPosition(0)")
     		  .build();
       
-	  TypeSpec actionInfoWindow = TypeSpec.classBuilder("ActionInfoWindow")
+	  TypeSpec ruleInfoPanel = TypeSpec.classBuilder("RuleInfoPanel")
+			  .addModifiers(Modifier.PUBLIC)
 			  .superclass(stage)
 			  .addField(actionClass, "action", Modifier.PRIVATE)
 			  .addField(ParameterizedTypeName.get(listView, string), "triggerRuleList", Modifier.PRIVATE)
@@ -312,7 +316,7 @@ public class RuleInfoPanelGenerator implements CodeGeneratorConstants {
       
  
       
-      JavaFile javaFile = JavaFile.builder("simse.explanatorytool", actionInfoWindow)
+      JavaFile javaFile = JavaFile.builder("simse.explanatorytool", ruleInfoPanel)
   		    .build();
 
     try {

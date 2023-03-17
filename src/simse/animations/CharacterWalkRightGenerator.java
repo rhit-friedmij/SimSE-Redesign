@@ -5,15 +5,15 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 
-public class CharacteWalkRightGenerator {
+public class CharacterWalkRightGenerator {
 
 	private File dir;
 	
-	public CharacteWalkRightGenerator(File dir) {
+	public CharacterWalkRightGenerator(File dir) {
 		this.dir = dir;
 	}
 
-	private void generate() {
+	public void generate() {
 		// TODO Auto-generated method stub
 	    File characterWalkRightFile = new File(dir,
 	            ("animations\\CharacterWalkRight.java"));
@@ -24,7 +24,7 @@ public class CharacteWalkRightGenerator {
 		
 		try {
 	        
-		FileReader reader = new FileReader("C:\\Users\\localmgr\\git\\simse-redesign\\simse-redesign\\res\\static\\animations\\CharacterWalkRight.txt");
+		FileReader reader = new FileReader("res\\static\\animations\\CharacterWalkRight.txt");
 		FileWriter writer = new FileWriter(characterWalkRightFile);
 	
 		String fileContents = "";

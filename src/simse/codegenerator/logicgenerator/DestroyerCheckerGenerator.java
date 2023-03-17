@@ -181,7 +181,7 @@ public class DestroyerCheckerGenerator implements CodeGeneratorConstants {
 
 				// game-ending:
 				if (tempDest.isGameEndingDestroyer()) {
-					conditions.add("// stop game and give score:");
+					conditions.add("// stop game and give score:\n");
 					conditions.addStatement("$T t111 = (" + actTypeName + ")tempAct", actName);
 					// find the scoring attribute:
 					ActionTypeParticipantDestroyer scoringPartDest = null;
@@ -319,7 +319,7 @@ public class DestroyerCheckerGenerator implements CodeGeneratorConstants {
 					conditions.endControlFlow(); // for loop
 				}
 				if (tempDest instanceof RandomActionTypeDestroyer) {
-					conditions.beginControlFlow("if ((destroy) && ((ranNumGen.nextDouble() * 100.0) < \"\r\n" + 
+					conditions.beginControlFlow("if ((destroy) && ((ranNumGen.nextDouble() * 100.0) < " + 
 							+ ((RandomActionTypeDestroyer) (tempDest)).getFrequency() + "))");
 				} else { 
 					// user, action or autonomous
@@ -367,7 +367,7 @@ public class DestroyerCheckerGenerator implements CodeGeneratorConstants {
 
 					// game-ending:
 					if (tempDest.isGameEndingDestroyer()) {
-						conditions.add("// stop game and give score:");
+						conditions.add("// stop game and give score:\n");
 						conditions.addStatement("$T t111 = (" + actTypeName + ")tempAct", actName);
 						
 						// find the scoring attribute:

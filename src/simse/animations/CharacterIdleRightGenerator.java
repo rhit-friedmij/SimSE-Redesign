@@ -13,7 +13,7 @@ public class CharacterIdleRightGenerator {
 		this.dir = dir;
 	}
 
-	private void generate() {
+	public void generate() {
 		// TODO Auto-generated method stub
 	    File characterIdleRightFile = new File(dir,
 	            ("animations\\CharacterIdleRight.java"));
@@ -24,7 +24,7 @@ public class CharacterIdleRightGenerator {
 		
 	    try {
 		
-		FileReader reader = new FileReader("C:\\Users\\localmgr\\git\\simse-redesign\\simse-redesign\\res\\static\\animations\\CharacterIdleRight.txt");
+		FileReader reader = new FileReader("res\\static\\animations\\CharacterIdleRight.txt");
 		FileWriter writer = new FileWriter(characterIdleRightFile);
 	
 		String fileContents = "";

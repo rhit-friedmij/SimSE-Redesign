@@ -13,7 +13,7 @@ public class CreatablePathGenerator {
 		this.dir = dir;
 	}
 
-	private void generate() {
+	public void generate() {
 		// TODO Auto-generated method stub
 	    File creatablePathFile = new File(dir,
 	            ("animations\\CreatablePath.java"));
@@ -24,7 +24,7 @@ public class CreatablePathGenerator {
 		
 	    try {
 		
-		FileReader reader = new FileReader("C:\\Users\\localmgr\\git\\simse-redesign\\simse-redesign\\res\\static\\animations\\CreatablePath.txt");
+		FileReader reader = new FileReader("res\\static\\animations\\CreatablePath.txt");
 		FileWriter writer = new FileWriter(creatablePathFile);
 	
 		String fileContents = "";

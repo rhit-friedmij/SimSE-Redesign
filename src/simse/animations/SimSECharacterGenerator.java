@@ -13,7 +13,7 @@ public class SimSECharacterGenerator {
 		this.dir = dir;
 	}
 
-	private void generate() {
+	public void generate() {
 		// TODO Auto-generated method stub
 	    File simSECharacterFile = new File(dir,
 	            ("animations\\SimSECharacter.java"));
@@ -24,7 +24,7 @@ public class SimSECharacterGenerator {
 		
 		try {
 	        
-		FileReader reader = new FileReader("C:\\Users\\localmgr\\git\\simse-redesign\\simse-redesign\\res\\static\\animations\\SimSECharacter.txt");
+		FileReader reader = new FileReader("res\\static\\animations\\SimSECharacter.txt");
 		FileWriter writer = new FileWriter(simSECharacterFile);
 	
 		String fileContents = "";
