@@ -232,7 +232,7 @@ public class ObjectGraphPanesGenerator {
 		    		  .addModifiers(Modifier.PUBLIC)
 		    		  .returns(void.class)
 		    		  .addStatement("$N = $N.getLog()", "log", "gui")
-		    		  .beginControlFlow("if ($N = $N.getLog())", "log", "gui")
+		    		  .beginControlFlow("if ($N != null)", "log")
 		    		  .addStatement("this.$N = new $T(title, log, objTypeType, objType, keyAttVal, attributes, false, $N)", "objGraph", objectgraph, "branch")
 		    		  .addStatement("$N = $N.getChart()", "chart", "objGraph")
 		    		  .addStatement("$N.setChart($N)", "chartViewer", "chart")
@@ -296,7 +296,7 @@ public class ObjectGraphPanesGenerator {
 		    				  .addStatement("td.setContentText(\"Please name this new game:\")")
 		    				  .addStatement("td.setHeaderText(null)")
 		    				  .addStatement("Optional<String> result = td.showAndWait()")
-		    				  .addStatement("result.ifPresent(name -> {this.newBranchName = name})")
+		    				  .addStatement("result.ifPresent(name -> {this.newBranchName = name;})")
 		    				  .beginControlFlow("if (newBranchName != null)")
 		    				  .addStatement("$T temp$T = (State) $N.get($N).clone()", state, state, "log", "lastRightClickedX")
 		    				  .addStatement("$T temp$T = new Logger(tempState, new ArrayList<State>($N.subList(0, $N)))", logger, logger, "log", "lastRightClickedX")
@@ -369,40 +369,40 @@ public class ObjectGraphPanesGenerator {
 		        for (int i = 0; i < objectTypes.size(); i++) {
 		          SimSEObjectType objType = objectTypes.get(i);
 		          if (i > 0) {
-		            al.concat("else ");
+		        	  al = al.concat("else ");
 		          }
-		          al.concat("if (selectedObject.startsWith(\""
+		          al = al.concat("if (selectedObject.startsWith(\""
 		              + CodeGeneratorUtils.getUpperCaseLeading(objType.getName()) + " "
 		              + SimSEObjectTypeTypes.getText(objType.getType())
 		              + "\")) {");
-		          al.concat("\n");
-		          al.concat("String[] currAttributes = {");
-		          al.concat("\n");
+		          al = al.concat("\n");
+		          al = al.concat("String[] currAttributes = {");
+		          al = al.concat("\n");
 		          Vector<Attribute> attributes = objType.getAllAttributes();
 		          int numVisibleNumericalAtts = 0;
 		          for (int j = 0; j < attributes.size(); j++) {
 		            Attribute att = attributes.get(j);
 		            if ((att instanceof NumericalAttribute)
 		                && ((att.isVisible()) || (att.isVisibleOnCompletion()))) {
-		              al.concat("\"" + att.getName() + "\",");
-		              al.concat("\n");
+		            	al = al.concat("\"" + att.getName() + "\",");
+		            	al = al.concat("\n");
 		              numVisibleNumericalAtts++;
 		            }
 		          }
 		          if (numVisibleNumericalAtts == 0) {
-		            al.concat("\"(No numerical attributes)\"");
-		            al.concat("\n");
+		        	  al = al.concat("\"(No numerical attributes)\"");
+		        	  al = al.concat("\n");
 		          }
-		          al.concat("};");
-		          al.concat("\n");
-		          al.concat("this.attributes = currAttributes");
-		          al.concat("\n");
-		          al.concat("}");
-		          al.concat("\n");
+		          al = al.concat("};");
+		          al = al.concat("\n");
+		          al = al.concat("this.attributes = currAttributes;");
+		          al = al.concat("\n");
+		          al = al.concat("}");
+		          al = al.concat("\n");
 		        }
-		        al.concat("}");
-		        al.concat("\n");
-		        al.concat("\n");
+		        al = al.concat("}");
+		        al = al.concat("\n");
+		        al = al.concat("\n");
 		  
 		  return al;
 	  }

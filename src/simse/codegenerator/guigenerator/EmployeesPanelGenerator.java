@@ -15,6 +15,7 @@ import simse.codegenerator.CodeGenerator;
 import simse.codegenerator.CodeGeneratorConstants;
 import simse.codegenerator.CodeGeneratorUtils;
 
+import java.util.ArrayList;
 import java.util.Vector;
 import java.io.File;
 import java.io.FileWriter;
@@ -38,12 +39,18 @@ public class EmployeesPanelGenerator implements CodeGeneratorConstants {
   private DefinedActionTypes actTypes; // holds all of the defined action types
                                        // from an ssa file
   private File directory; // directory to save generated code into
+  
+  private ArrayList<String> impTypes;
+  
+  private ArrayList<String> impActions;
 
   public EmployeesPanelGenerator(DefinedObjectTypes objTypes, 
   		DefinedActionTypes actTypes, File directory) {
     this.objTypes = objTypes;
     this.actTypes = actTypes;
     this.directory = directory;
+    this.impTypes = new ArrayList<>();
+    this.impActions = new ArrayList<>();
   }
 
   public void generate() {
@@ -358,7 +365,7 @@ public class EmployeesPanelGenerator implements CodeGeneratorConstants {
     		  .addAnnotation(Override.class)
     		  .addModifiers(Modifier.PUBLIC)
     		  .returns(panels)
-    		  .addStatement("returns $T.EMPLOYEES", panels)
+    		  .addStatement("return $T.EMPLOYEES", panels)
     		  .build();
       
       TypeSpec anon = TypeSpec.anonymousClassBuilder("")
@@ -404,10 +411,22 @@ public class EmployeesPanelGenerator implements CodeGeneratorConstants {
     		  .addMethod(getPanelType)
     		  .build();
       
-      JavaFile file = JavaFile.builder("simse.gui", actionPanel)
+      JavaFile file = JavaFile.builder("", actionPanel)
     		  .build();
       
-      file.writeTo(writer);
+      String fileString = "package simse.gui;\n\nimport javafx.scene.text.TextAlignment;\n";
+      for (String type : impTypes) {
+			fileString = fileString + "import simse.adts.objects." + type + ";\n";
+		}
+      
+      for (String actionI : impActions) {
+    	  fileString = fileString + "import simse.adts.actions." + actionI +"Action;\n";
+      }
+		
+		fileString = fileString + file.toString();
+		
+		
+		writer.write(fileString);
       
       writer.close();
     } catch (IOException e) {
@@ -425,28 +444,31 @@ public class EmployeesPanelGenerator implements CodeGeneratorConstants {
 	          if ((tempActType.isVisibleInSimulation())
 	              && (tempActType.getDescription() != null)
 	              && (tempActType.getDescription().length() > 0)) {
+	        	if (!this.impActions.contains(CodeGeneratorUtils.getUpperCaseLeading(tempActType.getName()))) {
+	        		this.impActions.add(CodeGeneratorUtils.getUpperCaseLeading(tempActType.getName()));
+	        	}
 	            if (putElse) {
-	              actions.concat("else ");
+	            	actions = actions.concat("else ");
 	            } else {
 	              putElse = true;
 	            }
-	            actions.concat("if(tempAct instanceof "
+	            actions = actions.concat("if(tempAct instanceof "
 	                + CodeGeneratorUtils.getUpperCaseLeading(tempActType.getName()) + 
 	                "Action)");
-	            actions.concat("\n");
-	            actions.concat("{");
-	            actions.concat("\n");
-	            actions.concat("Label tempLabel = new Label(\""
+	            actions = actions.concat("\n");
+	            actions = actions.concat("{");
+	            actions = actions.concat("\n");
+	            actions = actions.concat("Label tempLabel = new Label(\""
 	                + tempActType.getDescription() + "\");");
-	            actions.concat("\n");
-	            actions.concat("tempLabel.setFont(new Font(tempLabel.getFont().getName(), 10));");
-	            actions.concat("\n");
-	            actions.concat("tempLabel.setTextFill(Color.WHITE);");
-	            actions.concat("\n");
-	            actions.concat("actsPanel.getChildren.add(tempLabel);");
-	            actions.concat("\n");
-	            actions.concat("}");
-	            actions.concat("\n");
+	            actions = actions.concat("\n");
+	            actions = actions.concat("tempLabel.setFont(new Font(tempLabel.getFont().getName(), 10));");
+	            actions = actions.concat("\n");
+	            actions = actions.concat("tempLabel.setTextFill(Color.WHITE);");
+	            actions = actions.concat("\n");
+	            actions = actions.concat("actsPanel.getChildren().add(tempLabel);");
+	            actions = actions.concat("\n");
+	            actions = actions.concat("}");
+	            actions = actions.concat("\n");
 	          }
 	        }
 	       return actions;
@@ -456,8 +478,8 @@ public class EmployeesPanelGenerator implements CodeGeneratorConstants {
   private String continueIfHire() {
 	  String hire = "";
 	  if (CodeGenerator.allowHireFire) {
-		  hire.concat("if (!emp.getHired())\n");
-		  hire.concat("continue;\n");
+		  hire = hire.concat("if (!emp.getHired())\n");
+		  hire = hire.concat("continue;\n");
 	      }
 	  return hire;
   }
@@ -468,8 +490,11 @@ public class EmployeesPanelGenerator implements CodeGeneratorConstants {
 	            .getAllObjectTypesOfType(SimSEObjectTypeTypes.EMPLOYEE);
 	        for (int i = 0; i < empTypes.size(); i++) {
 	          SimSEObjectType tempType = empTypes.elementAt(i);
+	          if (!this.impTypes.contains(CodeGeneratorUtils.getUpperCaseLeading(tempType.getName()))) {
+	        	  this.impTypes.add(CodeGeneratorUtils.getUpperCaseLeading(tempType.getName()));
+	          }
 	          if (i > 0) {
-	            emps.concat("else ");
+	        	  emps = emps.concat("else ");
 	          }
 
 	          Vector<Attribute> v = tempType.getAllAttributes();
@@ -479,47 +504,47 @@ public class EmployeesPanelGenerator implements CodeGeneratorConstants {
 	              keyAtt = att;
 	          }
 
-	          emps.concat("if(emp instanceof "
+	          emps = emps.concat("if(emp instanceof "
 	              + CodeGeneratorUtils.getUpperCaseLeading(tempType.getName()) + ")");
-	          emps.concat("\n");
-	          emps.concat("{");
-	          emps.concat("\n");
-	          emps.concat(CodeGeneratorUtils.getUpperCaseLeading(tempType.getName()) 
+	          emps = emps.concat("\n");
+	          emps = emps.concat("{");
+	          emps = emps.concat("\n");
+	          emps = emps.concat(CodeGeneratorUtils.getUpperCaseLeading(tempType.getName()) 
 	          		+ " e = (" + 
 	          		CodeGeneratorUtils.getUpperCaseLeading(tempType.getName()) + 
 	          		")emp;");
-	          emps.concat("\n");
-	          emps.concat("if(empsToKeyLabels.get(e) == null)");
-	          emps.concat("\n");
-	          emps.concat("{");
-	          emps.concat("\n");
-	          emps.concat("Label temp = new Label(\"\" + e.get"
+	          emps = emps.concat("\n");
+	          emps = emps.concat("if(empsToKeyLabels.get(e) == null)");
+	          emps = emps.concat("\n");
+	          emps = emps.concat("{");
+	          emps = emps.concat("\n");
+	          emps = emps.concat("Label temp = new Label(\"\" + e.get"
 	              + CodeGeneratorUtils.getUpperCaseLeading(keyAtt.getName()) + 
 	              "());");
-	          emps.concat("\n");
-	          emps.concat("temp.setTextFill(Color.BLACK);");
-	          emps.concat("\n");
-	          emps.concat("temp.setAlignment(Pos.BASELINE_LEFT);");
-	          emps.concat("\n");
-	          emps.concat("temp.setTextAlignment(TextAlignment.LEFT)");
-	          emps.concat("\n");
-	          emps.concat("empsToKeyLabels.put(e, temp);");
-	          emps.concat("\n");
-	          emps.concat("}");
-	          emps.concat("\n");
-	          emps.concat("Label keyLabel = empsToKeyLabels.get(e);");
-	          emps.concat("\n");
-	          emps.concat("keyLabel.setId(\"EmployeeName\");");
-	          emps.concat("\n");
-	          emps.concat("if(!picPanel.getChildren().contains(keyLabel))");
-	          emps.concat("{");
-	          emps.concat("\n");
-	          emps.concat("picPanel.getChildren().add(keyLabel);");
-	          emps.concat("\n");
-	          emps.concat("}");
-	          emps.concat("\n");
-	          emps.concat("}");
-	          emps.concat("\n");
+	          emps = emps.concat("\n");
+	          emps = emps.concat("temp.setTextFill(Color.BLACK);");
+	          emps = emps.concat("\n");
+	          emps = emps.concat("temp.setAlignment(Pos.BASELINE_LEFT);");
+	          emps = emps.concat("\n");
+	          emps = emps.concat("temp.setTextAlignment(TextAlignment.LEFT);");
+	          emps = emps.concat("\n");
+	          emps = emps.concat("empsToKeyLabels.put(e, temp);");
+	          emps = emps.concat("\n");
+	          emps = emps.concat("}");
+	          emps = emps.concat("\n");
+	          emps = emps.concat("Label keyLabel = empsToKeyLabels.get(e);");
+	          emps = emps.concat("\n");
+	          emps = emps.concat("keyLabel.setId(\"EmployeeName\");");
+	          emps = emps.concat("\n");
+	          emps = emps.concat("if(!picPanel.getChildren().contains(keyLabel))");
+	          emps = emps.concat("{");
+	          emps = emps.concat("\n");
+	          emps = emps.concat("picPanel.getChildren().add(keyLabel);");
+	          emps = emps.concat("\n");
+	          emps = emps.concat("}");
+	          emps = emps.concat("\n");
+	          emps = emps.concat("}");
+	          emps = emps.concat("\n");
 	        }
 	  return emps;
   }

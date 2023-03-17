@@ -19,7 +19,7 @@ import simse.modelbuilder.startstatebuilder.SimSEObject;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Vector;
@@ -42,6 +42,7 @@ public class TabPanelGenerator implements CodeGeneratorConstants {
   private DefinedObjectTypes objTypes; // holds all of the defined object types
                                        // from an sso file
   private Hashtable<SimSEObject, String> objsToImages; // maps SimSEObjects
+  private ArrayList<String> impTypes;
 																												// (keys) to pathname
 																												// (String) of image
 																												// file (values)
@@ -52,6 +53,7 @@ public class TabPanelGenerator implements CodeGeneratorConstants {
     this.directory = directory;
     this.iconDir = iconDir;
     this.objsToImages = objsToImages;
+    this.impTypes = new ArrayList<>();
   }
 
   public void generate() {
@@ -415,6 +417,8 @@ public class TabPanelGenerator implements CodeGeneratorConstants {
     		  .addStatement("$N.update()", "clockPane")
     		  .build();
       
+      String switchString = getSwitchStatement();
+      
       MethodSpec updateParam = MethodSpec.methodBuilder("update")
     		  .addModifiers(Modifier.PUBLIC)
     		  .returns(void.class)
@@ -431,7 +435,7 @@ public class TabPanelGenerator implements CodeGeneratorConstants {
     		  .addStatement("")
     		  .addStatement("Button[] buttonList")
     		  .addStatement("Vector<? extends SSObject> objs")
-    		  .addCode(getSwitchStatement())
+    		  .addCode(switchString)
     		  .addStatement("setButtonConstraints(buttonList, $N)", "buttonsPane")
     		  .addStatement("boolean atLeastOneObj = false")
     		  .beginControlFlow("if (objs.size()>0)")
@@ -486,13 +490,14 @@ public class TabPanelGenerator implements CodeGeneratorConstants {
     		  .addStatement("$N=false", "guiChanged")
     		  .build();
       
-
+      String imageSwitch = getImageSwitch();
+      
       MethodSpec updateImages = MethodSpec.methodBuilder("updateImages")
     		  .addModifiers(Modifier.PRIVATE)
     		  .returns(void.class)
     		  .addParameter(int.class, "index")
     		  .addStatement("Vector<? extends SSObject> objs")
-    		  .addCode(getImageSwitch())
+    		  .addCode(imageSwitch)
     		  .beginControlFlow("for (int i=0; i<objs.size(); i++)")
     		  .addStatement("String filename = getImage(objs.elementAt(i))")
     		  .addStatement("$T scaledImage = $T.createImageView(filename)", imageview, javafxhelpers)
@@ -503,13 +508,15 @@ public class TabPanelGenerator implements CodeGeneratorConstants {
     		  .endControlFlow()
     		  .build();
 
+      String urlString = getUrlString();
+      
       MethodSpec getImage = MethodSpec.methodBuilder("getImage")
     		  .addModifiers(Modifier.PUBLIC)
     		  .addModifiers(Modifier.STATIC)
     		  .returns(String.class)
     		  .addParameter(Object.class, "obj")
     		  .addStatement("$T url = \"\"", String.class)
-    		  .addCode(getUrlString())
+    		  .addCode(urlString)
     		  .addStatement("return url")
     		  .build();
 
@@ -608,7 +615,11 @@ public class TabPanelGenerator implements CodeGeneratorConstants {
       JavaFile file = JavaFile.builder("", tabPanel)
     		  .build();
       
-      String fileString = "package simse.gui;\n\nimport java.util.Enumeration;\nimport java.util.Vector;\n" + file.toString();
+      String fileString = "package simse.gui;\n\nimport java.util.Enumeration;\nimport java.util.Vector;\n";
+      for (String type : this.impTypes) {
+    	  fileString = fileString + "import simse.adts.objects." + type + ";\n";
+      }
+      fileString = fileString + file.toString();
       
       writer.write(fileString);;
       
@@ -622,105 +633,105 @@ public class TabPanelGenerator implements CodeGeneratorConstants {
   
   private String getSwitchStatement() {
 	  String switchS = "";
-	  switchS.concat("switch (index)");
-	        switchS.concat("\n");
-	        switchS.concat("{");
-	        switchS.concat("\n");
-	        switchS.concat("case ARTIFACT:");
-	        switchS.concat("\n");
-	        switchS.concat("buttonList = artifactButton;");
-	        switchS.concat("\n");
-	        switchS.concat("objs = state.getArtifactStateRepository().getAll();");
-	        switchS.concat("\n");
-	        switchS.concat("break;");
-	        switchS.concat("\n");
-	        switchS.concat("case CUSTOMER:");
-	        switchS.concat("\n");
-	        switchS.concat("buttonList = customerButton;");
-	        switchS.concat("\n");
-	        switchS.concat("objs = state.getCustomerStateRepository().getAll();");
-	        switchS.concat("\n");
-	        switchS.concat("break;");
-	        switchS.concat("\n");
-	        switchS.concat("case EMPLOYEE:");
-	        switchS.concat("\n");
-	        switchS.concat("buttonList = employeeButton;");
-	        switchS.concat("\n");
-	        switchS.concat("objs = state.getEmployeeStateRepository().getAll();");
-	        switchS.concat("\n");
-	        switchS.concat("break;");
-	        switchS.concat("\n");
-	        switchS.concat("case PROJECT:");
-	        switchS.concat("\n");
-	        switchS.concat("buttonList = projectButton;");
-	        switchS.concat("\n");
-	        switchS.concat("objs = state.getProjectStateRepository().getAll();");
-	        switchS.concat("\n");
-	        switchS.concat("break;");
-	        switchS.concat("\n");
-	        switchS.concat("case TOOL:");
-	        switchS.concat("\n");
-	        switchS.concat("buttonList = toolButton;");
-	        switchS.concat("\n");
-	        switchS.concat("objs = state.getToolStateRepository().getAll();");
-	        switchS.concat("\n");
-	        switchS.concat("break;");
-	        switchS.concat("\n");
-	        switchS.concat("default:");
-	        switchS.concat("\n");
-	        switchS.concat("buttonList = toolButton;");
-	        switchS.concat("\n");
-	        switchS.concat("objs = new Vector<SSObject>();");
-	        switchS.concat("\n");
-	        switchS.concat("}");
-	        switchS.concat("\n");
-	        return switchS;
+	  switchS = switchS.concat("switch (index)");
+	  switchS = switchS.concat("\n");
+	  switchS = switchS.concat("{");
+	  switchS = switchS.concat("\n");
+	  switchS = switchS.concat("case ARTIFACT:");
+	  switchS = switchS.concat("\n");
+	  switchS = switchS.concat("buttonList = artifactButton;");
+	  switchS = switchS.concat("\n");
+	  switchS = switchS.concat("objs = state.getArtifactStateRepository().getAll();");
+	  switchS = switchS.concat("\n");
+	  switchS = switchS.concat("break;");
+	  switchS = switchS.concat("\n");
+	  switchS = switchS.concat("case CUSTOMER:");
+	  switchS = switchS.concat("\n");
+	  switchS = switchS.concat("buttonList = customerButton;");
+	  switchS = switchS.concat("\n");
+	  switchS = switchS.concat("objs = state.getCustomerStateRepository().getAll();");
+	  switchS = switchS.concat("\n");
+	  switchS = switchS.concat("break;");
+	  switchS = switchS.concat("\n");
+	  switchS = switchS.concat("case EMPLOYEE:");
+	  switchS = switchS.concat("\n");
+	  switchS = switchS.concat("buttonList = employeeButton;");
+	  switchS = switchS.concat("\n");
+	  switchS = switchS.concat("objs = state.getEmployeeStateRepository().getAll();");
+	  switchS = switchS.concat("\n");
+	  switchS = switchS.concat("break;");
+	  switchS = switchS.concat("\n");
+	  switchS = switchS.concat("case PROJECT:");
+	  switchS = switchS.concat("\n");
+	  switchS = switchS.concat("buttonList = projectButton;");
+	  switchS = switchS.concat("\n");
+	  switchS = switchS.concat("objs = state.getProjectStateRepository().getAll();");
+	  switchS = switchS.concat("\n");
+	  switchS = switchS.concat("break;");
+	  switchS = switchS.concat("\n");
+	  switchS = switchS.concat("case TOOL:");
+	  switchS = switchS.concat("\n");
+	  switchS = switchS.concat("buttonList = toolButton;");
+	  switchS = switchS.concat("\n");
+	  switchS = switchS.concat("objs = state.getToolStateRepository().getAll();");
+	  switchS = switchS.concat("\n");
+	  switchS = switchS.concat("break;");
+	  switchS = switchS.concat("\n");
+	  switchS = switchS.concat("default:");
+	  switchS = switchS.concat("\n");
+	  switchS = switchS.concat("buttonList = toolButton;");
+	  switchS = switchS.concat("\n");
+	  switchS = switchS.concat("objs = new Vector<SSObject>();");
+	  switchS = switchS.concat("\n");
+	  switchS = switchS.concat("}");
+	  switchS = switchS.concat("\n");
+	  return switchS;
   }
   
   private String getImageSwitch() {
 	  String switchS = "";
-	  switchS.concat("switch(index)");
-	        switchS.concat("\n");
-	        switchS.concat("{");
-	        switchS.concat("\n");
-	        switchS.concat("case ARTIFACT:");
-	        switchS.concat("\n");
-	        switchS.concat("objs = state.getArtifactStateRepository().getAll();");
-	        switchS.concat("\n");
-	        switchS.concat("break;");
-	        switchS.concat("\n");
-	        switchS.concat("case CUSTOMER:");
-	        switchS.concat("\n");
-	        switchS.concat("objs = state.getCustomerStateRepository().getAll();");
-	        switchS.concat("\n");
-	        switchS.concat("break;");
-	        switchS.concat("\n");
-	        switchS.concat("case EMPLOYEE:");
-	        switchS.concat("\n");
-	        switchS.concat("objs = state.getEmployeeStateRepository().getAll();");
-	        switchS.concat("\n");
-	        switchS.concat("break;");
-	        switchS.concat("\n");
-	        switchS.concat("case PROJECT:");
-	        switchS.concat("\n");
-	        switchS.concat("objs = state.getProjectStateRepository().getAll();");
-	        switchS.concat("\n");
-	        switchS.concat("break;");
-	        switchS.concat("\n");
-	        switchS.concat("case TOOL:");
-	        switchS.concat("\n");
-	        switchS.concat("objs = state.getToolStateRepository().getAll();");
-	        switchS.concat("\n");
-	        switchS.concat("break;");
-	        switchS.concat("\n");
-	        switchS.concat("default:");
-	        switchS.concat("\n");
-	        switchS.concat("objs = new Vector<SSObject>();");
-	        switchS.concat("\n");
-	        switchS.concat("break;");
-	        switchS.concat("\n");
-	        switchS.concat("}");
-	        return switchS;
+	  switchS = switchS.concat("switch(index)");
+	  switchS = switchS.concat("\n");
+	  switchS = switchS.concat("{");
+	  switchS = switchS.concat("\n");
+	  switchS = switchS.concat("case ARTIFACT:");
+	  switchS = switchS.concat("\n");
+	  switchS = switchS.concat("objs = state.getArtifactStateRepository().getAll();");
+	  switchS = switchS.concat("\n");
+	  switchS = switchS.concat("break;");
+	  switchS = switchS.concat("\n");
+	  switchS = switchS.concat("case CUSTOMER:");
+	  switchS = switchS.concat("\n");
+	  switchS = switchS.concat("objs = state.getCustomerStateRepository().getAll();");
+	  switchS = switchS.concat("\n");
+	  switchS = switchS.concat("break;");
+	  switchS = switchS.concat("\n");
+	  switchS = switchS.concat("case EMPLOYEE:");
+	  switchS = switchS.concat("\n");
+	  switchS = switchS.concat("objs = state.getEmployeeStateRepository().getAll();");
+	  switchS = switchS.concat("\n");
+	  switchS = switchS.concat("break;");
+	  switchS = switchS.concat("\n");
+	  switchS = switchS.concat("case PROJECT:");
+	  switchS = switchS.concat("\n");
+	  switchS = switchS.concat("objs = state.getProjectStateRepository().getAll();");
+	  switchS = switchS.concat("\n");
+	  switchS = switchS.concat("break;");
+	  switchS = switchS.concat("\n");
+	  switchS = switchS.concat("case TOOL:");
+	  switchS = switchS.concat("\n");
+	  switchS = switchS.concat("objs = state.getToolStateRepository().getAll();");
+	  switchS = switchS.concat("\n");
+	  switchS = switchS.concat("break;");
+	  switchS = switchS.concat("\n");
+	  switchS = switchS.concat("default:");
+	  switchS = switchS.concat("\n");
+	  switchS = switchS.concat("objs = new Vector<SSObject>();");
+	  switchS = switchS.concat("\n");
+	  switchS = switchS.concat("break;");
+	  switchS = switchS.concat("\n");
+	  switchS = switchS.concat("}");
+	  return switchS;
   }
   
   private String getUrlString() {
@@ -729,19 +740,22 @@ public class TabPanelGenerator implements CodeGeneratorConstants {
 	      Vector<SimSEObjectType> ssObjTypes = objTypes.getAllObjectTypes();
 	      for (int j = 0; j < ssObjTypes.size(); j++) {
 	        SimSEObjectType tempType = ssObjTypes.elementAt(j);
-	        if (j > 0) { // not on first element
-	          urlS.concat("else ");
+	        if (!this.impTypes.contains(CodeGeneratorUtils.getUpperCaseLeading(tempType.getName()))) {
+	        	this.impTypes.add(CodeGeneratorUtils.getUpperCaseLeading(tempType.getName()));
 	        }
-	        urlS.concat("if(obj instanceof "
+	        if (j > 0) { // not on first element
+	        	urlS = urlS.concat("else ");
+	        }
+	        urlS = urlS.concat("if(obj instanceof "
 	            + CodeGeneratorUtils.getUpperCaseLeading(tempType.getName()) + ")");
-	        urlS.concat("\n");
-	        urlS.concat("{");
-	        urlS.concat("\n");
-	        urlS.concat(CodeGeneratorUtils.getUpperCaseLeading(tempType.getName()) 
+	        urlS = urlS.concat("\n");
+	        urlS = urlS.concat("{");
+	        urlS = urlS.concat("\n");
+	        urlS = urlS.concat(CodeGeneratorUtils.getUpperCaseLeading(tempType.getName()) 
 	        		+ " p = (" + 
 	        		CodeGeneratorUtils.getUpperCaseLeading(tempType.getName()) + 
 	        		")obj;");
-	        urlS.concat("\n");
+	        urlS = urlS.concat("\n");
 
 	        /*
 	         * go through all of the created objects (and objects created by create
@@ -769,38 +783,38 @@ public class TabPanelGenerator implements CodeGeneratorConstants {
 	            }
 	            if (allAttValuesInit) {
 	              if (putElse) {
-	                urlS.concat("else ");
+	            	  urlS = urlS.concat("else ");
 	              } else {
 	                putElse = true;
 	              }
-	              urlS.concat("if(p.get"
+	              urlS = urlS.concat("if(p.get"
 	                  + CodeGeneratorUtils.getUpperCaseLeading(
 	                  		obj.getKey().getAttribute().getName()) + "()");
 	              if (obj.getKey().getAttribute().getType() == 
 	              	AttributeTypes.STRING) {
-	                urlS.concat(".equals(\"" + obj.getKey().getValue().toString()
+	            	  urlS = urlS.concat(".equals(\"" + obj.getKey().getValue().toString()
 	                    + "\"))");
 	              } else { // integer, double, or boolean att
-	                urlS.concat(" == " + obj.getKey().getValue().toString() + ")");
+	            	  urlS = urlS.concat(" == " + obj.getKey().getValue().toString() + ")");
 	              }
-	              urlS.concat("\n");
-	              urlS.concat("{");
-	              urlS.concat("\n");
+	              urlS = urlS.concat("\n");
+	              urlS = urlS.concat("{");
+	              urlS = urlS.concat("\n");
 	              String imgFilename = (String) objsToImages.get(obj);
 	              if (((imgFilename) != null)
 	                  && ((imgFilename).length() > 0) 
 	                  && ((new File(iconDir, imgFilename)).exists())) {
 	                String imagePath = (iconsDirectory + imgFilename);
-	                urlS.concat("url = \"" + imagePath + "\";");
-	                urlS.concat("\n");
+	                urlS = urlS.concat("url = \"" + imagePath + "\";");
+	                urlS = urlS.concat("\n");
 	              }
-	              urlS.concat("}");
-	              urlS.concat("\n");
+	              urlS = urlS.concat("}");
+	              urlS = urlS.concat("\n");
 	            }
 	          }
 	        }
-	        urlS.concat("}");
-	        urlS.concat("\n");
+	        urlS = urlS.concat("}");
+	        urlS = urlS.concat("\n");
 	      }
 	      return urlS;
   }

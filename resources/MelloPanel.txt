@@ -81,13 +81,13 @@ public class MelloPanel extends Pane implements SimSEPanel{
 		prog.getChildren().add(new MelloItem(task, participants));
 	}
 	
-	public void addEmployeeToTask(String task, String employee) {
+	public void addEmployeeToTask(String task, Object employee) {
 		MelloItem inProg = findTaskInProgress(task);
 		prog.getChildren().remove(inProg);
 		prog.getChildren().add(inProg.addEmp(employee));
 	}
 	
-	public void removeEmployeeFromTask(String task, String employee) {
+	public void removeEmployeeFromTask(String task, Object employee) {
 		MelloItem inProg = findTaskInProgress(task);
 		prog.getChildren().remove(inProg);
 		inProg = inProg.removeEmp(employee);
