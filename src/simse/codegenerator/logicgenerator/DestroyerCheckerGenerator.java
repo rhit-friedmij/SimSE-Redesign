@@ -319,7 +319,7 @@ public class DestroyerCheckerGenerator implements CodeGeneratorConstants {
 					conditions.endControlFlow(); // for loop
 				}
 				if (tempDest instanceof RandomActionTypeDestroyer) {
-					conditions.beginControlFlow("if ((destroy) && ((ranNumGen.nextDouble() * 100.0) < \"\r\n" + 
+					conditions.beginControlFlow("if ((destroy) && ((ranNumGen.nextDouble() * 100.0) < " + 
 							+ ((RandomActionTypeDestroyer) (tempDest)).getFrequency() + "))");
 				} else { 
 					// user, action or autonomous
