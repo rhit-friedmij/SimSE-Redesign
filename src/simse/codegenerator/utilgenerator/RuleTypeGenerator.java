@@ -3,7 +3,7 @@
  * class in the explanatory tool
  */
 
-package simse.codegenerator.explanatorytoolgenerator;
+package simse.codegenerator.utilgenerator;
 
 import simse.codegenerator.CodeGeneratorConstants;
 
@@ -50,6 +50,8 @@ public class RuleTypeGenerator implements CodeGeneratorConstants {
       try {
   		FileWriter writer = new FileWriter(ruleTypeFile);
   		javaFile.writeTo(writer);
+  		
+  		writer.close();
   	} catch (IOException e) {
   		// TODO Auto-generated catch block
   		e.printStackTrace();

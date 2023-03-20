@@ -118,7 +118,7 @@ public class TriggerDescriptionsGenerator implements CodeGeneratorConstants {
                     	initalization += condVal;
                     }
 //                    writer.write(" \\n");
-                    initalization += " \\n";
+                    initalization += " \n\"";
                   }
                 }
               }
@@ -126,7 +126,7 @@ public class TriggerDescriptionsGenerator implements CodeGeneratorConstants {
             
             actionFields.add(FieldSpec.builder(String.class, 
             		act.getName().toUpperCase()
-                    + "_" + trigger.getName().toUpperCase(), Modifier.STATIC, Modifier.PUBLIC, Modifier.FINAL).initializer(initalization + ";").build());
+                    + "_" + trigger.getName().toUpperCase(), Modifier.STATIC, Modifier.PUBLIC, Modifier.FINAL).initializer(initalization).build());
           }
         }
       }
@@ -141,6 +141,8 @@ public class TriggerDescriptionsGenerator implements CodeGeneratorConstants {
       try {
       	FileWriter writer = new FileWriter(trigDescFile);
   		javaFile.writeTo(writer);
+  		
+  		writer.close();
 	} catch (IOException e) {
 		// TODO Auto-generated catch block
 		e.printStackTrace();

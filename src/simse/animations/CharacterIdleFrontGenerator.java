@@ -17,7 +17,7 @@ public class CharacterIdleFrontGenerator {
 	public void generate() {
 		// TODO Auto-generated method stub
 	    File characterIdleFrontFile = new File(dir,
-	            ("animations\\CharacterIdleFront.java"));
+	            ("simse\\animation\\CharacterIdleFront.java"));
 	    
 	        if (characterIdleFrontFile.exists()) {
 	        	characterIdleFrontFile.delete(); // delete old version of file

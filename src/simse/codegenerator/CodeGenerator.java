@@ -18,12 +18,12 @@ import simse.animations.SimSESpriteGenerator;
 import simse.animations.SpriteAnimationGenerator;
 import simse.codegenerator.enginegenerator.EngineGenerator;
 import simse.codegenerator.explanatorytoolgenerator.ExplanatoryToolGenerator;
-import simse.codegenerator.explanatorytoolgenerator.RuleTypeGenerator;
 import simse.codegenerator.guigenerator.GUIGenerator;
 import simse.codegenerator.logicgenerator.LogicGenerator;
 import simse.codegenerator.stategenerator.StateGenerator;
 import simse.codegenerator.utilgenerator.IDGeneratorGenerator;
 import simse.codegenerator.utilgenerator.RuleCategoriesGenerator;
+import simse.codegenerator.utilgenerator.RuleTypeGenerator;
 import simse.modelbuilder.ModelOptions;
 import simse.modelbuilder.objectbuilder.DefinedObjectTypes;
 import simse.modelbuilder.actionbuilder.DefinedActionTypes;
@@ -274,6 +274,16 @@ public class CodeGenerator {
 	      }
 	    }
 	    util.mkdir();
+	    
+	    File animation = new File(simse, "animation");
+	    // if directory already exists, delete all files in it:
+	    if (animation.exists() && animation.isDirectory()) {
+	    	File[] files = animation.listFiles();
+	    	for (File f : files) {
+	    		f.delete();
+	    	}
+	    }
+	    animation.mkdir();
 	
 	    // generate main SimSE component:
 	    File ssFile = new File(options.getCodeGenerationDestinationDirectory(), 

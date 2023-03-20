@@ -16,7 +16,7 @@ public class CharacterIdleRightGenerator {
 	public void generate() {
 		// TODO Auto-generated method stub
 	    File characterIdleRightFile = new File(dir,
-	            ("animations\\CharacterIdleRight.java"));
+	            ("simse\\animation\\CharacterIdleRight.java"));
 	    
 	        if (characterIdleRightFile.exists()) {
 	        	characterIdleRightFile.delete(); // delete old version of file

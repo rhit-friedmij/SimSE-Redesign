@@ -72,7 +72,7 @@ public class DestroyerDescriptionsGenerator implements CodeGeneratorConstants {
                         + "\\\" and ";
               }
 
-              actionsString += "when the following conditions are met: \\n";
+              actionsString += "when the following conditions are met: \n";
 
               // go through all participant conditions:
               Vector<ActionTypeParticipantDestroyer> partDestroyers = 
@@ -111,7 +111,7 @@ public class DestroyerDescriptionsGenerator implements CodeGeneratorConstants {
                         actionsString += condVal;
                       }
 
-                      actionsString += " \\n";
+                      actionsString += "\n";
                     }
                   }
                 }
@@ -134,6 +134,8 @@ public class DestroyerDescriptionsGenerator implements CodeGeneratorConstants {
       try {
     	FileWriter writer = new FileWriter(destDescFile);
 		javaFile.writeTo(writer);
+		
+		writer.close();
 	} catch (IOException e) {
 		// TODO Auto-generated catch block
 		e.printStackTrace();

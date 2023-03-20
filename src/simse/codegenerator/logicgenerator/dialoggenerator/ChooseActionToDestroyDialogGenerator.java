@@ -442,5 +442,4 @@ public class ChooseActionToDestroyDialogGenerator implements CodeGeneratorConsta
 
 		return actions;
 	}
-
 }

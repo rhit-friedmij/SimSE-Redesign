@@ -16,7 +16,7 @@ public class DisplayableCharacterGenerator {
 	public void generate() {
 		// TODO Auto-generated method stub
 	    File displayableCharacterFile = new File(dir,
-	            ("animations\\DisplayableCharacter.java"));
+	            ("simse\\animation\\DisplayableCharacter.java"));
 	    
 	        if (displayableCharacterFile.exists()) {
 	        	displayableCharacterFile.delete(); // delete old version of file
