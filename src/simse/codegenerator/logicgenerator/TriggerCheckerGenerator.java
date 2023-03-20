@@ -260,7 +260,9 @@ public class TriggerCheckerGenerator implements CodeGeneratorConstants {
 			}
 		}
 		condition += ")";
-		checker.beginControlFlow(condition);
+		if (parts.size() > 0) {
+			checker.beginControlFlow(condition);
+		}
 		
 		if (outerTrig instanceof UserActionTypeTrigger) {
 			// go through each participant, and if it's an employee, add the text to their menu:
@@ -316,7 +318,7 @@ public class TriggerCheckerGenerator implements CodeGeneratorConstants {
 			}
 			checker.add("// set all overhead texts:\n");
 			checker.addStatement("$T allPart = a.getAllParticipants()", vectorOfObjects);
-			checker.beginControlFlow("for (int i = 0; i < allPart.size(); i++) {");
+			checker.beginControlFlow("for (int i = 0; i < allPart.size(); i++)");
 			checker.addStatement("$T tempObj = allPart.elementAt(i)", ssObject);
 			checker.beginControlFlow("if (tempObj instanceof $T)", employee);
 			
@@ -402,9 +404,14 @@ public class TriggerCheckerGenerator implements CodeGeneratorConstants {
 				// triggered (if ran num is 100 and frequency is 100)
 				checker.endControlFlow();
 			}
+		}
+		if (parts.size() > 0) {
 			checker.endControlFlow();
 		}
-		checker.endControlFlow();
+		if (!(outerTrig instanceof UserActionTypeTrigger)) { 
+			// not a user trigger
+			checker.endControlFlow();
+		}
 
 		// JOINING existing actions:
 		if ((outerTrig instanceof UserActionTypeTrigger) && (action.isJoiningAllowed())) {
