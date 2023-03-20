@@ -38,10 +38,6 @@ import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
 import com.squareup.javapoet.WildcardTypeName;
 
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
-import javafx.stage.Stage;
-
 public class ParticipantSelectionDialogsDriverGenerator implements CodeGeneratorConstants {
 	private File directory; // directory to generate into
 	private File psddFile; // file to generate
