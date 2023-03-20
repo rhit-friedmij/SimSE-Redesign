@@ -490,8 +490,9 @@ public class ActionGraphGenerator implements CodeGeneratorConstants {
 			.endControlFlow()
 			.build();
       
-  	TypeSpec anonHandleClass = TypeSpec.anonymousClassBuilder("new $T<$T>()", eventHandlerClass, actionEvent)
-    		  .addField(String.class, "newBranchName", Modifier.PRIVATE)
+  	TypeSpec anonHandleClass = TypeSpec.anonymousClassBuilder("", eventHandlerClass, actionEvent)
+    		  .addSuperinterface(ParameterizedTypeName.get(eventHandlerClass, actionEvent))
+			  .addField(String.class, "newBranchName", Modifier.PRIVATE)
               .addMethod(handle)
               .build();
     		  

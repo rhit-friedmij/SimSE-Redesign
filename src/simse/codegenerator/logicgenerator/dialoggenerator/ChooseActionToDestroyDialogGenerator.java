@@ -86,6 +86,7 @@ public class ChooseActionToDestroyDialogGenerator implements
 	  TypeName actionsType = ParameterizedTypeName.get(vector, actionWildcard);
 	  TypeName checkboxType = ParameterizedTypeName.get(vector, checkboxClass);
 	  
+	  
       // make a Vector of all the action types with user destroyers:
       Vector<ActionType> userDestActs = new Vector<ActionType>();
       Vector<ActionType> allActs = actTypes.getAllActionTypes();

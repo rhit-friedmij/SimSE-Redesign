@@ -349,8 +349,9 @@ public class ObjectGraphGenerator implements CodeGeneratorConstants {
     	ClassName javaFXHelpers = ClassName.get("simse.gui.util", "JavaFXHelpers");
     	ClassName color = ClassName.get("javafx.scene.paint", "Color");
 
-		TypeSpec anonHandleClass = TypeSpec.anonymousClassBuilder("new $T<$T>()", eventHandlerClass, actionEvent)
-        		  .addField(String.class, "newBranchName", Modifier.PRIVATE)
+		TypeSpec anonHandleClass = TypeSpec.anonymousClassBuilder("", eventHandlerClass, actionEvent)
+        		.addSuperinterface(ParameterizedTypeName.get(eventHandlerClass, actionEvent))  
+				.addField(String.class, "newBranchName", Modifier.PRIVATE)
                   .addMethod(MethodSpec.methodBuilder("handle")
                 		  .addParameter(actionEvent, "event")
                 		  .addStatement("$T source = event.getSource()", object)
@@ -435,9 +436,7 @@ public class ObjectGraphGenerator implements CodeGeneratorConstants {
 			  .addMethod(getLog)
 			  .addMethod(chartMouseClicked)
 				.addField(FieldSpec.builder(ParameterizedTypeName.get(eventHandlerClass, actionEvent), "menuEvent", Modifier.PRIVATE)
-						.initializer(CodeBlock.builder()
-								  .addStatement("$L",
-							                anonHandleClass).build()).build())
+						.initializer("$L", anonHandleClass).build())
     		  .build();
       
 

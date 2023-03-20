@@ -42,7 +42,6 @@ public class RuleInfoPanelGenerator implements CodeGeneratorConstants {
       ruleInfoFile.delete(); // delete old version of file
     }
       
-      ClassName eventHandler = ClassName.get("javafx.event", "EventHandler");
       ClassName pos = ClassName.get("javafx.geometry", "Pos");
       ClassName listView = ClassName.get("javafx.scene.control", "ListView");
       ClassName string = ClassName.get("java.lang", "String");

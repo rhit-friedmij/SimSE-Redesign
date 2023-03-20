@@ -1,4 +1,4 @@
-package animations;
+package simse.animation;
 
 public class CharacterWalkBack extends SimSESprite{
 	

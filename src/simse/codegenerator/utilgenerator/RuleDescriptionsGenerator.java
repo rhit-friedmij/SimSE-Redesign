@@ -46,18 +46,18 @@ public class RuleDescriptionsGenerator implements CodeGeneratorConstants {
       // go through all actions:
       Vector<ActionType> actions = actTypes.getAllActionTypes();
       for (ActionType act : actions) {
-    	  String actionsString = "";
+    	  String actionsString = "\"";
         if (act.isVisibleInExplanatoryTool()) {
           Vector<Rule> rules = act.getAllRules();
           for (int j = 0; j < rules.size(); j++) {
             Rule rule = rules.get(j);
             if (rule.isVisibleInExplanatoryTool()) {
-              actionsString += rule.getAnnotation().replaceAll("\n", "\\\\n").
-                      replaceAll("\"", "\\\\\"") + "\";";
+              actionsString += rule.getAnnotation().replaceAll("\"\n", "\\\n").
+                      replaceAll("\"", "\\\\\"") + "\"";
             }
             actionFields.add(FieldSpec.builder(String.class, 
             		act.getName().toUpperCase()
-                    + "_" + rule.getName().toUpperCase(), Modifier.STATIC).initializer(actionsString).build());
+                    + "_" + rule.getName().toUpperCase(), Modifier.STATIC, Modifier.PUBLIC, Modifier.FINAL).initializer(actionsString).build());
           }
         }
         
@@ -74,6 +74,8 @@ public class RuleDescriptionsGenerator implements CodeGeneratorConstants {
       try {
     	FileWriter writer = new FileWriter(ruleDescFile);
 		javaFile.writeTo(writer);
+		
+		writer.close();
 	} catch (IOException e) {
 		// TODO Auto-generated catch block
 		e.printStackTrace();

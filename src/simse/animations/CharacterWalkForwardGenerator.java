@@ -16,7 +16,7 @@ public class CharacterWalkForwardGenerator {
 	public void generate() {
 		// TODO Auto-generated method stub
 	    File characterWalkForwardFile = new File(dir,
-	            ("animations\\CharacterWalkForward.java"));
+	            ("simse\\animation\\CharacterWalkForward.java"));
 	    
 	        if (characterWalkForwardFile.exists()) {
 	        	characterWalkForwardFile.delete(); // delete old version of file
