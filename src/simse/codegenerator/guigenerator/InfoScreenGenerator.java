@@ -67,11 +67,11 @@ public class InfoScreenGenerator {
 	      
 	      Vector<Attribute> aAts = this.getSharedVisibleAttributes(SimSEObjectTypeTypes.ARTIFACT);
 	      String atts = "";
-	      atts.concat("attributes = new ListView<String>();\n");
+	      atts = atts.concat("attributes = new ListView<String>();\n");
 	      for (int i=0; i<aAts.size(); i++) {
-	    	  atts.concat("attributes.getItems().add(\""+aAts.get(i).getName() + ": \"" + getTypeAsToString(aAts.get(i))+"(artifact.get"+aAts.get(i).getName()+"()));\n");
+	    	  atts = atts.concat("attributes.getItems().add(\""+aAts.get(i).getName() + ": \"" + getTypeAsToString(aAts.get(i))+"(artifact.get"+aAts.get(i).getName()+"()));\n");
 	      }
-	      atts.concat("attributes.setMaxHeight(attributes.getItems().size()*25)");
+	      atts = atts.concat("attributes.setMaxHeight(attributes.getItems().size()*25)");
 	      
 	      MethodSpec constructor = MethodSpec.constructorBuilder()
 	    		  .addModifiers(Modifier.PUBLIC)
@@ -193,11 +193,11 @@ public class InfoScreenGenerator {
 		      
 		      Vector<Attribute> eAts = this.getSharedVisibleAttributes(SimSEObjectTypeTypes.EMPLOYEE);
 		      String atts = "";
-		      atts.concat("attributes = new ListView<String>();\n");
+		      atts = atts.concat("attributes = new ListView<String>();\n");
 		      for (int i=0; i<eAts.size(); i++) {
-		    	  atts.concat("attributes.getItems().add(\""+eAts.get(i).getName() + ": \"" + getTypeAsToString(eAts.get(i))+"(employee.get"+eAts.get(i).getName()+"()));\n");
+		    	  atts = atts.concat("attributes.getItems().add(\""+eAts.get(i).getName() + ": \"" + getTypeAsToString(eAts.get(i))+"(employee.get"+eAts.get(i).getName()+"()));\n");
 		      }
-		      atts.concat("attributes.setMaxHeight(attributes.getItems().size()*24)");
+		      atts = atts.concat("attributes.setMaxHeight(attributes.getItems().size()*24)");
 		      
 		      MethodSpec constructor = MethodSpec.constructorBuilder()
 		    		  .addModifiers(Modifier.PUBLIC)
@@ -300,10 +300,12 @@ public class InfoScreenGenerator {
 		    		  .addMethod(handle)
 		    		  .build();
 		      
-		      JavaFile file = JavaFile.builder("simse.gui", eis)
+		      JavaFile file = JavaFile.builder("", eis)
 						 .build();
 		      
-		      file.writeTo(writer);
+		      String fileString = "package simse.gui;\n\nimport java.util.Vector;\n"+file.toString();
+		      
+		      writer.write(fileString);
 		      
 		      writer.close();
 		    } catch (IOException e) {

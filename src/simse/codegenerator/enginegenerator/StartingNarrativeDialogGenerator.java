@@ -64,6 +64,7 @@ public class StartingNarrativeDialogGenerator implements CodeGeneratorConstants 
 		}
 
 		MethodSpec narrativeConstructor = MethodSpec.constructorBuilder()
+				.addModifiers(Modifier.PUBLIC)
 				.addStatement("this.initModality($T.APPLICATION_MODAL)", modality)
 				.addStatement("this.setTitle($S)", "Welcome!")
 				.addCode("$L", "\n")

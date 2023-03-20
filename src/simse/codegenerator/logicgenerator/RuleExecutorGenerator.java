@@ -385,7 +385,7 @@ public class RuleExecutorGenerator implements CodeGeneratorConstants {
 						
 						
 						if (input.isCancelable()) {
-							methodBody.addStatement("state.getActionStateRepository().get$LStateRepository().remove($T)"
+							methodBody.addStatement("state.getActionStateRepository().get$LStateRepository().remove($L)"
 									, uCaseActionName, oneActTypeVar);
 							methodBody.addStatement("cancel = true");
 							methodBody.addStatement("break");
@@ -423,7 +423,7 @@ public class RuleExecutorGenerator implements CodeGeneratorConstants {
 						methodBody.add("// action cancelled\n");
 						
 						if (input.isCancelable()) {
-							methodBody.addStatement("state.getActionStateRepository().get$LStateRepository().remove($T)"
+							methodBody.addStatement("state.getActionStateRepository().get$LStateRepository().remove($L)"
 									, uCaseActionName, oneActTypeVar);
 							methodBody.addStatement("cancel = true");
 							methodBody.addStatement("break");
@@ -491,7 +491,7 @@ public class RuleExecutorGenerator implements CodeGeneratorConstants {
 					String uCaseObjType = CodeGeneratorUtils.getUpperCaseLeading(objType);
 					String objTypeVar = objType.toLowerCase();
 					
-					ClassName objTypeClass = ClassName.get("simse.adts.objects", objType);
+					ClassName objTypeClass = ClassName.get("simse.adts.objects", uCaseObjType);
 					if (k == 0) { 
 						// on first element
 						methodBody.beginControlFlow("if ($L instanceof $T)", onePartTypeVar, objTypeClass);
@@ -523,11 +523,12 @@ public class RuleExecutorGenerator implements CodeGeneratorConstants {
 						Vector<ActionType> allActTypes = actTypes.getAllActionTypes();
 						for (int m = 0; m < allActTypes.size(); m++) {
 							ActionType tempActType = allActTypes.elementAt(m);
+							ClassName actTypeClass = ClassName.get("simse.adts.actions", tempActType.getName() + "Action");
 							if (m == 0) { 
 								// on first element
-								methodBody.beginControlFlow("if (tempAct instanceof $T)", onePartTypeVar, actClass);
+								methodBody.beginControlFlow("if (tempAct instanceof $T)", actTypeClass);
 							} else {
-								methodBody.nextControlFlow("else if (tempAct instanceof $T)", onePartTypeVar, actClass);
+								methodBody.nextControlFlow("else if (tempAct instanceof $T)", actTypeClass);
 							}
 							if (tempActType.getName().equals(actType.getName())) {
 								methodBody.beginControlFlow("if(tempAct.equals($L) == false)", oneActTypeVar);
@@ -926,6 +927,7 @@ public class RuleExecutorGenerator implements CodeGeneratorConstants {
 												methodBody.addStatement("double " + variableName + " = 0");
 											}
 											StringBuffer variableName2 = new StringBuffer();
+											boolean tempUsed = false;
 											if ((variableName.indexOf("Active") >= 0)
 													|| (variableName.indexOf("Inactive") >= 0)) {
 												if (variableName.indexOf("Active") >= 0) { 
@@ -952,9 +954,17 @@ public class RuleExecutorGenerator implements CodeGeneratorConstants {
 												}
 											} else {
 												variableName2.append(partName.toLowerCase() + "s");
-												if (vectorContainsString(variables,
-														variableName2.toString()) == false) { 
+												if (!vectorContainsString(variables,
+														variableName2.toString()) && !vectorContainsString(ruleVariables,
+																variableName2.toString())) { 
 													// variable has not been generated yet
+													variables.add(variableName2.toString());
+													methodBody.addStatement("Vector " + variableName2 + " = "
+															+ actType.getName().toLowerCase() + "Act.getAll"
+															+ partName + "s()");
+												} else if (!vectorContainsString(variables,
+														variableName2.toString())) {
+													variableName2.append("Temp");
 													variables.add(variableName2.toString());
 													methodBody.addStatement("Vector " + variableName2 + " = "
 															+ actType.getName().toLowerCase() + "Act.getAll"
@@ -988,8 +998,8 @@ public class RuleExecutorGenerator implements CodeGeneratorConstants {
 											methodBody.beginControlFlow("for(int m=0; m<" + vectorName + ".size(); m++)");
 											String actionCond = "";
 											if (actionName.equals("*")) {
-												methodBody.addStatement("Action action = (Action)" + vectorName + ".elementAt(m)");
-												actionCond += "if(action";
+												methodBody.addStatement("Action anyAction = (Action)" + vectorName + ".elementAt(m)");
+												actionCond += "if(anyAction";
 											} else { 
 												// action name specified
 												methodBody.addStatement(CodeGeneratorUtils.getUpperCaseLeading(actionName)
@@ -2039,15 +2049,15 @@ public class RuleExecutorGenerator implements CodeGeneratorConstants {
 								, scoringPartConstObjName, scoringPartConstObjName);
 						conditions.beginControlFlow("if (t != null)");
 						
-						ClassName scoreType = null;
+						Class scoreType = null;
 						if (scoringAttConst.getAttribute().getType() == AttributeTypes.INTEGER) {
-							scoreType = ClassName.get(int.class);
+							scoreType = int.class;
 						} else if (scoringAttConst.getAttribute().getType() == AttributeTypes.DOUBLE) {
-							scoreType = ClassName.get(double.class);
+							scoreType = double.class;
 						} else if (scoringAttConst.getAttribute().getType() == AttributeTypes.STRING) {
-							scoreType = ClassName.get(String.class);
+							scoreType = String.class;
 						} else if (scoringAttConst.getAttribute().getType() == AttributeTypes.BOOLEAN) {
-							scoreType = ClassName.get(boolean.class);
+							scoreType = boolean.class;
 						}
 						conditions.addStatement("$T v = t.get" + scoringAttConst.getAttribute().getName() + "()", scoreType);
 						conditions.addStatement("state.getClock().stop()");
