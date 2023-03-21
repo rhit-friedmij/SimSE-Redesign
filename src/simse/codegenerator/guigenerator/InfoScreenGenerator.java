@@ -69,7 +69,7 @@ public class InfoScreenGenerator {
 	      String atts = "";
 	      atts = atts.concat("attributes = new ListView<String>();\n");
 	      for (int i=0; i<aAts.size(); i++) {
-	    	  atts = atts.concat("attributes.getItems().add(\""+aAts.get(i).getName() + ": \"" + getTypeAsToString(aAts.get(i))+"(artifact.get"+aAts.get(i).getName()+"()));\n");
+	    	  atts = atts.concat("attributes.getItems().add(\""+aAts.get(i).getName() + ": \" + " + getTypeAsToString(aAts.get(i))+"(artifact.get"+aAts.get(i).getName()+"()));\n");
 	      }
 	      atts = atts.concat("attributes.setMaxHeight(attributes.getItems().size()*25)");
 	      
@@ -195,7 +195,7 @@ public class InfoScreenGenerator {
 		      String atts = "";
 		      atts = atts.concat("attributes = new ListView<String>();\n");
 		      for (int i=0; i<eAts.size(); i++) {
-		    	  atts = atts.concat("attributes.getItems().add(\""+eAts.get(i).getName() + ": \"" + getTypeAsToString(eAts.get(i))+"(employee.get"+eAts.get(i).getName()+"()));\n");
+		    	  atts = atts.concat("attributes.getItems().add(\""+eAts.get(i).getName() + ": \" + " + getTypeAsToString(eAts.get(i))+"(employee.get"+eAts.get(i).getName()+"()));\n");
 		      }
 		      atts = atts.concat("attributes.setMaxHeight(attributes.getItems().size()*24);\n");
 		      

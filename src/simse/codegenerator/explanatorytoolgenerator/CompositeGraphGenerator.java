@@ -83,7 +83,7 @@ public class CompositeGraphGenerator implements CodeGeneratorConstants {
     		  .addStatement("super()")
     		  .addStatement("this.branch = branch")
     		  .addStatement("$T title = \"Composite Graph\"", String.class)
-    		  .beginControlFlow("if (branch.getName() != null)")
+    		  .beginControlFlow("if (branch.getName() != null) {")
     		  .addStatement("title = title.concat(\" - \" + branch.getName())")
     		  .endControlFlow()
     		  .addStatement("setTitle(title)")
@@ -161,14 +161,14 @@ public class CompositeGraphGenerator implements CodeGeneratorConstants {
 			.addModifiers(Modifier.PUBLIC)
 			.addParameter(actionEvent, "event")
 			.addStatement("$T source = event.getSource()", object)
-			.beginControlFlow("if (source == newBranchItem)")
+			.beginControlFlow("if (source == newBranchItem) {")
 			.addStatement("$T td = new $T()", textInputDialog, textInputDialog)
 			.addStatement("td.setTitle(\"Name New Branch\")")
 			.addStatement("td.setContentText(\"Please name this new game:\")")
 			.addStatement("td.setHeaderText(null)")
 			.addStatement("$T<$T> result = td.showAndWait()", optional, String.class)
 			.addStatement("result.ifPresent(name -> { this.newBranchName = name; })")
-			.beginControlFlow("if (newBranchName != null)")
+			.beginControlFlow("if (newBranchName != null) {")
 			.addStatement("$T tempState = ($T) objGraph.getLog().get(lastRightClickedX).clone()", state, state)
 			.addStatement("$T tempLogger = new $T(tempState, new $T<$T>(objGraph.getLog().subList(0, lastRightClickedX)))", logger, logger, arrayList, state)
 			.addStatement("$T tempClock = new $T(tempLogger, lastRightClickedX)", clock, clock)
@@ -198,6 +198,10 @@ public class CompositeGraphGenerator implements CodeGeneratorConstants {
 	
 	MethodSpec chartMouseMoved = MethodSpec.methodBuilder("chartMouseMoved")
 			.addModifiers(Modifier.PUBLIC)
+			.addParameter(chartMouseEventFX, "me")
+			.build();
+	
+	MethodSpec chartMouseMoved = MethodSpec.methodBuilder("chartMouseMoved")
 			.addParameter(chartMouseEventFX, "me")
 			.build();
 	

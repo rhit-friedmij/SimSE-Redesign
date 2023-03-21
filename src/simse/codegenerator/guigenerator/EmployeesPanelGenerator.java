@@ -66,8 +66,8 @@ public class EmployeesPanelGenerator implements CodeGeneratorConstants {
       ClassName enumeration = ClassName.get("java.util", "Enumeration");
       ClassName hashtable = ClassName.get("java.util", "Hashtable");
       ClassName vector = ClassName.get("java.util", "Vector");
-      ClassName displayablecharacter = ClassName.get("animations", "DisplayableCharacter");
-      ClassName simsecharacter = ClassName.get("animations", "SimSECharacter");
+      ClassName displayablecharacter = ClassName.get("simse.animation", "DisplayableCharacter");
+      ClassName simsecharacter = ClassName.get("simse.animation", "SimSECharacter");
       ClassName actionevent = ClassName.get("javafx.event", "ActionEvent");
       ClassName eventhandler = ClassName.get("javafx.event", "EventHandler");
       ClassName pos = ClassName.get("javafx.geometry", "Pos");
@@ -136,43 +136,31 @@ public class EmployeesPanelGenerator implements CodeGeneratorConstants {
     		  .addStatement("$N = s", "state")
     		  .addStatement("$N = l", "logic")
     		  .addStatement("$N = gui", "mainGUIFrame")
-    		  .addStatement("")
     		  .addStatement("$N = new $T()", "layout", vbox)
     		  .addStatement("$N.setId(\"actionPanelVBox\")", "layout")
-    		  .addStatement("")
     		  .addStatement("$N = new $T()", "employeePane", scrollpane)
     		  .addStatement("$N.setId(\"scrollPaneActionPanel\")", "employeePane")
     		  .addStatement("$N.setPrefSize(225, 425)", "employeePane")
     		  .addStatement("$N.setId(\"ActionPanelMain\")", "employeePane")
-    		  .addStatement("")
     		  .addStatement("empsToEmpPanels = new $T()", hashEmpVB)
     		  .addStatement("empsToPicPanels = new $T()", hashEmpHB)
     		  .addStatement("empsToPicLabels = new $T()", hashEmpLab)
     		  .addStatement("empsToKeyLabels = new $T()", hashEmpLab)
-    		  .addStatement("")
-    		  .addStatement("")
-    		  .addStatement("")
-    		  .addStatement("")
-    		  .addStatement("")
     		  .addStatement("$T titlePanel = new $T(\"$T Panel\", $N)", titledpane, titledpane, employee, "employeePane")
     		  .addStatement("titlePanel.set$T(Border.EMPTY)", border)
     		  .addStatement("titlePanel.setId(\"ActionTitlePanel\")")
     		  .addStatement("titlePanel.setBackground($T.createBackground$T(Color.rgb(102, 102, 102, 1)))", javafxhelpers, color)
-    		  .addStatement("")
-    		  .addStatement("")
     		  .addStatement("$N = null", "selectedEmp")
     		  .addStatement("$N = new $T()", "popup", contextmenu)
-    		  .addStatement("")
     		  .addStatement("$N.getChildren().add(titlePanel)", "layout")
-    		  .addStatement("")
     		  .addStatement("$T allEmps = $N.getEmployeeStateRepository().getAll()", vOfE, "state")
     		  .addStatement("$N = new $T()", "characters", listOfDC)
     		  .beginControlFlow("for (int i=0; i<allEmps.size(); i++)")
     		  .addStatement("$T char1 = new $T(i, 50, 75)", displayablecharacter, simsecharacter)
     		  .addStatement("$N.add(char1)", "characters")
     		  .endControlFlow()
-    		  .addStatement("$T char1 = new $T(i, 50, 75)", displayablecharacter, simsecharacter)
-    		  .addStatement("$N.add(char1)", "characters")
+    		  .addStatement("update()")
+    		  .addStatement("this.getChildren().add(layout)")
     		  .build();
 
       // createPopupMenu function:

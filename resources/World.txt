@@ -6,10 +6,10 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Vector;
 
-import animations.CreatablePath;
-import animations.DisplayableCharacter;
-import animations.PathData;
-import animations.SimSECharacter;
+import simse.animation.CreatablePath;
+import simse.animation.DisplayableCharacter;
+import simse.animation.PathData;
+import simse.animation.SimSECharacter;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
