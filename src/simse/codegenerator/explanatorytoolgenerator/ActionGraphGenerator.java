@@ -50,6 +50,7 @@ public class ActionGraphGenerator implements CodeGeneratorConstants {
       
       ClassName stage = ClassName.get("javafx.stage", "Stage");
       ClassName state = ClassName.get("simse.state", "State");
+      ClassName stringClass = ClassName.get("java.lang", "String");
       ClassName chartMouseListener = ClassName.get("org.jfree.chart.fx.interaction", "ChartMouseListenerFX");
       ClassName arrayList = ClassName.get("java.util", "ArrayList");
       ClassName jFreeChart = ClassName.get("org.jfree.chart", "JFreeChart");
@@ -101,6 +102,7 @@ public class ActionGraphGenerator implements CodeGeneratorConstants {
       
       MethodSpec generateToolTip = MethodSpec.methodBuilder("generateToolTip")
     		  .returns(String.class)
+    		  .addModifiers(Modifier.PUBLIC)
     		  .addParameter(xyDataset, "dataset")
     		  .addParameter(int.class, "series")
     		  .addParameter(int.class, "item")
@@ -221,6 +223,7 @@ public class ActionGraphGenerator implements CodeGeneratorConstants {
       
       
       MethodSpec createDataset = MethodSpec.methodBuilder("createDataset")
+    		  .returns(xyDataset)
     		  .addModifiers(Modifier.PRIVATE)
     		  .addStatement("// add a dummy entry for index 0")
     		  .addStatement("indices.add(0, \"Action\")")
@@ -311,7 +314,7 @@ public class ActionGraphGenerator implements CodeGeneratorConstants {
                   + "Indices.indexOf(new Integer(action.getId()));\n\n";
           elseStatementCodeBlock += "// add the data value to the series:\n"; 
           elseStatementCodeBlock += "oldSeries.add(clockTick, indices.indexOf(\""
-                  + uCaseName + "\"Action-\" + index));\n";
+                  + uCaseName + "Action-\" + index));\n";
           elseStatementCodeBlock += "}\n";
         }
       }
@@ -366,7 +369,6 @@ public class ActionGraphGenerator implements CodeGeneratorConstants {
     	String mouseReleasedBlock = "";
     	
     	if (options.getAllowBranchingOption()) {
-	    	mouseReleasedBlock += "if (me.getButton() != MouseEvent.BUTTON1) { // not left-click\n";
 	    	mouseReleasedBlock += "XYPlot plot = chart.getXYPlot();\n";
 	    	mouseReleasedBlock += "Range domainRange = plot.getDataRange(plot.getDomainAxis());\n";
 	    	mouseReleasedBlock += "if (domainRange != null) { // chart is not blank\n";
@@ -380,10 +382,10 @@ public class ActionGraphGenerator implements CodeGeneratorConstants {
 	    	mouseReleasedBlock += "if (domainRange != null && lastRightClickedX >= domainRange.getLowerBound() && lastRightClickedX <= domainRange.getUpperBound()) { // clicked within domain range\n";
 	    	mouseReleasedBlock += "if (chartViewer.getContextMenu().getItems().indexOf(newBranchItem) == -1) { // no new branch item on menu currently\n";
 	    	mouseReleasedBlock += "chartViewer.getContextMenu().getItems().add(separator);\n";
-	    	mouseReleasedBlock += "chartViewer.getContextMenu().getItems().add(newBranchItem)\n";
+	    	mouseReleasedBlock += "chartViewer.getContextMenu().getItems().add(newBranchItem);\n";
 	    	mouseReleasedBlock += "\n}\n";
-	    	mouseReleasedBlock += "else { // clicked outside of domain range";
-	    	mouseReleasedBlock += "if (chartViewer.getContextMenu().getItems().indexOf(newBranchItem) >= 0) { // new branch item currently on menu";
+	    	mouseReleasedBlock += "else { // clicked outside of domain range\n";
+	    	mouseReleasedBlock += "if (chartViewer.getContextMenu().getItems().indexOf(newBranchItem) >= 0) { // new branch item currently on menu\n";
 	    	mouseReleasedBlock += "chartViewer.getContextMenu().getItems().remove(newBranchItem);\n";
 	    	mouseReleasedBlock += "if (chartViewer.getContextMenu().getItems().indexOf(separator) >= 0) { // has separator\n";
 	    	mouseReleasedBlock += "chartViewer.getContextMenu().getItems().remove(separator);\n";
@@ -489,6 +491,10 @@ public class ActionGraphGenerator implements CodeGeneratorConstants {
 			.endControlFlow()
 			.endControlFlow()
 			.build();
+  	
+  	MethodSpec chartMouseMoved = MethodSpec.methodBuilder("chartMouseMoved")
+  			.addParameter(chartMouseEventFX, "event")
+  			.build();
       
   	TypeSpec anonHandleClass = TypeSpec.anonymousClassBuilder("", eventHandlerClass, actionEvent)
     		  .addSuperinterface(ParameterizedTypeName.get(eventHandlerClass, actionEvent))
@@ -513,6 +519,10 @@ public class ActionGraphGenerator implements CodeGeneratorConstants {
     		  .addField(ParameterizedTypeName.get(hashTable, integer, xySeries), "series", Modifier.PRIVATE)
     		  .addField(FieldSpec.builder(ParameterizedTypeName.get(eventHandlerClass, actionEvent), "menuEvent", Modifier.PRIVATE)
 					.initializer("$L", anonHandleClass).build())
+    		  .addField(FieldSpec.builder(ParameterizedTypeName.get(arrayList, stringClass), "indicies", Modifier.PRIVATE)
+    				  .initializer("new $T<$T>()", arrayList, stringClass).build())
+    		  .addField(FieldSpec.builder(int.class, "actionIndex", Modifier.PRIVATE)
+    				  .initializer("1").build())
     		  .addFields(actionFields)
     		  .addMethod(constructor)
     		  .addMethod(createDataset)
@@ -523,15 +533,22 @@ public class ActionGraphGenerator implements CodeGeneratorConstants {
     		  .addMethod(getIdOfActionWithSeriesName)
     		  .addMethod(update)
     		  .addMethod(getXYPlot)
+    		  .addMethod(chartMouseMoved)
     		  .addType(actionGraphToolTipGenerator)
     		  .build();
       
-      JavaFile javaFile = JavaFile.builder("simse.explanatorytool", actionGraph)
+      JavaFile javaFile = JavaFile.builder("", actionGraph)
     		    .build();
 
       try {
     	FileWriter writer = new FileWriter(actGraphFile);
-		javaFile.writeTo(writer);
+    	
+  	  	String toAppend = "/* File generated by: simse.codegenerator.explanatorytool.ActionGraph */\n"
+  	  	  		+ "package simse.explanatorytool;\n"
+  	  	  		+ "\n"
+  	  	  		+ "import simse.adts.actions.*;\n";
+    	
+		writer.write(toAppend + javaFile.toString());
 		
 		writer.close();
 	} catch (IOException e) {

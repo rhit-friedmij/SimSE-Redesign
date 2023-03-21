@@ -38,6 +38,7 @@ import javax.lang.model.element.Modifier;
 
 import com.squareup.javapoet.ArrayTypeName;
 import com.squareup.javapoet.ClassName;
+import com.squareup.javapoet.CodeBlock;
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.ParameterizedTypeName;
@@ -169,41 +170,62 @@ public class ExplanatoryToolGenerator implements CodeGeneratorConstants {
       ClassName eventHandler = ClassName.get("javafx.event", "EventHandler");
       ClassName actionEvent = ClassName.get("javafx.event", "ActionEvent");
       ClassName chartMouseListenerFX = ClassName.get("org.jfree.chart.fx.interaction", "ChartMouseListenerFX");
-      
-
+      ClassName observableList = ClassName.get("javafx.collections", "ObservableList");
+      ClassName fxCollections = ClassName.get("javafx.collections", "FXCollections");
 
      
-      String constructorObj = "ObservableList<String> objects = FXCollections.observableArrayList(";
       
       Vector<SimSEObject> objects = objs.getAllObjects();
+      String internalObj = "";  
       for (int i = 0; i < objects.size(); i++) {
         SimSEObject obj = objects.get(i);
-        constructorObj += "\"" + CodeGeneratorUtils.getUpperCaseLeading(
-        		obj.getSimSEObjectType().getName()) + " " + 
-        		CodeGeneratorUtils.getUpperCaseLeading(
-        				SimSEObjectTypeTypes.getText(
-        						obj.getSimSEObjectType().getType())) + " " + 
-        						obj.getKey().getValue().toString() + "\",\n";
+        if(i == objects.size() - 1) {
+            internalObj += "\"" + CodeGeneratorUtils.getUpperCaseLeading(
+            		obj.getSimSEObjectType().getName()) + " " + 
+            		CodeGeneratorUtils.getUpperCaseLeading(
+            				SimSEObjectTypeTypes.getText(
+            						obj.getSimSEObjectType().getType())) + " " + 
+            						obj.getKey().getValue().toString() + "\",\n";
+        }
+        else {
+            internalObj += "\"" + CodeGeneratorUtils.getUpperCaseLeading(
+            		obj.getSimSEObjectType().getName()) + " " + 
+            		CodeGeneratorUtils.getUpperCaseLeading(
+            				SimSEObjectTypeTypes.getText(
+            						obj.getSimSEObjectType().getType())) + " " + 
+            						obj.getKey().getValue().toString() + "\"\n";
+        }
+
       }
+      CodeBlock constructorObj = CodeBlock.builder()
+    		  .addStatement("$T<$T> objects = $T.observableArrayList(" + internalObj + ")", observableList, String.class, fxCollections)
+    		  .build();
       
-      constructorObj += ");";
       
 
       
     
-      
-      String construtorActions = "ObservableList<String> actions = FXCollections.observableArrayList(";
-      
+            
       Vector<ActionType> actions = acts.getAllActionTypes();
+      String internalActions = "";
       for (int i = 0; i < actions.size(); i++) {
         ActionType act = actions.get(i);
         if (act.isVisibleInExplanatoryTool()) {
-          construtorActions += "\"" + 
-            		CodeGeneratorUtils.getUpperCaseLeading(act.getName()) + "\",\n";
+        	if(i == actions.size() - 1) {
+            	internalActions += "\"" + 
+                		CodeGeneratorUtils.getUpperCaseLeading(act.getName()) + "\"\n";
+        	} 
+        	else {
+            	internalActions += "\"" + 
+                		CodeGeneratorUtils.getUpperCaseLeading(act.getName()) + "\",\n";
+        	}
+
         }
       }
       
-      construtorActions += ");";
+      CodeBlock constructorActions = CodeBlock.builder()
+    		  .addStatement("$T<$T> objects = $T.observableArrayList(" + internalActions + ")", observableList, String.class, fxCollections)
+    		  .build();
       
       String refreshAttributeListObjectTypes = "";
       
@@ -306,30 +328,30 @@ public class ExplanatoryToolGenerator implements CodeGeneratorConstants {
     		  		"		});", eventHandler, actionEvent, actionEvent, refreshAttributeList)
     		  .addStatement("objectPane.getChildren().add(objectList)")
     		  .addStatement("// Create attribute list pane:")
-    		  .addStatement("$T attributeListTitlePane = new $T();", pane, pane)
-    		  .addStatement("attributeListTitlePane.getChildren().add(new $T(\"Show Attributes:\"));", label)
-    		  .addStatement("attributeListTitlePane.setMinHeight(20);")
-    		  .addStatement("objectPane.getChildren().add(attributeListTitlePane);")
-    		  .addStatement("attributeList = new $T<$T>();", listView, String.class)
-    		  .addStatement("attributeList.setFixedCellSize(24);")
-    		  .addStatement("attributeList.getSelectionModel().setSelectionMode($T.MULTIPLE);", selectionMode)
-    		  .addStatement("attributeList.addEventHandler($T.MOUSE_CLICKED, this);", mouseEvent)
-    		  .addStatement("attributeList.setMinWidth(550);")
-    		  .addStatement("$T attributeListPane = new $T(attributeList);", scrollPane, scrollPane)
-    		  .addStatement("attributeListPane.setMinHeight(120);")
-    		  .addStatement("objectPane.getChildren().add(attributeListPane);")
+    		  .addStatement("$T attributeListTitlePane = new $T()", pane, pane)
+    		  .addStatement("attributeListTitlePane.getChildren().add(new $T(\"Show Attributes:\"))", label)
+    		  .addStatement("attributeListTitlePane.setMinHeight(20)")
+    		  .addStatement("objectPane.getChildren().add(attributeListTitlePane)")
+    		  .addStatement("attributeList = new $T<$T>()", listView, String.class)
+    		  .addStatement("attributeList.setFixedCellSize(24)")
+    		  .addStatement("attributeList.getSelectionModel().setSelectionMode($T.MULTIPLE)", selectionMode)
+    		  .addStatement("attributeList.addEventHandler($T.MOUSE_CLICKED, this)", mouseEvent)
+    		  .addStatement("attributeList.setMinWidth(550)")
+    		  .addStatement("$T attributeListPane = new $T(attributeList)", scrollPane, scrollPane)
+    		  .addStatement("attributeListPane.setMinHeight(120)")
+    		  .addStatement("objectPane.getChildren().add(attributeListPane)")
     		  .addStatement("// Create objectBottom pane & button:")
-    		  .addStatement("$T objBottomPane = new $T();", pane, pane)
-    		  .addStatement("generateObjGraphButton = new $T(\"Generate Object Graph\");", button)
-    		  .addStatement("generateObjGraphButton.addEventHandler($T.MOUSE_CLICKED, this);", mouseEvent)
-    		  .addStatement("objBottomPane.getChildren().add(generateObjGraphButton);")
-    		  .addStatement("objectPane.getChildren().add(objBottomPane);")
+    		  .addStatement("$T objBottomPane = new $T()", pane, pane)
+    		  .addStatement("generateObjGraphButton = new $T(\"Generate Object Graph\")", button)
+    		  .addStatement("generateObjGraphButton.addEventHandler($T.MOUSE_CLICKED, this)", mouseEvent)
+    		  .addStatement("objBottomPane.getChildren().add(generateObjGraphButton)")
+    		  .addStatement("objectPane.getChildren().add(objBottomPane)")
     		  .addStatement("// Create action pane and components:")
-    		  .addStatement("$T actionPane = new $T();", vBox, vBox)
-    		  .addStatement("$T actionTitlePane = new $T();", pane, pane)
-    		  .addStatement("actionTitlePane.getChildren().add(new $T(\"Action Graph:\"));", label)
-    		  .addStatement("actionTitlePane.setMinHeight(20);")
-    		  .addStatement("actionPane.getChildren().add(actionTitlePane);")
+    		  .addStatement("$T actionPane = new $T()", vBox, vBox)
+    		  .addStatement("$T actionTitlePane = new $T()", pane, pane)
+    		  .addStatement("actionTitlePane.getChildren().add(new $T(\"Action Graph:\"))", label)
+    		  .addStatement("actionTitlePane.setMinHeight(20)")
+    		  .addStatement("actionPane.getChildren().add(actionTitlePane)")
     		  .addStatement("// Create attribute list pane")
     		  .addStatement("$T attributeListTitlePane = new $T()", pane, pane)
     		  .addStatement("attributeListTitlePane.getChildren().add(new Label(\"Show Attributes:\"))")
@@ -355,7 +377,7 @@ public class ExplanatoryToolGenerator implements CodeGeneratorConstants {
     		  .addStatement("actionTitlePane.getChildren().add(new $T(\"Action Graph:\"))", label)
     		  .addStatement("actionTitlePane.setMinHeight(20)")
     		  .addStatement("actionPane.getChildren().add(actionTitlePane)")
-    		  .addCode(construtorActions)
+    		  .addCode(constructorActions)
     		  .addStatement("actionList = new $T<$T>(actions)", listView, String.class)
     		  .addStatement("attributeList.setFixedCellSize(24)")
     		  .addStatement("actionList.getSelectionModel().setSelectionMode($T.MULTIPLE)", selectionMode)
@@ -645,7 +667,7 @@ public class ExplanatoryToolGenerator implements CodeGeneratorConstants {
               }
             }
             ruleBlock += "};\n";
-            ruleBlock += "intermediateRuleList.getItems.setAll(intList);\n";
+            ruleBlock += "intermediateRuleList.getItems().setAll(intList);\n";
           }
           ruleBlock += "}\n";
         }
@@ -695,8 +717,6 @@ public class ExplanatoryToolGenerator implements CodeGeneratorConstants {
     		  .addParameter(String.class, "ruleName")
     		  .beginControlFlow("if (ruleName != null)")
     		  .addStatement("$T text = $T.getRuleMapping(ruleName)", String.class, ruleCategories)
-    		  .endControlFlow()
-    		  .addCode(actionBlock)
     		  .addStatement("descriptionArea.setText(text)")
     		  .addStatement("descriptionArea.positionCaret(0)")
     		  .endControlFlow()
@@ -711,7 +731,7 @@ public class ExplanatoryToolGenerator implements CodeGeneratorConstants {
       TypeSpec explanatoryTool = TypeSpec.classBuilder("ExplanatoryTool")
     		  .addModifiers(Modifier.PUBLIC)
     		  .superclass(stage)
-    		  .addSuperinterface(chartMouseListenerFX)
+    		  .addSuperinterface(ParameterizedTypeName.get(eventHandler, mouseEvent))
     		  .addField(ParameterizedTypeName.get(arrayList, state), "log", Modifier.PRIVATE)
     		  .addField(ParameterizedTypeName.get(arrayList, stage), "visibleGraphs", Modifier.PRIVATE)
     		  .addField(multipleTimelinesBrowser, "timelinesBrowser", Modifier.PRIVATE)

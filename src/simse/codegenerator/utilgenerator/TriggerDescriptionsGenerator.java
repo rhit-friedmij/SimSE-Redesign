@@ -77,7 +77,7 @@ public class TriggerDescriptionsGenerator implements CodeGeneratorConstants {
                       + "\\\" and ";
             }
 //            writer.write("when the following conditions are met: \\n");
-            initalization += "when the following conditions are met: \\n";
+            initalization += "when the following conditions are met:";
             // go through all participant conditions:
             Vector<ActionTypeParticipantTrigger> partTriggers = 
             	trigger.getAllParticipantTriggers();
@@ -118,7 +118,7 @@ public class TriggerDescriptionsGenerator implements CodeGeneratorConstants {
                     	initalization += condVal;
                     }
 //                    writer.write(" \\n");
-                    initalization += " \n\"";
+                    initalization += " \"";
                   }
                 }
               }
