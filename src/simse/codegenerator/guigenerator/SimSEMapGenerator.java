@@ -47,6 +47,8 @@ public class SimSEMapGenerator implements CodeGeneratorConstants {
 																												// (String) of image
 																												// file (values)
   private Hashtable<SimSEObject, Vector<Integer>> objsToXYLocs; // maps
+  
+  private ArrayList<String> impTypes;
 																																// SimSEObjects
 																																// (keys) to
 																																// XYLocations
@@ -65,6 +67,7 @@ public class SimSEMapGenerator implements CodeGeneratorConstants {
     this.userDatas = userDatas;
     objsToXYLocs = new Hashtable<SimSEObject, Vector<Integer>>();
     this.directory = directory;
+    this.impTypes = new ArrayList<>();
   }
 
   public void generate() {
@@ -87,20 +90,20 @@ public class SimSEMapGenerator implements CodeGeneratorConstants {
       FileWriter writer = new FileWriter(ssmFile);      
       // constructor:
       String usrData = "";
-      usrData.concat("for(int i=0; i<sopUsers.size(); i++)\n{\n");
-      usrData.concat("DisplayedEmployee user = sopUsers.get(i);\n");
-      usrData.concat("user.setXYLocations(getXYCoordinates(user.getEmployee())[0], getXYCoordinates(user.getEmployee())[1]);\n");
-      usrData.concat("String url = getImage(user.getEmployee());\n");
-      usrData.concat("if (url != null) {\n");
-      usrData.concat("user.setUserIcon(url);\n");
+      usrData = usrData.concat("for(int i=0; i<sopUsers.size(); i++)\n{\n");
+      usrData = usrData.concat("DisplayedEmployee user = sopUsers.get(i);\n");
+      usrData = usrData.concat("user.setXYLocations(getXYCoordinates(user.getEmployee())[0], getXYCoordinates(user.getEmployee())[1]);\n");
+      usrData = usrData.concat("String url = getImage(user.getEmployee());\n");
+      usrData = usrData.concat("if (url != null) {\n");
+      usrData = usrData.concat("user.setUserIcon(url);\n");
 
       // go through all user datas:
       for (int i = 0; i < userDatas.size(); i++) {
         UserData tmpUser = userDatas.get(i);
         if (i > 0) {
-        	usrData.concat("else ");
+        	usrData = usrData.concat("else ");
         }
-        usrData.concat("if((user.getEmployee() instanceof " + 
+        usrData = usrData.concat("if((user.getEmployee() instanceof " + 
         		CodeGeneratorUtils.getUpperCaseLeading(
         				tmpUser.getSimSEObject().getSimSEObjectType().getName()) + 
         				") && (((" + 
@@ -108,7 +111,7 @@ public class SimSEMapGenerator implements CodeGeneratorConstants {
         						tmpUser.getSimSEObject().getSimSEObjectType().getName()) + 
         						")user.getEmployee()).get");
         SimSEObjectType objType = tmpUser.getSimSEObject().getSimSEObjectType();
-        usrData.concat(CodeGeneratorUtils.getUpperCaseLeading(
+        usrData = usrData.concat(CodeGeneratorUtils.getUpperCaseLeading(
         		objType.getKey().getName()) + "()");
 
         if ((tmpUser.getSimSEObject().getKey() != null)
@@ -118,9 +121,9 @@ public class SimSEMapGenerator implements CodeGeneratorConstants {
           Object keyAttVal = tmpUser.getSimSEObject().getKey().getValue();
           if (objType.getKey().getType() == AttributeTypes.STRING) { // string
                                                                    	 // attribute
-        	  usrData.concat(".equals(\"" + keyAttVal.toString() + "\")))");
+        	  usrData = usrData.concat(".equals(\"" + keyAttVal.toString() + "\")))");
           } else { // non-string attribute
-        	  usrData.concat(" == " + keyAttVal.toString() + "))");
+        	  usrData = usrData.concat(" == " + keyAttVal.toString() + "))");
           }
 
           // x y locations:
@@ -129,9 +132,9 @@ public class SimSEMapGenerator implements CodeGeneratorConstants {
           xys.add(new Integer(tmpUser.getYLocation()));
           objsToXYLocs.put(tmpUser.getSimSEObject(), xys);
 
-          usrData.concat("\n{\n");
-          usrData.concat("user.setDisplayed(" + tmpUser.isDisplayed() + ");\n");
-          usrData.concat("user.setActivated(" + tmpUser.isActivated() + ");\n}\n");
+          usrData = usrData.concat("\n{\n");
+          usrData = usrData.concat("user.setDisplayed(" + tmpUser.isDisplayed() + ");\n");
+          usrData = usrData.concat("user.setActivated(" + tmpUser.isActivated() + ");\n}\n");
         } else {
           JOptionPane.showMessageDialog(null, "Generator exception: " + 
           		objType.getName() + " " + 
@@ -140,7 +143,7 @@ public class SimSEMapGenerator implements CodeGeneratorConstants {
           				" object has no key attribute value.");
         }
       }
-      usrData.concat("}\n}\n\n");
+      usrData = usrData.concat("}\n}\n\n");
       
    // map info:
       String mapData = "";
@@ -193,12 +196,15 @@ public class SimSEMapGenerator implements CodeGeneratorConstants {
       // go through all employee types:
       for (int i = 0; i < empTypes.size(); i++) {
         SimSEObjectType tempType = empTypes.elementAt(i);
-        if (i > 0) { // not on first element
-          gi.concat("else ");
+        if (!this.impTypes.contains(CodeGeneratorUtils.getUpperCaseLeading(tempType.getName()))) {
+        	this.impTypes.add(CodeGeneratorUtils.getUpperCaseLeading(tempType.getName()));
         }
-        gi.concat("if(e instanceof "
+        if (i > 0) { // not on first element
+        	gi = gi.concat("else ");
+        }
+        gi = gi.concat("if(e instanceof "
             + CodeGeneratorUtils.getUpperCaseLeading(tempType.getName()) + ")\n{\n");
-        gi.concat(CodeGeneratorUtils.getUpperCaseLeading(tempType.getName()) 
+        gi = gi.concat(CodeGeneratorUtils.getUpperCaseLeading(tempType.getName()) 
         		+ " p = (" + 
         		CodeGeneratorUtils.getUpperCaseLeading(tempType.getName()) + ")e;\n");
 
@@ -228,33 +234,33 @@ public class SimSEMapGenerator implements CodeGeneratorConstants {
             }
             if (allAttValuesInit) {
               if (putElse) {
-            	  gi.concat("else ");
+            	  gi = gi.concat("else ");
               } else {
                 putElse = true;
               }
-              gi.concat("if(p.get" + 
+              gi = gi.concat("if(p.get" + 
               		CodeGeneratorUtils.getUpperCaseLeading(
               				obj.getKey().getAttribute().getName()) + 
               				"()");
               if (obj.getKey().getAttribute().getType() == 
               	AttributeTypes.STRING) { // string att
-            	  gi.concat(".equals(\"" + obj.getKey().getValue().toString() +
+            	  gi = gi.concat(".equals(\"" + obj.getKey().getValue().toString() +
                 		"\"))");
               } else { // integer, double, or boolean att
-            	  gi.concat(" == " + obj.getKey().getValue().toString() + ")");
+            	  gi = gi.concat(" == " + obj.getKey().getValue().toString() + ")");
               }
-              gi.concat("\n{\n");
+              gi = gi.concat("\n{\n");
               if (((objsToImages.get(obj)) != null)
                   && (((String) objsToImages.get(obj)).length() > 0)) {
                 String imagePath = (iconsDirectory + ((String) objsToImages
                     .get(obj)));
-                gi.concat("return \"" + imagePath + "\";\n");
+                gi = gi.concat("return \"" + imagePath + "\";\n");
               }
-              gi.concat("}\n");
+              gi = gi.concat("}\n");
             }
           }
         }
-        gi.concat("}\n");
+        gi = gi.concat("}\n");
       }
 
       // getImage function:
@@ -273,12 +279,15 @@ public class SimSEMapGenerator implements CodeGeneratorConstants {
       String xys="";
       for (int i = 0; i < empTypes.size(); i++) {
         SimSEObjectType tempType = empTypes.elementAt(i);
-        if (i > 0) { // not on first element
-          xys.concat("else ");
+        if (!this.impTypes.contains(CodeGeneratorUtils.getUpperCaseLeading(tempType.getName()))) {
+        	this.impTypes.add(CodeGeneratorUtils.getUpperCaseLeading(tempType.getName()));
         }
-        xys.concat("if(emp instanceof "
+        if (i > 0) { // not on first element
+        	xys=xys.concat("else ");
+        }
+        xys=xys.concat("if(emp instanceof "
             + CodeGeneratorUtils.getUpperCaseLeading(tempType.getName()) + ")\n{\n");
-        xys.concat(CodeGeneratorUtils.getUpperCaseLeading(tempType.getName()) 
+        xys=xys.concat(CodeGeneratorUtils.getUpperCaseLeading(tempType.getName()) 
         		+ " p = (" + CodeGeneratorUtils.getUpperCaseLeading(
         				tempType.getName()) + ")emp;\n{\n");
 
@@ -290,34 +299,34 @@ public class SimSEMapGenerator implements CodeGeneratorConstants {
           if (obj.getSimSEObjectType().getName().equals(tempType.getName())) { // matching
                                                                              	 // type
             if (putElse) {
-            	xys.concat("else ");
+            	xys=xys.concat("else ");
             } else {
               putElse = true;
             }
-            xys.concat("if(p.get" + 
+            xys=xys.concat("if(p.get" + 
             		CodeGeneratorUtils.getUpperCaseLeading(
             				obj.getKey().getAttribute().getName()) + "()");
             if (obj.getKey().isInstantiated()) {
               if (obj.getKey().getAttribute().getType() == 
               	AttributeTypes.STRING) { // string att
-            	  xys.concat(".equals(\"" + obj.getKey().getValue().toString()
+            	  xys=xys.concat(".equals(\"" + obj.getKey().getValue().toString()
                     + "\"))");
               } else { // integer, double, or boolean att
-            	  xys.concat(" == " + obj.getKey().getValue().toString() + ")");
+            	  xys=xys.concat(" == " + obj.getKey().getValue().toString() + ")");
               }
             }
-            xys.concat("\n{\n");
+            xys=xys.concat("\n{\n");
             if ((objsToXYLocs.get(obj) != null)
                 && (objsToXYLocs.get(obj).size() >= 2)) {
               int x = objsToXYLocs.get(obj).elementAt(0).intValue();
               int y = objsToXYLocs.get(obj).elementAt(1).intValue();
-              xys.concat("xys[0] = " + x + ";\n");
-              xys.concat("xys[1] = " + y + ";\n");
+              xys=xys.concat("xys[0] = " + x + ";\n");
+              xys=xys.concat("xys[1] = " + y + ";\n");
             }
-            xys.concat("}\n");
+            xys=xys.concat("}\n");
           }
         }
-        xys.concat("}\n}\n");
+        xys=xys.concat("}\n}\n");
       }
       
       MethodSpec getXYCoordinates = MethodSpec.methodBuilder("getXYCoordinates")
@@ -407,7 +416,11 @@ public class SimSEMapGenerator implements CodeGeneratorConstants {
       JavaFile file = JavaFile.builder("", simSEMap)
     		    .build();
       
-      String fileString = "package simse.gui;\n\nimport java.util.Vector;\n" + file.toString();
+      String fileString = "package simse.gui;\n\nimport java.util.Vector;\n"; 
+	  for (String type : this.impTypes) {
+    	  fileString = fileString + "import simse.adts.objects." + type + ";\n";
+      }
+      fileString = fileString + file.toString();
       
       writer
       .write("/* File generated by: simse.codegenerator.guigenerator.SimSEMapGenerator */\n");

@@ -390,20 +390,20 @@ public class MenuInputManagerGenerator implements CodeGeneratorConstants {
 							lambda.addStatement("$T t$L = ($T)(t111$L.getAll" + scoringPartVarName + "().elementAt(0))"
 									, scoringPartConstObjName, j, scoringPartConstObjName, j);
 							lambda.beginControlFlow("if (t$L != null)", j);
-							ClassName scoreType = null;
+							Class scoreType = null;
 							if (scoringAttConst.getAttribute().getType() == AttributeTypes.INTEGER) {
-								scoreType = ClassName.get(int.class);
+								scoreType = int.class;
 							} else if (scoringAttConst.getAttribute().getType() == AttributeTypes.DOUBLE) {
-								scoreType = ClassName.get(double.class);
+								scoreType = double.class;
 							} else if (scoringAttConst.getAttribute().getType() == AttributeTypes.STRING) {
-								scoreType = ClassName.get(String.class);
+								scoreType = String.class;
 							} else if (scoringAttConst.getAttribute().getType() == AttributeTypes.BOOLEAN) {
-								scoreType = ClassName.get(boolean.class);
+								scoreType = boolean.class;
 							}
 							lambda.addStatement("$T v$L = t$L.get" + scoringAttConst.getAttribute().getName() + "()", scoreType, j, j);
 							lambda.addStatement("state.getClock().stop()");
 							lambda.addStatement("state.setScore(v$L)", j);
-							lambda.addStatement("(($T)gui).update()", simseGui);
+							lambda.addStatement("(($T)parent).update()", simseGui);
 							lambda.addStatement("$T d = new $T($T.INFORMATION)", alert, alert, alertType);
 							lambda.addStatement("d.setContentText(($S + v$L))", "Your score is ", j);
 							lambda.addStatement("d.setTitle($S)", "Game over!");
@@ -542,15 +542,12 @@ public class MenuInputManagerGenerator implements CodeGeneratorConstants {
 							ifCondition += " && (a.get"
 									+ CodeGeneratorUtils.getUpperCaseLeading(attConst.getAttribute().getName())
 									+ "() ";
-							if (attConst.getGuard().equals(AttributeGuard.EQUALS)) {
-								ifCondition += "== ";
+							if (attConst.getGuard().equals(AttributeGuard.EQUALS) && attConst.getAttribute().getType() == AttributeTypes.STRING) {
+								ifCondition += ".equals(\"" + attConst.getValue().toString() + "\")";
+							} else if (attConst.getGuard().equals(AttributeGuard.EQUALS)) {
+								ifCondition += "== " + attConst.getValue().toString();
 							} else {
-								ifCondition += attConst.getGuard() + " ";
-							}
-							if (attConst.getAttribute().getType() == AttributeTypes.STRING) {
-								ifCondition += "\"" + attConst.getValue().toString() + "\")";
-							} else {
-								ifCondition += attConst.getValue().toString();
+								ifCondition += attConst.getGuard() + " " + attConst.getValue().toString();
 							}
 							ifCondition += ")";
 						}
@@ -860,20 +857,20 @@ public class MenuInputManagerGenerator implements CodeGeneratorConstants {
 									, scoringPartConstObjName, scoringPartConstObjName);
 							effectCode.beginControlFlow("if (t != null)");
 							
-							ClassName scoreType = null;
+							Class scoreType = null;
 							if (scoringAttConst.getAttribute().getType() == AttributeTypes.INTEGER) {
-								scoreType = ClassName.get(int.class);
+								scoreType = int.class;
 							} else if (scoringAttConst.getAttribute().getType() == AttributeTypes.DOUBLE) {
-								scoreType = ClassName.get(double.class);
+								scoreType = double.class;
 							} else if (scoringAttConst.getAttribute().getType() == AttributeTypes.STRING) {
-								scoreType = ClassName.get(String.class);
+								scoreType = String.class;
 							} else if (scoringAttConst.getAttribute().getType() == AttributeTypes.BOOLEAN) {
-								scoreType = ClassName.get(boolean.class);
+								scoreType = boolean.class;
 							}
 							effectCode.addStatement("$T v = t.get" + scoringAttConst.getAttribute().getName() + "()", scoreType);
 							effectCode.addStatement("state.getClock().stop()");
 							effectCode.addStatement("state.setScore(v)");
-							effectCode.addStatement("(($T)gui).update()", simseGui);
+							effectCode.addStatement("(($T)parent).update()", simseGui);
 							effectCode.addStatement("$T d = new $T($T.INFORMATION)", alert, alert, alertType);
 							effectCode.addStatement("d.setContentText(($S + v))", "Your score is ");
 							effectCode.addStatement("d.setTitle($S)", "Game over!");

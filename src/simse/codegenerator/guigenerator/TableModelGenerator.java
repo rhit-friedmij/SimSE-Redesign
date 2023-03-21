@@ -100,7 +100,7 @@ public class TableModelGenerator implements CodeGeneratorConstants {
 	 
 	 String initCol = "";
 	 for (int i=0; i<common.size(); i++) {
-		 initCol.concat("columnNames.add(\""+common.get(i).getName() + "\");\n");
+		 initCol = initCol.concat("columnNames.add(\""+common.get(i).getName() + "\");\n");
 	 }
 	 
 	 MethodSpec initCols = MethodSpec.methodBuilder("initColNames")
@@ -110,12 +110,12 @@ public class TableModelGenerator implements CodeGeneratorConstants {
 			 .build();
 	 
 	 String getVal = "";
-	 getVal.concat("switch(row) {\n");
+	 getVal = getVal.concat("switch(row) {\n");
 	 for (int i=0; i<common.size(); i++) {
-		 getVal.concat("case " + i + ": returnValue = model.get"+common.get(i).getName()+"();\n");
-		 getVal.concat("break;\n");
+		 getVal = getVal.concat("case " + i + ": returnValue = model.get"+common.get(i).getName()+"();\n");
+		 getVal = getVal.concat("break;\n");
 	 }
-	 getVal.concat("}\n");
+	 getVal = getVal.concat("}\n");
 	 
 	 MethodSpec getValue = MethodSpec.methodBuilder("getValueAt")
 			 .addAnnotation(Override.class)
@@ -129,12 +129,12 @@ public class TableModelGenerator implements CodeGeneratorConstants {
 			 .build();
 	 
 	 String setVal = "";
-	 setVal.concat("switch(row) {\n");
+	 setVal = setVal.concat("switch(row) {\n");
 	 for (int i=0; i<common.size(); i++) {
-		 setVal.concat("case " + i + ": model.set"+common.get(i).getName()+"("+getTypeAsCast(common.get(i))+" value);\n");
-		 setVal.concat("break;\n");
+		 setVal = setVal.concat("case " + i + ": model.set"+common.get(i).getName()+"("+getTypeAsCast(common.get(i))+" value);\n");
+		 setVal = setVal.concat("break;\n");
 	 }
-	 setVal.concat("}\n");
+	 setVal = setVal.concat("}\n");
 	 
 	 MethodSpec setValue = MethodSpec.methodBuilder("setValueAt")
 			 .addAnnotation(Override.class)
@@ -198,7 +198,7 @@ public class TableModelGenerator implements CodeGeneratorConstants {
 		 
 		 String initCol = "";
 		 for (int i=0; i<common.size(); i++) {
-			 initCol.concat("columnNames.add(\""+common.get(i).getName() + "\");\n");
+			 initCol = initCol.concat("columnNames.add(\""+common.get(i).getName() + "\");\n");
 		 }
 		 
 		 MethodSpec initCols = MethodSpec.methodBuilder("initColNames")
@@ -208,12 +208,12 @@ public class TableModelGenerator implements CodeGeneratorConstants {
 				 .build();
 		 
 		 String getVal = "";
-		 getVal.concat("switch(row) {\n");
+		 getVal = getVal.concat("switch(row) {\n");
 		 for (int i=0; i<common.size(); i++) {
-			 getVal.concat("case " + i + ": returnValue = model.get"+common.get(i).getName()+"();\n");
-			 getVal.concat("break;\n");
+			 getVal = getVal.concat("case " + i + ": returnValue = model.get"+common.get(i).getName()+"();\n");
+			 getVal = getVal.concat("break;\n");
 		 }
-		 getVal.concat("}\n");
+		 getVal = getVal.concat("}\n");
 		 
 		 MethodSpec getValue = MethodSpec.methodBuilder("getValueAt")
 				 .addAnnotation(Override.class)
@@ -227,12 +227,12 @@ public class TableModelGenerator implements CodeGeneratorConstants {
 				 .build();
 		 
 		 String setVal = "";
-		 setVal.concat("switch(row) {\n");
+		 setVal = setVal.concat("switch(row) {\n");
 		 for (int i=0; i<common.size(); i++) {
-			 setVal.concat("case " + i + ": model.set"+common.get(i).getName()+"("+getTypeAsCast(common.get(i))+" value);\n");
-			 setVal.concat("break;\n");
+			 setVal = setVal.concat("case " + i + ": model.set"+common.get(i).getName()+"("+getTypeAsCast(common.get(i))+" value);\n");
+			 setVal = setVal.concat("break;\n");
 		 }
-		 setVal.concat("}\n");
+		 setVal = setVal.concat("}\n");
 		 
 		 MethodSpec setValue = MethodSpec.methodBuilder("setValueAt")
 				 .addAnnotation(Override.class)
@@ -289,7 +289,7 @@ public class TableModelGenerator implements CodeGeneratorConstants {
 		 
 		 String initCol = "";
 		 for (int i=0; i<common.size(); i++) {
-			 initCol.concat("columnNames.add(\""+common.get(i).getName() + "\");\n");
+			 initCol = initCol.concat("columnNames.add(\""+common.get(i).getName() + "\");\n");
 		 }
 		 
 		 MethodSpec initCols = MethodSpec.methodBuilder("initColNames")
@@ -305,12 +305,12 @@ public class TableModelGenerator implements CodeGeneratorConstants {
 				 .build();
 		 
 		 String getVal = "";
-		 getVal.concat("switch(row) {\n");
+		 getVal = getVal.concat("switch(row) {\n");
 		 for (int i=0; i<common.size(); i++) {
-			 getVal.concat("case " + i + ": returnValue = model.get"+common.get(i).getName()+"();\n");
-			 getVal.concat("break;\n");
+			 getVal = getVal.concat("case " + i + ": returnValue = model.get"+common.get(i).getName()+"();\n");
+			 getVal = getVal.concat("break;\n");
 		 }
-		 getVal.concat("}\n");
+		 getVal = getVal.concat("}\n");
 		 
 		 MethodSpec getValue = MethodSpec.methodBuilder("getValueAt")
 				 .addAnnotation(Override.class)
@@ -324,12 +324,12 @@ public class TableModelGenerator implements CodeGeneratorConstants {
 				 .build();
 		 
 		 String setVal = "";
-		 setVal.concat("switch(row) {\n");
+		 setVal = setVal.concat("switch(row) {\n");
 		 for (int i=0; i<common.size(); i++) {
-			 setVal.concat("case " + i + ": model.set"+common.get(i).getName()+"("+getTypeAsCast(common.get(i))+" value);\n");
-			 setVal.concat("break;\n");
+			 setVal = setVal.concat("case " + i + ": model.set"+common.get(i).getName()+"("+getTypeAsCast(common.get(i))+" value);\n");
+			 setVal = setVal.concat("break;\n");
 		 }
-		 setVal.concat("}\n");
+		 setVal = setVal.concat("}\n");
 		 
 		 MethodSpec setValue = MethodSpec.methodBuilder("setValueAt")
 				 .addAnnotation(Override.class)
@@ -392,7 +392,7 @@ public class TableModelGenerator implements CodeGeneratorConstants {
 		 
 		 String initCol = "";
 		 for (int i=0; i<common.size(); i++) {
-			 initCol.concat("columnNames.add(\""+common.get(i).getName() + "\");\n");
+			 initCol = initCol.concat("columnNames.add(\""+common.get(i).getName() + "\");\n");
 		 }
 		 
 		 MethodSpec initCols = MethodSpec.methodBuilder("initColNames")
@@ -402,12 +402,12 @@ public class TableModelGenerator implements CodeGeneratorConstants {
 				 .build();
 		 
 		 String getVal = "";
-		 getVal.concat("switch(row) {\n");
+		 getVal = getVal.concat("switch(row) {\n");
 		 for (int i=0; i<common.size(); i++) {
-			 getVal.concat("case " + i + ": returnValue = model.get"+common.get(i).getName()+"();\n");
-			 getVal.concat("break;\n");
+			 getVal = getVal.concat("case " + i + ": returnValue = model.get"+common.get(i).getName()+"();\n");
+			 getVal = getVal.concat("break;\n");
 		 }
-		 getVal.concat("}\n");
+		 getVal = getVal.concat("}\n");
 		 
 		 MethodSpec getValue = MethodSpec.methodBuilder("getValueAt")
 				 .addAnnotation(Override.class)
@@ -421,12 +421,12 @@ public class TableModelGenerator implements CodeGeneratorConstants {
 				 .build();
 		 
 		 String setVal = "";
-		 setVal.concat("switch(row) {\n");
+		 setVal = setVal.concat("switch(row) {\n");
 		 for (int i=0; i<common.size(); i++) {
-			 setVal.concat("case " + i + ": model.set"+common.get(i).getName()+"("+getTypeAsCast(common.get(i))+" value);\n");
-			 setVal.concat("break;\n");
+			 setVal = setVal.concat("case " + i + ": model.set"+common.get(i).getName()+"("+getTypeAsCast(common.get(i))+" value);\n");
+			 setVal = setVal.concat("break;\n");
 		 }
-		 setVal.concat("}\n");
+		 setVal = setVal.concat("}\n");
 		 
 		 MethodSpec setValue = MethodSpec.methodBuilder("setValueAt")
 				 .addAnnotation(Override.class)
@@ -489,7 +489,7 @@ public class TableModelGenerator implements CodeGeneratorConstants {
 		 
 		 String initCol = "";
 		 for (int i=0; i<common.size(); i++) {
-			 initCol.concat("columnNames.add(\""+common.get(i).getName() + "\");\n");
+			 initCol = initCol.concat("columnNames.add(\""+common.get(i).getName() + "\");\n");
 		 }
 		 
 		 MethodSpec initCols = MethodSpec.methodBuilder("initColNames")
@@ -499,12 +499,12 @@ public class TableModelGenerator implements CodeGeneratorConstants {
 				 .build();
 		 
 		 String getVal = "";
-		 getVal.concat("switch(row) {\n");
+		 getVal = getVal.concat("switch(row) {\n");
 		 for (int i=0; i<common.size(); i++) {
-			 getVal.concat("case " + i + ": returnValue = model.get"+common.get(i).getName()+"();\n");
-			 getVal.concat("break;\n");
+			 getVal = getVal.concat("case " + i + ": returnValue = model.get"+common.get(i).getName()+"();\n");
+			 getVal = getVal.concat("break;\n");
 		 }
-		 getVal.concat("}\n");
+		 getVal = getVal.concat("}\n");
 		 
 		 MethodSpec getValue = MethodSpec.methodBuilder("getValueAt")
 				 .addAnnotation(Override.class)
@@ -518,12 +518,12 @@ public class TableModelGenerator implements CodeGeneratorConstants {
 				 .build();
 		 
 		 String setVal = "";
-		 setVal.concat("switch(row) {\n");
+		 setVal = setVal.concat("switch(row) {\n");
 		 for (int i=0; i<common.size(); i++) {
-			 setVal.concat("case " + i + ": model.set"+common.get(i).getName()+"("+getTypeAsCast(common.get(i))+" value);\n");
-			 setVal.concat("break;\n");
+			 setVal = setVal.concat("case " + i + ": model.set"+common.get(i).getName()+"("+getTypeAsCast(common.get(i))+" value);\n");
+			 setVal = setVal.concat("break;\n");
 		 }
-		 setVal.concat("}\n");
+		 setVal = setVal.concat("}\n");
 		 
 		 MethodSpec setValue = MethodSpec.methodBuilder("setValueAt")
 				 .addAnnotation(Override.class)

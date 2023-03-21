@@ -54,7 +54,7 @@ public class LogicGenerator implements CodeGeneratorConstants {
     menuGen = new MenuInputManagerGenerator(options, actTypes, objTypes, directory);
     epsdGen = new EmployeeParticipantSelectionDialogGenerator(actTypes, objTypes, directory);
     nepsdGen = new NonEmployeeParticipantSelectionDialogGenerator(actTypes, objTypes, directory);
-    psdDriverGen = new ParticipantSelectionDialogsDriverGenerator(actTypes, objTypes, directory);
+    psdDriverGen = new ParticipantSelectionDialogsDriverGenerator(actTypes, directory);
     catddGen = new ChooseActionToDestroyDialogGenerator(actTypes, directory);
     catjdGen = new ChooseActionToJoinDialogGenerator(actTypes, directory);
     crtpdGen = new ChooseRoleToPlayDialogGenerator(actTypes, directory);

@@ -16,6 +16,7 @@ import simse.codegenerator.CodeGeneratorUtils;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Vector;
 
 import javax.lang.model.element.Modifier;
@@ -33,10 +34,12 @@ public class InformationPanelGenerator implements CodeGeneratorConstants {
 	private DefinedObjectTypes objTypes; // holds all of the defined object types
 											// from an sso file
 	private File directory; // directory to save generated code into
+	private ArrayList<String> impTypes;
 
 	public InformationPanelGenerator(DefinedObjectTypes objTypes, File directory) {
 		this.objTypes = objTypes;
 		this.directory = directory;
+		this.impTypes = new ArrayList<>();
 	}
 
 	public void generate() {
@@ -184,6 +187,7 @@ public class InformationPanelGenerator implements CodeGeneratorConstants {
 					.build();
 			
 			TypeSpec informationPanel = TypeSpec.classBuilder("InformationPanel")
+					.addModifiers(Modifier.PUBLIC)
 					.superclass(pane)
 					.addSuperinterface(simsepanel)
 					.addField(FieldSpec.builder(int.class, "ATTRIBUTE_LIST_CAPACITY", Modifier.PRIVATE, Modifier.FINAL)
@@ -209,11 +213,18 @@ public class InformationPanelGenerator implements CodeGeneratorConstants {
 					.addMethod(getPanelType)
 					.build();
 			
-			JavaFile file = JavaFile.builder("simse.gui", informationPanel)
+			JavaFile file = JavaFile.builder("", informationPanel)
 					.build();
 			
+			String fileString = "package simse.gui;\n\n";
+			for (String type : impTypes) {
+				fileString = fileString + "import simse.adts.objects." + type + ";\n";
+			}
 			
-			file.writeTo(writer);
+			fileString = fileString + file.toString();
+			
+			
+			writer.write(fileString);
 			writer.close();
 			
 		} catch (IOException e) {
@@ -228,16 +239,16 @@ public class InformationPanelGenerator implements CodeGeneratorConstants {
 		String[] metaTypes = SimSEObjectTypeTypes.getAllTypesAsStrings();
 		for (int i = 0; i < metaTypes.length; i++) {
 			String typeName = metaTypes[i];
-			attString.concat("// " + typeName + ":");
-			attString.concat("\n");
+			attString = attString.concat("// " + typeName + ":");
+			attString = attString.concat("\n");
 			if (i > 0) { // not on first element
-				attString.concat("else ");
+				attString = attString.concat("else ");
 			}
-			attString.concat("if((objInFocus != null) && state.get" + typeName
+			attString = attString.concat("if((objInFocus != null) && state.get" + typeName
 					+ "StateRepository().getAll().contains(objInFocus))");
-			attString.concat("\n");
-			attString.concat("{");
-			attString.concat("\n");
+			attString = attString.concat("\n");
+			attString = attString.concat("{");
+			attString = attString.concat("\n");
 			// go through all object types:
 			Vector<SimSEObjectType> types = objTypes.getAllObjectTypes();
 			// Make a vector of only the types that have the correct meta type:
@@ -250,28 +261,31 @@ public class InformationPanelGenerator implements CodeGeneratorConstants {
 			}
 			for (int j = 0; j < correctTypes.size(); j++) {
 				SimSEObjectType tempType = correctTypes.elementAt(j);
-				if (j > 0) { // not on first element
-					attString.concat("else ");
+				if (!this.impTypes.contains(CodeGeneratorUtils.getUpperCaseLeading(tempType.getName()))) {
+					this.impTypes.add(CodeGeneratorUtils.getUpperCaseLeading(tempType.getName()));
 				}
-				attString.concat(
+				if (j > 0) { // not on first element
+					attString = attString.concat("else ");
+				}
+				attString = attString.concat(
 						"if(objInFocus instanceof " + CodeGeneratorUtils.getUpperCaseLeading(tempType.getName()) + ")");
-				attString.concat("\n");
-				attString.concat("{");
-				attString.concat("\n");
-				attString.concat(CodeGeneratorUtils.getUpperCaseLeading(tempType.getName()) + " p = ("
+				attString = attString.concat("\n");
+				attString = attString.concat("{");
+				attString = attString.concat("\n");
+				attString = attString.concat(CodeGeneratorUtils.getUpperCaseLeading(tempType.getName()) + " p = ("
 						+ CodeGeneratorUtils.getUpperCaseLeading(tempType.getName()) + ")objInFocus;");
-				attString.concat("\n");
-				attString.concat("attributes.add(\"Type: " + tempType.getName() + "\");");
-				attString.concat("\n");
+				attString = attString.concat("\n");
+				attString = attString.concat("attributes.add(\"Type: " + tempType.getName() + "\");");
+				attString = attString.concat("\n");
 				// go through all attributes:
 				Vector<Attribute> atts = tempType.getAllAttributes();
 				for (int k = 0; k < atts.size(); k++) {
 					Attribute a = atts.elementAt(k);
 					if (a.isVisible()) {
-						attString.concat("if(!state.getClock().isStopped()) // game not over");
-						attString.concat("\n");
-						attString.concat("{");
-						attString.concat("\n");
+						attString = attString.concat("if(!state.getClock().isStopped()) // game not over");
+						attString = attString.concat("\n");
+						attString = attString.concat("{");
+						attString = attString.concat("\n");
 						if (a.getType() == AttributeTypes.DOUBLE) { // double att -- need
 																	// to do formatting
 																	// stuff
@@ -279,41 +293,41 @@ public class InformationPanelGenerator implements CodeGeneratorConstants {
 							if (numAtt.getMinNumFractionDigits() != null) { // has a min num
 																			// fraction
 																			// digits
-								attString.concat("numFormat.setMinimumFractionDigits("
+								attString = attString.concat("numFormat.setMinimumFractionDigits("
 										+ numAtt.getMinNumFractionDigits().intValue() + ");");
-								attString.concat("\n");
+								attString = attString.concat("\n");
 							} else {
 								// set it to the default minimum:
-								attString.concat("numFormat.setMinimumFractionDigits(0);");
-								attString.concat("\n");
+								attString = attString.concat("numFormat.setMinimumFractionDigits(0);");
+								attString = attString.concat("\n");
 							}
 							if (numAtt.getMaxNumFractionDigits() != null) { // has a max num
 																			// fraction
 																			// digits
-								attString.concat("numFormat.setMaximumFractionDigits("
+								attString = attString.concat("numFormat.setMaximumFractionDigits("
 										+ numAtt.getMaxNumFractionDigits().intValue() + ");");
-								attString.concat("\n");
+								attString = attString.concat("\n");
 							} else {
 								// set it to the default maximum:
-								attString.concat("numFormat.setMaximumFractionDigits(16);");
-								attString.concat("\n");
+								attString = attString.concat("numFormat.setMaximumFractionDigits(16);");
+								attString = attString.concat("\n");
 							}
-							attString.concat("attributes.add(\"" + numAtt.getName() + ": \" + numFormat.format(p.get"
+							attString = attString.concat("attributes.add(\"" + numAtt.getName() + ": \" + numFormat.format(p.get"
 									+ CodeGeneratorUtils.getUpperCaseLeading(numAtt.getName()) + "()) + \"\");");
-							attString.concat("\n");
+							attString = attString.concat("\n");
 						} else { // non-double att -- no formatting required
-							attString.concat("attributes.add(\"" + a.getName() + ": \" + p.get"
+							attString = attString.concat("attributes.add(\"" + a.getName() + ": \" + p.get"
 									+ CodeGeneratorUtils.getUpperCaseLeading(a.getName()) + "() + \"\");");
-							attString.concat("\n");
+							attString = attString.concat("\n");
 						}
-						attString.concat("}");
-						attString.concat("\n");
+						attString = attString.concat("}");
+						attString = attString.concat("\n");
 					}
 					if (a.isVisibleOnCompletion()) {
-						attString.concat("if(state.getClock().isStopped()) // game is over");
-						attString.concat("\n");
-						attString.concat("{");
-						attString.concat("\n");
+						attString = attString.concat("if(state.getClock().isStopped()) // game is over");
+						attString = attString.concat("\n");
+						attString = attString.concat("{");
+						attString = attString.concat("\n");
 						if (a.getType() == AttributeTypes.DOUBLE) { // double att -- need
 																	// to do formatting
 																	// stuff
@@ -321,42 +335,42 @@ public class InformationPanelGenerator implements CodeGeneratorConstants {
 							if (numAtt.getMinNumFractionDigits() != null) { // has a min num
 																			// fraction
 																			// digits
-								attString.concat("numFormat.setMinimumFractionDigits("
+								attString = attString.concat("numFormat.setMinimumFractionDigits("
 										+ numAtt.getMinNumFractionDigits().intValue() + ");");
-								attString.concat("\n");
+								attString = attString.concat("\n");
 							} else {
 								// set it to the default minimum:
-								attString.concat("numFormat.setMinimumFractionDigits(0);");
-								attString.concat("\n");
+								attString = attString.concat("numFormat.setMinimumFractionDigits(0);");
+								attString = attString.concat("\n");
 							}
 							if (numAtt.getMaxNumFractionDigits() != null) { // has a max num
 																			// fraction
 																			// digits
-								attString.concat("numFormat.setMaximumFractionDigits("
+								attString = attString.concat("numFormat.setMaximumFractionDigits("
 										+ numAtt.getMaxNumFractionDigits().intValue() + ");");
-								attString.concat("\n");
+								attString = attString.concat("\n");
 							} else {
 								// set it to the default maximum:
-								attString.concat("numFormat.setMaximumFractionDigits(16);");
-								attString.concat("\n");
+								attString = attString.concat("numFormat.setMaximumFractionDigits(16);");
+								attString = attString.concat("\n");
 							}
-							attString.concat("attributes.add(\"" + numAtt.getName() + ": \" + numFormat.format(p.get"
+							attString = attString.concat("attributes.add(\"" + numAtt.getName() + ": \" + numFormat.format(p.get"
 									+ CodeGeneratorUtils.getUpperCaseLeading(numAtt.getName()) + "()) + \"\");");
-							attString.concat("\n");
+							attString = attString.concat("\n");
 						} else { // non-double att -- no formatting required
-							attString.concat("attributes.add(\"" + a.getName() + ": \" + p.get"
+							attString = attString.concat("attributes.add(\"" + a.getName() + ": \" + p.get"
 									+ CodeGeneratorUtils.getUpperCaseLeading(a.getName()) + "() + \"\");");
-							attString.concat("\n");
+							attString = attString.concat("\n");
 						}
-						attString.concat("}");
-						attString.concat("\n");
+						attString = attString.concat("}");
+						attString = attString.concat("\n");
 					}
 				}
-				attString.concat("}");
-				attString.concat("\n");
+				attString = attString.concat("}");
+				attString = attString.concat("\n");
 			}
-			attString.concat("}");
-			attString.concat("\n");
+			attString = attString.concat("}");
+			attString = attString.concat("\n");
 		}
 		return attString;
 	}
