@@ -11,11 +11,7 @@ import simse.modelbuilder.ModelOptions;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
-
 import javax.lang.model.element.Modifier;
-import javax.swing.JOptionPane;
-
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.CodeBlock;
 import com.squareup.javapoet.FieldSpec;
@@ -23,7 +19,6 @@ import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.TypeSpec;
-import com.sun.glass.events.MouseEvent;
 
 public class CompositeGraphGenerator implements CodeGeneratorConstants {
   private File directory; // directory to save generated code into
@@ -83,7 +78,7 @@ public class CompositeGraphGenerator implements CodeGeneratorConstants {
     		  .addStatement("super()")
     		  .addStatement("this.branch = branch")
     		  .addStatement("$T title = \"Composite Graph\"", String.class)
-    		  .beginControlFlow("if (branch.getName() != null) {")
+    		  .beginControlFlow("if (branch.getName() != null)")
     		  .addStatement("title = title.concat(\" - \" + branch.getName())")
     		  .endControlFlow()
     		  .addStatement("setTitle(title)")
@@ -118,10 +113,10 @@ public class CompositeGraphGenerator implements CodeGeneratorConstants {
     
     	if (options.getAllowBranchingOption()) {
     		rightClick = CodeBlock.builder()
-    				.beginControlFlow("if (event.getButton() != $T.PRIMARY) { // not left-click", mouseButton)
+    				.beginControlFlow("if (event.getButton() != $T.PRIMARY)", mouseButton)
     				.addStatement("$T plot = chart.getXYPlot()", xyPlot)
     				.addStatement("$T domainRange = plot.getDataRange(plot.getDomainAxis())", range)
-    				.beginControlFlow("if (domainRange != null) { // chart is not blank\\")
+    				.beginControlFlow("if (domainRange != null)")
     				.addStatement("javafx.geometry.Point2D pt = chartViewer.localToScreen(event.getScreenX(), event.getScreenY())")
     				.addStatement("$T info = this.chartViewer.getRenderingInfo()", chartRenderingInfo)
     				.addStatement("java.awt.geom.Rectangle2D dataArea = info.getPlotInfo().getDataArea()")
@@ -129,13 +124,13 @@ public class CompositeGraphGenerator implements CodeGeneratorConstants {
     				.addStatement("$T domainAxisEdge = plot.getDomainAxisEdge()", rectangleEdge)
     				.addStatement("double chartX = domainAxis.java2DToValue(pt.getX(), dataArea, domainAxisEdge)")
     				.addStatement("lastRightClickedX = ($T) $T.rint(chartX)", int.class, math)
-    				.beginControlFlow("if (domainRange != null && lastRightClickedX >= domainRange.getLowerBound() && lastRightClickedX <= domainRange.getUpperBound()) { // clicked within domain range")
+    				.beginControlFlow("if (domainRange != null && lastRightClickedX >= domainRange.getLowerBound() && lastRightClickedX <= domainRange.getUpperBound())")
     				.beginControlFlow("if ((chartViewer).getContextMenu().getItems().indexOf(newBranchItem) == -1)")
     				.addStatement("chartViewer.getContextMenu().getItems().add(separator)")
     				.addStatement("chartViewer.getContextMenu().getItems().add(newBranchItem)")
     				.endControlFlow()
     				.beginControlFlow("else")
-    				.beginControlFlow("if (chartViewer.getContextMenu().getItems().indexOf(newBranchItem) >= 0) { // new branch item currently")
+    				.beginControlFlow("if (chartViewer.getContextMenu().getItems().indexOf(newBranchItem) >= 0)")
     				.addStatement("chartViewer.getContextMenu().getItems().remove(newBranchItem)")
     				.beginControlFlow("if (chartViewer.getContextMenu().getItems().indexOf(separator) >= 0)")
     				.addStatement("chartViewer.getContextMenu().getItems().remove(separator)")
@@ -161,14 +156,14 @@ public class CompositeGraphGenerator implements CodeGeneratorConstants {
 			.addModifiers(Modifier.PUBLIC)
 			.addParameter(actionEvent, "event")
 			.addStatement("$T source = event.getSource()", object)
-			.beginControlFlow("if (source == newBranchItem) {")
+			.beginControlFlow("if (source == newBranchItem)")
 			.addStatement("$T td = new $T()", textInputDialog, textInputDialog)
 			.addStatement("td.setTitle(\"Name New Branch\")")
 			.addStatement("td.setContentText(\"Please name this new game:\")")
 			.addStatement("td.setHeaderText(null)")
 			.addStatement("$T<$T> result = td.showAndWait()", optional, String.class)
 			.addStatement("result.ifPresent(name -> { this.newBranchName = name; })")
-			.beginControlFlow("if (newBranchName != null) {")
+			.beginControlFlow("if (newBranchName != null)")
 			.addStatement("$T tempState = ($T) objGraph.getLog().get(lastRightClickedX).clone()", state, state)
 			.addStatement("$T tempLogger = new $T(tempState, new $T<$T>(objGraph.getLog().subList(0, lastRightClickedX)))", logger, logger, arrayList, state)
 			.addStatement("$T tempClock = new $T(tempLogger, lastRightClickedX)", clock, clock)
@@ -200,12 +195,6 @@ public class CompositeGraphGenerator implements CodeGeneratorConstants {
 			.addModifiers(Modifier.PUBLIC)
 			.addParameter(chartMouseEventFX, "me")
 			.build();
-	
-	MethodSpec chartMouseMoved = MethodSpec.methodBuilder("chartMouseMoved")
-			.addParameter(chartMouseEventFX, "me")
-			.build();
-	
-
 	
 	TypeSpec compositeGraph = TypeSpec.classBuilder("CompositeGraph")
 			.addModifiers(Modifier.PUBLIC)

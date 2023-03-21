@@ -220,9 +220,10 @@ public class RuleCategoriesGenerator implements CodeGeneratorConstants {
         if (act.isVisibleInExplanatoryTool()) {
         	Vector<Rule> rules = act.getAllRules();
         	for(Rule rule : rules) {
-        		ruleDescriptionBlock += "ruleMapping.put(\"" + rule.getName() + "\", RuleDescriptions." + act.getName().toUpperCase() + "_" + rule.getName().toUpperCase() + ");\n";
+        		if (rule.isVisibleInExplanatoryTool()) {
+        			ruleDescriptionBlock += "ruleMapping.put(\"" + rule.getName() + "\", RuleDescriptions." + act.getName().toUpperCase() + "_" + rule.getName().toUpperCase() + ");\n";
+        		}
         	}
-        	
         }
       }
       
@@ -240,14 +241,15 @@ public class RuleCategoriesGenerator implements CodeGeneratorConstants {
         	String ruleBlock = "";
         	for(int i = 0; i < rules.size(); i++) {
         		Rule rule = rules.get(i);
-        		if(rules.size() == 1 || i == rules.size() - 1) {
-        			ruleBlock += "\"" + rule.getName() + "\"";
-        		} else {
-        			ruleBlock += "\"" + rule.getName() + "\"" + ", ";
-        		}
+        		if (rule.isVisibleInExplanatoryTool()) {
+	        		if(rules.size() == 1 || i == rules.size() - 1) {
+	        			ruleBlock += "\"" + rule.getName() + "\"";
+	        		} else {
+	        			ruleBlock += "\"" + rule.getName() + "\"" + ", ";
+	        		}
+        		}	
         	}
         	intRuleDescriptionBlock += ruleBlock + "},\n";
-        	
         }
       }
       intRuleDescriptionBlock += "};\n";
@@ -271,10 +273,12 @@ public class RuleCategoriesGenerator implements CodeGeneratorConstants {
         	String ruleBlock = "";
         	for(int i = 0; i < rules.size(); i++) {
         		Rule rule = rules.get(i);
-        		if(rules.size() == 1 || i == rules.size() - 1) {
-        			ruleBlock += "\"" + rule.getName() + "\"";
-        		} else {
-        			ruleBlock += "\"" + rule.getName() + "\"" + ", ";
+        		if (rule.isVisibleInExplanatoryTool()) {
+	        		if(rules.size() == 1 || i == rules.size() - 1) {
+	        			ruleBlock += "\"" + rule.getName() + "\"";
+	        		} else {
+	        			ruleBlock += "\"" + rule.getName() + "\"" + ", ";
+	        		}
         		}
         	}
         	trigRuleDescriptionBlock += ruleBlock + "},\n";
@@ -302,10 +306,12 @@ public class RuleCategoriesGenerator implements CodeGeneratorConstants {
         	String ruleBlock = "";
         	for(int i = 0; i < rules.size(); i++) {
         		Rule rule = rules.get(i);
-        		if(rules.size() == 1 || i == rules.size() - 1) {
-        			ruleBlock += "\"" + rule.getName() + "\"";
-        		} else {
-        			ruleBlock += "\"" + rule.getName() + "\"" + ", ";
+        		if (rule.isVisibleInExplanatoryTool()) {
+	        		if(rules.size() == 1 || i == rules.size() - 1) {
+	        			ruleBlock += "\"" + rule.getName() + "\"";
+	        		} else {
+	        			ruleBlock += "\"" + rule.getName() + "\"" + ", ";
+	        		}
         		}
         	}
         	destRuleDescriptionBlock += ruleBlock + "},\n";
@@ -327,47 +333,50 @@ public class RuleCategoriesGenerator implements CodeGeneratorConstants {
       
       String backendRuleBlock = "";
       for (ActionType act : actions) {
-        	Vector<Rule> rules = act.getAllRules();
+    	  if (act.isVisibleInExplanatoryTool()) {
         	Vector<ActionTypeDestroyer> destroyerRules = act.getAllDestroyers();
         	Vector<ActionTypeTrigger> triggerRules = act.getAllTriggers();
         	backendRuleBlock += "backendRuleMapping.put(Action." + act.getName().toUpperCase()
         			+ ", makeRuleMappingTable(";
         	backendRuleBlock += "new String[]{";
         	
-        	//Generate regular rules
-        	String ruleBlock = "";
-        	for(int i = 0; i < rules.size(); i++) {
-        		Rule rule = rules.get(i);
-        		if(rules.size() == 1 || i == rules.size() - 1) {
-        			ruleBlock += "\"" + rule.getName() + "\"";
-        		} else {
-        			ruleBlock += "\"" + rule.getName() + "\"" + ", ";
-        		}
-        	}
-        	backendRuleBlock += ruleBlock + "},\n";
-        	backendRuleBlock += "new String[]{";
+        	//Generate trigger/destroyer names
+        	String ruleBlock = "";        	
         	
         	//Generate trigger rules
         	String triggerRulesBlock = "";
         	for(int i = 0; i < triggerRules.size(); i++) {
         		ActionTypeTrigger triggerRule = triggerRules.get(i);
-    			triggerRulesBlock += "TriggerDescriptions." + act.getName().toUpperCase() + "_" + triggerRule.getName().toUpperCase() + ", ";			
+        		ruleBlock += "\"" + triggerRule.getName() + "\"";
+        		if(triggerRules.size() != 1 || i != triggerRules.size() - 1 || destroyerRules.size() != 0) {
+        			ruleBlock += ", ";
+        		}
+        		triggerRulesBlock += "TriggerDescriptions." + act.getName().toUpperCase() + "_" + triggerRule.getName().toUpperCase();			
+        		if(i != triggerRules.size() - 1 || destroyerRules.size() != 0) {
+        			triggerRulesBlock += ", ";		
+        		} 
+    			
         	}
-        	backendRuleBlock += triggerRulesBlock;
         	
         	//Generate destroyer rules
         	String destroyerRulesBlock = "";
         	for(int i = 0; i < destroyerRules.size(); i++) {
         		ActionTypeDestroyer destroyerRule = destroyerRules.get(i);
-        		if(i == destroyerRules.size() - 1) {
-        			destroyerRulesBlock += "DestroyerDescriptions." + act.getName().toUpperCase() + "_" + destroyerRule.getName().toUpperCase();
-        		} else {
-        			destroyerRulesBlock += "DestroyerDescriptions." + act.getName().toUpperCase() + "_" + destroyerRule.getName().toUpperCase() + ", ";
+        		ruleBlock += "\"" + destroyerRule.getName() + "\"";
+        		if(destroyerRules.size() != 1 || i != destroyerRules.size() - 1) {
+        			ruleBlock += ", ";
         		}
+        		destroyerRulesBlock += "DestroyerDescriptions." + act.getName().toUpperCase() + "_" + destroyerRule.getName().toUpperCase();
+        		if(i != destroyerRules.size() - 1) {
+        			destroyerRulesBlock += ", ";		
+        		} 
         					
         	}
+        	backendRuleBlock += ruleBlock + "},\n";
+        	backendRuleBlock += "new String[]{";
+        	backendRuleBlock += triggerRulesBlock;
         	backendRuleBlock += destroyerRulesBlock + "}));\n";
-        	
+    	  }
       }
       
       MethodSpec initializeBackendRuleMapping = MethodSpec.methodBuilder("initializeBackendRuleMapping")

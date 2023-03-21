@@ -118,11 +118,11 @@ public class DestroyerDescriptionsGenerator implements CodeGeneratorConstants {
                   }
                 }
               }
-              actionFields.add(FieldSpec.builder(String.class, 
+              
+              }
+            actionFields.add(FieldSpec.builder(String.class, 
               		act.getName().toUpperCase()
                       + "_" + destroyers.get(i).getName().toUpperCase(), Modifier.STATIC, Modifier.FINAL, Modifier.PUBLIC).initializer(actionsString + "\"").build());
-              }
-
           }
         }
       }
