@@ -58,15 +58,15 @@ public class RuleCategoriesGenerator implements CodeGeneratorConstants {
       String actionBlock = "{";
       
       for(int i = 0; i < actions.size(); i++) {
-    	  if(i == 0 || i == actions.size() - 1) {
-    		  actionBlock += "Action." + actions.get(i).getName();
+    	  if(actions.size() == 1 || i == actions.size() - 1) {
+    		  actionBlock += "Action." + actions.get(i).getName().toUpperCase();
     	  }
     	  else {
-    		  actionBlock += ", " + actions.get(i).getName();
+    		  actionBlock += "Action." + actions.get(i).getName().toUpperCase() + ", ";
     	  }
       }
       
-      actionBlock = "};";
+      actionBlock += "}";
       
       CodeBlock actionArray = CodeBlock.builder()
     		  .add(actionBlock)
@@ -240,7 +240,7 @@ public class RuleCategoriesGenerator implements CodeGeneratorConstants {
         	String ruleBlock = "";
         	for(int i = 0; i < rules.size(); i++) {
         		Rule rule = rules.get(i);
-        		if(i == 0 || i == rules.size() - 1) {
+        		if(rules.size() == 1 || i == rules.size() - 1) {
         			ruleBlock += "\"" + rule.getName() + "\"";
         		} else {
         			ruleBlock += "\"" + rule.getName() + "\"" + ", ";
@@ -271,7 +271,7 @@ public class RuleCategoriesGenerator implements CodeGeneratorConstants {
         	String ruleBlock = "";
         	for(int i = 0; i < rules.size(); i++) {
         		Rule rule = rules.get(i);
-        		if(i == 0 || i == rules.size() - 1) {
+        		if(rules.size() == 1 || i == rules.size() - 1) {
         			ruleBlock += "\"" + rule.getName() + "\"";
         		} else {
         			ruleBlock += "\"" + rule.getName() + "\"" + ", ";
@@ -302,7 +302,7 @@ public class RuleCategoriesGenerator implements CodeGeneratorConstants {
         	String ruleBlock = "";
         	for(int i = 0; i < rules.size(); i++) {
         		Rule rule = rules.get(i);
-        		if(i == 0 || i == rules.size() - 1) {
+        		if(rules.size() == 1 || i == rules.size() - 1) {
         			ruleBlock += "\"" + rule.getName() + "\"";
         		} else {
         			ruleBlock += "\"" + rule.getName() + "\"" + ", ";
@@ -327,7 +327,6 @@ public class RuleCategoriesGenerator implements CodeGeneratorConstants {
       
       String backendRuleBlock = "";
       for (ActionType act : actions) {
-        if (act.isVisibleInExplanatoryTool()) {
         	Vector<Rule> rules = act.getAllRules();
         	Vector<ActionTypeDestroyer> destroyerRules = act.getAllDestroyers();
         	Vector<ActionTypeTrigger> triggerRules = act.getAllTriggers();
@@ -339,7 +338,7 @@ public class RuleCategoriesGenerator implements CodeGeneratorConstants {
         	String ruleBlock = "";
         	for(int i = 0; i < rules.size(); i++) {
         		Rule rule = rules.get(i);
-        		if(i == 0 || i == rules.size() - 1) {
+        		if(rules.size() == 1 || i == rules.size() - 1) {
         			ruleBlock += "\"" + rule.getName() + "\"";
         		} else {
         			ruleBlock += "\"" + rule.getName() + "\"" + ", ";
@@ -369,9 +368,7 @@ public class RuleCategoriesGenerator implements CodeGeneratorConstants {
         	}
         	backendRuleBlock += destroyerRulesBlock + "}));\n";
         	
-        }
       }
-      backendRuleBlock += "};\n";
       
       MethodSpec initializeBackendRuleMapping = MethodSpec.methodBuilder("initializeBackendRuleMapping")
     		  .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
@@ -387,7 +384,7 @@ public class RuleCategoriesGenerator implements CodeGeneratorConstants {
         	String ruleBlock = "";
         	for(int i = 0; i < rules.size(); i++) {
         		ActionTypeTrigger rule = rules.get(i);
-        		if(i == 0 || i == rules.size() - 1) {
+        		if(rules.size() == 1 || i == rules.size() - 1) {
         			ruleBlock += "\"" + rule.getName() + "\"";
         		} else {
         			ruleBlock += "\"" + rule.getName() + "\"" + ", ";
@@ -413,7 +410,7 @@ public class RuleCategoriesGenerator implements CodeGeneratorConstants {
         	String ruleBlock = "";
         	for(int i = 0; i < rules.size(); i++) {
         		ActionTypeDestroyer rule = rules.get(i);
-        		if(i == 0 || i == rules.size() - 1) {
+        		if(rules.size() == 1 || i == rules.size() - 1) {
         			ruleBlock += "\"" + rule.getName() + "\"";
         		} else {
         			ruleBlock += "\"" + rule.getName() + "\"" + ", ";

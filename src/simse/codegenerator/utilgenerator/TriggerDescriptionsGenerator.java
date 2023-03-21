@@ -53,34 +53,30 @@ public class TriggerDescriptionsGenerator implements CodeGeneratorConstants {
       
       // go through all actions:
       Vector<ActionType> actions = actTypes.getAllActionTypes();
+      
       for (ActionType act : actions) {
-    	  String actionsString = "";
+    	String initalization = "";
         if (act.isVisibleInExplanatoryTool()) {
           Vector<ActionTypeTrigger> triggers = act.getAllTriggers();
-          for (ActionTypeTrigger trigger : triggers) {
-//            writer.write("static final String " + act.getName().toUpperCase()
-//                + "_" + trigger.getName().toUpperCase() + " = ");
-            String initalization = "";
-            
-//            writer.write(NEWLINE);
-            initalization += "\n";
-//            writer.write("\"This action occurs ");
-            initalization += "\"This action occurs ";
-            if (trigger instanceof RandomActionTypeTrigger) {
-//              writer.write(((RandomActionTypeTrigger) trigger).getFrequency()
-//                  + "% of the time ");
-            	initalization += ((RandomActionTypeTrigger) trigger).getFrequency()
+          for (int i = 0; i < triggers.size(); i++) {
+        	if(i == 0) {
+        		initalization += "\"This action stops ";
+        	}
+        	else {
+        		initalization += " This action stops ";
+        	}
+            if (triggers.get(i) instanceof RandomActionTypeTrigger) {
+            	initalization += ((RandomActionTypeTrigger) triggers.get(i)).getFrequency()
                       + "% of the time ";
-            } else if (trigger instanceof UserActionTypeTrigger) {
+            } else if (triggers.get(i) instanceof UserActionTypeTrigger) {
             	initalization += "when the user chooses the menu item \\\""
-                      + ((UserActionTypeTrigger) trigger).getMenuText()
+                      + ((UserActionTypeTrigger) triggers.get(i)).getMenuText()
                       + "\\\" and ";
             }
-//            writer.write("when the following conditions are met: \\n");
             initalization += "when the following conditions are met:";
             // go through all participant conditions:
             Vector<ActionTypeParticipantTrigger> partTriggers = 
-            	trigger.getAllParticipantTriggers();
+            		triggers.get(i).getAllParticipantTriggers();
             for (int k = 0; k < partTriggers.size(); k++) {
               ActionTypeParticipantTrigger partTrigger = partTriggers.get(k);
               String partName = partTrigger.getParticipant().getName();
@@ -105,20 +101,15 @@ public class TriggerDescriptionsGenerator implements CodeGeneratorConstants {
                   String attGuard = attConstraint.getGuard();
                   if (attConstraint.isConstrained()) {
                     String condVal = attConstraint.getValue().toString();
-//                    writer.write(partName + "." + attName + " (" + typeName
-//                        + ") " + attGuard + " ");
                     initalization += partName + "." + attName + " (" + typeName
                             + ") " + attGuard + " ";
                     if (attConstraint.getAttribute().getType() == 
                     	AttributeTypes.STRING) {
-//                      writer.write("\\\"" + condVal + "\\\"");
                     	initalization += "\\\"" + condVal + "\\\"";
                     } else {
-//                      writer.write(condVal);
                     	initalization += condVal;
                     }
-//                    writer.write(" \\n");
-                    initalization += " \"";
+                    initalization += " \\n";
                   }
                 }
               }
@@ -126,7 +117,7 @@ public class TriggerDescriptionsGenerator implements CodeGeneratorConstants {
             
             actionFields.add(FieldSpec.builder(String.class, 
             		act.getName().toUpperCase()
-                    + "_" + trigger.getName().toUpperCase(), Modifier.STATIC, Modifier.PUBLIC, Modifier.FINAL).initializer(initalization).build());
+                    + "_" + triggers.get(i).getName().toUpperCase(), Modifier.STATIC, Modifier.PUBLIC, Modifier.FINAL).initializer(initalization + "\"").build());
           }
         }
       }

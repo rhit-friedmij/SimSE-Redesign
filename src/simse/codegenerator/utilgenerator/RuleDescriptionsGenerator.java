@@ -45,19 +45,22 @@ public class RuleDescriptionsGenerator implements CodeGeneratorConstants {
 
       // go through all actions:
       Vector<ActionType> actions = actTypes.getAllActionTypes();
+      String actionsString = "";
       for (ActionType act : actions) {
-    	  String actionsString = "\"";
         if (act.isVisibleInExplanatoryTool()) {
           Vector<Rule> rules = act.getAllRules();
           for (int j = 0; j < rules.size(); j++) {
             Rule rule = rules.get(j);
-            if (rule.isVisibleInExplanatoryTool()) {
-              actionsString += "\"" + rule.getAnnotation().replaceAll("\"", "\\").
-                      replaceAll("\"", "\\\\\"") + "\"";
+            if (rule.isVisibleInExplanatoryTool() && !rule.getAnnotation().isEmpty()) {
+            	if(j == 0) {
+                    actionsString += rule.getAnnotation().replaceAll("\n", "\\\\n").
+                            replaceAll("\"", " ");
+            	} 
+
             }
             actionFields.add(FieldSpec.builder(String.class, 
             		act.getName().toUpperCase()
-                    + "_" + rule.getName().toUpperCase(), Modifier.STATIC, Modifier.PUBLIC, Modifier.FINAL).initializer(actionsString).build());
+                    + "_" + rule.getName().toUpperCase(), Modifier.STATIC, Modifier.PUBLIC, Modifier.FINAL).initializer("\"" + actionsString + "\"").build());
           }
         }
         
