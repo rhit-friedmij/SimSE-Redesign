@@ -52,7 +52,7 @@ public class RuleDescriptionsGenerator implements CodeGeneratorConstants {
           for (int j = 0; j < rules.size(); j++) {
             Rule rule = rules.get(j);
             if (rule.isVisibleInExplanatoryTool()) {
-              actionsString += rule.getAnnotation().replaceAll("\"", "\\").
+              actionsString += "\"" + rule.getAnnotation().replaceAll("\"", "\\").
                       replaceAll("\"", "\\\\\"") + "\"";
             }
             actionFields.add(FieldSpec.builder(String.class, 

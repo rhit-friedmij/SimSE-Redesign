@@ -73,7 +73,7 @@ public class RuleCategoriesGenerator implements CodeGeneratorConstants {
     		  .build();
       
       MethodSpec getAllDestRulesForAction = MethodSpec.methodBuilder("getAllDestRulesForAction")
-    		  .addModifiers(Modifier.PUBLIC)
+    		  .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
     		  .returns(stringArray)
     		  .addParameter(String.class, "actionName")
     		  .addStatement("$T rules = getDestRulesForAction(actionName)", stringArray)
@@ -87,7 +87,7 @@ public class RuleCategoriesGenerator implements CodeGeneratorConstants {
     		  .build();
       
       MethodSpec getAllTrigRulesForAction = MethodSpec.methodBuilder("getAllTrigRulesForAction")
-    		  .addModifiers(Modifier.PUBLIC)
+    		  .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
     		  .returns(stringArray)
     		  .addParameter(String.class, "actionName")
     		  .addStatement("$T rules = getTrigRulesForAction(actionName)", stringArray)
@@ -340,9 +340,9 @@ public class RuleCategoriesGenerator implements CodeGeneratorConstants {
         	for(int i = 0; i < rules.size(); i++) {
         		Rule rule = rules.get(i);
         		if(i == 0 || i == rules.size() - 1) {
-        			ruleBlock += rule.getName();
+        			ruleBlock += "\"" + rule.getName() + "\"";
         		} else {
-        			ruleBlock += rule.getName() + ", ";
+        			ruleBlock += "\"" + rule.getName() + "\"" + ", ";
         		}
         	}
         	backendRuleBlock += ruleBlock + "},\n";
@@ -388,9 +388,9 @@ public class RuleCategoriesGenerator implements CodeGeneratorConstants {
         	for(int i = 0; i < rules.size(); i++) {
         		ActionTypeTrigger rule = rules.get(i);
         		if(i == 0 || i == rules.size() - 1) {
-        			ruleBlock += rule.getName();
+        			ruleBlock += "\"" + rule.getName() + "\"";
         		} else {
-        			ruleBlock += rule.getName() + ", ";
+        			ruleBlock += "\"" + rule.getName() + "\"" + ", ";
         		}
         	}
         	backendTrigRuleDescriptionBlock += ruleBlock + "},\n";
@@ -414,9 +414,9 @@ public class RuleCategoriesGenerator implements CodeGeneratorConstants {
         	for(int i = 0; i < rules.size(); i++) {
         		ActionTypeDestroyer rule = rules.get(i);
         		if(i == 0 || i == rules.size() - 1) {
-        			ruleBlock += rule.getName();
+        			ruleBlock += "\"" + rule.getName() + "\"";
         		} else {
-        			ruleBlock += rule.getName() + ", ";
+        			ruleBlock += "\"" + rule.getName() + "\"" + ", ";
         		}
         	}
         	backendDestRuleDescriptionBlock += ruleBlock + "},\n";

@@ -218,7 +218,9 @@ public class ActionInfoPanelGenerator implements CodeGeneratorConstants {
     		  .addStatement("status.setCellValueFactory(new $T<>(\"status\"))", propertyValueFactory)
     		  .addStatement("$T<$T> data = $T.observableArrayList()", observableList, participant, fxCollections)
     		  .addCode(participantsTableActions)
-    		  .addStatement("return new $T(data, columnNames)")
+    		  .addStatement("newView.getColumns().setAll(name, participant, status)")
+    		  .addStatement("newView.setItems(data)")
+    		  .addStatement("return newView")
     		  .build();
       
       MethodSpec constructor = MethodSpec.constructorBuilder()
@@ -361,7 +363,7 @@ public class ActionInfoPanelGenerator implements CodeGeneratorConstants {
     		  .addParameter(int.class, "trigOrDest")
     		  .addStatement("$T name = trigOrDest == TRIGGER ? ($T) triggerList.getSelectionModel().getSelectedItem() : ($T) destroyerList.getSelectionModel().getSelectedItem()", String.class, String.class, String.class)
     		  .beginControlFlow("if (name != null)")
-    		  .addStatement("#T actionName = this.action.getActionName()")
+    		  .addStatement("$T actionName = this.action.getActionName()", String.class)
     		  .addStatement("descriptionArea.setText(text)")
     		  .addStatement("descriptionArea.setCaretPosition(0)")
     		  .endControlFlow()

@@ -167,7 +167,7 @@ public class ObjectGraphGenerator implements CodeGeneratorConstants {
     		  .beginControlFlow("for (int j = 0; j < attributes.length; j++)")
     		  .addCode(createDatasetCodeBlock)
     		  .endControlFlow()
-    		  .addStatement("$T dataset = new $T()", xySeriesCollection)
+    		  .addStatement("$T dataset = new $T()", xySeriesCollection, xySeriesCollection)
     		  .beginControlFlow("for (int i = 0; i < series.length; i++)")
     		  .addStatement("dataset.addSeries(series[i])")
     		  .endControlFlow()

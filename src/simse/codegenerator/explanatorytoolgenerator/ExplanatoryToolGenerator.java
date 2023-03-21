@@ -184,7 +184,7 @@ public class ExplanatoryToolGenerator implements CodeGeneratorConstants {
             		CodeGeneratorUtils.getUpperCaseLeading(
             				SimSEObjectTypeTypes.getText(
             						obj.getSimSEObjectType().getType())) + " " + 
-            						obj.getKey().getValue().toString() + "\",\n";
+            						obj.getKey().getValue().toString() + "\"\n";
         }
         else {
             internalObj += "\"" + CodeGeneratorUtils.getUpperCaseLeading(
@@ -192,7 +192,7 @@ public class ExplanatoryToolGenerator implements CodeGeneratorConstants {
             		CodeGeneratorUtils.getUpperCaseLeading(
             				SimSEObjectTypeTypes.getText(
             						obj.getSimSEObjectType().getType())) + " " + 
-            						obj.getKey().getValue().toString() + "\"\n";
+            						obj.getKey().getValue().toString() + "\",\n";
         }
 
       }
@@ -253,7 +253,7 @@ public class ExplanatoryToolGenerator implements CodeGeneratorConstants {
           refreshAttributeListObjectTypes += "\"(No numerical attributes)\"\n";
         }
         refreshAttributeListObjectTypes += "};\n";
-        refreshAttributeListObjectTypes += "attributeList.getItems.setAll(attributes);\n";
+        refreshAttributeListObjectTypes += "attributeList.getItems().setAll(attributes);\n";
         if (numVisibleNumericalAtts == 0) {
           refreshAttributeListObjectTypes += "attributeList.setEditable(true);\n";
         } else {
