@@ -294,7 +294,7 @@ public class ObjectGraphPanesGenerator {
 		    				  .addStatement("td.setTitle(\"Name New $T\")", branch)
 		    				  .addStatement("td.setContentText(\"Please name this new game:\")")
 		    				  .addStatement("td.setHeaderText(null)")
-		    				  .addStatement("Optional<String> result = td.showAndWait()")
+		    				  .addStatement("$T result = td.showAndWait()", optionalString)
 		    				  .addStatement("result.ifPresent(name -> {this.newBranchName = name;})")
 		    				  .beginControlFlow("if (newBranchName != null)")
 		    				  .addStatement("$T temp$T = (State) $N.get($N).clone()", state, state, "log", "lastRightClickedX")
@@ -399,9 +399,6 @@ public class ObjectGraphPanesGenerator {
 		          al = al.concat("}");
 		          al = al.concat("\n");
 		        }
-		        al = al.concat("}");
-		        al = al.concat("\n");
-		        al = al.concat("\n");
 		  
 		  return al;
 	  }

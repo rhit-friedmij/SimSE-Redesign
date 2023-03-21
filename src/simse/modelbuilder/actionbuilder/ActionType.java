@@ -722,6 +722,16 @@ public class ActionType implements Cloneable {
     }
     return false;
   }
+  
+  public Vector<Integer> getCategories() {
+      Vector<Integer> types = new Vector<>();
+      for (ActionTypeParticipant part: this.getAllParticipants()) {
+          int category = part.getSimSEObjectTypeType();
+          if (!types.contains(category))
+              types.add(category);
+      }
+      return types;
+  }
 
   public void removeAllRules() {
     rules.clear();

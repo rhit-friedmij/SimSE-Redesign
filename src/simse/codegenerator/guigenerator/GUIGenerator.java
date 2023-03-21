@@ -117,7 +117,7 @@ public class GUIGenerator implements CodeGeneratorConstants {
     objGraphGen = new ObjectGraphPanesGenerator(objs, objTypes, 
     		options.getCodeGenerationDestinationDirectory());
     fxHelpGen = new JavaFXHelpersGenerator(options.getCodeGenerationDestinationDirectory());
-    ruleInfoGen = new RulesInfoScreenGenerator(
+    ruleInfoGen = new RulesInfoScreenGenerator(acts,
     		options.getCodeGenerationDestinationDirectory());
   }
 
