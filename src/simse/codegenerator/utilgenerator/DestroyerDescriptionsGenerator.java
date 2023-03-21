@@ -55,28 +55,33 @@ public class DestroyerDescriptionsGenerator implements CodeGeneratorConstants {
     	  String actionsString = "";
         if (act.isVisibleInExplanatoryTool()) {
           Vector<ActionTypeDestroyer> destroyers = act.getAllDestroyers();
-          for (ActionTypeDestroyer destroyer : destroyers) {
-
-            actionsString += "\"This action stops ";
-            if (destroyer instanceof TimedActionTypeDestroyer) {
+          for(int i = 0; i < destroyers.size(); i++) {
+        	if(i == 0) {
+        		actionsString += "\"This action stops ";
+        	}
+        	else {
+        		actionsString += " This action stops ";
+        	}
+            
+            if (destroyers.get(i) instanceof TimedActionTypeDestroyer) {
               actionsString += "when the action has been occuring for "
-                      + ((TimedActionTypeDestroyer) destroyer).getTime()
+                      + ((TimedActionTypeDestroyer) destroyers.get(i)).getTime()
                       + " clock ticks.";
             } else {
-              if (destroyer instanceof RandomActionTypeDestroyer) {
-                actionsString += ((RandomActionTypeDestroyer) destroyer)
+              if (destroyers.get(i) instanceof RandomActionTypeDestroyer) {
+                actionsString += ((RandomActionTypeDestroyer) destroyers.get(i))
                         .getFrequency() + "% of the time ";
-              } else if (destroyer instanceof UserActionTypeDestroyer) {
+              } else if (destroyers.get(i) instanceof UserActionTypeDestroyer) {
                 actionsString += "when the user chooses the menu item \\\""
-                        + ((UserActionTypeDestroyer) destroyer).getMenuText()
+                        + ((UserActionTypeDestroyer) destroyers.get(i)).getMenuText()
                         + "\\\" and ";
               }
 
-              actionsString += "when the following conditions are met: ";
+              actionsString += "when the following conditions are met: \\n";
 
               // go through all participant conditions:
               Vector<ActionTypeParticipantDestroyer> partDestroyers = 
-              	destroyer.getAllParticipantDestroyers();
+            		  destroyers.get(i).getAllParticipantDestroyers();
               for (ActionTypeParticipantDestroyer partDestroyer : 
               	partDestroyers) {
                 String partName = partDestroyer.getParticipant().getName();
@@ -104,20 +109,18 @@ public class DestroyerDescriptionsGenerator implements CodeGeneratorConstants {
                               + ") " + attGuard + " ";
                       if (attConstraint.getAttribute().getType() == 
                       	AttributeTypes.STRING) {
-
                         actionsString += "\\\"" + condVal + "\\\"";
                       } else {
-
                         actionsString += condVal;
                       }
-
+                      actionsString += " \\n";
                     }
                   }
                 }
               }
               actionFields.add(FieldSpec.builder(String.class, 
               		act.getName().toUpperCase()
-                      + "_" + destroyer.getName().toUpperCase(), Modifier.STATIC, Modifier.FINAL, Modifier.PUBLIC).initializer(actionsString).build());
+                      + "_" + destroyers.get(i).getName().toUpperCase(), Modifier.STATIC, Modifier.FINAL, Modifier.PUBLIC).initializer(actionsString + "\"").build());
               }
 
           }

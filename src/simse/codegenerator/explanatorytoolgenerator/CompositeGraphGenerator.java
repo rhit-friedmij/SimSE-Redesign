@@ -23,6 +23,7 @@ import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.TypeSpec;
+import com.sun.glass.events.MouseEvent;
 
 public class CompositeGraphGenerator implements CodeGeneratorConstants {
   private File directory; // directory to save generated code into
@@ -44,6 +45,8 @@ public class CompositeGraphGenerator implements CodeGeneratorConstants {
       ClassName jFreeChart = ClassName.get("org.jfree.chart", "JFreeChart");
       ClassName numberAxis = ClassName.get("org.jfree.chart.axis", "NumberAxis");
       ClassName chartViewer = ClassName.get("org.jfree.chart.fx", "ChartViewer");
+      ClassName mouseEvent = ClassName.get("javafx.scene.input", "MouseEvent");
+      ClassName mouseButton = ClassName.get("javafx.scene.input", "MouseButton");
       ClassName chartMouseEventFX = ClassName.get("org.jfree.chart.fx.interaction", "ChartMouseEventFX");
       ClassName chartMouseListenerFX = ClassName.get("org.jfree.chart.fx.interaction", "ChartMouseListenerFX");
       ClassName combinedDomainXYPlot = ClassName.get("org.jfree.chart.plot", "CombinedDomainXYPlot");
@@ -56,7 +59,6 @@ public class CompositeGraphGenerator implements CodeGeneratorConstants {
       ClassName scene = ClassName.get("javafx.scene", "Scene");
       ClassName menuItem = ClassName.get("javafx.scene.control", "MenuItem");
       ClassName separatorMenuItem = ClassName.get("javafx.scene.control", "SeparatorMenuItem");
-      ClassName textInput = ClassName.get("javafx.scene.control", "TextInputDialog");
       ClassName objectGraph = ClassName.get("simse.explanatorytool", "ObjectGraph");
       ClassName actionGraph = ClassName.get("simse.explanatorytool", "ActionGraph");
       ClassName branch = ClassName.get("simse.explanatorytool", "Branch");
@@ -81,7 +83,7 @@ public class CompositeGraphGenerator implements CodeGeneratorConstants {
     		  .addStatement("super()")
     		  .addStatement("this.branch = branch")
     		  .addStatement("$T title = \"Composite Graph\"", String.class)
-    		  .beginControlFlow("if (branch.getName() != null) {")
+    		  .beginControlFlow("if (branch.getName() != null)")
     		  .addStatement("title = title.concat(\" - \" + branch.getName())")
     		  .endControlFlow()
     		  .addStatement("setTitle(title)")
@@ -116,7 +118,7 @@ public class CompositeGraphGenerator implements CodeGeneratorConstants {
     
     	if (options.getAllowBranchingOption()) {
     		rightClick = CodeBlock.builder()
-    				.beginControlFlow("if (event.getButton() != MouseButton.PRIMARY) { // not left-click")
+    				.beginControlFlow("if (event.getButton() != $T.PRIMARY) { // not left-click", mouseButton)
     				.addStatement("$T plot = chart.getXYPlot()", xyPlot)
     				.addStatement("$T domainRange = plot.getDataRange(plot.getDomainAxis())", range)
     				.beginControlFlow("if (domainRange != null) { // chart is not blank\\")
@@ -128,14 +130,14 @@ public class CompositeGraphGenerator implements CodeGeneratorConstants {
     				.addStatement("double chartX = domainAxis.java2DToValue(pt.getX(), dataArea, domainAxisEdge)")
     				.addStatement("lastRightClickedX = ($T) $T.rint(chartX)", int.class, math)
     				.beginControlFlow("if (domainRange != null && lastRightClickedX >= domainRange.getLowerBound() && lastRightClickedX <= domainRange.getUpperBound()) { // clicked within domain range")
-    				.beginControlFlow("if ((chartViewer).getContextMenu().getItems().indexOf(newBranchItem) == -1) {")
+    				.beginControlFlow("if ((chartViewer).getContextMenu().getItems().indexOf(newBranchItem) == -1)")
     				.addStatement("chartViewer.getContextMenu().getItems().add(separator)")
     				.addStatement("chartViewer.getContextMenu().getItems().add(newBranchItem)")
     				.endControlFlow()
-    				.addStatement("else")
+    				.beginControlFlow("else")
     				.beginControlFlow("if (chartViewer.getContextMenu().getItems().indexOf(newBranchItem) >= 0) { // new branch item currently")
     				.addStatement("chartViewer.getContextMenu().getItems().remove(newBranchItem)")
-    				.beginControlFlow("if (chartViewer.getContextMenu().getItems().indexOf(separator) >= 0) {")
+    				.beginControlFlow("if (chartViewer.getContextMenu().getItems().indexOf(separator) >= 0)")
     				.addStatement("chartViewer.getContextMenu().getItems().remove(separator)")
     				.endControlFlow()
     				.endControlFlow()
@@ -159,14 +161,14 @@ public class CompositeGraphGenerator implements CodeGeneratorConstants {
 			.addModifiers(Modifier.PUBLIC)
 			.addParameter(actionEvent, "event")
 			.addStatement("$T source = event.getSource()", object)
-			.beginControlFlow("if (source == newBranchItem) {")
+			.beginControlFlow("if (source == newBranchItem)")
 			.addStatement("$T td = new $T()", textInputDialog, textInputDialog)
 			.addStatement("td.setTitle(\"Name New Branch\")")
 			.addStatement("td.setContentText(\"Please name this new game:\")")
 			.addStatement("td.setHeaderText(null)")
 			.addStatement("$T<$T> result = td.showAndWait()", optional, String.class)
 			.addStatement("result.ifPresent(name -> { this.newBranchName = name; })")
-			.beginControlFlow("if (newBranchName != null) {")
+			.beginControlFlow("if (newBranchName != null)")
 			.addStatement("$T tempState = ($T) objGraph.getLog().get(lastRightClickedX).clone()", state, state)
 			.addStatement("$T tempLogger = new $T(tempState, new $T<$T>(objGraph.getLog().subList(0, lastRightClickedX)))", logger, logger, arrayList, state)
 			.addStatement("$T tempClock = new $T(tempLogger, lastRightClickedX)", clock, clock)
@@ -186,14 +188,16 @@ public class CompositeGraphGenerator implements CodeGeneratorConstants {
 	MethodSpec chartMouseClicked = MethodSpec.methodBuilder("chartMouseClicked")
 			.addModifiers(Modifier.PUBLIC)
 			.addParameter(chartMouseEventFX, "me")
-			.addStatement("MouseEvent event = me.getTrigger()")
+			.addStatement("$T event = me.getTrigger()", mouseEvent)
 			.addCode(rightClick)
 			.beginControlFlow("else ")
 			.addStatement("actGraph.chartMouseClicked(me)")
 			.endControlFlow()
+			.endControlFlow()
 			.build();
 	
 	MethodSpec chartMouseMoved = MethodSpec.methodBuilder("chartMouseMoved")
+			.addModifiers(Modifier.PUBLIC)
 			.addParameter(chartMouseEventFX, "me")
 			.build();
 	

@@ -158,10 +158,14 @@ public class RuleInfoPanelGenerator implements CodeGeneratorConstants {
     		  .addStatement("destroyerRuleList.getSelectionModel().clearSelection()")
     		  .addStatement("intermediateRuleList.getSelectionModel().clearSelection()")
     		  .addStatement("refreshDescriptionArea()")
-    		  .nextControlFlow("else if (!destroyerRuleList.getSelectionModel().isEmpty())")
-    		  .addStatement("name = ($T) destroyerRuleList.getSelectionModel().getSelectedItem()", string)
-    		  .nextControlFlow("else if (!intermediateRuleList.getSelectionModel().isEmpty())")
-    		  .addStatement("name = ($T) intermediateRuleList.getSelectionModel().getSelectedItem()", string)
+    		  .nextControlFlow("else if(event.getSource() == destroyerRuleList && !destroyerRuleList.getSelectionModel().isEmpty())")
+    		  .addStatement("triggerRuleList.getSelectionModel().clearSelection()")
+    		  .addStatement("intermediateRuleList.getSelectionModel().clearSelection()")
+    		  .addStatement("refreshDescriptionArea()")
+    		  .nextControlFlow("else if (event.getSource() == intermediateRuleList && !intermediateRuleList.getSelectionModel().isEmpty())")
+    		  .addStatement("triggerRuleList.getSelectionModel().clearSelection()")
+    		  .addStatement("destroyerRuleList.getSelectionModel().clearSelection()")
+    		  .addStatement("refreshDescriptionArea()")
     		  .endControlFlow()
     		  .build();
 

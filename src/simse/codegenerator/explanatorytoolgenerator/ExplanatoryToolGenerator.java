@@ -223,7 +223,7 @@ public class ExplanatoryToolGenerator implements CodeGeneratorConstants {
       }
       
       CodeBlock constructorActions = CodeBlock.builder()
-    		  .addStatement("$T<$T> objects = $T.observableArrayList(" + internalActions + ")", observableList, String.class, fxCollections)
+    		  .addStatement("$T<$T> actions = $T.observableArrayList(" + internalActions + ")", observableList, String.class, fxCollections)
     		  .build();
       
       String refreshAttributeListObjectTypes = "";
@@ -245,7 +245,13 @@ public class ExplanatoryToolGenerator implements CodeGeneratorConstants {
           Attribute att = attributes.get(j);
           if ((att instanceof NumericalAttribute)
               && ((att.isVisible()) || (att.isVisibleOnCompletion()))) {
-            refreshAttributeListObjectTypes += "\"" + att.getName() + "\",\n";
+        	  if(j == attributes.size() - 1) {
+                  refreshAttributeListObjectTypes += "\"" + att.getName() + "\"\n";
+        	  } 
+        	  else {
+        		  refreshAttributeListObjectTypes += "\"" + att.getName() + "\",\n";
+        	  }
+            
             numVisibleNumericalAtts++;
           }
         }
@@ -263,7 +269,7 @@ public class ExplanatoryToolGenerator implements CodeGeneratorConstants {
         }
         refreshAttributeListObjectTypes += "}\n";
       }
-      refreshAttributeListObjectTypes += "}\n\n";
+//      refreshAttributeListObjectTypes += "}\n\n";
       
       MethodSpec refreshAttributeList = MethodSpec.methodBuilder("refreshAttributeList")
     		  .addModifiers(Modifier.PRIVATE)
@@ -324,7 +330,7 @@ public class ExplanatoryToolGenerator implements CodeGeneratorConstants {
     		  		"			public void handle($T arg0) {\r\n" + 
     		  		"				$N();\r\n" + 
     		  		"			}\r\n" + 
-    		  		"		});", eventHandler, actionEvent, actionEvent, refreshAttributeList)
+    		  		"		})", eventHandler, actionEvent, actionEvent, refreshAttributeList)
     		  .addStatement("objectPane.getChildren().add(objectList)")
     		  .addStatement("// Create attribute list pane:")
     		  .addStatement("$T attributeListTitlePane = new $T()", pane, pane)
@@ -346,31 +352,6 @@ public class ExplanatoryToolGenerator implements CodeGeneratorConstants {
     		  .addStatement("objBottomPane.getChildren().add(generateObjGraphButton)")
     		  .addStatement("objectPane.getChildren().add(objBottomPane)")
     		  .addStatement("// Create action pane and components:")
-    		  .addStatement("$T actionPane = new $T()", vBox, vBox)
-    		  .addStatement("$T actionTitlePane = new $T()", pane, pane)
-    		  .addStatement("actionTitlePane.getChildren().add(new $T(\"Action Graph:\"))", label)
-    		  .addStatement("actionTitlePane.setMinHeight(20)")
-    		  .addStatement("actionPane.getChildren().add(actionTitlePane)")
-    		  .addStatement("// Create attribute list pane")
-    		  .addStatement("$T attributeListTitlePane = new $T()", pane, pane)
-    		  .addStatement("attributeListTitlePane.getChildren().add(new Label(\"Show Attributes:\"))")
-    		  .addStatement("attributeListTitlePane.setMinHeight(20)")
-    		  .addStatement("objectPane.getChildren().add(attributeListTitlePane)")
-    		  .addStatement("attributeList = new $T<$T>()", listView, String.class)
-    		  .addStatement("attributeList.setFixedCellSize(24)")
-    		  .addStatement("attributeList.getSelectionModel().setSelectionMode($T.MULTIPLE)", selectionMode)
-    		  .addStatement("attributeList.addEventHandler($T.MOUSE_CLICKED, this)", mouseEvent)
-    		  .addStatement("attributeList.setMinWidth(550)")
-    		  .addStatement("$T attributeListPane = new $T(attributeList)", scrollPane, scrollPane)
-    		  .addStatement("attributeListPane.setMinHeight(120)")
-    		  .addStatement("objectPane.getChildren().add(attributeListPane)")
-    		  .addStatement("// Create objectBottom pane & button")
-    		  .addStatement("$T objBottomPane = new $T()", pane, pane)
-    		  .addStatement("generateObjGraphButton = new $T(\"Generate Object Graph\")", button)
-    		  .addStatement("generateObjGraphButton.addEventHandler($T.MOUSE_CLICKED, this)", mouseEvent)
-    		  .addStatement("objBottomPane.getChildren().add(generateObjGraphButton)")
-    		  .addStatement("objectPane.getChildren().add(objBottomPane)")
-    		  .addStatement("// Create action pane and components")
     		  .addStatement("$T actionPane = new $T()", vBox, vBox)
     		  .addStatement("$T actionTitlePane = new $T()", pane, pane)
     		  .addStatement("actionTitlePane.getChildren().add(new $T(\"Action Graph:\"))", label)
@@ -529,7 +510,7 @@ public class ExplanatoryToolGenerator implements CodeGeneratorConstants {
     		  .endControlFlow()
     		  .beginControlFlow("else if (source == generateCompGraphButton)")
     		  .addStatement("$T selectedObj = ($T) objectList.getSelectionModel().getSelectedItem()", String.class, String.class)
-    		  .addStatement("$T words = selectedObj.split(\"\\s\")", stringArray)
+    		  .addStatement("$T words = selectedObj.split(\"\\\\s\")", stringArray)
     		  .addStatement("$T title = selectedObj + \" Attributes\"", String.class)
     		  .addStatement("$T objType = words[0]", String.class)
     		  .addStatement("$T objTypeType = words[1]", String.class)
@@ -581,6 +562,7 @@ public class ExplanatoryToolGenerator implements CodeGeneratorConstants {
     		  .endControlFlow()
     		  .beginControlFlow("else if (source == closeButton)")
     		  .addStatement("close()")
+    		  .endControlFlow()
     		  .build();
       
      
