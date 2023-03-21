@@ -69,6 +69,16 @@ public class ObjectGraphGenerator implements CodeGeneratorConstants {
       ClassName actionEvent = ClassName.get("javafx.event", "ActionEvent");
       ClassName stage = ClassName.get("javafx.stage", "Stage");
       ClassName chartMouseListenerFX = ClassName.get("org.jfree.chart.fx.interaction", "ChartMouseListenerFX");
+      ClassName chartMouseEventFX = ClassName.get("org.jfree.chart.fx.interaction", "ChartMouseEventFX");
+      ClassName chartFactory = ClassName.get("org.jfree.chart", "ChartFactory");
+      ClassName plotOrientation = ClassName.get("org.jfree.chart.plot", "PlotOrientation");
+      ClassName rectangleInsets = ClassName.get("org.jfree.chart.ui", "RectangleInsets");
+      ClassName xyLineAndShapeRenderer = ClassName.get("org.jfree.chart.renderer.xy", "XYLineAndShapeRenderer");
+      ClassName xySeriesCollection = ClassName.get("org.jfree.data.xy", "XYSeriesCollection");
+      ClassName numberAxis = ClassName.get("org.jfree.chart.axis", "NumberAxis");
+      ClassName range = ClassName.get("org.jfree.data", "Range");
+      ClassName chartRenderingInfo = ClassName.get("org.jfree.chart", "ChartRenderingInfo");
+      ClassName rectangleEdge = ClassName.get("org.jfree.chart.ui", "RectangleEdge");
       ArrayTypeName stringArray = ArrayTypeName.of(String.class);
       ArrayTypeName xySeriesArray = ArrayTypeName.of(xySeries);
 
@@ -149,36 +159,41 @@ public class ObjectGraphGenerator implements CodeGeneratorConstants {
       MethodSpec createDataset = MethodSpec.methodBuilder("createDataset")
     		  .addModifiers(Modifier.PRIVATE)
     		  .returns(xyDataset)
-    		  .addStatement("series = new XYSeries[attributes.length]")
+    		  .addStatement("series = new $T[attributes.length]", xySeries)
     		  .beginControlFlow("for (int i = 0; i < attributes.length; i++)")
-    		  .addStatement("series[i] = new XYSeries(attributes[i])")
+    		  .addStatement("series[i] = new $T(attributes[i])", xySeries)
     		  .endControlFlow()
     		  .beginControlFlow("for (int i = 0; i < log.size(); i++)")
     		  .beginControlFlow("for (int j = 0; j < attributes.length; j++)")
     		  .addCode(createDatasetCodeBlock)
     		  .endControlFlow()
-    		  .addStatement("XYSeriesCollection dataset = new XYSeriesCollection()")
+    		  .addStatement("$T dataset = new $T()", xySeriesCollection, xySeriesCollection)
     		  .beginControlFlow("for (int i = 0; i < series.length; i++)")
     		  .addStatement("dataset.addSeries(series[i])")
     		  .endControlFlow()
     		  .addStatement("return dataset")
     		  .build();
       
+  	MethodSpec chartMouseMoved = MethodSpec.methodBuilder("chartMouseMoved")
+			.addParameter(chartMouseEventFX, "me")
+			.build();
+
+      
       MethodSpec createChart = MethodSpec.methodBuilder("createChart")
     		  .addModifiers(Modifier.PRIVATE)
     		  .returns(jFreeChart)
     		  .addParameter(xyDataset, "dataset")
-    		  .addStatement("JFreeChart chart = ChartFactory.createXYLineChart(this.getTitle(), \"Clock Ticks\", null, dataset,\r\n" + 
-    		  		"				PlotOrientation.VERTICAL, true, true, false)")
-    		  .addStatement("XYPlot plot = (XYPlot) chart.getPlot()")
+    		  .addStatement("$T chart = $T.createXYLineChart(this.getTitle(), \"Clock Ticks\", null, dataset,\r\n" + 
+    		  		"				$T.VERTICAL, true, true, false)", jFreeChart, chartFactory, plotOrientation)
+    		  .addStatement("$T plot = ($T) chart.getPlot()", xyPlot, xyPlot)
     		  .addStatement("plot.setBackgroundPaint(java.awt.Color.LIGHT_GRAY)")
-    		  .addStatement("plot.setAxisOffset(new RectangleInsets(5.0, 5.0, 5.0, 5.0))")
+    		  .addStatement("plot.setAxisOffset(new $T(5.0, 5.0, 5.0, 5.0))", rectangleInsets)
     		  .addStatement("plot.setDomainGridlinePaint(java.awt.Color.WHITE)")
     		  .addStatement("plot.setRangeGridlinePaint(java.awt.Color.WHITE)")
-    		  .addStatement("XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) plot.getRenderer()")
+    		  .addStatement("$T renderer = ($T) plot.getRenderer()", xyLineAndShapeRenderer, xyLineAndShapeRenderer)
     		  .addStatement("renderer.setDefaultShapesVisible(true)")
     		  .addStatement("renderer.setDefaultShapesFilled(true)")
-    		  .addStatement("NumberAxis domainAxis = (NumberAxis) plot.getDomainAxis()")
+    		  .addStatement("$T domainAxis = ($T) plot.getDomainAxis()", numberAxis, numberAxis)
     		  .addStatement("domainAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits())")
     		  .addStatement("return chart")
     		  .build();
@@ -298,38 +313,43 @@ public class ObjectGraphGenerator implements CodeGeneratorConstants {
     		  .endControlFlow()
     		  .endControlFlow()
     		  .build();
-
     	
-    	String chartMouseClickedBlock = "";
+    	CodeBlock chartMouseClickedBlock = null;
     	
     	if (options.getAllowBranchingOption()) {
-	    	chartMouseClickedBlock += "if (me.getButton() != MouseEvent.BUTTON1) { // not left-click\n";
-	    	chartMouseClickedBlock += "XYPlot plot = chart.getXYPlot();\n";
-	    	chartMouseClickedBlock += "Range domainRange = plot.getDataRange(plot.getDomainAxis());\n";
-	    	chartMouseClickedBlock += "if (domainRange != null) { // chart is not blank\n";
-	    	chartMouseClickedBlock += "javafx.geometry.Point2D pt = chartViewer.localToScreen(event.getScreenX(), event.getScreenY());\n";
-	    	chartMouseClickedBlock += "ChartRenderingInfo info = this.chartViewer.getRenderingInfo();\n";
-	    	chartMouseClickedBlock += "NumberAxis domainAxis = (NumberAxis) plot.getDomainAxis();\n";
-	    	chartMouseClickedBlock += "RectangleEdge domainAxisEdge = plot.getDomainAxisEdge();\n";
-	    	chartMouseClickedBlock += "double chartX = domainAxis.java2DToValue(pt.getX(), dataArea, domainAxisEdge);\n";
-	    	chartMouseClickedBlock += "lastRightClickedX = (int) Math.rint(chartX);\n";
-	    	chartMouseClickedBlock += "if (domainRange != null && lastRightClickedX >= domainRange.getLowerBound()\r\n" + 
-	    			"						&& lastRightClickedX <= (domainRange.getUpperBound() - 1) && lastRightClickedX >= 0) {\n";
-	    	chartMouseClickedBlock += "if (chartViewer.getContextMenu().getItems().indexOf(newBranchItem) == -1) { // no new branch item on\n";
-	    	chartMouseClickedBlock += "chartViewer.getContextMenu().getItems().add(separator);\n";
-	    	chartMouseClickedBlock += "chartViewer.getContextMenu().getItems().add(newBranchItem);\n";
-	    	chartMouseClickedBlock += "}\n";
-	    	chartMouseClickedBlock += "}\n";
-	    	chartMouseClickedBlock += "else { // clicked outside of domain range\n";
-	    	chartMouseClickedBlock += "if (chartViewer.getContextMenu().getItems().indexOf(newBranchItem) >= 0) { // new branch item\n";
-	    	chartMouseClickedBlock += "chartViewer.getContextMenu().getItems().remove(newBranchItem);\n";
-	    	chartMouseClickedBlock += "if (chartViewer.getContextMenu().getItems().indexOf(separator) >= 0) { // has separator\n";
-	    	chartMouseClickedBlock += "chartViewer.getContextMenu().getItems().remove(separator);\n";
-	    	chartMouseClickedBlock += "}\n";
-	    	chartMouseClickedBlock += "}\n";
-	    	chartMouseClickedBlock += "}\n";
-	    	chartMouseClickedBlock += "}\n";
-	    	chartMouseClickedBlock += "}\n";
+    		
+    		chartMouseClickedBlock = CodeBlock.builder()
+    				.beginControlFlow("if (event.getButton() != MouseEvent.PRIMARY)")
+    				.addStatement("$T plot = chart.getXYPlot()", xyPlot)
+    				.addStatement("$T domainRange = plot.getDataRange(plot.getDomainAxis())", range)
+    				.beginControlFlow("if (domainRange != null)")
+    				.addStatement("javafx.geometry.Point2D pt = chartViewer.localToScreen(event.getScreenX(), event.getScreenY())")
+    				.addStatement("$T info = this.chartViewer.getRenderingInfo()", chartRenderingInfo)
+    				.addStatement("java.awt.geom.Rectangle2D dataArea = info.getPlotInfo().getDataArea()")
+    				.addStatement("$T domainAxis = ($T) plot.getDomainAxis()", numberAxis, numberAxis)
+    				.addStatement("$T domainAxisEdge = plot.getDomainAxisEdge()", rectangleEdge)
+    				.addStatement("double chartX = domainAxis.java2DToValue(pt.getX(), dataArea, domainAxisEdge)")
+    				.addStatement("lastRightClickedX = ($T) Math.rint(chartX)", int.class)
+    				.beginControlFlow("if (domainRange != null && lastRightClickedX >= domainRange.getLowerBound() && lastRightClickedX <= (domainRange.getUpperBound() - 1) && lastRightClickedX >= 0)")
+    				.beginControlFlow("if (chartViewer.getContextMenu().getItems().indexOf(newBranchItem) == -1)")
+    				.addStatement("chartViewer.getContextMenu().getItems().add(separator)")
+    				.addStatement("chartViewer.getContextMenu().getItems().add(newBranchItem)")
+    				.endControlFlow()
+    				.endControlFlow()
+    				.beginControlFlow("else ")
+    				.beginControlFlow("if (chartViewer.getContextMenu().getItems().indexOf(newBranchItem) >= 0)")
+    				.addStatement("chartViewer.getContextMenu().getItems().remove(newBranchItem)")
+    				.beginControlFlow("if (chartViewer.getContextMenu().getItems().indexOf(separator) >= 0)")
+    				.addStatement("chartViewer.getContextMenu().getItems().remove(separator)")
+    				.endControlFlow()
+    				.endControlFlow()
+    				.endControlFlow()
+    				.endControlFlow()
+    				.endControlFlow()
+    				.build();
+    	} 
+    	else {
+    		chartMouseClickedBlock = CodeBlock.builder().build();
     	}
     	
     	ClassName mouseEvent = ClassName.get("javafx.scene.input", "MouseEvent");
@@ -401,7 +421,7 @@ public class ObjectGraphGenerator implements CodeGeneratorConstants {
     		  .addStatement("return log")
     		  .build();
       
-      MethodSpec setChartColor = MethodSpec.methodBuilder("setChartColor")
+      MethodSpec setChartColors = MethodSpec.methodBuilder("setChartColors")
     		  .addModifiers(Modifier.PRIVATE)
     		  .addStatement("chartViewer.backgroundProperty().set($T.createBackgroundColor($T.WHITE))", javaFXHelpers, color)
     		  .build();
@@ -427,7 +447,7 @@ public class ObjectGraphGenerator implements CodeGeneratorConstants {
 			  .addField(branch, "branch", Modifier.PRIVATE)
 			  .addMethod(constructor)
 			  .addMethod(createDataset)
-			  .addMethod(setChartColor)
+			  .addMethod(setChartColors)
 			  .addMethod(createChart)
 			  .addMethod(update)
 			  .addMethod(getXYPlot)
@@ -435,6 +455,7 @@ public class ObjectGraphGenerator implements CodeGeneratorConstants {
 			  .addMethod(getChartTitle)
 			  .addMethod(getLog)
 			  .addMethod(chartMouseClicked)
+			  .addMethod(chartMouseMoved)
 				.addField(FieldSpec.builder(ParameterizedTypeName.get(eventHandlerClass, actionEvent), "menuEvent", Modifier.PRIVATE)
 						.initializer("$L", anonHandleClass).build())
     		  .build();

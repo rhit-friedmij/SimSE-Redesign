@@ -73,7 +73,7 @@ public class RuleCategoriesGenerator implements CodeGeneratorConstants {
     		  .build();
       
       MethodSpec getAllDestRulesForAction = MethodSpec.methodBuilder("getAllDestRulesForAction")
-    		  .addModifiers(Modifier.PUBLIC)
+    		  .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
     		  .returns(stringArray)
     		  .addParameter(String.class, "actionName")
     		  .addStatement("$T rules = getDestRulesForAction(actionName)", stringArray)
@@ -87,7 +87,7 @@ public class RuleCategoriesGenerator implements CodeGeneratorConstants {
     		  .build();
       
       MethodSpec getAllTrigRulesForAction = MethodSpec.methodBuilder("getAllTrigRulesForAction")
-    		  .addModifiers(Modifier.PUBLIC)
+    		  .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
     		  .returns(stringArray)
     		  .addParameter(String.class, "actionName")
     		  .addStatement("$T rules = getTrigRulesForAction(actionName)", stringArray)
@@ -110,7 +110,7 @@ public class RuleCategoriesGenerator implements CodeGeneratorConstants {
     		  .beginControlFlow("if (text == \"\")")
     		  .addStatement("text = getBackendRuleMappings(actionName, ruleName)")
     		  .endControlFlow()
-    		  .addStatement("retur text")
+    		  .addStatement("return text")
     		  .build();
       
       MethodSpec getBackendDestRulesForAction = MethodSpec.methodBuilder("getBackendDestRulesForAction")
@@ -227,6 +227,7 @@ public class RuleCategoriesGenerator implements CodeGeneratorConstants {
       }
       
       MethodSpec initalizeRuleMapping = MethodSpec.methodBuilder("initializeRuleMapping")
+    		  .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
     		  .addStatement("ruleMapping = new $T<>()", hashTable)
     		  .addCode(ruleDescriptionBlock)
     		  .build();
@@ -240,9 +241,9 @@ public class RuleCategoriesGenerator implements CodeGeneratorConstants {
         	for(int i = 0; i < rules.size(); i++) {
         		Rule rule = rules.get(i);
         		if(i == 0 || i == rules.size() - 1) {
-        			ruleBlock += rule.getName();
+        			ruleBlock += "\"" + rule.getName() + "\"";
         		} else {
-        			ruleBlock += rule.getName() + ", ";
+        			ruleBlock += "\"" + rule.getName() + "\"" + ", ";
         		}
         	}
         	intRuleDescriptionBlock += ruleBlock + "},\n";
@@ -271,9 +272,9 @@ public class RuleCategoriesGenerator implements CodeGeneratorConstants {
         	for(int i = 0; i < rules.size(); i++) {
         		Rule rule = rules.get(i);
         		if(i == 0 || i == rules.size() - 1) {
-        			ruleBlock += rule.getName();
+        			ruleBlock += "\"" + rule.getName() + "\"";
         		} else {
-        			ruleBlock += rule.getName() + ", ";
+        			ruleBlock += "\"" + rule.getName() + "\"" + ", ";
         		}
         	}
         	trigRuleDescriptionBlock += ruleBlock + "},\n";
@@ -302,9 +303,9 @@ public class RuleCategoriesGenerator implements CodeGeneratorConstants {
         	for(int i = 0; i < rules.size(); i++) {
         		Rule rule = rules.get(i);
         		if(i == 0 || i == rules.size() - 1) {
-        			ruleBlock += rule.getName();
+        			ruleBlock += "\"" + rule.getName() + "\"";
         		} else {
-        			ruleBlock += rule.getName() + ", ";
+        			ruleBlock += "\"" + rule.getName() + "\"" + ", ";
         		}
         	}
         	destRuleDescriptionBlock += ruleBlock + "},\n";
@@ -339,9 +340,9 @@ public class RuleCategoriesGenerator implements CodeGeneratorConstants {
         	for(int i = 0; i < rules.size(); i++) {
         		Rule rule = rules.get(i);
         		if(i == 0 || i == rules.size() - 1) {
-        			ruleBlock += rule.getName();
+        			ruleBlock += "\"" + rule.getName() + "\"";
         		} else {
-        			ruleBlock += rule.getName() + ", ";
+        			ruleBlock += "\"" + rule.getName() + "\"" + ", ";
         		}
         	}
         	backendRuleBlock += ruleBlock + "},\n";
@@ -387,9 +388,9 @@ public class RuleCategoriesGenerator implements CodeGeneratorConstants {
         	for(int i = 0; i < rules.size(); i++) {
         		ActionTypeTrigger rule = rules.get(i);
         		if(i == 0 || i == rules.size() - 1) {
-        			ruleBlock += rule.getName();
+        			ruleBlock += "\"" + rule.getName() + "\"";
         		} else {
-        			ruleBlock += rule.getName() + ", ";
+        			ruleBlock += "\"" + rule.getName() + "\"" + ", ";
         		}
         	}
         	backendTrigRuleDescriptionBlock += ruleBlock + "},\n";
@@ -413,9 +414,9 @@ public class RuleCategoriesGenerator implements CodeGeneratorConstants {
         	for(int i = 0; i < rules.size(); i++) {
         		ActionTypeDestroyer rule = rules.get(i);
         		if(i == 0 || i == rules.size() - 1) {
-        			ruleBlock += rule.getName();
+        			ruleBlock += "\"" + rule.getName() + "\"";
         		} else {
-        			ruleBlock += rule.getName() + ", ";
+        			ruleBlock += "\"" + rule.getName() + "\"" + ", ";
         		}
         	}
         	backendDestRuleDescriptionBlock += ruleBlock + "},\n";
@@ -446,6 +447,7 @@ public class RuleCategoriesGenerator implements CodeGeneratorConstants {
     		  .addModifiers(Modifier.PUBLIC)
     		  .addField(doubleStringHashTable, "ruleMapping", Modifier.STATIC, Modifier.PRIVATE)
     		  .addField(stringStringArrayHashTable, "intRules", Modifier.STATIC, Modifier.PRIVATE)
+    		  .addField(stringStringArrayHashTable, "destRules", Modifier.STATIC, Modifier.PRIVATE)
     		  .addField(stringStringArrayHashTable, "trigRules", Modifier.STATIC, Modifier.PRIVATE)
     		  .addField(stringStringArrayHashTable, "trigBackendRules", Modifier.STATIC, Modifier.PRIVATE)
     		  .addField(stringStringArrayHashTable, "destBackendRules", Modifier.STATIC, Modifier.PRIVATE)
@@ -472,11 +474,16 @@ public class RuleCategoriesGenerator implements CodeGeneratorConstants {
     		  .addMethod(getAllDestRulesForAction)
     		  .build();
       
-      JavaFile javaFile = JavaFile.builder("simse.util", ruleCategories).build();
+      JavaFile javaFile = JavaFile.builder("", ruleCategories).build();
       
       try {
     	FileWriter writer = new FileWriter(ruleCategoriesFile);
-		javaFile.writeTo(writer);
+  	  	String toAppend = "/* File generated by: simse.codegenerator.util.RuleCategories */\n"
+  	  	  		+ "package simse.util;\n"
+  	  	  		+ "\n"
+  	  	  		+ "import simse.adts.actions.*;\n";
+    	
+		writer.write(toAppend + javaFile.toString());
 		
 		writer.close();
 	} catch (IOException e) {

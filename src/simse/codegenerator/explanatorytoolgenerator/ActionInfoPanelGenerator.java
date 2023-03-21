@@ -32,6 +32,9 @@ import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.TypeSpec;
 
+import javafx.scene.control.cell.PropertyValueFactory;
+import jdk.javadoc.internal.doclets.toolkit.builders.FieldBuilder;
+
 public class ActionInfoPanelGenerator implements CodeGeneratorConstants {
   private File directory; // directory to save generated code into
   private DefinedActionTypes actTypes;
@@ -59,13 +62,17 @@ public class ActionInfoPanelGenerator implements CodeGeneratorConstants {
       ClassName scrollPanePolicy = ClassName.get("javafx.scene.control.ScrollPane", "ScrollPanePolicy");
       ClassName pos = ClassName.get("javafx.geometry", "Pos");
       ClassName tableView = ClassName.get("javafx.scene.control", "TableView");
+      ClassName tableColumn = ClassName.get("javafx.scene.control", "TableColumn");
       ClassName participant = ClassName.get("simse.explanatorytool", "Participant");
       ClassName scrollBarPolicy = ClassName.get("javafx.scene.control.ScrollPane", "ScrollBarPolicy");
       ClassName gridPane = ClassName.get("javafx.scene.layout", "GridPane");
       ClassName listView = ClassName.get("javafx.scene.control", "ListView");
       ClassName selectionMode = ClassName.get("javafx.scene.control", "SelectionMode");
       ClassName string = ClassName.get("java.lang", "String");
-      ClassName actionClass = ClassName.get("simse.adts", "actions");
+      ClassName ruleCategories = ClassName.get("simse.util", "RuleCategories");
+      ClassName propertyValueFactory = ClassName.get("javafx.scene.control.cell", "PropertyValueFactory");
+      ClassName observableList = ClassName.get("javafx.collections", "ObservableList");
+      ClassName fxCollections = ClassName.get("javafx.collections", "FXCollections");
       
       String initalizeActionDescriptionActions = "";
       
@@ -98,68 +105,17 @@ public class ActionInfoPanelGenerator implements CodeGeneratorConstants {
     		  .addStatement("actionDescriptionArea.positionCaret(0)")
     		  .build();
       
-      String initalizeDestroyerListBlock = "";
-
-      // go through all actions:
-      writeElse = false;
-      for (ActionType act : actions) {
-        if (act.isVisibleInExplanatoryTool()) {
-          String uCaseName = 
-          	CodeGeneratorUtils.getUpperCaseLeading(act.getName());
-          if (writeElse) {
-            initalizeDestroyerListBlock += "else ";
-          } else {
-            writeElse = true;
-          }
-          initalizeDestroyerListBlock += "if (action instanceof " + uCaseName + "Action) {\n";
-          initalizeDestroyerListBlock += "String [] list = {\n";
-          Vector<ActionTypeDestroyer> destroyers = act.getAllDestroyers();
-          for (ActionTypeDestroyer destroyer : destroyers) {
-            initalizeDestroyerListBlock += "\"" + destroyer.getName() + "\",\n";
-          }
-          initalizeDestroyerListBlock += "};\n";
-          initalizeDestroyerListBlock += "destroyerList.setListData(list);\n";
-          initalizeDestroyerListBlock += "}\n";
-        }
-      }
-      
       MethodSpec initializeDestroyerList = MethodSpec.methodBuilder("initializeDestroyerList")
     		  .addModifiers(Modifier.PRIVATE)
     		  .addStatement("String actionName = action.getActionName()")
-    		  .addCode(initalizeDestroyerListBlock)
+    		  .addStatement("destroyerList.getItems().setAll($T.getBackendDestRulesForAction(actionName))", ruleCategories)
     		  .build();
       
-      // "initializeTriggerList" method:
-
-      String initalizeTriggerListBlock = "";
-      
-      // go through all actions:
-      writeElse = false;
-      for (ActionType act : actions) {
-        if (act.isVisibleInExplanatoryTool()) {
-          String uCaseName = 
-          	CodeGeneratorUtils.getUpperCaseLeading(act.getName());
-          if (writeElse) {
-        	  initalizeTriggerListBlock += "else ";
-          } else {
-            writeElse = true;
-          }
-          initalizeTriggerListBlock += "if (action instanceof " + uCaseName + "Action) {\n";
-          initalizeTriggerListBlock += "String [] list = {\n";
-          Vector<ActionTypeTrigger> triggers = act.getAllTriggers();
-          for (ActionTypeTrigger trigger : triggers) {
-        	  initalizeTriggerListBlock += "\"" + trigger.getName() + "\",\n";
-          }
-          initalizeTriggerListBlock += "};\n";
-          initalizeTriggerListBlock += "triggerList.setListData(list);\n";
-          initalizeTriggerListBlock += "}\n";
-        }
-      }
       
       MethodSpec initializeTriggerList = MethodSpec.methodBuilder("initializeTriggerList")
     		  .addModifiers(Modifier.PRIVATE)
     		  .addStatement("String actionName = action.getActionName()")
-    		  .addCode(initalizeTriggerListBlock)
+    		  .addStatement("triggerList.getItems().setAll($T.getBackendTrigRulesForAction(actionName))", ruleCategories)
     		  .build();
       
       String participantsTableActions = "";
@@ -218,7 +174,6 @@ public class ActionInfoPanelGenerator implements CodeGeneratorConstants {
                   		";\n";
               participantsTableActions +="// find out whether it's active or not:\n";
               participantsTableActions += "boolean active = false;\n";
-              participantsTableActions += "boolean active = false;\n";
               participantsTableActions += "for (int j = 0; j < active" + part.getName()
               + "s.size(); j++) {\n";
               participantsTableActions += metaType + " active" + part.getName() + " = active" +
@@ -245,7 +200,6 @@ public class ActionInfoPanelGenerator implements CodeGeneratorConstants {
               participantsTableActions += "data[index][2] = active ? \"Active\" : \"Inactive\";\n";
               participantsTableActions += "}\n";
             }
-            participantsTableActions += "index++;\n";
             participantsTableActions += "}\n";
           }
           participantsTableActions += "}\n";
@@ -255,16 +209,18 @@ public class ActionInfoPanelGenerator implements CodeGeneratorConstants {
       MethodSpec createParticipantsTable = MethodSpec.methodBuilder("createParticipantsTable")
     		  .addModifiers(Modifier.PRIVATE)
     		  .returns(ParameterizedTypeName.get(tableView, participant))
-    		  .addStatement("TableView<Participant> newView = new TableView<Participant>()")
-    		  .addStatement("TableColumn<Participant, String> name = new TableColumn<>(\"Participant Name\")")
-    		  .addStatement("name.setCellValueFactory(new PropertyValueFactory<>(\"title1\"))")
-    		  .addStatement("TableColumn<Participant, String> participant = new TableColumn<>(\"Participant\")")
-    		  .addStatement("participant.setCellValueFactory(new PropertyValueFactory<>(\"title2\"))")
-    		  .addStatement("TableColumn<Participant, String> status = new TableColumn<>(\"Status\")")
-    		  .addStatement("status.setCellValueFactory(new PropertyValueFactory<>(\"status\"))")
-    		  .addStatement("ObservableList<Participant> data = FXCollections.observableArrayList()")
+    		  .addStatement("$T<$T> newView = new $T<$T>()", tableView, participant, tableView, participant)
+    		  .addStatement("$T<$T, $T> name = new $T<>(\"Participant Name\")", tableColumn, participant, String.class, tableColumn)
+    		  .addStatement("name.setCellValueFactory(new $T<>(\"title1\"))", propertyValueFactory)
+    		  .addStatement("$T<$T, $T> participant = new $T<>(\"Participant\")", tableColumn, participant, String.class, tableColumn)
+    		  .addStatement("participant.setCellValueFactory(new $T<>(\"title2\"))", propertyValueFactory)
+    		  .addStatement("$T<$T, $T> status = new $T<>(\"Status\")", tableColumn, participant, String.class, tableColumn)
+    		  .addStatement("status.setCellValueFactory(new $T<>(\"status\"))", propertyValueFactory)
+    		  .addStatement("$T<$T> data = $T.observableArrayList()", observableList, participant, fxCollections)
     		  .addCode(participantsTableActions)
-    		  .addStatement("return new JTable(data, columnNames)")
+    		  .addStatement("newView.getColumns().setAll(name, participant, status)")
+    		  .addStatement("newView.setItems(data)")
+    		  .addStatement("return newView")
     		  .build();
       
       MethodSpec constructor = MethodSpec.constructorBuilder()
@@ -407,7 +363,7 @@ public class ActionInfoPanelGenerator implements CodeGeneratorConstants {
     		  .addParameter(int.class, "trigOrDest")
     		  .addStatement("$T name = trigOrDest == TRIGGER ? ($T) triggerList.getSelectionModel().getSelectedItem() : ($T) destroyerList.getSelectionModel().getSelectedItem()", String.class, String.class, String.class)
     		  .beginControlFlow("if (name != null)")
-    		  .addCode(refreshDescriptionAreaBlock)
+    		  .addStatement("$T actionName = this.action.getActionName()", String.class)
     		  .addStatement("descriptionArea.setText(text)")
     		  .addStatement("descriptionArea.setCaretPosition(0)")
     		  .endControlFlow()

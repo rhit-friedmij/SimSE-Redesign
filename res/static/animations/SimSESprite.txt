@@ -10,7 +10,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.util.Duration;
 
-abstract class SimSESprite extends ImageView{
+public abstract class SimSESprite extends ImageView{
 
 	Animation spriteAnimation;
 	private int speed;
