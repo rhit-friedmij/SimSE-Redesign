@@ -33,14 +33,6 @@ import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
 
-import javafx.geometry.Point2D;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Dialog;
-import javafx.scene.control.Label;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
-
 public class ChooseRoleToPlayDialogGenerator implements CodeGeneratorConstants {
   private File directory; // directory to generate into
   private File crtpdFile; // file to generate

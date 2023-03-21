@@ -139,7 +139,7 @@ public class ProjectOverviewScreen extends Stage implements EventHandler<MouseEv
 		if (lastClickedProject) {
 			objType = tableModel.getData().get(lastClickedProjectIndex).getClass().getSimpleName();
 			objTypeType = "Project";
-			name = tableModel.getData().get(lastClickedProjectIndex).getDescription();
+			name = tableModel.getData().get(lastClickedProjectIndex).getName();
 		} else {
 			objType = tableModel2.getData().get(lastClickedToolIndex).getClass().getSimpleName();
 			objTypeType = "Tool";

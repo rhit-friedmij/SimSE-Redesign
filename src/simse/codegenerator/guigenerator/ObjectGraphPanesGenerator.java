@@ -16,7 +16,6 @@ import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
 
-import javafx.scene.input.MouseButton;
 import simse.codegenerator.CodeGeneratorUtils;
 import simse.modelbuilder.objectbuilder.Attribute;
 import simse.modelbuilder.objectbuilder.DefinedObjectTypes;

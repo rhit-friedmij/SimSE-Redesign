@@ -927,7 +927,6 @@ public class RuleExecutorGenerator implements CodeGeneratorConstants {
 												methodBody.addStatement("double " + variableName + " = 0");
 											}
 											StringBuffer variableName2 = new StringBuffer();
-											boolean tempUsed = false;
 											if ((variableName.indexOf("Active") >= 0)
 													|| (variableName.indexOf("Inactive") >= 0)) {
 												if (variableName.indexOf("Active") >= 0) { 

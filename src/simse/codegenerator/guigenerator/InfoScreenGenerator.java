@@ -197,7 +197,7 @@ public class InfoScreenGenerator {
 		      for (int i=0; i<eAts.size(); i++) {
 		    	  atts = atts.concat("attributes.getItems().add(\""+eAts.get(i).getName() + ": \"" + getTypeAsToString(eAts.get(i))+"(employee.get"+eAts.get(i).getName()+"()));\n");
 		      }
-		      atts = atts.concat("attributes.setMaxHeight(attributes.getItems().size()*24)");
+		      atts = atts.concat("attributes.setMaxHeight(attributes.getItems().size()*24);\n");
 		      
 		      MethodSpec constructor = MethodSpec.constructorBuilder()
 		    		  .addModifiers(Modifier.PUBLIC)
