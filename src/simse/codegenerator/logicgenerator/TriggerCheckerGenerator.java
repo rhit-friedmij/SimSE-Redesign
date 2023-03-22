@@ -427,7 +427,7 @@ public class TriggerCheckerGenerator implements CodeGeneratorConstants {
 			checker.addStatement("$T $L = state.getEmployeeStateRepository().getAll()", vector, empCntVar);
 			checker.beginControlFlow("for (int i = 0; i < $L.size(); i++)", empCntVar);
 			checker.addStatement("(($T) $L.elementAt(i)).removeMenuItem($S)", employee, empCntVar,
-					((UserActionTypeTrigger) outerTrig).getMenuText());
+					"JOIN " + ((UserActionTypeTrigger) outerTrig).getMenuText());
 			checker.endControlFlow();
 			checker.endControlFlow();
 			checker.beginControlFlow("for (int i = 0; i < $L.size(); i++)", actCntVar);

@@ -58,9 +58,10 @@ public class RuleDescriptionsGenerator implements CodeGeneratorConstants {
             	} 
 
             }
+            String init = "\"" + actionsString + "\"";
             actionFields.add(FieldSpec.builder(String.class, 
             		act.getName().toUpperCase()
-                    + "_" + rule.getName().toUpperCase(), Modifier.STATIC, Modifier.PUBLIC, Modifier.FINAL).initializer("\"" + actionsString + "\"").build());
+                    + "_" + rule.getName().toUpperCase(), Modifier.STATIC, Modifier.PUBLIC, Modifier.FINAL).initializer("$N", init).build());
           }
         }
         

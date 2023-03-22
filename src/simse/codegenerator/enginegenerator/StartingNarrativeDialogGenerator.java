@@ -52,7 +52,7 @@ public class StartingNarrativeDialogGenerator implements CodeGeneratorConstants 
 		ClassName stage = ClassName.get("javafx.stage", "Stage");
 		TypeName mouseHandler = ParameterizedTypeName.get(eventHandler, mouseEvent);
 
-		char[] startNarrChars = createdObjs.getStartingNarrative().replaceAll("\n", "\\\\n").replaceAll("\"", "\\\\\"")
+		char[] startNarrChars = createdObjs.getStartingNarrative().replaceAll("\n", "\\\n").replaceAll("\"", "\\\"")
 				.toCharArray();
 		String dialogText = "";
 		for (int i = 0; i < startNarrChars.length; i++) {

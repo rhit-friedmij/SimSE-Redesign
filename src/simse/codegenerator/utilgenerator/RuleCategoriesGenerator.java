@@ -256,7 +256,7 @@ public class RuleCategoriesGenerator implements CodeGeneratorConstants {
       
       MethodSpec initializeIntRules = MethodSpec.methodBuilder("initializeIntRules")
     		  .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
-    		  .addStatement("destRules = new $T<>()", hashTable)
+    		  .addStatement("intRules = new $T<>()", hashTable)
     		  .addCode(intRuleDescriptionBlock)
     		  .beginControlFlow("if (actions.length == actionRules.length)")
     		  .beginControlFlow("for (int i = 0; i < actions.length; i++)")
