@@ -33,10 +33,12 @@ import simse.modelbuilder.mapeditor.TileData;
 import simse.modelbuilder.mapeditor.UserData;
 
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.Scanner;
 
 import javax.lang.model.element.Modifier;
 import javax.swing.JOptionPane;
@@ -291,135 +293,16 @@ public class CodeGenerator {
 	    if (ssFile.exists()) {
 	      ssFile.delete(); // delete old version of file
 	    }
-    	ClassName branch = ClassName.get("simse.explanatorytool", "Branch");
-    	ClassName simSEGui = ClassName.get("simse.gui", "SimSEGUI");
-    	ClassName arrayList = ClassName.get("java.util", "ArrayList");
-    	ClassName multipleTimelinesBrowser = ClassName.get("simse.explanatorytool", "MultipleTimelinesBrowser");
-    	ClassName engineClass = ClassName.get("simse.engine", "Engine");
-    	ClassName stateClass = ClassName.get("simse.state", "State");
-    	ClassName logicClass = ClassName.get("simse.logic", "Logic");
-    	ClassName ruleCategories = ClassName.get("simse.util", "RuleCategories");
-    	ClassName alertClass = ClassName.get("javafx.scene.control", "Alert");
-    	ClassName alertTypeClass = ClassName.get("javafx.scene.control.Alert", "AlertType");
-    	ClassName buttonTypeClass = ClassName.get("javafx.scene.control", "ButtonType");
-    	ClassName stageClass = ClassName.get("javafx.stage", "Stage");
-    	ClassName applicationClass = ClassName.get("javafx.application", "Application");
-    	TypeName listOfBranches = ParameterizedTypeName.get(arrayList, branch);
-    	TypeName listOfGuis = ParameterizedTypeName.get(arrayList, simSEGui);
-    	TypeName stringArray = ArrayTypeName.of(String.class);
     	
-    	FieldSpec branches = FieldSpec.builder(listOfBranches, "branches")
-    		    .addModifiers(Modifier.PRIVATE, Modifier.STATIC)
-    		    .initializer("new $T()", listOfBranches)
-    		    .build();
-    	
-    	FieldSpec guis = FieldSpec.builder(listOfGuis, "guis")
-    		    .addModifiers(Modifier.PRIVATE, Modifier.STATIC)
-    		    .initializer("new $T()", listOfGuis)
-    		    .build();
-    	
-    	FieldSpec timelinesBrowser = FieldSpec.builder(multipleTimelinesBrowser, "timelinesBrowser")
-    		    .addModifiers(Modifier.PRIVATE, Modifier.STATIC)
-    		    .initializer("new $T()", multipleTimelinesBrowser)
-    		    .build();
-    	
-    	FieldSpec engineField = FieldSpec.builder(engineClass, "engine")
-    		    .addModifiers(Modifier.PRIVATE, Modifier.STATIC)
-    		    .build();
-    	
-    	MethodSpec startNewBranch = MethodSpec.methodBuilder("startNewBranch")
-    			.addModifiers(Modifier.PUBLIC, Modifier.STATIC)
-    			.returns(void.class)
-    			.addParameter(stateClass, "state")
-    			.addParameter(branch, "branch")
-    			.beginControlFlow("for (int i = 0; i < $N.size(); i++)", branches)
-    			.beginControlFlow("if (branch.getName().equals($N.get(i).getName()))", branches)
-    			.addStatement("$T alert = new $T($T.ERROR, $S, $T.OK)", alertClass, alertClass,
-    					alertTypeClass, "Please choose a unique name for your new branch", buttonTypeClass)
-    			.addStatement("alert.showAndWait()")
-    			.addStatement("return")
-    		    .endControlFlow()
-    		    .endControlFlow()
-    		    .addStatement("$T logic = new $T(state)", logicClass, logicClass)
-    		    .addStatement("$N = new $T(logic, state)", engineField, engineClass)
-    		    .addStatement("$T gui = new $T($N, state, logic, branch, $N)", simSEGui,
-    		    		simSEGui, engineField, timelinesBrowser)
-    		    .addStatement("state.getClock().setGUI(gui)")
-    		    .addStatement("gui.setX(0)")
-    		    .addStatement("gui.setY(0)")
-    		    .addStatement("gui.setWidth(1180)")
-    		    .addStatement("gui.setHeight(720)")
-    		    .addStatement("$T.initializeRuleCategories()", ruleCategories)
-    		    .addStatement("$N.giveGUI(gui)", engineField)
-    		    .addStatement("logic.getTriggerChecker().update(false, gui)")
-    		    .addStatement("$N.add(branch)", branches)
-    		    .addStatement("$N.add(gui)", guis)
-    		    .addStatement("$N.update()", timelinesBrowser)
-    			.build();
-    	
-    	MethodSpec getBranches = MethodSpec.methodBuilder("getBranches")
-    			.addModifiers(Modifier.PUBLIC, Modifier.STATIC)
-    			.returns(listOfBranches)
-    			.addStatement("return $N", branches)
-    			.build();
-    			
-    	MethodSpec getNumOpenBranches = MethodSpec.methodBuilder("getNumOpenBranches")
-    			.addModifiers(Modifier.PUBLIC, Modifier.STATIC)
-    			.returns(int.class)
-    			.addStatement("$T numOpen = 0", int.class)
-    			.beginControlFlow("for ($T b : $N)", branch, branches)
-    			.beginControlFlow("if (!b.isClosed())")
-    			.addStatement("numOpen++")
-    			.endControlFlow()
-    			.endControlFlow()
-    			.addStatement("return numOpen")
-    			.build();
-    	
-    	MethodSpec getGUIs = MethodSpec.methodBuilder("getGUIs")
-    			.addModifiers(Modifier.PUBLIC, Modifier.STATIC)
-    			.returns(listOfGuis)
-    			.addStatement("return $N", guis)
-    			.build();
-    	
-    	MethodSpec main = MethodSpec.methodBuilder("main")
-    			.addModifiers(Modifier.PUBLIC, Modifier.STATIC)
-    			.returns(void.class)
-    			.addParameter(stringArray, "args")
-    			.addStatement("launch(args)")
-    			.build();
-    	
-    	MethodSpec start = MethodSpec.methodBuilder("start")
-    			.addModifiers(Modifier.PUBLIC)
-    			.returns(void.class)
-    			.addParameter(stageClass, "arg0")
-    			.addException(Exception.class)
-    			.addStatement("startNewBranch(new $T(), new $T(null, 0, 0, null, $S))",
-    					stateClass, branch, "")
-    			.build();
-    	
-    	TypeSpec simSE = TypeSpec.classBuilder("SimSE")
-    			.superclass(applicationClass)
-    			.addModifiers(Modifier.PUBLIC)
-    			.addField(branches)
-    			.addField(guis)
-    			.addField(timelinesBrowser)
-    			.addField(engineField)
-    			.addMethod(startNewBranch)
-    			.addMethod(getBranches)
-    			.addMethod(getNumOpenBranches)
-    			.addMethod(getGUIs)
-    			.addMethod(main)
-    			.addMethod(start)
-    			.build();
-		
-		JavaFile javaFile = JavaFile.builder("simse", simSE)
-				.addFileComment("/* File generated by: simse.codegenerator.CodeGenerator */")
-			    .build();
 
 	    try {
 	    	FileWriter writer = new FileWriter(ssFile);
-	    	
-			javaFile.writeTo(writer);
+  	      FileReader reader = new FileReader("resources\\SimSE.txt");
+  	      Scanner s = new Scanner(reader);
+  	      
+  	      while (s.hasNextLine()) {
+  	      	  writer.write(s.nextLine() + "\n");
+  	      }
 			writer.close();
 	    } catch (IOException e) {
 	      JOptionPane.showMessageDialog(null, ("Error writing file "
