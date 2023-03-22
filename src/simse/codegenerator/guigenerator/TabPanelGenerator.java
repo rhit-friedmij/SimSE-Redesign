@@ -805,7 +805,7 @@ public class TabPanelGenerator implements CodeGeneratorConstants {
 	                  && ((imgFilename).length() > 0) 
 	                  && ((new File(iconDir, imgFilename)).exists())) {
 	                String imagePath = (iconsDirectory + imgFilename);
-	                urlS = urlS.concat("url = \"" + imagePath + "\";");
+	                urlS = urlS.concat("url = \"src" + imagePath + "\";");
 	                urlS = urlS.concat("\n");
 	              }
 	              urlS = urlS.concat("}");

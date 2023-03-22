@@ -275,6 +275,9 @@ public class ExplanatoryToolGenerator implements CodeGeneratorConstants {
     		  .addModifiers(Modifier.PRIVATE)
     		  .addStatement("attributeList.getItems().removeAll()")
     		  .addStatement("$T selectedObject = ($T) objectList.getSelectionModel().getSelectedItem()", String.class, String.class)
+    		  .beginControlFlow("if (selectedObject == null)")
+    		  .addStatement("return")
+    		  .endControlFlow()
     		  .addCode(refreshAttributeListObjectTypes)
     		  .build();
       

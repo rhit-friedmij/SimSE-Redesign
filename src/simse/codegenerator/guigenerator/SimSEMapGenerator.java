@@ -254,7 +254,7 @@ public class SimSEMapGenerator implements CodeGeneratorConstants {
                   && (((String) objsToImages.get(obj)).length() > 0)) {
                 String imagePath = (iconsDirectory + ((String) objsToImages
                     .get(obj)));
-                gi = gi.concat("return \"" + imagePath + "\";\n");
+                gi = gi.concat("return \"src" + imagePath + "\";\n");
               }
               gi = gi.concat("}\n");
             }
