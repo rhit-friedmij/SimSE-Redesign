@@ -136,9 +136,8 @@ public class GUIGenerator implements CodeGeneratorConstants {
       return false;
 	  } else {
 	    CodeGeneratorUtils.copyDir(options.getIconDirectory().getPath(),
-	        (options.getCodeGenerationDestinationDirectory().getPath() + 
-	            "\\simse\\gui\\" + (new File(options.getIconDirectory().
-	                getPath())).getName()));
+	        options.getCodeGenerationDestinationDirectory().getPath() + 
+	            "\\simse\\gui\\icons\\");
 	
 	    ImageLoader.copyImagesToDir(
 	    		options.getCodeGenerationDestinationDirectory().getPath() + 
