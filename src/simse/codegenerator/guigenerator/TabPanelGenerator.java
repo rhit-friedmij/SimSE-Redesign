@@ -244,6 +244,7 @@ public class TabPanelGenerator implements CodeGeneratorConstants {
     		  .addStatement("$N.setBackground($T.createBackground$T(Color.LIGHTGRAY))", "buttonsPane", javafxhelpers, color)
     		  .addStatement("$T buttons$T = new ScrollPane($N)", scrollpane, scrollpane, "buttonsPane")
     		  .addStatement("buttonsScrollPane.setPrefSize(292, 75)")
+    		  .addStatement("generateButtons()")
     		  .addStatement("$N = new ClockPanel(gui, s, e)", "clockPane")
     		  .addStatement("$N.setPrefSize(250, 100)", "clockPane")
     		  .addStatement("// Add panes and labels to main pane:")

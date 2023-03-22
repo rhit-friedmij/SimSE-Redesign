@@ -295,7 +295,8 @@ public class TriggerCheckerGenerator implements CodeGeneratorConstants {
 				checker.beginControlFlow("if(" + partVarName + ".size() > 0)");
 				
 				String objManipulation = "";
-				if (partObjType == SimSEObjectTypeTypes.ARTIFACT || partObjType == SimSEObjectTypeTypes.EMPLOYEE) { 
+				if (partObjType == SimSEObjectTypeTypes.ARTIFACT || partObjType == SimSEObjectTypeTypes.EMPLOYEE 
+						|| part.getQuantity().isMaxValBoundless()) { 
 					// can't be in more than one action of the same type at a time
 					objManipulation = ".remove(0)";
 				} else {
