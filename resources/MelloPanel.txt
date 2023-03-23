@@ -100,8 +100,10 @@ public class MelloPanel extends Pane implements SimSEPanel{
 	
 	public void completeTask(String task) {
 		MelloItem found = findTaskInProgress(task);
-		if (found != null) prog.getChildren().remove(found);
-		comp.getChildren().add(found);
+		if (found != null) { 
+			prog.getChildren().remove(found);
+			comp.getChildren().add(found);
+		}
 	}
 	
 	public void removeTask(String task) {
