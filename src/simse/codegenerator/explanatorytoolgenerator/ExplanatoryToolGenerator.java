@@ -44,7 +44,6 @@ import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.TypeSpec;
 
-
 public class ExplanatoryToolGenerator implements CodeGeneratorConstants {
   private ModelOptions options;
   private DefinedObjectTypes objTypes;
@@ -171,6 +170,7 @@ public class ExplanatoryToolGenerator implements CodeGeneratorConstants {
       ClassName chartMouseListenerFX = ClassName.get("org.jfree.chart.fx.interaction", "ChartMouseListenerFX");
       ClassName observableList = ClassName.get("javafx.collections", "ObservableList");
       ClassName fxCollections = ClassName.get("javafx.collections", "FXCollections");
+      ClassName scene = ClassName.get("javafx.scene", "Scene");
 
      
       
@@ -462,6 +462,34 @@ public class ExplanatoryToolGenerator implements CodeGeneratorConstants {
     		  .addStatement("closeButton = new $T(\"Close\")", button)
     		  .addStatement("closeButton.addEventHandler($T.MOUSE_CLICKED, this)", mouseEvent)
     		  .addStatement("closeButtonPane.getChildren().add(closeButton)")
+    		  .beginControlFlow("if (actions.size() > 0)")
+    		  .addStatement("actionComboBox.getSelectionModel().select(0)")
+    		  .endControlFlow()
+    		  .addComment("set up tool tips:")
+    		  .addStatement("setUpToolTips()")
+    		  .addStatement("mainPane = new $T()", gridPane)
+    		  .addStatement("mainPane.setHgap(10)")
+    		  .addStatement("mainPane.setVgap(30)")
+    		  .addStatement("mainPane.setPadding(new $T(0, 10, 0, 10))", insets)
+    		  .addComment("Add panes to main pane and main sub-pane:")
+    		  .addStatement("$T spacerPane = new $T()", pane, pane)
+    		  .addStatement("spacerPane.setMinWidth(300)")
+    		  .addStatement("mainPane.add(spacerPane, 0, 0)")
+    		  .addStatement("mainPane.add(multipleTimelinesPanel, 1, 0)")
+    		  .addStatement("mainPane.add(generateGraphsTitlePane, 1, 1)")
+    		  .addStatement("mainPane.add(objectPane, 0, 2, 2, 1)")
+    		  .addStatement("mainPane.add(actionPane, 2, 2)")
+    		  .addStatement("mainPane.add(generateCompGraphPane, 1, 3)")
+    		  .addStatement("mainPane.add(viewRulesTitlePane, 1, 4)")
+    		  .addStatement("mainPane.add(actionComboBoxPane, 1, 5)")
+    		  .addStatement("mainPane.add(rulesMainPane, 0, 6, 3, 1)")
+    		  .addStatement("mainPane.add(closeButtonPane, 1, 7)")
+    		  .addStatement("$T spacerPane2 = new $T()", pane, pane)
+    		  .addStatement("mainPane.add(spacerPane2, 0, 8, 3, 1)")
+    		  .addStatement("$T scene = new $T(mainPane, 900, 720)", scene, scene)
+    		  .addStatement("scene.getStylesheets().add($S)", "style.css")
+    		  .addStatement("this.setScene(scene)")
+    		  .addStatement("hide()")
     		  .build();
       
       
