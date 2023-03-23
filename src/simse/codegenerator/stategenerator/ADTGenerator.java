@@ -945,6 +945,14 @@ public class ADTGenerator implements CodeGeneratorConstants {
     
     MethodSpec clone = cloneBuilder.addStatement("return cl").build();
     
+    MethodSpec setText = MethodSpec.methodBuilder("setOverheadText")
+    		.addAnnotation(Override.class)
+    		.addModifiers(Modifier.PUBLIC)
+    		.returns(void.class)
+    		.addParameter(String.class, "s")
+    		.addStatement("super.setOverheadText(s, this.name)")
+    		.build();
+    
     TypeSpec.Builder adtBuilder = TypeSpec.classBuilder(name)
     		.addModifiers(Modifier.PUBLIC)
     		.superclass(superClass)
@@ -1036,7 +1044,13 @@ public class ADTGenerator implements CodeGeneratorConstants {
         		  .build();
 
           adtBuilder.addMethod(getMenu);
+          
     }
+    
+    if (objType.getType() == SimSEObjectTypeTypes.EMPLOYEE) {
+        adtBuilder.addMethod(setText);
+    }
+  
     
     TypeSpec adt = adtBuilder.build();
     
