@@ -164,9 +164,12 @@ public class ActionInfoPanelGenerator implements CodeGeneratorConstants {
               Attribute keyAtt = type.getKey();
               String uCaseAttName = 
               	CodeGeneratorUtils.getUpperCaseLeading(keyAtt.getName());
-              participantsTableActions += uCaseTypeName + " " + uCaseTypeName.toLowerCase() +
-                		uCasePartName + " = (" + uCaseTypeName + ")" + lCasePartName +
+              String singlePartName = uCaseTypeName.toLowerCase() + uCasePartName;
+              participantsTableActions += uCaseTypeName + " " + singlePartName + " = (" + uCaseTypeName + ")" + lCasePartName +
                   		";\n";
+              participantsTableActions += "title1 = \"" + uCaseTypeName + " " + uCasePartName + " \" + " + singlePartName 
+            		  + ".get" + type.getKey().getName() + "();";
+              
               participantsTableActions +="// find out whether it's active or not:\n";
               participantsTableActions += "boolean active = false;\n";
               participantsTableActions += "for (int j = 0; j < active" + part.getName()
@@ -386,7 +389,7 @@ public class ActionInfoPanelGenerator implements CodeGeneratorConstants {
     			.addField(textArea, "descriptionArea", Modifier.PRIVATE)
     			.addField(textArea, "actionDescriptionArea", Modifier.PRIVATE)
     			.addField(FieldSpec.builder(int.class, "TRIGGER", Modifier.PRIVATE, Modifier.FINAL).initializer("0").build())
-    			.addField(FieldSpec.builder(int.class, "DESTROYER", Modifier.PRIVATE, Modifier.FINAL).initializer("0").build())
+    			.addField(FieldSpec.builder(int.class, "DESTROYER", Modifier.PRIVATE, Modifier.FINAL).initializer("1").build())
     			.superclass(pane)
     			.addSuperinterface(ParameterizedTypeName.get(eventHandler, mouseEvent))
     			.addMethod(constructor)

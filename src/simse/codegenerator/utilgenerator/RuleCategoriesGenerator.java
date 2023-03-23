@@ -58,11 +58,14 @@ public class RuleCategoriesGenerator implements CodeGeneratorConstants {
       String actionBlock = "{";
       
       for(int i = 0; i < actions.size(); i++) {
-    	  if(actions.size() == 1 || i == actions.size() - 1) {
-    		  actionBlock += "Action." + actions.get(i).getName().toUpperCase();
-    	  }
-    	  else {
-    		  actionBlock += "Action." + actions.get(i).getName().toUpperCase() + ", ";
+    	  ActionType act = actions.get(i);
+    	  if (act.isVisibleInExplanatoryTool()) {
+	    	  if(actions.size() == 1 || i == actions.size() - 1) {
+	    		  actionBlock += "Action." + act.getName().toUpperCase();
+	    	  }
+	    	  else {
+	    		  actionBlock += "Action." + act.getName().toUpperCase() + ", ";
+	    	  }
     	  }
       }
       
@@ -409,6 +412,11 @@ public class RuleCategoriesGenerator implements CodeGeneratorConstants {
     		  .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
     		  .addStatement("trigBackendRules = new $T<>()", hashTable)
     		  .addCode(backendTrigRuleDescriptionBlock)
+    		  .beginControlFlow("if (actions.length == actionRules.length)")
+    		  .beginControlFlow("for (int i = 0; i < actions.length; i++)")
+    		  .addStatement("trigBackendRules.put(actions[i], actionRules[i])")
+    		  .endControlFlow()
+    		  .endControlFlow()
     		  .build();
       
       String backendDestRuleDescriptionBlock = "String[][] actionRules = {";
@@ -435,6 +443,11 @@ public class RuleCategoriesGenerator implements CodeGeneratorConstants {
     		  .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
     		  .addStatement("destBackendRules = new $T<>()", hashTable)
     		  .addCode(backendDestRuleDescriptionBlock)
+    		  .beginControlFlow("if (actions.length == actionRules.length)")
+    		  .beginControlFlow("for (int i = 0; i < actions.length; i++)")
+    		  .addStatement("destBackendRules.put(actions[i], actionRules[i])")
+    		  .endControlFlow()
+    		  .endControlFlow()
     		  .build();
       
       MethodSpec initializeRuleCategories = MethodSpec.methodBuilder("initializeRuleCategories")

@@ -391,9 +391,9 @@ public class SimSEGUI extends Stage implements EventHandler<Event> {
 			break;
 			
 		case GRAPH:
-			if (!p1Empty && panel1.getChildren().get(0) instanceof ObjectGraphPane) {
+			if (!p1Empty && panel1.getChildren().get(0) instanceof ObjectGraphPanel) {
 				panel1.getChildren().clear();
-			} else if (!p2Empty && panel2.getChildren().get(0) instanceof ObjectGraphPane) {
+			} else if (!p2Empty && panel2.getChildren().get(0) instanceof ObjectGraphPanel) {
 				panel2.getChildren().clear();
 			}
 			break;

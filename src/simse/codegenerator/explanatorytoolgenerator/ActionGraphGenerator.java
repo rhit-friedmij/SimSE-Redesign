@@ -16,6 +16,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.Hashtable;
 import java.util.Vector;
 
 import javax.lang.model.element.Modifier;
@@ -516,7 +517,8 @@ public class ActionGraphGenerator implements CodeGeneratorConstants {
     		  .addField(int.class, "lastRightClickedX", Modifier.PRIVATE)
     		  .addField(xySeriesCollection, "dataset", Modifier.PRIVATE)
     		  .addField(branch, "branch", Modifier.PRIVATE)
-    		  .addField(ParameterizedTypeName.get(hashTable, integer, xySeries), "series", Modifier.PRIVATE)
+    		  .addField(FieldSpec.builder(ParameterizedTypeName.get(hashTable, integer, xySeries), "series", Modifier.PRIVATE)
+  					.initializer("new Hashtable<Integer, XYSeries>()").build())
     		  .addField(FieldSpec.builder(ParameterizedTypeName.get(eventHandlerClass, actionEvent), "menuEvent", Modifier.PRIVATE)
 					.initializer("$L", anonHandleClass).build())
     		  .addField(FieldSpec.builder(ParameterizedTypeName.get(arrayList, stringClass), "indices", Modifier.PRIVATE)
