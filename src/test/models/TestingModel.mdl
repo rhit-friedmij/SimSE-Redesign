@@ -662,7 +662,9 @@ boundless
 <endDefinedObjectTypes>
 <beginCreatedObjects>
 <beginStartingNarrative>
-Welcome to The Addams Family Garden, Kooky Gardens! As a Valentine's gift for Morticia, Gomez has decided he needs to find the deadliest rose in the world and plant it in her garden. He has enlisted the help of Thing and the two of them need to research what this rose is and how to grow it. Once it is fully grown, all that's left will be to cut off the petals and it will be ready! They have $500 dollars to spend and only 1000 clock ticks to finish in time!
+Welcome to The Addams Family Garden, Kooky Gardens!
+
+	As a Valentine's gift for Morticia, Gomez has decided he needs to find the deadliest rose in the world and plant it in her garden. He has enlisted the help of Thing and the two of them need to research what this rose is and how to grow it. Once it is fully grown, all that's left will be to cut off the petals and it will be ready! They have $500 dollars to spend and only 1000 clock ticks to finish in time!
 <endStartingNarrative>
 <beginObject>
 1
@@ -10859,6 +10861,12 @@ Vine
 <endGraphics>
 <beginMap>
 <beginSOPUsers>
+- Employee - Obsessed - Gomez
+true
+true
+7
+1
+
 - Employee - Unobsessed - Wednesday
 true
 true
@@ -10870,12 +10878,6 @@ true
 true
 4
 2
-
-- Employee - Obsessed - Gomez
-true
-true
-7
-1
 
 <endSOPUsers>
 605
