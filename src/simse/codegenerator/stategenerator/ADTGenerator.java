@@ -950,7 +950,7 @@ public class ADTGenerator implements CodeGeneratorConstants {
     		.addModifiers(Modifier.PUBLIC)
     		.returns(void.class)
     		.addParameter(String.class, "s")
-    		.addStatement("super.setOverheadText(s, this.name)")
+    		.addStatement("super.setOverheadText(s, String.valueOf(this.$L))", objType.getKey().getName().toLowerCase())
     		.build();
     
     TypeSpec.Builder adtBuilder = TypeSpec.classBuilder(name)
