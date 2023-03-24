@@ -1472,7 +1472,7 @@ Garden
 <beginActionTypeParticipantAttributeConstraint>
 Name
 =
-KookyGardens
+<>
 false
 <endActionTypeParticipantAttributeConstraint>
 <beginActionTypeParticipantAttributeConstraint>
@@ -1655,8 +1655,8 @@ Proj
 Garden
 <beginActionTypeParticipantAttributeConstraint>
 Name
-<
-<>
+=
+KookyGardens
 false
 <endActionTypeParticipantAttributeConstraint>
 <beginActionTypeParticipantAttributeConstraint>
@@ -1685,7 +1685,7 @@ false
 <endActionTypeParticipantAttributeConstraint>
 <beginActionTypeParticipantAttributeConstraint>
 RandomGameOver
-<
+=
 <>
 false
 <endActionTypeParticipantAttributeConstraint>
@@ -2035,7 +2035,7 @@ Emp
 Unobsessed
 <beginActionTypeParticipantAttributeConstraint>
 Name
-<
+=
 <>
 false
 <endActionTypeParticipantAttributeConstraint>
@@ -2053,7 +2053,7 @@ false
 <endActionTypeParticipantAttributeConstraint>
 <beginActionTypeParticipantAttributeConstraint>
 Dancing
-<
+=
 <>
 false
 <endActionTypeParticipantAttributeConstraint>
@@ -2080,7 +2080,7 @@ false
 Obsessed
 <beginActionTypeParticipantAttributeConstraint>
 Name
-<
+=
 <>
 false
 <endActionTypeParticipantAttributeConstraint>
@@ -2098,7 +2098,7 @@ false
 <endActionTypeParticipantAttributeConstraint>
 <beginActionTypeParticipantAttributeConstraint>
 Dancing
-<
+=
 <>
 false
 <endActionTypeParticipantAttributeConstraint>
@@ -2137,7 +2137,7 @@ false
 <endActionTypeParticipantAttributeConstraint>
 <beginActionTypeParticipantAttributeConstraint>
 Vibes
-<
+=
 <>
 false
 <endActionTypeParticipantAttributeConstraint>
@@ -2167,7 +2167,7 @@ Proj
 Garden
 <beginActionTypeParticipantAttributeConstraint>
 Name
-<
+=
 <>
 false
 <endActionTypeParticipantAttributeConstraint>
@@ -2197,7 +2197,7 @@ false
 <endActionTypeParticipantAttributeConstraint>
 <beginActionTypeParticipantAttributeConstraint>
 RandomGameOver
-<
+=
 <>
 false
 <endActionTypeParticipantAttributeConstraint>
@@ -10867,17 +10867,17 @@ true
 7
 1
 
-- Employee - Unobsessed - Wednesday
-true
-true
-1
-1
-
 - Employee - Unobsessed - Thing
 true
 true
 4
 2
+
+- Employee - Unobsessed - Wednesday
+true
+true
+1
+1
 
 <endSOPUsers>
 605
