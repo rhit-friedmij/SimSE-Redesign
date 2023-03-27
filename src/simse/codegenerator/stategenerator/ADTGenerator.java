@@ -263,8 +263,9 @@ public class ADTGenerator implements CodeGeneratorConstants {
     		.addModifiers(Modifier.PUBLIC)
     		.returns(void.class)
     		.addParameter(String.class, "s")
-    		.addParameter(String.class, "name")
-    		.addStatement("$N.addText(s, name)", "track")
+    		.addParameter(Object.class, "sender")
+    		.addParameter(String.class, "senderName")
+    		.addStatement("$N.addText(s, sender, senderName)", "track")
     		.addStatement("$N = s", "overheadText")
     		.build();
     
@@ -471,8 +472,9 @@ public class ADTGenerator implements CodeGeneratorConstants {
     		.addModifiers(Modifier.PUBLIC)
     		.returns(void.class)
     		.addParameter(String.class, "s")
-    		.addParameter(String.class, "name")
-    		.addStatement("$N.addText(s, name)", "track")
+    		.addParameter(Object.class, "sender")
+    		.addParameter(String.class, "senderName")
+    		.addStatement("$N.addText(s, sender, senderName)", "track")
     		.build();
     
     MethodSpec hasOverheadText2 = MethodSpec.methodBuilder("hasOverheadText")
@@ -950,7 +952,7 @@ public class ADTGenerator implements CodeGeneratorConstants {
     		.addModifiers(Modifier.PUBLIC)
     		.returns(void.class)
     		.addParameter(String.class, "s")
-    		.addStatement("super.setOverheadText(s, String.valueOf(this.$L))", objType.getKey().getName().toLowerCase())
+    		.addStatement("super.setOverheadText(s, this, this.$L)", objType.getKey().getName().toLowerCase())
     		.build();
     
     TypeSpec.Builder adtBuilder = TypeSpec.classBuilder(name)
@@ -1047,7 +1049,7 @@ public class ADTGenerator implements CodeGeneratorConstants {
           
     }
     
-    if (objType.getType() == SimSEObjectTypeTypes.EMPLOYEE) {
+    if (objType.getType() == SimSEObjectTypeTypes.EMPLOYEE || objType.getType() == SimSEObjectTypeTypes.CUSTOMER) {
         adtBuilder.addMethod(setText);
     }
   
