@@ -77,6 +77,7 @@ public class MelloPanel extends Pane implements SimSEPanel{
 	}
 	
 	public void addTaskInProgress(String task, Vector<Object> participants) {
+		if (participants.isEmpty()) return;
 		removeTask(task);
 		prog.getChildren().add(new MelloItem(task, participants));
 	}
