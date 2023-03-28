@@ -26,9 +26,14 @@ public class TrackMessage extends Pane{
 		ImageView img = JavaFXHelpers.createImageView(imageUrl);
 		pane.add(img, 0, 0);
 		
-		pane.add(new Text(((Employee) sender).getName()), 1, 0);
+		String key = "";
+		if (sender instanceof Employee) {
+			key = ((Employee) sender).getKeyAsString();
+		} else if (sender instanceof Customer) {
+			key = ((Customer) sender).getKeyAsString();
+		}
+		pane.add(new Text(key), 1, 0);
 
-		
 		HBox textBox = new HBox();
 		textBox.setBackground(JavaFXHelpers.createBackgroundColor(Color.rgb(255, 255, 255)));
 		textBox.getChildren().add(new Text(message));

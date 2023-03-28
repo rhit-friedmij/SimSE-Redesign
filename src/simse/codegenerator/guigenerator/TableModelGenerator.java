@@ -583,7 +583,8 @@ public class TableModelGenerator implements CodeGeneratorConstants {
 	                boolean isShared = false;
 	                for (Attribute compare2: obj.getAllVisibleAttributes()) {
 	                    if (isShared) break;
-	                    if (compare1.attributeEquals(compare2)) isShared = true;
+	                    if (compare1.attributeEquals(compare2)||
+	    						compare1.isKey()) isShared = true;
 	                }
 	                
 	                if (!isShared) toRemove.add(compare1);
