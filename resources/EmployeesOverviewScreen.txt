@@ -132,5 +132,13 @@ public class EmployeesOverviewScreen extends Stage implements EventHandler<Mouse
 		tablePane.setCenter(table);
 		mainPane.getChildren().add(3, tablePane);
 	}
-
+	
+		
+	public boolean isEmployee() {
+		if (tableModel instanceof EmployeeTableModel) {
+			return true;
+		}
+		
+		return false;
+	}
 }
