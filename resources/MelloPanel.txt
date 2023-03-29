@@ -84,17 +84,17 @@ public class MelloPanel extends Pane implements SimSEPanel{
 	
 	public void addEmployeeToTask(String task, Object employee) {
 		MelloItem inProg = findTaskInProgress(task);
+		if (inProg = null) return;
 		prog.getChildren().remove(inProg);
 		prog.getChildren().add(inProg.addEmp(employee));
 	}
 	
 	public void removeEmployeeFromTask(String task, Object employee) {
 		MelloItem inProg = findTaskInProgress(task);
-		if (inProg != null) {
-			prog.getChildren().remove(inProg);
-			inProg = inProg.removeEmp(employee);
-			prog.getChildren().add(inProg);
-		}
+		if (inProg == null) return;
+		prog.getChildren().remove(inProg);
+		inProg = inProg.removeEmp(employee);
+		prog.getChildren().add(inProg);
 	}
 	
 	public void stopEverything() {
@@ -103,10 +103,10 @@ public class MelloPanel extends Pane implements SimSEPanel{
 	
 	public void completeTask(String task) {
 		MelloItem found = findTaskInProgress(task);
-		if (found != null) { 
-			prog.getChildren().remove(found);
-			comp.getChildren().add(found);
-		}
+		if (found == null) return; 
+		prog.getChildren().remove(found);
+		comp.getChildren().add(found);
+	
 	}
 	
 	public void removeTask(String task) {
