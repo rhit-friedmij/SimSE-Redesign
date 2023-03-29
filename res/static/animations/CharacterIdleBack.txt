@@ -2,7 +2,7 @@ package simse.animation;
 
 public class CharacterIdleBack extends SimSESprite{
 	
-	public final static String URL = "sprites\\character1cus_walk.png";
+	public final static String URL = "simse\\sprites\\character1cus_walk.png";
 
 
 	public CharacterIdleBack(int characterNum) {
