@@ -381,6 +381,7 @@ public class ModelBuilderGUI extends JFrame implements ActionListener,
 		          options.setCodeGenerationDestinationDirectory(f);
 		        }
 		      }
+		      
         }
         // generate code:
         CodeGenerator codeGen = new CodeGenerator(options, objectTypes, 
@@ -408,6 +409,8 @@ public class ModelBuilderGUI extends JFrame implements ActionListener,
       }
     }
   }
+  
+
 
   public void stateChanged(ChangeEvent e) {
     checkForInconsistencies(true);

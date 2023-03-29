@@ -16,6 +16,7 @@ import simse.animations.PathDataGenerator;
 import simse.animations.SimSECharacterGenerator;
 import simse.animations.SimSESpriteGenerator;
 import simse.animations.SpriteAnimationGenerator;
+import simse.animations.StylesGenerator;
 import simse.codegenerator.enginegenerator.EngineGenerator;
 import simse.codegenerator.explanatorytoolgenerator.ExplanatoryToolGenerator;
 import simse.codegenerator.guigenerator.GUIGenerator;
@@ -36,6 +37,9 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Scanner;
@@ -86,6 +90,7 @@ public class CodeGenerator {
   private SimSECharacterGenerator simSECharacterGen;
   private SimSESpriteGenerator simSESpriteGen;
   private SpriteAnimationGenerator spriteAnimGen;
+  private StylesGenerator stylesGenerator;
 
   public CodeGenerator(ModelOptions options, DefinedObjectTypes objTypes, 
       CreatedObjects objs, DefinedActionTypes actTypes, 
@@ -117,10 +122,35 @@ public class CodeGenerator {
     simSECharacterGen = new SimSECharacterGenerator(options.getCodeGenerationDestinationDirectory());
     simSESpriteGen = new SimSESpriteGenerator(options.getCodeGenerationDestinationDirectory());
     spriteAnimGen = new SpriteAnimationGenerator(options.getCodeGenerationDestinationDirectory());
+    stylesGenerator = new StylesGenerator(options.getCodeGenerationDestinationDirectory());
   }
 
   public void setAllowHireFire(boolean b) {
     allowHireFire = false;
+  }
+  
+  public void createImageFiles() {	  
+	  try {
+		Files.copy(
+				  Paths.get("SimSEMap\\SimSESpriteSheet.png"),
+				  Paths.get(options.getCodeGenerationDestinationDirectory() + "\\" + "simse\\SimSEMap\\SimSESpriteSheet.png"),
+				  StandardCopyOption.REPLACE_EXISTING);
+	
+		  for(int i = 0; i <= 7; i++) {
+			  Files.copy(
+					  Paths.get("sprites\\character" + i + "cus_walk.png"),
+					  Paths.get(options.getCodeGenerationDestinationDirectory() + "\\" + "simse\\sprites\\character" + i + "cus_walk.png"),
+					  StandardCopyOption.REPLACE_EXISTING);	  
+		  }
+	  } catch (IOException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+	  
+	  
+
+	  
+
   }
 
   /*
@@ -286,6 +316,24 @@ public class CodeGenerator {
 	    	}
 	    }
 	    animation.mkdir();
+	    
+	    File map = new File(simse, "SimSEMap");
+	    if(map.exists() && map.isDirectory()) {
+	    	File[] files = map.listFiles();
+	    	for (File f : files) {
+	    		f.delete();
+	    	}
+	    }
+	    map.mkdir();
+	    
+	    File sprites = new File(simse, "sprites");
+	    if(sprites.exists() && sprites.isDirectory()) {
+	    	File[] files = sprites.listFiles();
+	    	for (File f : files) {
+	    		f.delete();
+	    	}
+	    }
+	    sprites.mkdir();
 	
 	    // generate main SimSE component:
 	    File ssFile = new File(options.getCodeGenerationDestinationDirectory(), 
@@ -293,7 +341,20 @@ public class CodeGenerator {
 	    if (ssFile.exists()) {
 	      ssFile.delete(); // delete old version of file
 	    }
+	    
+	    File mapFile = new File(options.getCodeGenerationDestinationDirectory(),
+	    		("simse\\SimSEMap\\SimSESpriteSheet.png"));
+	    if (mapFile.exists()) {
+	    	mapFile.delete();
+	    }
+//	    try {
+//			mapFile.createNewFile();
+//		} catch (IOException e1) {
+//			// TODO Auto-generated catch block
+//			e1.printStackTrace();
+//		}
     	
+//    	File spriteFile = new File(options.getCodeGenerationDestinationDirectory(), "sprites")
 
 	    try {
 	    	FileWriter writer = new FileWriter(ssFile);
@@ -333,6 +394,8 @@ public class CodeGenerator {
 	    simSECharacterGen.generate();
 	    simSESpriteGen.generate();
 	    spriteAnimGen.generate();
+	    stylesGenerator.generate();
+	    this.createImageFiles();
 	    if (logicGenSuccess && guiGenSuccess) {
 	      JOptionPane.showMessageDialog(null, "Simulation generated!",
 	          "Generation Successful", JOptionPane.INFORMATION_MESSAGE);
