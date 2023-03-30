@@ -37,6 +37,8 @@ public class GUIGenerator implements CodeGeneratorConstants {
   private LogoPanelGenerator logoPanelGen; // generates the logo panel
   private InformationPanelGenerator attPanelGen; // generates the attribute panel
   private EmployeesPanelGenerator actPanelGen; // generates the action panel
+  private ArtifactsPanelGenerator artPanGen;
+  private ProjectsPanelGenerator projPanGen;
   private PopupListenerGenerator popupListGen; // generates the PopupListener
                                                // class
   private DisplayedEmployeeGenerator dispEmpGen; // generates the
@@ -90,6 +92,10 @@ public class GUIGenerator implements CodeGeneratorConstants {
         options.getCodeGenerationDestinationDirectory());
     actPanelGen = new EmployeesPanelGenerator(objTypes, acts, 
         options.getCodeGenerationDestinationDirectory());
+    artPanGen = new ArtifactsPanelGenerator(objTypes, acts,
+    		options.getCodeGenerationDestinationDirectory());
+    projPanGen = new ProjectsPanelGenerator(objTypes, acts,
+    		options.getCodeGenerationDestinationDirectory());
     popupListGen = new PopupListenerGenerator(
         options.getCodeGenerationDestinationDirectory());
     dispEmpGen = new DisplayedEmployeeGenerator(
@@ -149,6 +155,8 @@ public class GUIGenerator implements CodeGeneratorConstants {
 	    logoPanelGen.generate();
 	    attPanelGen.generate();
 	    actPanelGen.generate();
+	    artPanGen.generate();
+	    projPanGen.generate();
 	    popupListGen.generate();
 	    dispEmpGen.generate();
 	    mapDataGen.generate();
