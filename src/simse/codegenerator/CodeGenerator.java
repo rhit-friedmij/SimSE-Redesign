@@ -16,7 +16,6 @@ import simse.animations.PathDataGenerator;
 import simse.animations.SimSECharacterGenerator;
 import simse.animations.SimSESpriteGenerator;
 import simse.animations.SpriteAnimationGenerator;
-import simse.animations.StylesGenerator;
 import simse.codegenerator.enginegenerator.EngineGenerator;
 import simse.codegenerator.explanatorytoolgenerator.ExplanatoryToolGenerator;
 import simse.codegenerator.guigenerator.GUIGenerator;
@@ -30,6 +29,7 @@ import simse.modelbuilder.objectbuilder.DefinedObjectTypes;
 import simse.modelbuilder.actionbuilder.DefinedActionTypes;
 import simse.modelbuilder.startstatebuilder.CreatedObjects;
 import simse.modelbuilder.startstatebuilder.SimSEObject;
+import simse.stylesheet.StyleSheetGenerator;
 import simse.modelbuilder.mapeditor.TileData;
 import simse.modelbuilder.mapeditor.UserData;
 
@@ -90,7 +90,7 @@ public class CodeGenerator {
   private SimSECharacterGenerator simSECharacterGen;
   private SimSESpriteGenerator simSESpriteGen;
   private SpriteAnimationGenerator spriteAnimGen;
-  private StylesGenerator stylesGenerator;
+  private StyleSheetGenerator stylesGenerator;
 
   public CodeGenerator(ModelOptions options, DefinedObjectTypes objTypes, 
       CreatedObjects objs, DefinedActionTypes actTypes, 
@@ -122,7 +122,7 @@ public class CodeGenerator {
     simSECharacterGen = new SimSECharacterGenerator(options.getCodeGenerationDestinationDirectory());
     simSESpriteGen = new SimSESpriteGenerator(options.getCodeGenerationDestinationDirectory());
     spriteAnimGen = new SpriteAnimationGenerator(options.getCodeGenerationDestinationDirectory());
-    stylesGenerator = new StylesGenerator(options.getCodeGenerationDestinationDirectory());
+    stylesGenerator = new StyleSheetGenerator(options.getCodeGenerationDestinationDirectory());
   }
 
   public void setAllowHireFire(boolean b) {

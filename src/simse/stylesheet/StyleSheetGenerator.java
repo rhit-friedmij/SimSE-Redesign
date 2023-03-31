@@ -14,7 +14,7 @@ public class StyleSheetGenerator {
 		this.dir = dir;
 	}
 
-	private void generate() {
+	public void generate() {
 		// TODO Auto-generated method stub
 	    File stylesheetFile = new File(dir,
 	            ("animations\\styles.css"));
