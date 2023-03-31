@@ -771,23 +771,23 @@ Power
 <endInstantiatedAttribute>
 <beginInstantiatedAttribute>
 Vibes
-<>
+Bad
 <endInstantiatedAttribute>
 <beginInstantiatedAttribute>
 Mood
-<>
+50
 <endInstantiatedAttribute>
 <beginInstantiatedAttribute>
 Age
-<>
+40
 <endInstantiatedAttribute>
 <beginInstantiatedAttribute>
 PrefHoleDepth
-<>
+-20
 <endInstantiatedAttribute>
 <beginInstantiatedAttribute>
 FavNum
-<>
+54
 <endInstantiatedAttribute>
 <endObject>
 <beginObject>
@@ -815,7 +815,7 @@ FlowerExists
 <endInstantiatedAttribute>
 <beginInstantiatedAttribute>
 Healing
-<>
+3
 <endInstantiatedAttribute>
 <endObject>
 <beginObject>
@@ -839,11 +839,11 @@ false
 <endInstantiatedAttribute>
 <beginInstantiatedAttribute>
 PercentGrown
-<>
+2.0
 <endInstantiatedAttribute>
 <beginInstantiatedAttribute>
 Healing
-<>
+4
 <endInstantiatedAttribute>
 <endObject>
 <beginObject>
@@ -867,11 +867,11 @@ true
 <endInstantiatedAttribute>
 <beginInstantiatedAttribute>
 PercentGrown
-<>
+40.0
 <endInstantiatedAttribute>
 <beginInstantiatedAttribute>
 Healing
-<>
+6
 <endInstantiatedAttribute>
 <endObject>
 <beginObject>
@@ -891,15 +891,15 @@ Shears
 <endInstantiatedAttribute>
 <beginInstantiatedAttribute>
 Cost
-<>
+20
 <endInstantiatedAttribute>
 <beginInstantiatedAttribute>
 NumTimesUsed
-<>
+0
 <endInstantiatedAttribute>
 <beginInstantiatedAttribute>
 Damage
-<>
+10
 <endInstantiatedAttribute>
 <endObject>
 <beginObject>
@@ -919,15 +919,15 @@ true
 <endInstantiatedAttribute>
 <beginInstantiatedAttribute>
 Cost
-<>
+10
 <endInstantiatedAttribute>
 <beginInstantiatedAttribute>
 NumTimesUsed
-<>
+0
 <endInstantiatedAttribute>
 <beginInstantiatedAttribute>
 Damage
-<>
+0
 <endInstantiatedAttribute>
 <endObject>
 <beginObject>
@@ -947,15 +947,15 @@ false
 <endInstantiatedAttribute>
 <beginInstantiatedAttribute>
 Cost
-<>
+10
 <endInstantiatedAttribute>
 <beginInstantiatedAttribute>
 NumTimesUsed
-<>
+30
 <endInstantiatedAttribute>
 <beginInstantiatedAttribute>
 Damage
-<>
+4
 <endInstantiatedAttribute>
 <endObject>
 <beginObject>
@@ -1027,15 +1027,15 @@ Morticia
 <endInstantiatedAttribute>
 <beginInstantiatedAttribute>
 Age
-<>
+45
 <endInstantiatedAttribute>
 <beginInstantiatedAttribute>
 PrefHoleDepth
-<>
+-3
 <endInstantiatedAttribute>
 <beginInstantiatedAttribute>
 FavNum
-<>
+17
 <endInstantiatedAttribute>
 <endObject>
 <beginObject>
@@ -1051,15 +1051,15 @@ Mood
 <endInstantiatedAttribute>
 <beginInstantiatedAttribute>
 Age
-<>
+30
 <endInstantiatedAttribute>
 <beginInstantiatedAttribute>
 PrefHoleDepth
-<>
+-40
 <endInstantiatedAttribute>
 <beginInstantiatedAttribute>
 FavNum
-<>
+50
 <endInstantiatedAttribute>
 <endObject>
 <beginObject>
@@ -1075,15 +1075,15 @@ Mood
 <endInstantiatedAttribute>
 <beginInstantiatedAttribute>
 Age
-<>
+50
 <endInstantiatedAttribute>
 <beginInstantiatedAttribute>
 PrefHoleDepth
-<>
+-2
 <endInstantiatedAttribute>
 <beginInstantiatedAttribute>
 FavNum
-<>
+90
 <endInstantiatedAttribute>
 <endObject>
 <endCreatedObjects>
@@ -4567,7 +4567,7 @@ Project
 true
 <beginActionTypeParticipantQuantity>
 at least
-<>
+1
 <>
 <endActionTypeParticipantQuantity>
 <beginSSObjTypeNames>
@@ -4587,7 +4587,7 @@ Emp
 Unobsessed
 <beginActionTypeParticipantAttributeConstraint>
 Name
-<
+=
 <>
 false
 <endActionTypeParticipantAttributeConstraint>
@@ -4605,7 +4605,7 @@ false
 <endActionTypeParticipantAttributeConstraint>
 <beginActionTypeParticipantAttributeConstraint>
 Dancing
-<
+=
 <>
 false
 <endActionTypeParticipantAttributeConstraint>
@@ -4632,7 +4632,7 @@ false
 Obsessed
 <beginActionTypeParticipantAttributeConstraint>
 Name
-<
+=
 <>
 false
 <endActionTypeParticipantAttributeConstraint>
@@ -4650,7 +4650,7 @@ false
 <endActionTypeParticipantAttributeConstraint>
 <beginActionTypeParticipantAttributeConstraint>
 Dancing
-<
+=
 <>
 false
 <endActionTypeParticipantAttributeConstraint>
@@ -4689,7 +4689,7 @@ false
 <endActionTypeParticipantAttributeConstraint>
 <beginActionTypeParticipantAttributeConstraint>
 Vibes
-<
+=
 <>
 false
 <endActionTypeParticipantAttributeConstraint>
@@ -8889,7 +8889,7 @@ Mood
 <endActionTypeParticipantAttributeConstraint>
 <beginActionTypeParticipantAttributeConstraint>
 Vibes
-<
+=
 <>
 <endActionTypeParticipantAttributeConstraint>
 <beginActionTypeParticipantAttributeConstraint>
@@ -8915,7 +8915,7 @@ Proj
 Garden
 <beginActionTypeParticipantAttributeConstraint>
 Name
-<
+=
 <>
 <endActionTypeParticipantAttributeConstraint>
 <beginActionTypeParticipantAttributeConstraint>
@@ -8940,8 +8940,8 @@ Score
 <endActionTypeParticipantAttributeConstraint>
 <beginActionTypeParticipantAttributeConstraint>
 RandomGameOver
-<
-<>
+=
+true
 <endActionTypeParticipantAttributeConstraint>
 <endActionTypeParticipantConstraint>
 <endDestroyObjectsRuleParticipantCondition>
@@ -10791,7 +10791,7 @@ Wednesday.png
 Employee
 Magical
 5
-
+magicalEmp.png
 
 Artifact
 Flower
@@ -10851,12 +10851,12 @@ Investor
 Artifact
 Vine
 3
-
+pinkVine.png
 
 Artifact
 Vine
 1
-
+greenVine.png
 
 <endGraphics>
 <beginMap>
@@ -10867,17 +10867,23 @@ true
 7
 1
 
-- Employee - Unobsessed - Thing
-true
-true
-4
-2
-
 - Employee - Unobsessed - Wednesday
 true
 true
 1
 1
+
+- Employee - Magical - 5
+true
+true
+6
+3
+
+- Employee - Unobsessed - Thing
+true
+true
+4
+2
 
 <endSOPUsers>
 605
