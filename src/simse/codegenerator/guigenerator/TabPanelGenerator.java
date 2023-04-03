@@ -226,7 +226,7 @@ public class TabPanelGenerator implements CodeGeneratorConstants {
     		  .addStatement("$N = new ProjectOverviewScreen(state, $N)", "projectFrame", "gui")
     		  .addStatement("$N = new PanelsScreen(state, gui, $N)", "panelsFrame", "logic")
     		  .addStatement("$N = TrackPanel.getInstance()", "trackPane")
-    		  .addStatement("$N = MelloPanel.getInstance()", "melloPane")
+    		  .addStatement("$N = MelloPanel.getInstance($N)", "melloPane", "state")
     		  .addStatement("$N = $T.createImage(\"src/simse/gui/images/layout/border.gif\")", "border", javafxhelpers)
     		  .addStatement("$N = $T.createImage(\"src/simse/gui/images/all.GIF\")", "allIcon", javafxhelpers)
     		  .addStatement("// get the $T styles:", border)

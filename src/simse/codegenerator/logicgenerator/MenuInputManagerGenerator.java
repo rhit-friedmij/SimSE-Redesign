@@ -115,7 +115,7 @@ public class MenuInputManagerGenerator implements CodeGeneratorConstants {
 				.addStatement("trigChecker = t")
 				.addStatement("destChecker = d")
 				.addStatement("ruleExec = r")
-				.addStatement("mello = $T.getInstance()", melloPanel)
+				.addStatement("mello = $T.getInstance($N)", melloPanel, "state")
 				.build();
 
 		MethodSpec itemSelected = MethodSpec.methodBuilder("menuItemSelected")

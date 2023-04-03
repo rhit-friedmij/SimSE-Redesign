@@ -1,67 +1,167 @@
 package simse.gui;
 
+import java.util.HashMap;
 import java.util.Vector;
 
-import javafx.scene.image.ImageView;
+import javafx.scene.Node;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import simse.gui.util.JavaFXHelpers;
+import simse.state.State;
 
-public class MelloItem extends Pane{
+public class MelloPanel extends Pane implements SimSEPanel, Cloneable{
 	
-	String task;
-	Vector<Object> employees;
+	private GridPane mello;
+	private ScrollPane inProgress;
+	private ScrollPane complete;
+	private VBox prog;
+	private VBox comp;
+	private static HashMap<State, MelloPanel> instances = new HashMap<>();;
 	
-	public MelloItem(String item, Vector<Object> workers) {
-		this.task = item;
-		this.employees = workers;
-		HBox box = new HBox();
+	private MelloPanel() {
+		VBox pane = new VBox();
+		HBox top = new HBox();
+		top.getChildren().add(JavaFXHelpers.createImageView("src/simse/gui/icons/mello.png"));
+		top.getChildren().add(new Text("Mello"));
+		top.setPrefWidth(600);
+		top.setBackground(JavaFXHelpers.createBackgroundColor(Color.rgb(128, 128, 128)));
 		
-		HBox textBox = new HBox();
-		textBox.setBackground(JavaFXHelpers.createBackgroundColor(Color.rgb(128, 128, 128)));
-		textBox.getChildren().add(new Text(task));
+		inProgress = new ScrollPane();
+		prog = new VBox();
+		prog.heightProperty().addListener(observable -> inProgress.setVvalue(1D));
+		prog.setBackground(JavaFXHelpers.createBackgroundColor(Color.rgb(217, 217, 217)));
+		inProgress.setBackground(JavaFXHelpers.createBackgroundColor(Color.rgb(217, 217, 217)));
+		inProgress.setContent(prog);
+		inProgress.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
+		inProgress.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+		inProgress.setVvalue(1.0);
+		inProgress.setFitToWidth(true);
 		
-		box.getChildren().add(textBox);
+		complete = new ScrollPane();
+		comp = new VBox();
+		comp.heightProperty().addListener(observable -> complete.setVvalue(1D));
+		comp.setBackground(JavaFXHelpers.createBackgroundColor(Color.rgb(217, 217, 217)));
+		complete.setBackground(JavaFXHelpers.createBackgroundColor(Color.rgb(217, 217, 217)));
+		complete.setContent(comp);
+		complete.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
+		complete.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+		complete.setVvalue(1.0);
+		complete.setFitToWidth(true);
 		
-		for (Object worker : workers) {
-			String imgName = TabPanel.getImage(worker);
-			ImageView img = JavaFXHelpers.createImageView(imgName);
-			box.getChildren().add(img);
+		mello = new GridPane();
+		mello.setBackground(JavaFXHelpers.createBackgroundColor(Color.rgb(217, 217, 217)));
+		inProgress.setBackground(JavaFXHelpers.createBackgroundColor(Color.rgb(217, 217, 217)));
+		complete.setBackground(JavaFXHelpers.createBackgroundColor(Color.rgb(217, 217, 217)));
+		prog.setBackground(JavaFXHelpers.createBackgroundColor(Color.rgb(217, 217, 217)));
+		comp.setBackground(JavaFXHelpers.createBackgroundColor(Color.rgb(217, 217, 217)));
+		
+		mello.add(new Text("In Progress"), 0, 0);
+		mello.add(new Text("Complete"), 1, 0);
+		mello.add(inProgress, 0, 1);
+		mello.add(complete, 1, 1);
+		
+		pane.getChildren().add(top);
+		pane.getChildren().add(mello);
+		
+		
+
+		this.getChildren().add(pane);
+	}
+	
+	public static MelloPanel getInstance(State state) {
+		return instances.get(state);
+	}
+	
+	public static void createInstance(State state) {
+		instances.put(state, new MelloPanel());
+	}
+	
+	public static void createInstance(State newState, State oldState) {
+		MelloPanel oldInstance = instances.get(oldState);
+		instances.put(newState, (MelloPanel)oldInstance.clone());
+	}
+	
+	public void addTaskInProgress(String task, Vector<Object> participants) {
+		if (participants.isEmpty()) return;
+		removeTask(task);
+		prog.getChildren().add(new MelloItem(task, participants));
+	}
+	
+	public void addEmployeeToTask(String task, Object employee) {
+		MelloItem inProg = findTaskInProgress(task);
+		if (inProg == null) return;
+		prog.getChildren().remove(inProg);
+		prog.getChildren().add(inProg.addEmp(employee));
+	}
+	
+	public void removeEmployeeFromTask(String task, Object employee) {
+		MelloItem inProg = findTaskInProgress(task);
+		if (inProg == null) return;
+		prog.getChildren().remove(inProg);
+		inProg = inProg.removeEmp(employee);
+		prog.getChildren().add(inProg);
+	}
+	
+	public void stopEverything() {
+		prog.getChildren().removeAll(prog.getChildren());
+	}
+	
+	public void completeTask(String task) {
+		MelloItem found = findTaskInProgress(task);
+		if (found != null) {
+			prog.getChildren().remove(found);
+			comp.getChildren().add(found);
 		}
-		
-		this.getChildren().add(box);
 	}
 	
-	public MelloItem(String item) {
-		this.task = item;
-		this.employees = new Vector<Object>();
-		HBox box = new HBox();
-		
-		HBox textBox = new HBox();
-		textBox.setBackground(JavaFXHelpers.createBackgroundColor(Color.rgb(128, 128, 128)));
-		textBox.getChildren().add(new Text(task));
-		
-		box.getChildren().add(textBox);
-		
-		this.getChildren().add(box);
+	public void removeTask(String task) {
+		MelloItem inProg = findTaskInProgress(task);
+		if (findTaskInProgress(task) != null) prog.getChildren().remove(inProg);
 	}
 	
-	public MelloItem addEmp(Object emp) {
-		employees.add(emp);
-		return new MelloItem(task, employees);
+	private void addTaskInProgress(MelloItem mi) {
+		prog.getChildren().add(mi);
 	}
 	
-	public MelloItem removeEmp(Object emp) {
-		employees.remove(emp);
-		if (employees.isEmpty()) return null;
-		return new MelloItem(task, employees);
+	private void addCompleteTask(MelloItem mi) {
+		comp.getChildren().add(mi);
 	}
 	
+	@Override
+	public Object clone() {
+		MelloPanel clone = new MelloPanel();
+		for (int i=0; i<prog.getChildren().size(); i++) {
+			Object child = prog.getChildren().get(i);
+			if (child instanceof MelloItem) {
+				clone.addTaskInProgress((MelloItem) ((MelloItem) child).clone());
+			}
+		}
+		for (int i=0; i<comp.getChildren().size(); i++) {
+			Object child = comp.getChildren().get(i);
+			if (child instanceof MelloItem) {
+				clone.addCompleteTask((MelloItem) ((MelloItem) child).clone());
+			}
+		}
+		return clone;
+	}
+	
+	private MelloItem findTaskInProgress(String task) {
+		for (Node n : prog.getChildren()) {
+			if (n instanceof MelloItem) {
+				if (((MelloItem) n).isTask(task)) return (MelloItem) n;
+			}
+		}
+		return null;
+	}
 
-	public boolean isTask(String task) {
-		return this.task.equals(task);
+	@Override
+	public Panels getPanelType() {
+		return Panels.MELLO;
 	}
 
 }

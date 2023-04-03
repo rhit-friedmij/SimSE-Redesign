@@ -1,5 +1,6 @@
 package simse.gui;
 
+import java.util.HashMap;
 import java.util.Vector;
 
 import javafx.scene.Node;
@@ -11,15 +12,16 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import simse.gui.util.JavaFXHelpers;
+import simse.state.State;
 
-public class MelloPanel extends Pane implements SimSEPanel{
+public class MelloPanel extends Pane implements SimSEPanel, Cloneable{
 	
 	private GridPane mello;
 	private ScrollPane inProgress;
 	private ScrollPane complete;
 	private VBox prog;
 	private VBox comp;
-	private static MelloPanel instance = null;
+	private static HashMap<State, MelloPanel> instances = new HashMap<>();;
 	
 	private MelloPanel() {
 		VBox pane = new VBox();
@@ -71,9 +73,17 @@ public class MelloPanel extends Pane implements SimSEPanel{
 		this.getChildren().add(pane);
 	}
 	
-	public static MelloPanel getInstance() {
-		if (instance == null) instance = new MelloPanel();
-		return instance;
+	public static MelloPanel getInstance(State state) {
+		return instances.get(state);
+	}
+	
+	public static void createInstance(State state) {
+		instances.put(state, new MelloPanel());
+	}
+	
+	public static void createInstance(State newState, State oldState) {
+		MelloPanel oldInstance = instances.get(oldState);
+		instances.put(newState, (MelloPanel)oldInstance.clone());
 	}
 	
 	public void addTaskInProgress(String task, Vector<Object> participants) {
@@ -103,15 +113,39 @@ public class MelloPanel extends Pane implements SimSEPanel{
 	
 	public void completeTask(String task) {
 		MelloItem found = findTaskInProgress(task);
-		if (found == null) return; 
-		prog.getChildren().remove(found);
+		if (found != null) prog.getChildren().remove(found);
 		comp.getChildren().add(found);
-	
 	}
 	
 	public void removeTask(String task) {
 		MelloItem inProg = findTaskInProgress(task);
 		if (findTaskInProgress(task) != null) prog.getChildren().remove(inProg);
+	}
+	
+	private void addTaskInProgress(MelloItem mi) {
+		prog.getChildren().add(mi);
+	}
+	
+	private void addCompleteTask(MelloItem mi) {
+		comp.getChildren().add(mi);
+	}
+	
+	@Override
+	public Object clone() {
+		MelloPanel clone = new MelloPanel();
+		for (int i=0; i<prog.getChildren().size(); i++) {
+			Object child = prog.getChildren().get(i);
+			if (child instanceof MelloItem) {
+				clone.addTaskInProgress((MelloItem) ((MelloItem) child).clone());
+			}
+		}
+		for (int i=0; i<comp.getChildren().size(); i++) {
+			Object child = comp.getChildren().get(i);
+			if (child instanceof MelloItem) {
+				clone.addCompleteTask((MelloItem) ((MelloItem) child).clone());
+			}
+		}
+		return clone;
 	}
 	
 	private MelloItem findTaskInProgress(String task) {

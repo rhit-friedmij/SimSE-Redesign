@@ -127,7 +127,7 @@ public class SimSEGUI extends Stage implements EventHandler<Event> {
 		projectsPanel = new ProjectsPanel(this, state, logic);
 		objGraphPanel = new ObjectGraphPanel(this);
 		trackPanel = TrackPanel.getInstance();
-		melloPanel = MelloPanel.getInstance();
+		melloPanel = MelloPanel.getInstance(state);
 
 		// Set window title:
 		String title = "SimSE";

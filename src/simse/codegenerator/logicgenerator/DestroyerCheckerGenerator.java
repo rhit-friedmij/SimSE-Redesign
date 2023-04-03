@@ -78,7 +78,7 @@ public class DestroyerCheckerGenerator implements CodeGeneratorConstants {
 				.addStatement("ruleExec = r")
 				.addStatement("trigCheck = t")
 				.addStatement("ranNumGen = new $T()", random)
-				.addStatement("mello = $T.getInstance()", melloPanel)
+				.addStatement("mello = $T.getInstance($N)", melloPanel, "state")
 				.build();
 		
 		 MethodSpec update = MethodSpec.methodBuilder("update")
