@@ -17,7 +17,7 @@ public class StyleSheetGenerator {
 	public void generate() {
 		// TODO Auto-generated method stub
 	    File stylesheetFile = new File(dir,
-	            ("animations\\styles.css"));
+	            ("styles.css"));
 	    
 	        if (stylesheetFile.exists()) {
 	        	stylesheetFile.delete(); // delete old version of file
@@ -27,7 +27,7 @@ public class StyleSheetGenerator {
 		FileReader reader = null;
 		FileWriter writer = null;
 		try {
-			reader = new FileReader("C:\\Users\\localmgr\\git\\simse-redesign\\simse-redesign\\res\\static\\stylesheet\\staticstylesheet.txt");
+			reader = new FileReader("res\\static\\stylesheet\\staticstylesheet.txt");
 			writer = new FileWriter(stylesheetFile);
 
 		

@@ -347,6 +347,12 @@ public class CodeGenerator {
 	    if (mapFile.exists()) {
 	    	mapFile.delete();
 	    }
+	    
+	    File stylesheetFile = new File(options.getCodeGenerationDestinationDirectory(), "simse\\styles.css");
+	    if(stylesheetFile.exists()) {
+	    	stylesheetFile.delete();
+	    }
+	    
 //	    try {
 //			mapFile.createNewFile();
 //		} catch (IOException e1) {
@@ -354,7 +360,7 @@ public class CodeGenerator {
 //			e1.printStackTrace();
 //		}
     	
-//    	File spriteFile = new File(options.getCodeGenerationDestinationDirectory(), "sprites")
+//    	File spriteFile = new File(options.getCodeGenerationDestinationDirectory(), "sprites");
 
 	    try {
 	    	FileWriter writer = new FileWriter(ssFile);

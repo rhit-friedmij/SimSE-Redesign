@@ -59,14 +59,25 @@ public class EngineGenerator implements CodeGeneratorConstants {
 		ClassName simseGui = ClassName.get("simse.gui", "SimSEGUI");
 		ClassName logic = ClassName.get("simse.logic", "Logic");
 		ClassName state = ClassName.get("simse.state", "State");
+		ClassName creatablePath = ClassName.get("simse.animation", "CreatablePath");
+		ClassName pathData = ClassName.get("simse.animation", "PathData");
+		ClassName simSECharacter = ClassName.get("simse.animation", "SimSECharacter");
+		ClassName mapData = ClassName.get("simse.gui", "MapData");
 		TypeName actionHandler = ParameterizedTypeName.get(eventHandler, actionEvent);
 
 		CodeBlock.Builder objsBuilder = CodeBlock.builder();
 		Vector<SimSEObject> objs = createdObjs.getAllObjects();
 		for (int i = 0; i < objs.size(); i++) {
 			StringBuffer strToWrite = new StringBuffer();
+			int pathCounter = 0;
 			SimSEObject tempObj = objs.elementAt(i);
 			String objTypeName = CodeGeneratorUtils.getUpperCaseLeading(tempObj.getSimSEObjectType().getName());
+			
+			if(objs.get(i).getSimSEObjectType().getType() == SimSEObjectTypeTypes.EMPLOYEE) {
+				strToWrite.append("this.generateNewPath(" + pathCounter + ");");
+				pathCounter++;
+			}
+			
 			strToWrite.append("$T a" + i + " = new " + objTypeName + "(");
 			Vector<Attribute> atts = tempObj.getSimSEObjectType().getAllAttributes();
 			
@@ -104,6 +115,9 @@ public class EngineGenerator implements CodeGeneratorConstants {
 				}
 				// if valid, finish writing:
 				if (validObj) { 
+					if(objs.get(i).getSimSEObjectType().getType() == SimSEObjectTypeTypes.EMPLOYEE) {
+						strToWrite.append(" new SimSECharacter(characterPath, " + pathCounter + ", 50, 75)");
+					}
 					ClassName tempName = ClassName.get("simse.adts.objects", objTypeName);
 					objsBuilder.addStatement(strToWrite + ")", tempName);
 					objsBuilder.addStatement("state.get" + SimSEObjectTypeTypes.getText(tempObj.getSimSEObjectType().getType())
@@ -126,6 +140,18 @@ public class EngineGenerator implements CodeGeneratorConstants {
 				.addStatement("timer.play()")
 				.addCode("$L", "\n")
 				.addCode(objsBuilder.build())
+				.build();
+		
+		MethodSpec generateNewPath = MethodSpec.methodBuilder("generateNewPath")
+				.addParameter(int.class, "characterNum")
+				.addStatement("$T[][] pathDirections = $T.getStartingPath(characterNum)", double.class, pathData)
+				.addStatement("this.characterPath = new $T(\r\n" + 
+						"				$T.getStartingMapLocation(characterNum)[0] + 5, \r\n" + 
+						"				$T.getStartingMapLocation(characterNum)[1],\r\n" + 
+						"				pathDirections,\r\n" + 
+						"				$T.getAnimationData(characterNum)[0],\r\n" + 
+						"				$T.getAnimationData(characterNum)[1]\r\n" + 
+						"				)", creatablePath, mapData, mapData, pathData, pathData)
 				.build();
 		
 		MethodSpec giveGui = MethodSpec.methodBuilder("giveGUI")
@@ -234,7 +260,9 @@ public class EngineGenerator implements CodeGeneratorConstants {
 				.addField(boolean.class, "stopClock", Modifier.PRIVATE)
 				.addField(boolean.class, "stopAtEvents", Modifier.PRIVATE)
 				.addField(timeline, "timer", Modifier.PRIVATE)
+				.addField(creatablePath, "characterPath")
 				.addMethod(engineConstructor)
+				.addMethod(generateNewPath)
 				.addMethod(giveGui)
 				.addMethod(running)
 				.addMethod(events)

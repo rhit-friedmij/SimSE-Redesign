@@ -169,7 +169,7 @@ public class SimSEGUI extends Stage implements EventHandler<Event> {
 
 		// Set main window frame properties:
 		mainPane.setFill(Color.WHITE);
-		mainPane.getStylesheets().add("style.css");
+		mainPane.getStylesheets().add("src\\simse\\style.css");
 		this.addEventHandler(WindowEvent.WINDOW_CLOSE_REQUEST, this);
 		this.setScene(mainPane);
 //		this.setSize(bPane.getLayout().preferredLayoutSize(this));
