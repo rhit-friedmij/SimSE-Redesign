@@ -721,7 +721,7 @@ public class ADTGenerator implements CodeGeneratorConstants {
 		String name = CodeGeneratorUtils.getUpperCaseLeading(objType.getName());
 		ClassName vectorClass = ClassName.get("java.util", "Vector");
 		ClassName superClass = ClassName.get("simse.adts.objects", SimSEObjectTypeTypes.getText(objType.getType()));
-		ClassName displayableCharacter = ClassName.get("animations", "DisplayableCharacter");
+		ClassName displayableCharacter = ClassName.get("simse.animation", "DisplayableCharacter");
 		ClassName thisClass = ClassName.get("simse.adts.objects", name);
 
 		File adtFile = new File(options.getCodeGenerationDestinationDirectory(),
@@ -795,7 +795,7 @@ public class ADTGenerator implements CodeGeneratorConstants {
 		}
 		
 		if(objType.getType() == SimSEObjectTypeTypes.EMPLOYEE) {
-			superConstructor += ", DisplayableCharacter model";
+			superConstructor += ", model";
 		}
 		
 		superConstructor += ");\n";
@@ -825,7 +825,7 @@ public class ADTGenerator implements CodeGeneratorConstants {
 		}
 		
 		if(objType.getType() == SimSEObjectTypeTypes.EMPLOYEE) {
-			cloneBuilder.addStatement("c1.characterModel = characterModel");
+			cloneBuilder.addStatement("cl.characterModel = characterModel");
 		}
 
 		MethodSpec clone = cloneBuilder.addStatement("return cl").build();
@@ -926,7 +926,11 @@ public class ADTGenerator implements CodeGeneratorConstants {
 		}
 
 		if (objType.getType() == SimSEObjectTypeTypes.EMPLOYEE || objType.getType() == SimSEObjectTypeTypes.CUSTOMER) {
-			adtBuilder.addMethod(setText).addMethod(setCharacterModel).addMethod(getCharacterModel);
+			adtBuilder.addMethod(setText);
+		}
+		
+		if(objType.getType() == SimSEObjectTypeTypes.EMPLOYEE) {
+			adtBuilder.addMethod(setCharacterModel).addMethod(getCharacterModel);
 		}
 		
 		MethodSpec getKey = MethodSpec.methodBuilder("getKeyAsString")

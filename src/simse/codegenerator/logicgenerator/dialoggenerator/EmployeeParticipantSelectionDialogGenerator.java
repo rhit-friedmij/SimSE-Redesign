@@ -154,7 +154,7 @@ public class EmployeeParticipantSelectionDialogGenerator implements
 			  .addStatement("$N.add(tempCheckBox)", "checkBoxes")
 			  .addStatement("$T<$T> allEmp = state.getEmployeeStateRepository().getAll()", vector, employee)
 			  .beginControlFlow("for(int k = 0; k < allEmp.size(); k++)")
-			  .beginControlFlow("if(allEmp.get(k).getName().equals(((SoftwareEngineer) tempObj).getName()))")
+			  .beginControlFlow("if(allEmp.get(k).getName().equals(((Employee) tempObj).getName()))")
 			  .addStatement("$T icon = allEmp.get(k).getCharacterModel().getDisplayedCharacter(true)", imageView)
 			  .addStatement("icon.setScaleX(1.5)")
 			  .addStatement("icon.setScaleY(1.5)")
