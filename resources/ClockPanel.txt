@@ -38,24 +38,32 @@ public class ClockPanel extends Pane implements EventHandler<MouseEvent> {
 	private SimSEGUI gui;
 	private Canvas canvas;
 
+	private int screenX = 300; // x width of the screen
+	private int screenY = 100; // y width of the screen
 
 	private TextField txtAdvClock;
 	private Label btnAdvClock;
 	private Label btnNextEvent;
+	private Label lblTimeElapsed;
 	private Image[] timeElapsedDigits;
 	private CheckBox stopCBox;
 
 	private StackPane stackPane;
 	
+	private boolean cursorDisplayed;
+	private String cursor;
 
-	private static ImageView icoNextEvent = JavaFXHelpers.createImageView("src/simse/gui/images/layout/btnNextEvent.gif");
-	private static ImageView icoAdvClock = JavaFXHelpers.createImageView("src/simse/gui/images/layout/btnAdvClock.gif");
-	private static ImageView icoStopClock = JavaFXHelpers.createImageView("src/simse/gui/images/layout/btnStopClock.gif");
+	private ImageView icoNextEvent;
+	private ImageView icoAdvClock;
+	private ImageView icoStopClock;
 
 	public ClockPanel(SimSEGUI g, State s, Engine e) {
 		gui = g;
 		state = s;
 		engine = e;
+		icoNextEvent = JavaFXHelpers.createImageView("src/simse/gui/images/layout/btnNextEvent.gif");
+		icoAdvClock = JavaFXHelpers.createImageView("src/simse/gui/images/layout/btnAdvClock.gif");
+		icoStopClock = JavaFXHelpers.createImageView("src/simse/gui/images/layout/btnStopClock.gif");
 		stackPane = new StackPane();
 		canvas = new Canvas(250,250);
 		update();

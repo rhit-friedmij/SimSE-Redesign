@@ -41,6 +41,8 @@ public class SimSEGUI extends Stage implements EventHandler<Event> {
 	private TabPanel tabPanel;
 	private InformationPanel infoPanel;
 	private EmployeesPanel employeesPanel;
+	private ArtifactsPanel artifactsPanel;
+	private ProjectsPanel projectsPanel;
 	private TrackPanel trackPanel;
 	private MelloPanel melloPanel;
 	private ObjectGraphPanel objGraphPanel;
@@ -121,6 +123,8 @@ public class SimSEGUI extends Stage implements EventHandler<Event> {
 		infoPanel = new InformationPanel(this, state, engine);
 		tabPanel = new TabPanel(this, state, logic, engine, infoPanel, expTool);
 		employeesPanel = new EmployeesPanel(this, state, logic);
+		artifactsPanel = new ArtifactsPanel(this, state, logic);
+		projectsPanel = new ProjectsPanel(this, state, logic);
 		objGraphPanel = new ObjectGraphPanel(this);
 		trackPanel = TrackPanel.getInstance();
 		melloPanel = MelloPanel.getInstance();
@@ -222,6 +226,8 @@ public class SimSEGUI extends Stage implements EventHandler<Event> {
 		infoPanel.update();
 		world.update();
 		employeesPanel.update();
+		artifactsPanel.update();
+		projectsPanel.update();
 		expTool.update();
 		branch.update(state);
 		objGraphPanel.update();
@@ -342,6 +348,14 @@ public class SimSEGUI extends Stage implements EventHandler<Event> {
 				panel3.getChildren().add(employeesPanel);
 				break;
 				
+			case ARTIFACTS:
+				panel3.getChildren().add(artifactsPanel);
+				break;
+				
+			case PROJECTS:
+				panel3.getChildren().add(projectsPanel);
+				break;
+				
 			default:
 				break;
 			}
@@ -375,6 +389,18 @@ public class SimSEGUI extends Stage implements EventHandler<Event> {
 			
 		case EMPLOYEES:
 			if (!p3Empty&& panel3.getChildren().get(0) instanceof EmployeesPanel) {
+				panel3.getChildren().clear();
+			}
+			break;
+			
+		case ARTIFACTS:
+			if (!p3Empty&& panel3.getChildren().get(0) instanceof ArtifactsPanel) {
+				panel3.getChildren().clear();
+			}
+			break;
+			
+		case PROJECTS:
+			if (!p3Empty&& panel3.getChildren().get(0) instanceof ProjectsPanel) {
 				panel3.getChildren().clear();
 			}
 			break;

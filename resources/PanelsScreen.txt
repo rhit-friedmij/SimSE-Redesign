@@ -28,6 +28,8 @@ public class PanelsScreen extends Stage implements EventHandler<MouseEvent> {
 	Button trackButton;
 	Button melloButton;
 	Button progGraphButton;
+	Button artifactButton;
+	Button projectButton;
 
 	@Override
 	public void handle(MouseEvent e) {
@@ -45,6 +47,20 @@ public class PanelsScreen extends Stage implements EventHandler<MouseEvent> {
 			} else {
 				gui.removePanel(Panels.EMPLOYEES);
 				employeeButton.setText("Add");
+			}
+		} else if (src == artifactButton) {
+			if (artifactButton.getText().equals("Add")) {
+				gui.addSidePanel(Panels.ARTIFACTS);
+			} else {
+				gui.removePanel(Panels.ARTIFACTS);
+				artifactButton.setText("Add");
+			}
+		} else if (src == projectButton) {
+			if (projectButton.getText().equals("Add")) {
+				gui.addSidePanel(Panels.PROJECTS);
+			} else {
+				gui.removePanel(Panels.PROJECTS);
+				projectButton.setText("Add");
 			}
 		} else if (src == trackButton) {
 			if (trackButton.getText().equals("Add")) {
@@ -96,7 +112,8 @@ public class PanelsScreen extends Stage implements EventHandler<MouseEvent> {
 		mainPane.add(new Label("Add/Remove"), 3, 0);
 		
 		mainPane.add(new Label("Detailed Information"), 0, 1);
-		Label infoLabel = new Label("Provides detailed quick reference information on some game elements");
+		Label infoLabel = new Label("Provides detailed quick reference information on some game elements. "
+								+ "NOTE: This information is only available through use of the ___ Reference panels");
 		infoLabel.setWrapText(true);
 		GridPane.setMargin(infoLabel, new Insets(5));
 		mainPane.add(infoLabel, 1, 1);
@@ -148,7 +165,28 @@ public class PanelsScreen extends Stage implements EventHandler<MouseEvent> {
 		progGraphButton.addEventHandler(MouseEvent.MOUSE_CLICKED, this);
 		mainPane.add(progGraphButton, 3, 5);
 		
-//		mainPane.setPrefSize(300, 400);
+		mainPane.add(new Label("Artifact Reference"), 0, 6);
+		Label artifactLabel = new Label("Provides quick access to artifacts to see the full list"
+				+ " and display their information on the detailed information panel");
+		artifactLabel.setWrapText(true);
+		GridPane.setMargin(artifactLabel, new Insets(5));
+		mainPane.add(artifactLabel, 1, 6);
+		mainPane.add(new Label("Side"), 2, 6);
+		artifactButton = new Button("Add");
+		artifactButton.addEventHandler(MouseEvent.MOUSE_CLICKED, this);
+		mainPane.add(artifactButton, 3, 6);
+		
+		mainPane.add(new Label("Project Reference"), 0, 7);
+		Label projectLabel = new Label("Provides quick access to project to see the full list"
+				+ " and display their information on the detailed information panel");
+		projectLabel.setWrapText(true);
+		GridPane.setMargin(projectLabel, new Insets(5));
+		mainPane.add(projectLabel, 1, 7);
+		mainPane.add(new Label("Side"), 2, 7);
+		projectButton = new Button("Add");
+		projectButton.addEventHandler(MouseEvent.MOUSE_CLICKED, this);
+		mainPane.add(projectButton, 3, 7);
+		
 		this.setScene(new Scene(mainPane));
 	}
 	
@@ -163,6 +201,14 @@ public class PanelsScreen extends Stage implements EventHandler<MouseEvent> {
 				
 			case EMPLOYEES:
 				employeeButton.setText("Remove");
+				break;
+				
+			case ARTIFACTS:
+				artifactButton.setText("Remove");
+				break;
+				
+			case PROJECTS:
+				projectButton.setText("Remove");
 				break;
 				
 			case TRACK:

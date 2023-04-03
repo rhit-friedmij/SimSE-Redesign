@@ -65,15 +65,7 @@ public class InfoScreenGenerator {
 	      TypeName mouseHandler = ParameterizedTypeName.get(eventhandler, mouseevent);
 	      TypeName viewOfStrings = ParameterizedTypeName.get(listview, string);
 	      
-	      Vector<Attribute> aAts = this.getSharedVisibleAttributes(SimSEObjectTypeTypes.ARTIFACT);
-	      String atts = "";
-	      atts = atts.concat("attributes = new ListView<String>();\n");
-	      for (int i=0; i<aAts.size(); i++) {
-	    	  atts = atts.concat("attributes.getItems().add(\""+aAts.get(i).getName() + ": \" + " + getTypeAsToString(aAts.get(i))+"(artifact.get"+aAts.get(i).getName()+"()));\n");
-	      }
-	      atts = atts.concat("attributes.setMaxHeight(attributes.getItems().size()*25)");
-	      
-	      MethodSpec constructor = MethodSpec.constructorBuilder()
+	      MethodSpec.Builder constructorBuilder = MethodSpec.constructorBuilder()
 	    		  .addModifiers(Modifier.PUBLIC)
 	    		  .addParameter(state, "s")
 	    		  .addParameter(simsegui, "gui")
@@ -94,7 +86,36 @@ public class InfoScreenGenerator {
 	    		  .addStatement("img.setScaleX(2)")
 	    		  .addStatement("img.setScaleY(2)")
 	    		  .addStatement("imagePane.getChildren().add(img)")
-	    		  .addCode(atts + ";\n")
+	    		  .addStatement("$N = new $T<$T>()", "attributes", listview, string);
+	      
+	      	Vector<SimSEObjectType> objs = objTypes.getAllObjectTypes();
+	      
+			Vector<SimSEObjectType> types = new Vector<>();
+			for (SimSEObjectType type : objs) {
+				if (type.getType() == SimSEObjectTypeTypes.ARTIFACT) {
+					types.add(type);
+				}
+			}
+			
+	      for (int i = 0; i < types.size(); i++) {
+		      String atts = "";
+		      if (i == 0) {
+		    	  atts = atts.concat("if (artifact instanceof " + types.get(i).getName() + "){\n");
+		      } else {
+		    	  atts = atts.concat("else if (artifact instanceof " + types.get(i).getName() + "){\n");
+		      }
+		      for (Attribute att : types.get(i).getAllVisibleAttributes()) {
+		    	  atts = atts.concat("attributes.getItems().add(\""+att.getName() + ": \" + " + getTypeAsToString(att)+
+		    			  "(((" + types.get(i).getName() + ")artifact).get"+att.getName()+"()));\n");
+		      }
+		      
+		      atts = atts.concat("}\n");
+		      constructorBuilder.addCode(atts);
+	      }
+
+	    		  
+	    		  
+	    MethodSpec constructor = constructorBuilder.addStatement("$N.setMaxHeight($N.getItems().size()*25)", "attributes", "attributes")
 	    		  .addStatement("String objTypeFull = $N.getClass().toString()", "artifact")
 	    		  .addStatement("String[] objTypeArr = objTypeFull.split(\"\\\\.\")")
 	    		  .addStatement("String objType = objTypeArr[objTypeArr.length - 1]")
@@ -135,10 +156,12 @@ public class InfoScreenGenerator {
 	    		  .addMethod(handle)
 	    		  .build();
 	      
-	      JavaFile file = JavaFile.builder("simse.gui", ais)
+	      JavaFile file = JavaFile.builder("", ais)
 					 .build();
+	      String toAppend = "package simse.gui;\n"
+					+ "import simse.adts.objects.*;\n";
 	      
-	      file.writeTo(writer);
+	      writer.write(toAppend + file.toString());
 	      
 	      writer.close();
 	    } catch (IOException e) {
@@ -182,15 +205,7 @@ public class InfoScreenGenerator {
 		      TypeName viewOfStrings = ParameterizedTypeName.get(listview, string);
 		      TypeName actionHandler = ParameterizedTypeName.get(eventhandler, actionevent);
 		      
-		      Vector<Attribute> eAts = this.getSharedVisibleAttributes(SimSEObjectTypeTypes.EMPLOYEE);
-		      String atts = "";
-		      atts = atts.concat("attributes = new ListView<String>();\n");
-		      for (int i=0; i<eAts.size(); i++) {
-		    	  atts = atts.concat("attributes.getItems().add(\""+eAts.get(i).getName() + ": \" + " + getTypeAsToString(eAts.get(i))+"(employee.get"+eAts.get(i).getName()+"()));\n");
-		      }
-		      atts = atts.concat("attributes.setMaxHeight(attributes.getItems().size()*24);\n");
-		      
-		      MethodSpec constructor = MethodSpec.constructorBuilder()
+		      MethodSpec.Builder constructorBuilder = MethodSpec.constructorBuilder()
 		    		  .addModifiers(Modifier.PUBLIC)
 		    		  .addParameter(state, "s")
 		    		  .addParameter(simsegui, "gui")
@@ -220,7 +235,36 @@ public class InfoScreenGenerator {
 		    		  .addStatement("imagePane.getChildren().add(img)")
 		    		  .addStatement("$N = new $T(\"Assign $T to Tasks\")", "actionsButton", button, employee)
 		    		  .addStatement("$N.addEventHandler($T.MOUSE_CLICKED, this)", "actionsButton", mouseevent)
-		    		  .addCode(atts + ";\n")
+		    		  .addStatement("$N = new $T<$T>()", "attributes", listview, string);
+		    	      
+		  	      	Vector<SimSEObjectType> objs = objTypes.getAllObjectTypes();
+		  	      
+		  			Vector<SimSEObjectType> types = new Vector<>();
+		  			for (SimSEObjectType type : objs) {
+		  				if (type.getType() == SimSEObjectTypeTypes.EMPLOYEE) {
+		  					types.add(type);
+		  				}
+		  			}
+		  			
+		  	      for (int i = 0; i < types.size(); i++) {
+		  		      String atts = "";
+		  		      if (i == 0) {
+		  		    	  atts = atts.concat("if (employee instanceof " + types.get(i).getName() + "){\n");
+		  		      } else {
+		  		    	  atts = atts.concat("else if (employee instanceof " + types.get(i).getName() + "){\n");
+		  		      }
+		  		      for (Attribute att : types.get(i).getAllVisibleAttributes()) {
+		  		    	  atts = atts.concat("attributes.getItems().add(\""+att.getName() + ": \" + " + getTypeAsToString(att)+
+		  		    			  "(((" + types.get(i).getName() + ")employee).get"+att.getName()+"()));\n");
+		  		      }
+		  		      
+		  		      atts = atts.concat("}\n");
+		  		      constructorBuilder.addCode(atts);
+		  	      }
+
+		  	    		  
+		  	    		  
+		  	    MethodSpec constructor = constructorBuilder.addStatement("$N.setMaxHeight($N.getItems().size()*25)", "attributes", "attributes")
 		    		  .addStatement("String objTypeFull = employee.getClass().toString()")
 		    		  .addStatement("String[] objTypeArr = objTypeFull.split(\"\\\\.\")")
 		    		  .addStatement("String objType = objTypeArr[objTypeArr.length - 1]")
@@ -292,7 +336,7 @@ public class InfoScreenGenerator {
 		      JavaFile file = JavaFile.builder("", eis)
 						 .build();
 		      
-		      String fileString = "package simse.gui;\n\nimport java.util.Vector;\n"+file.toString();
+		      String fileString = "package simse.gui;\n\nimport java.util.Vector;\nimport simse.adts.objects.*;\n"+file.toString();
 		      
 		      writer.write(fileString);
 		      

@@ -141,6 +141,12 @@ public class ADTGenerator implements CodeGeneratorConstants {
 					compareAttributes.remove(remove);
 				}
 			}
+			
+			for (SimSEObjectType type : employeeTypes) {
+				if (!type.getKey().attributeEquals(compareType.getKey())) {
+					compareAttributes.add(type.getKey());
+				}
+			}
 		}
 
 		MethodSpec.Builder employeeConstructorBuilder = MethodSpec.constructorBuilder().addModifiers(Modifier.PUBLIC)
@@ -364,6 +370,12 @@ public class ADTGenerator implements CodeGeneratorConstants {
 
 				for (Attribute remove : toRemove) {
 					compareAttributes.remove(remove);
+				}
+			}
+			
+			for (SimSEObjectType type : customerTypes) {
+				if (!type.getKey().attributeEquals(compareType.getKey())) {
+					compareAttributes.add(type.getKey());
 				}
 			}
 		}
@@ -617,8 +629,15 @@ public class ADTGenerator implements CodeGeneratorConstants {
 					compareAttributes.remove(remove);
 				}
 			}
+			
+			for (SimSEObjectType type : objSpecificTypes) {
+				if (!type.getKey().attributeEquals(compareType.getKey())) {
+					compareAttributes.add(type.getKey());
+				}
+			}
 		}
-
+		
+		
 		MethodSpec.Builder constructorBuilder = MethodSpec.constructorBuilder().addModifiers(Modifier.PUBLIC);
 
 		for (Attribute compare : compareAttributes) {
@@ -763,6 +782,12 @@ public class ADTGenerator implements CodeGeneratorConstants {
 
 				for (Attribute remove : toRemove) {
 					compareAttributes.remove(remove);
+				}
+			}
+			
+			for (SimSEObjectType type : objSpecificTypes) {
+				if (!type.getKey().attributeEquals(compareType.getKey())) {
+					compareAttributes.add(type.getKey());
 				}
 			}
 		}
