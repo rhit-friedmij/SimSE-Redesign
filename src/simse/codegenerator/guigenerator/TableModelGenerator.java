@@ -594,6 +594,12 @@ public class TableModelGenerator implements CodeGeneratorConstants {
 	                compareAttributes.remove(remove);
 	            }
 	        }
+	        
+			for (SimSEObjectType type : typeTypes) {
+				if (!type.getKey().attributeEquals(compareType.getKey())) {
+					compareAttributes.add(type.getKey());
+				}
+			}
 	  }
 	        
 	  return compareAttributes;
