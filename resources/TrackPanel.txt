@@ -1,5 +1,7 @@
 package simse.gui;
 
+import java.util.HashMap;
+
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
@@ -11,11 +13,11 @@ import simse.adts.objects.Employee;
 import simse.gui.util.JavaFXHelpers;
 import simse.state.State;
 
-public class TrackPanel extends Pane implements SimSEPanel {
+public class TrackPanel extends Pane implements SimSEPanel, Cloneable {
 	
 	VBox track;
 	ScrollPane scroll;
-	static TrackPanel instance = null;
+	private static HashMap<State, TrackPanel> instances = new HashMap<>();
 	
 	private TrackPanel() {
 		
@@ -46,15 +48,37 @@ public class TrackPanel extends Pane implements SimSEPanel {
 		this.getChildren().add(pane);
 	}
 	
-	public static TrackPanel getInstance() {
-		if (instance == null) {
-			instance = new TrackPanel();
-		}
-		return instance;
+	public static TrackPanel getInstance(State s) {
+		return instances.get(s);
 	}
 	
-	public void addText(String message, Object sender, String name) {
-		track.getChildren().add(new TrackMessage(sender, name, message));
+	public static void createInstance(State s) {
+		instances.put(s, new TrackPanel());
+	}
+	
+	public static void createInstance(State newState, State oldState) {
+		TrackPanel oldInstance = instances.get(oldState);
+		instances.put(newState, (TrackPanel) oldInstance.clone());
+	}
+	
+	public void addText(String message, Object sender) {
+		track.getChildren().add(new TrackMessage(sender, message));
+	}
+	
+	private void addMessage(TrackMessage tm) {
+		track.getChildren().add(tm);
+	}
+	
+	@Override
+	public Object clone() {
+		TrackPanel clone = new TrackPanel();
+		for (int i=0; i<track.getChildren().size(); i++) {
+			Object child = track.getChildren().get(i);
+			if (child instanceof TrackMessage) {
+				clone.addMessage((TrackMessage) ((TrackMessage) child).clone());
+			}
+		}
+		return clone;
 	}
 
 	@Override

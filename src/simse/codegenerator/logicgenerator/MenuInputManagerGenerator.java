@@ -324,7 +324,7 @@ public class MenuInputManagerGenerator implements CodeGeneratorConstants {
 
 					lambda.addStatement("b" + j + ".remove" + tempPart.getName() + "(emp)");
 					if ((outerDest.getDestroyerText() != null) && (outerDest.getDestroyerText().length() > 0)) {
-						lambda.addStatement("emp.setOverheadText($S)", outerDest.getDestroyerText());
+						lambda.addStatement("emp.setOverheadText($S, $N)", outerDest.getDestroyerText(), "state");
 					}
 					
 					int bound = 0;
@@ -340,12 +340,12 @@ public class MenuInputManagerGenerator implements CodeGeneratorConstants {
 					lambda.beginControlFlow("if (d$L instanceof $T)", j, employee);
 					
 					if ((outerDest.getDestroyerText() != null) && (outerDest.getDestroyerText().length() > 0)) {
-						lambda.addStatement("(($T) d$L).setOverheadText($S)", employee, j, outerDest.getDestroyerText());
+						lambda.addStatement("(($T) d$L).setOverheadText($S, $N)", employee, j, outerDest.getDestroyerText(), "state");
 					}
 					lambda.nextControlFlow("else if (d$L instanceof $T)", j, customer);
 					
 					if ((outerDest.getDestroyerText() != null) && (outerDest.getDestroyerText().length() > 0)) {
-						lambda.addStatement("(($T) d$L).setOverheadText($S)", customer, j, outerDest.getDestroyerText());
+						lambda.addStatement("(($T) d$L).setOverheadText($S, $N)", customer, j, outerDest.getDestroyerText(), "state");
 					}
 					lambda.endControlFlow();
 					lambda.endControlFlow();
@@ -789,7 +789,7 @@ public class MenuInputManagerGenerator implements CodeGeneratorConstants {
 
 					effectCode.addStatement("b.remove$L(selectedEmp)", objName);
 					if ((outerDest.getDestroyerText() != null) && (outerDest.getDestroyerText().length() > 0)) {
-						effectCode.addStatement("selectedEmp.setOverheadText($S)", outerDest.getDestroyerText());
+						effectCode.addStatement("selectedEmp.setOverheadText($S, $N)", outerDest.getDestroyerText(), "state");
 					}
 					
 					int bound = 0;
@@ -807,12 +807,12 @@ public class MenuInputManagerGenerator implements CodeGeneratorConstants {
 					effectCode.beginControlFlow("if (d instanceof $T)", employee);
 					
 					if ((outerDest.getDestroyerText() != null) && (outerDest.getDestroyerText().length() > 0)) {
-						effectCode.addStatement("(($T) d).setOverheadText($S)", employee, outerDest.getDestroyerText());
+						effectCode.addStatement("(($T) d).setOverheadText($S, $N)", employee, outerDest.getDestroyerText(), "state");
 					}
 					
 					effectCode.nextControlFlow("else if (d instanceof $T)", customer);
 					if ((outerDest.getDestroyerText() != null) && (outerDest.getDestroyerText().length() > 0)) {
-						effectCode.addStatement("(($T) d).setOverheadText($S)", customer, outerDest.getDestroyerText());
+						effectCode.addStatement("(($T) d).setOverheadText($S, $N)", customer, outerDest.getDestroyerText(), "state");
 					}
 					effectCode.endControlFlow();
 					effectCode.endControlFlow();

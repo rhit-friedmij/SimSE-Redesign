@@ -53,6 +53,7 @@ public class ADTGenerator implements CodeGeneratorConstants {
 
 	public void generate() {
 		ClassName ssObjectClass = ClassName.get("simse.adts.objects", "SSObject");
+		ClassName state = ClassName.get("simse.state", "State");
 		ClassName vector = ClassName.get("java.util", "Vector");
 		ClassName stringClass = ClassName.get("java.lang", "String");
 		ClassName trackClass = ClassName.get("simse.gui", "TrackPanel");
@@ -150,8 +151,7 @@ public class ADTGenerator implements CodeGeneratorConstants {
 
 		MethodSpec.Builder employeeConstructorBuilder = MethodSpec.constructorBuilder().addModifiers(Modifier.PUBLIC)
 				.addStatement("$N = new $T()", "menu", stringVector).addStatement("clearMenu()")
-				.addStatement("$N = new $T()", "overheadText", String.class)
-				.addStatement("$N = $T.getInstance()", "track", trackClass);
+				.addStatement("$N = new $T()", "overheadText", String.class);
 
 		for (Attribute compare : compareAttributes) {
 			employeeConstructorBuilder.addParameter(getTypeAsClass(compare), compare.getName().toLowerCase())
@@ -206,7 +206,7 @@ public class ADTGenerator implements CodeGeneratorConstants {
 				.returns(String.class).addStatement("return $N", "overheadText").build();
 
 		MethodSpec setOverheadText1 = MethodSpec.methodBuilder("setOverheadText").addModifiers(Modifier.PUBLIC)
-				.returns(void.class).addParameter(String.class, "s")
+				.returns(void.class).addParameter(String.class, "s").addParameter(state, "state")
 				.beginControlFlow("if ((s != null) && (s.length() > 0)) ")
 				.beginControlFlow("if (($N != null) && ($N.length() > 0)) ", "overheadText", "overheadText")
 				.beginControlFlow("if ($N.equals($N)) ", "overheadText", "IDLE_STRING")
@@ -217,7 +217,9 @@ public class ADTGenerator implements CodeGeneratorConstants {
 
 		MethodSpec setOverheadText2 = MethodSpec.methodBuilder("setOverheadText").addModifiers(Modifier.PUBLIC)
 				.returns(void.class).addParameter(String.class, "s").addParameter(Object.class, "sender")
-				.addParameter(String.class, "senderName").addStatement("$N.addText(s, sender, senderName)", "track")
+				.addParameter(String.class, "senderName").addParameter(state, "state")
+				.addStatement("$T track = $T.getInstance(state)", trackClass, trackClass)
+				.addStatement("$N.addText(s, sender, state)", "track")
 				.addStatement("$N = s", "overheadText").build();
 
 		MethodSpec clearOverheadText = MethodSpec.methodBuilder("clearOverheadText").addModifiers(Modifier.PUBLIC)
@@ -363,8 +365,7 @@ public class ADTGenerator implements CodeGeneratorConstants {
 		}
 
 		MethodSpec.Builder customerConstructorBuilder = MethodSpec.constructorBuilder().addModifiers(Modifier.PUBLIC)
-				.addStatement("$N = new $T()", "overheadText", String.class)
-				.addStatement("$N = $T.getInstance()", "track", trackClass);
+				.addStatement("$N = new $T()", "overheadText", String.class);
 
 		for (Attribute compare : compareAttributes) {
 			customerConstructorBuilder.addParameter(getTypeAsClass(compare), compare.getName().toLowerCase())
@@ -388,11 +389,14 @@ public class ADTGenerator implements CodeGeneratorConstants {
 				.addStatement("$N = new $T()", "overheadText", String.class).addStatement("return temp").build();
 
 		MethodSpec setOverheadText3 = MethodSpec.methodBuilder("setOverheadText").addModifiers(Modifier.PUBLIC)
-				.returns(void.class).addParameter(String.class, "s").addStatement("$N = s", "overheadText").build();
+				.returns(void.class).addParameter(String.class, "s").addParameter(state, "state")
+				.addStatement("$N = s", "overheadText").build();
 
 		MethodSpec setOverheadText4 = MethodSpec.methodBuilder("setOverheadText").addModifiers(Modifier.PUBLIC)
 				.returns(void.class).addParameter(String.class, "s").addParameter(Object.class, "sender")
-				.addParameter(String.class, "senderName").addStatement("$N.addText(s, sender, senderName)", "track")
+				.addParameter(state, "state")
+				.addStatement("$T track = $T.getInstance(state)", trackClass, trackClass)
+				.addStatement("$N.addText(s, sender, senderName)", "track")
 				.build();
 
 		MethodSpec hasOverheadText2 = MethodSpec.methodBuilder("hasOverheadText").addModifiers(Modifier.PUBLIC)
@@ -723,6 +727,7 @@ public class ADTGenerator implements CodeGeneratorConstants {
 		ClassName vectorClass = ClassName.get("java.util", "Vector");
 		ClassName superClass = ClassName.get("simse.adts.objects", SimSEObjectTypeTypes.getText(objType.getType()));
 		ClassName thisClass = ClassName.get("simse.adts.objects", name);
+		ClassName state = ClassName.get("simse.state", "State");
 
 		File adtFile = new File(options.getCodeGenerationDestinationDirectory(),
 				("simse\\adts\\objects\\" + CodeGeneratorUtils.getUpperCaseLeading(objType.getName()) + ".java"));
@@ -824,8 +829,8 @@ public class ADTGenerator implements CodeGeneratorConstants {
 
 		MethodSpec setText = MethodSpec.methodBuilder("setOverheadText").addAnnotation(Override.class)
 				.addModifiers(Modifier.PUBLIC).returns(void.class).addParameter(String.class, "s")
-				.addStatement("super.setOverheadText(s, this, String.valueOf(this.$L))",
-						objType.getKey().getName().toLowerCase())
+				.addParameter(state, "state")
+				.addStatement("super.setOverheadText(s, this, state)")
 				.build();
 
 		TypeSpec.Builder adtBuilder = TypeSpec.classBuilder(name).addModifiers(Modifier.PUBLIC).superclass(superClass)

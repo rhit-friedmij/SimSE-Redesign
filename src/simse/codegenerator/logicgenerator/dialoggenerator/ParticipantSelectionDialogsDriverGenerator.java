@@ -196,7 +196,7 @@ public class ParticipantSelectionDialogsDriverGenerator implements CodeGenerator
 						putElse9 = true;
 					}
 					actions += "if(menuText.equals(\"" + ((UserActionTypeTrigger) tempTrig).getMenuText() + "\")){\n";
-					actions += "((Employee)obj).setOverheadText(\"" + tempTrig.getTriggerText() + "\");\n";
+					actions += "((Employee)obj).setOverheadText(\"" + tempTrig.getTriggerText() + "\", state);\n";
 					actions += "people.add(obj);\n}\n";
 				}
 			}
@@ -214,7 +214,7 @@ public class ParticipantSelectionDialogsDriverGenerator implements CodeGenerator
 						putElse8 = true;
 					}
 					actions += "if(menuText.equals(\"" + ((UserActionTypeTrigger) tempTrig).getMenuText() + "\")){\n";
-					actions += "((Customer)obj).setOverheadText(\"" + tempTrig.getTriggerText() + "\");\n";
+					actions += "((Customer)obj).setOverheadText(\"" + tempTrig.getTriggerText() + "\", state);\n";
 					actions += "people.add(obj);\n}\n";
 				}
 			}

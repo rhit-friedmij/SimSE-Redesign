@@ -50,6 +50,7 @@ public class ChooseRoleToPlayDialogGenerator implements CodeGeneratorConstants {
 	  ClassName vector = ClassName.get("java.util", "Vector");
 	  ClassName ruleExecClass = ClassName.get("simse.logic", "RuleExecutor");
 	  ClassName employeeClass = ClassName.get("simse.adts.objects", "Employee");
+	  ClassName stateClass = ClassName.get("simse.state", "State");
 	  ClassName actionClass = ClassName.get("simse.adts.actions", "Action");
 	  ClassName buttonClass = ClassName.get("javafx.scene.control", "Button");
 	  ClassName stageClass = ClassName.get("javafx.stage", "Stage");
@@ -72,11 +73,13 @@ public class ChooseRoleToPlayDialogGenerator implements CodeGeneratorConstants {
 			  .addParameter(actionClass, "act")
 			  .addParameter(String.class, "menText")
 			  .addParameter(ruleExecClass, "re")
+			  .addParameter(stateClass, "state")
 			  .addStatement("$N = owner", "gui")
 			  .addStatement("$N = e", "emp")
 			  .addStatement("$N = act", "action")
 			  .addStatement("$N = menText", "menuText")
 			  .addStatement("$N = re", "ruleExec")
+			  .addStatement("$N = state", "state")
 			  .addStatement("setTitle($S)", "Choose Action Role")
 			  .addStatement("$T mainPane = new $T()", vBoxClass, vBoxClass)
 			  .addStatement("$T topPane = new $T()", paneClass, paneClass)
@@ -153,6 +156,7 @@ public class ChooseRoleToPlayDialogGenerator implements CodeGeneratorConstants {
 			  .addField(stageClass, "gui", Modifier.PRIVATE)
 			  .addField(employeeClass, "emp", Modifier.PRIVATE)
 			  .addField(actionClass, "action", Modifier.PRIVATE)
+			  .addField(stateClass, "state", Modifier.PRIVATE)
 			  .addField(String.class, "menuText", Modifier.PRIVATE)
 			  .addField(ruleExecClass, "ruleExec", Modifier.PRIVATE)
 			  .addField(comboBoxClass, "partNameList", Modifier.PRIVATE)
@@ -272,7 +276,7 @@ public class ChooseRoleToPlayDialogGenerator implements CodeGeneratorConstants {
                 + ((UserActionTypeTrigger) outerTrig).getMenuText() + "\"))\n{\n";
             actions += "emp.setOverheadText(\""
                     + ((UserActionTypeTrigger) outerTrig).getTriggerText()
-                    + "\");\n}\n";
+                    + "\", state);\n}\n";
           }
         }
 
@@ -338,7 +342,7 @@ public class ChooseRoleToPlayDialogGenerator implements CodeGeneratorConstants {
               actions += "if(menuText.equals(\""
                   + ((UserActionTypeTrigger) outerTrig).getMenuText() + "\"))\n{\n";
               actions += "emp.setOverheadText(\"" + outerTrig.getTriggerText()
-                  + "\");\n}\n";
+                  + "\", state);\n}\n";
             }
           }
 

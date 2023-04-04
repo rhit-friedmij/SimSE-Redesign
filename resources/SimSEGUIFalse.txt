@@ -126,7 +126,7 @@ public class SimSEGUI extends Stage implements EventHandler<Event> {
 		artifactsPanel = new ArtifactsPanel(this, state, logic);
 		projectsPanel = new ProjectsPanel(this, state, logic);
 		objGraphPanel = new ObjectGraphPanel(this);
-		trackPanel = TrackPanel.getInstance();
+		trackPanel = TrackPanel.getInstance(state);
 		melloPanel = MelloPanel.getInstance(state);
 
 		// Set window title:

@@ -2,6 +2,7 @@
 package simse.state;
 
 import simse.gui.MelloPanel;
+import simse.gui.TrackPanel;
 import simse.state.logger.Logger;
 
 public class State implements Cloneable {
@@ -26,6 +27,7 @@ public class State implements Cloneable {
 		clock = new Clock(logger);
 		score = new Integer(-1);
 		MelloPanel.createInstance(this);
+		TrackPanel.createInstance(this);
 	}
 
 	public Object clone() {
@@ -46,6 +48,7 @@ public class State implements Cloneable {
 				cl.score = new Double(score.doubleValue());
 			}
 			MelloPanel.createInstance(cl, this);
+			TrackPanel.createInstance(cl, this);
 			return cl;
 		} catch (CloneNotSupportedException c) {
 			System.out.println(c.getMessage());
