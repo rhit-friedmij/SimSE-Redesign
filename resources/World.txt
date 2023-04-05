@@ -147,7 +147,7 @@ public class World extends SimSEMap implements EventHandler<Event> {
 	}
 
 	public void createPopupMenu() {
-		popup.getItems().removeAll();
+		popup.getItems().clear();
 
 		if (selectedEmployee != null) {
 			Vector<String> menuItems = selectedEmployee.getMenu();
