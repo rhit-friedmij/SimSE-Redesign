@@ -487,7 +487,7 @@ public class ExplanatoryToolGenerator implements CodeGeneratorConstants {
     		  .addStatement("$T spacerPane2 = new $T()", pane, pane)
     		  .addStatement("mainPane.add(spacerPane2, 0, 8, 3, 1)")
     		  .addStatement("$T scene = new $T(mainPane, 900, 720)", scene, scene)
-    		  .addStatement("scene.getStylesheets().add($S)", "src\\simse\\style.css")
+    		  .addStatement("scene.getStylesheets().add($S)", "style.css")
     		  .addStatement("this.setScene(scene)")
     		  .addStatement("hide()")
     		  .build();

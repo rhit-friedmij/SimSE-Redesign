@@ -348,7 +348,7 @@ public class CodeGenerator {
 	    	mapFile.delete();
 	    }
 	    
-	    File stylesheetFile = new File(options.getCodeGenerationDestinationDirectory(), "simse\\styles.css");
+	    File stylesheetFile = new File(options.getCodeGenerationDestinationDirectory(), "styles.css");
 	    if(stylesheetFile.exists()) {
 	    	stylesheetFile.delete();
 	    }
