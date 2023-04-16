@@ -72,8 +72,7 @@ public class GUIGenerator implements CodeGeneratorConstants {
 
   public GUIGenerator(ModelOptions options, DefinedObjectTypes objTypes, 
       CreatedObjects objs, DefinedActionTypes acts, Hashtable<SimSEObject, 
-      String> stsObjs, Hashtable<SimSEObject, String> ruleObjs, 
-      TileData[][] map, ArrayList<UserData> userDatas) {
+      String> stsObjs, Hashtable<SimSEObject, String> ruleObjs, ArrayList<UserData> userDatas) {
     this.options = options;
     Hashtable<SimSEObject, String> allObjsToImages = 
     	new Hashtable<SimSEObject, String>();
@@ -102,7 +101,7 @@ public class GUIGenerator implements CodeGeneratorConstants {
         options.getCodeGenerationDestinationDirectory());
     mapDataGen = new MapDataGenerator(
         options.getCodeGenerationDestinationDirectory());
-    ssmGen = new SimSEMapGenerator(objTypes, allObjsToImages, map, userDatas,
+    ssmGen = new SimSEMapGenerator(objTypes, allObjsToImages, userDatas,
         options.getCodeGenerationDestinationDirectory());
     worldGen = new WorldGenerator(
         options.getCodeGenerationDestinationDirectory());

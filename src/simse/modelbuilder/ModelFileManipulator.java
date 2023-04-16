@@ -209,19 +209,17 @@ public class ModelFileManipulator {
   private DefinedObjectTypes objectTypes;
   private CreatedObjects objects;
   private DefinedActionTypes actionTypes;
-  private TileData[][] mapRep;
+//  private TileData[][] mapRep;
   private ArrayList<UserData> sopUsers;
   
   public ModelFileManipulator(ModelOptions options, 
   		DefinedObjectTypes objectTypes, DefinedActionTypes actionTypes, 
-  		CreatedObjects objects, ArrayList<UserData> sopUsers, 
-  		TileData[][] mapRep) {
+  		CreatedObjects objects, ArrayList<UserData> sopUsers) {
     this.options = options;
     this.objectTypes = objectTypes;
     this.objects = objects;
     this.actionTypes = actionTypes;
     this.sopUsers = sopUsers;
-    this.mapRep = mapRep;
   }
 
   /*
@@ -1208,18 +1206,6 @@ public class ModelFileManipulator {
         writer.write(NEWLINE);
       }
       writer.write(END_SOP_USERS_TAG);
-      writer.write(NEWLINE);
-
-      // write map to file
-      for (int i = 0; i < MapData.Y_MAPSIZE; i++) {
-        for (int j = 0; j < MapData.X_MAPSIZE; j++) {
-          writer.write("" + mapRep[j][i].getBaseKey());
-          writer.write(NEWLINE);
-          writer.write("" + mapRep[j][i].getFringeKey());
-          writer.write(NEWLINE);
-        }
-      }
-      writer.write(END_MAP_TAG);
       writer.close();
     } catch (IOException e) {
       JOptionPane.showMessageDialog(null, ("Error writing file: " + e

@@ -95,14 +95,14 @@ public class CodeGenerator {
   public CodeGenerator(ModelOptions options, DefinedObjectTypes objTypes, 
       CreatedObjects objs, DefinedActionTypes actTypes, 
       Hashtable<SimSEObject, String> stsObjsToImages, 
-      Hashtable<SimSEObject, String> ruleObjsToImages, TileData[][] map,
+      Hashtable<SimSEObject, String> ruleObjsToImages,
       ArrayList<UserData> userDatas) {
     this.options = options;
     stateGen = new StateGenerator(options, objTypes, actTypes);
     logicGen = new LogicGenerator(options, objTypes, actTypes);
     engineGen = new EngineGenerator(options, objs);
     guiGen = new GUIGenerator(options, objTypes, objs, actTypes, 
-        stsObjsToImages, ruleObjsToImages, map, userDatas);
+        stsObjsToImages, ruleObjsToImages, userDatas);
     expToolGen = new ExplanatoryToolGenerator(options, objTypes, objs, 
         actTypes);
     idGen = new IDGeneratorGenerator(options.getCodeGenerationDestinationDirectory());
