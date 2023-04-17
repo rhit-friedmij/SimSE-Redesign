@@ -258,7 +258,12 @@ public class GraphicsBuilderGUI extends JPanel implements ActionListener {
 	private void refreshObjectList() {
 		objectListData = new Vector<String>();
 		Vector<SimSEObject> currentObjs = new Vector<SimSEObject>();
-		currentObjs.addAll(objects.getAllObjects());
+		
+		for(SimSEObject obj : objects.getAllObjects()) {
+			if(!(obj.getSimSEObjectType().getType() == SimSEObjectTypeTypes.EMPLOYEE)) {
+					currentObjs.add(obj);
+			}
+		}
 
 		// append all objects created by CreateObjectsRules to the currentObjs
 		// Vector:
