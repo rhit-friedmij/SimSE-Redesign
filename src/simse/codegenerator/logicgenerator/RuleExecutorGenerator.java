@@ -1106,8 +1106,8 @@ public class RuleExecutorGenerator implements CodeGeneratorConstants {
 													methodBody.beginControlFlow(
 															"for(int k=0; k<" + variableName2 + ".size(); k++)");
 													methodBody.addStatement("SSObject " + partName.toLowerCase()
-															+ "2 = (SSObject)" + variableName2 + ".elementAt(k)");
-													methodBody.beginControlFlow("if(" + partName.toLowerCase() + "2 instanceof "
+															+ "4 = (SSObject)" + variableName2 + ".elementAt(k)");
+													methodBody.beginControlFlow("if(" + partName.toLowerCase() + "4 instanceof "
 															+ ssObjType + ")");
 													methodBody.addStatement(variableName + "++");
 													methodBody.endControlFlow();
