@@ -216,10 +216,10 @@ public class ADTGenerator implements CodeGeneratorConstants {
 				.build();
 
 		MethodSpec setOverheadText2 = MethodSpec.methodBuilder("setOverheadText").addModifiers(Modifier.PUBLIC)
-				.returns(void.class).addParameter(String.class, "s").addParameter(Object.class, "sender")
-				.addParameter(String.class, "senderName").addParameter(state, "state")
+				.returns(void.class).addParameter(String.class, "s")
+				.addParameter(Object.class, "sender").addParameter(state, "state")
 				.addStatement("$T track = $T.getInstance(state)", trackClass, trackClass)
-				.addStatement("$N.addText(s, sender, state)", "track")
+				.addStatement("$N.addText(s, sender)", "track")
 				.addStatement("$N = s", "overheadText").build();
 
 		MethodSpec clearOverheadText = MethodSpec.methodBuilder("clearOverheadText").addModifiers(Modifier.PUBLIC)
@@ -396,7 +396,7 @@ public class ADTGenerator implements CodeGeneratorConstants {
 				.returns(void.class).addParameter(String.class, "s").addParameter(Object.class, "sender")
 				.addParameter(state, "state")
 				.addStatement("$T track = $T.getInstance(state)", trackClass, trackClass)
-				.addStatement("$N.addText(s, sender, senderName)", "track")
+				.addStatement("$N.addText(s, sender)", "track")
 				.build();
 
 		MethodSpec hasOverheadText2 = MethodSpec.methodBuilder("hasOverheadText").addModifiers(Modifier.PUBLIC)
