@@ -78,7 +78,7 @@ public class DestroyerCheckerGenerator implements CodeGeneratorConstants {
 				.addStatement("ruleExec = r")
 				.addStatement("trigCheck = t")
 				.addStatement("ranNumGen = new $T()", random)
-				.addStatement("mello = $T.getInstance()", melloPanel)
+				.addStatement("mello = $T.getInstance($N)", melloPanel, "state")
 				.build();
 		
 		 MethodSpec update = MethodSpec.methodBuilder("update")
@@ -157,12 +157,12 @@ public class DestroyerCheckerGenerator implements CodeGeneratorConstants {
 				conditions.beginControlFlow("if(c instanceof $T)", employee);
 				
 				if ((tempDest.getDestroyerText() != null) && (tempDest.getDestroyerText().length() > 0)) {
-					conditions.addStatement("(($T)c).setOverheadText(\"" + tempDest.getDestroyerText() + "\")", employee);
+					conditions.addStatement("(($T)c).setOverheadText(\"" + tempDest.getDestroyerText() + "\", state)", employee);
 				}
 				
 				conditions.nextControlFlow("else if(c instanceof $T)", customer);
 				if ((tempDest.getDestroyerText() != null) && (tempDest.getDestroyerText().length() > 0)) {
-					conditions.addStatement("(($T)c).setOverheadText(\"" + tempDest.getDestroyerText() + "\")", customer);
+					conditions.addStatement("(($T)c).setOverheadText(\"" + tempDest.getDestroyerText() + "\", state)", customer);
 				}
 				conditions.endControlFlow(); // ObjectType
 				conditions.endControlFlow(); // For loop
@@ -332,7 +332,7 @@ public class DestroyerCheckerGenerator implements CodeGeneratorConstants {
 				conditions.beginControlFlow("if (c instanceof $T)", employee);
 				if ((tempDest instanceof AutonomousActionTypeDestroyer) || (tempDest instanceof RandomActionTypeDestroyer)) {
 					if ((tempDest.getDestroyerText() != null) && (tempDest.getDestroyerText().length() > 0)) {
-						conditions.addStatement("(($T)c).setOverheadText(\"" + tempDest.getDestroyerText() + "\")", employee);
+						conditions.addStatement("(($T)c).setOverheadText(\"" + tempDest.getDestroyerText() + "\", state)", employee);
 					}
 
 					// For each user destroyer for this action, remove the menu item:
@@ -347,7 +347,7 @@ public class DestroyerCheckerGenerator implements CodeGeneratorConstants {
 
 					conditions.nextControlFlow("else if(c instanceof $T)", customer);
 					if ((tempDest.getDestroyerText() != null) && (tempDest.getDestroyerText().length() > 0)) {
-						conditions.addStatement("(($T)c).setOverheadText(\"" + tempDest.getDestroyerText() + "\")", customer);
+						conditions.addStatement("(($T)c).setOverheadText(\"" + tempDest.getDestroyerText() + "\", state)", customer);
 					}
 					conditions.endControlFlow();
 					conditions.endControlFlow();

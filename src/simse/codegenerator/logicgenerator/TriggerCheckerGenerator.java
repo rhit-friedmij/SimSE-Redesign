@@ -325,10 +325,10 @@ public class TriggerCheckerGenerator implements CodeGeneratorConstants {
 			
 			if ((outerTrig.getTriggerText() != null) && (outerTrig.getTriggerText().length() > 0)) { 
 				// has trigger text
-				checker.addStatement("(($T) tempObj).setOverheadText(\"" + outerTrig.getTriggerText() + "\")", employee);
+				checker.addStatement("(($T) tempObj).setOverheadText(\"" + outerTrig.getTriggerText() + "\", state)", employee);
 			}
 			checker.nextControlFlow("else if (tempObj instanceof $T)", customer);
-			checker.addStatement("(($T) tempObj).setOverheadText(\"" + outerTrig.getTriggerText() + "\")", customer);
+			checker.addStatement("(($T) tempObj).setOverheadText(\"" + outerTrig.getTriggerText() + "\", state)", customer);
 			checker.endControlFlow();
 			checker.endControlFlow();
 			checker.addStatement("state.getActionStateRepository().get" + actTypeName + "StateRepository().add(a)");

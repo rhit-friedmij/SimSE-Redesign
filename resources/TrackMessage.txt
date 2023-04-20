@@ -1,5 +1,7 @@
 package simse.gui;
 
+import java.util.Vector;
+
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -10,12 +12,12 @@ import simse.adts.objects.Customer;
 import simse.adts.objects.Employee;
 import simse.gui.util.JavaFXHelpers;
 
-public class TrackMessage extends Pane{
+public class TrackMessage extends Pane implements Cloneable{
 	
 	Object sender;
 	String message;
 	
-	public TrackMessage(Object sender, String name, String text) {
+	public TrackMessage(Object sender, String text) {
 		this.sender = sender;
 		this.message = text;
 		
@@ -40,6 +42,11 @@ public class TrackMessage extends Pane{
 		pane.add(textBox, 1, 1);
 		
 		this.getChildren().add(pane);
+	}
+	
+	@Override
+	public Object clone() {
+		return new TrackMessage(this.sender, this.message);
 	}
 
 }

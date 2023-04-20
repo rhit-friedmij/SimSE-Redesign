@@ -1106,8 +1106,8 @@ public class RuleExecutorGenerator implements CodeGeneratorConstants {
 													methodBody.beginControlFlow(
 															"for(int k=0; k<" + variableName2 + ".size(); k++)");
 													methodBody.addStatement("SSObject " + partName.toLowerCase()
-															+ "2 = (SSObject)" + variableName2 + ".elementAt(k)");
-													methodBody.beginControlFlow("if(" + partName.toLowerCase() + "2 instanceof "
+															+ "4 = (SSObject)" + variableName2 + ".elementAt(k)");
+													methodBody.beginControlFlow("if(" + partName.toLowerCase() + "4 instanceof "
 															+ ssObjType + ")");
 													methodBody.addStatement(variableName + "++");
 													methodBody.endControlFlow();
@@ -1984,9 +1984,9 @@ public class RuleExecutorGenerator implements CodeGeneratorConstants {
 					conditions.beginControlFlow("for (int j = 0; j < c.size(); j++)");
 					conditions.addStatement("$T d = c.elementAt(j)", ssObject);
 					conditions.beginControlFlow("if (d instanceof $T)", employee);
-					conditions.addStatement("(($T) d).setOverheadText($S)", employee, destText);
+					conditions.addStatement("(($T) d).setOverheadText($S, $N)", employee, destText, "state");
 					conditions.nextControlFlow("else if (d instanceof $T)", customer);
-					conditions.addStatement("(($T) d).setOverheadText($S)", customer, destText);
+					conditions.addStatement("(($T) d).setOverheadText($S, $N)", customer, destText, "state");
 					conditions.endControlFlow();
 					conditions.endControlFlow();
 				}

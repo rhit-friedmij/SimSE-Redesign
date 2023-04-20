@@ -277,7 +277,7 @@ public class ChooseActionToDestroyDialogGenerator implements CodeGeneratorConsta
 					}
 					actions += "if(menuText.equals(\"" + ((UserActionTypeDestroyer) tempDest).getMenuText()
 							+ "\"))\n{\n";
-					actions += "emp.setOverheadText(\"" + tempDest.getDestroyerText() + "\");\n";
+					actions += "emp.setOverheadText(\"" + tempDest.getDestroyerText() + "\", state);\n";
 
 					// execute all destroyer rules that have executeOnJoins == true:
 					Vector<Rule> destRules = tempAct.getAllDestroyerRules();
@@ -323,7 +323,7 @@ public class ChooseActionToDestroyDialogGenerator implements CodeGeneratorConsta
 						}
 						actions += "if(menuText.equals(\"" + ((UserActionTypeDestroyer) tempDest).getMenuText()
 								+ "\"))\n{\n";
-						actions += "((Employee)d).setOverheadText(\"" + tempDest.getDestroyerText() + "\");\n}\n";
+						actions += "((Employee)d).setOverheadText(\"" + tempDest.getDestroyerText() + "\", state);\n}\n";
 					}
 				}
 
@@ -343,7 +343,7 @@ public class ChooseActionToDestroyDialogGenerator implements CodeGeneratorConsta
 						}
 						actions += "if(menuText.equals(\"" + ((UserActionTypeDestroyer) tempDest).getMenuText()
 								+ "\"))\n{\n";
-						actions += "((Customer)d).setOverheadText(\"" + tempDest.getDestroyerText() + "\");\n}\n";
+						actions += "((Customer)d).setOverheadText(\"" + tempDest.getDestroyerText() + "\", state);\n}\n";
 					}
 				}
 

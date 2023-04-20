@@ -168,8 +168,8 @@ public class ChooseActionToJoinDialogGenerator implements
 			  .addStatement("$T tempAct = $N.elementAt(i)", actionClass, "actions")
 			  .addStatement("$T participantNames = new $T()", stringVector, stringVector)
 			  .addCode(generateActionHandle(userTrigActs))
-			  .addStatement("new $T($N, participantNames, $N, tempAct, $N, $N)",
-					  roleDialog, "gui", "emp", "menuText", "ruleExec")
+			  .addStatement("new $T($N, participantNames, $N, tempAct, $N, $N, $N)",
+					  roleDialog, "gui", "emp", "menuText", "ruleExec", "state")
 			  .addStatement("close()")
 			  .addStatement("break")
 			  .endControlFlow()
@@ -187,8 +187,8 @@ public class ChooseActionToJoinDialogGenerator implements
 			  .addStatement("$T tempAct = $N.elementAt(i)", actionClass, "actions")
 			  .addStatement("$T participantNames = new $T()", stringVector, stringVector)
 			  .addCode(generateActionOnlyOneChoice(userTrigActs))
-			  .addStatement("new $T(owner, participantNames, $N, tempAct, $N, $N)",
-					  roleDialog, "emp", "menuText", "ruleExec")
+			  .addStatement("new $T(owner, participantNames, $N, tempAct, $N, $N, $N)",
+					  roleDialog, "emp", "menuText", "ruleExec", "state")
 			  .addStatement("close()")
 			  .addStatement("break")
 			  .endControlFlow()

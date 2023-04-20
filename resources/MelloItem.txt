@@ -9,7 +9,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import simse.gui.util.JavaFXHelpers;
 
-public class MelloItem extends Pane{
+public class MelloItem extends Pane implements Cloneable{
 	
 	String task;
 	Vector<Object> employees;
@@ -32,6 +32,11 @@ public class MelloItem extends Pane{
 		}
 		
 		this.getChildren().add(box);
+	}
+	
+	@Override
+	public Object clone() {
+		return new MelloItem(this.task, (Vector<Object>)this.employees.clone());
 	}
 	
 	public MelloItem(String item) {

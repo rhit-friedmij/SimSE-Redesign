@@ -92,7 +92,7 @@ public class ParticipantSelectionDialogsDriverGenerator implements CodeGenerator
 				.addStatement("$N = act", "action").addStatement("$N = s", "state")
 				.addStatement("$N = emp", "selectedEmp").addStatement("$N = re", "ruleExec")
 				.addStatement("$N = dc", "destChecker").addStatement("$N = mText", "menuText")
-				.addStatement("$N = $T.getInstance()", "mello", melloPanelClass)
+				.addStatement("$N = $T.getInstance($N)", "mello", melloPanelClass, "state")
 				.addStatement("$T actionValid = true", boolean.class)
 				.beginControlFlow("for (int i = 0; i < $N.size(); i++) ", "partNames")
 				.addStatement("$T participantName = $N.elementAt(i)", String.class, "partNames")
@@ -196,7 +196,7 @@ public class ParticipantSelectionDialogsDriverGenerator implements CodeGenerator
 						putElse9 = true;
 					}
 					actions += "if(menuText.equals(\"" + ((UserActionTypeTrigger) tempTrig).getMenuText() + "\")){\n";
-					actions += "((Employee)obj).setOverheadText(\"" + tempTrig.getTriggerText() + "\");\n";
+					actions += "((Employee)obj).setOverheadText(\"" + tempTrig.getTriggerText() + "\", state);\n";
 					actions += "people.add(obj);\n}\n";
 				}
 			}
@@ -214,7 +214,7 @@ public class ParticipantSelectionDialogsDriverGenerator implements CodeGenerator
 						putElse8 = true;
 					}
 					actions += "if(menuText.equals(\"" + ((UserActionTypeTrigger) tempTrig).getMenuText() + "\")){\n";
-					actions += "((Customer)obj).setOverheadText(\"" + tempTrig.getTriggerText() + "\");\n";
+					actions += "((Customer)obj).setOverheadText(\"" + tempTrig.getTriggerText() + "\", state);\n";
 					actions += "people.add(obj);\n}\n";
 				}
 			}
