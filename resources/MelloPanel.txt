@@ -104,7 +104,7 @@ public class MelloPanel extends Pane implements SimSEPanel, Cloneable{
 		if (inProg == null) return;
 		prog.getChildren().remove(inProg);
 		inProg = inProg.removeEmp(employee);
-		prog.getChildren().add(inProg);
+		if (inProg != null) prog.getChildren().add(inProg);
 	}
 	
 	public void stopEverything() {
