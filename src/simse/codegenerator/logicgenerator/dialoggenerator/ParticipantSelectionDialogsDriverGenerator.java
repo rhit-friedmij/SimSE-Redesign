@@ -13,6 +13,7 @@ import simse.modelbuilder.actionbuilder.ActionTypeParticipantConstraint;
 import simse.modelbuilder.actionbuilder.ActionTypeParticipantTrigger;
 import simse.modelbuilder.actionbuilder.ActionTypeTrigger;
 import simse.modelbuilder.actionbuilder.DefinedActionTypes;
+import simse.modelbuilder.actionbuilder.TimedActionTypeDestroyer;
 import simse.modelbuilder.actionbuilder.UserActionTypeTrigger;
 import simse.modelbuilder.objectbuilder.AttributeTypes;
 import simse.modelbuilder.objectbuilder.DefinedObjectTypes;
@@ -228,7 +229,11 @@ public class ParticipantSelectionDialogsDriverGenerator implements CodeGenerator
 				actions += "ruleExec.update(parent, RuleExecutor.UPDATE_ONE, \"" + tRule.getName() + "\", action);\n";
 			}
 			actions += "destChecker.update(false, parent);\n";
-			actions += "mello.addTaskInProgress(\"" + CodeGeneratorUtils.getUpperCaseLeading(tempAct.getName())
+			if (hasTimedDestroyer(tempAct)) {
+				actions += "if ((("+CodeGeneratorUtils.getUpperCaseLeading(tempAct.getName()) +"Action) action).getTimeToLive() > 1) mello.addTaskInProgress(\"" + CodeGeneratorUtils.getUpperCaseLeading(tempAct.getName())
+				+ "\", people);\n";
+			}
+			else actions += "mello.addTaskInProgress(\"" + CodeGeneratorUtils.getUpperCaseLeading(tempAct.getName())
 					+ "\", people);\n";
 
 			// game-ending:
@@ -307,5 +312,12 @@ public class ParticipantSelectionDialogsDriverGenerator implements CodeGenerator
 			actions += "}\n";
 		}
 		return actions;
+	}
+	
+	private boolean hasTimedDestroyer(ActionType a) {
+		for (int i=0; i<a.getAllDestroyers().size(); i++) {
+			if (a.getAllDestroyers().get(i) instanceof TimedActionTypeDestroyer) return true;
+		}
+		return false;
 	}
 }

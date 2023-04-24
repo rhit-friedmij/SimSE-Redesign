@@ -79,7 +79,7 @@ public class ChooseRoleToPlayDialogGenerator implements CodeGeneratorConstants {
 			  .addStatement("$N = act", "action")
 			  .addStatement("$N = menText", "menuText")
 			  .addStatement("$N = re", "ruleExec")
-			  .addStatement("$N = state", "state")
+			  .addStatement("this.$N = state", "state")
 			  .addStatement("setTitle($S)", "Choose Action Role")
 			  .addStatement("$T mainPane = new $T()", vBoxClass, vBoxClass)
 			  .addStatement("$T topPane = new $T()", paneClass, paneClass)
