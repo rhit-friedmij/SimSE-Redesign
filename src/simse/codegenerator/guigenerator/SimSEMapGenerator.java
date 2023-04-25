@@ -55,15 +55,13 @@ public class SimSEMapGenerator implements CodeGeneratorConstants {
 																																// (Vectors) of
 																																// employees
 																																// (values)
-  private TileData[][] mapRep; // representation of map
   private ArrayList<UserData> userDatas; // array list of UserDatas
 
   public SimSEMapGenerator(DefinedObjectTypes objTypes, Hashtable<SimSEObject, 
-  		String> objsToImages, TileData[][] mapRep, ArrayList<UserData> userDatas, 
+  		String> objsToImages, ArrayList<UserData> userDatas, 
   		File directory) {
     this.objTypes = objTypes;
     this.objsToImages = objsToImages;
-    this.mapRep = mapRep;
     this.userDatas = userDatas;
     objsToXYLocs = new Hashtable<SimSEObject, Vector<Integer>>();
     this.directory = directory;
@@ -145,31 +143,12 @@ public class SimSEMapGenerator implements CodeGeneratorConstants {
       }
       usrData = usrData.concat("}\n}\n\n");
       
-   // map info:
-      String mapData = "";
-      mapData.concat("// map objects:\n");
-      for (int i = 0; i < MapData.Y_MAPSIZE; i++) {
-        for (int j = 0; j < MapData.X_MAPSIZE; j++) {
-        	mapData.concat("mapRep[" + j + "][" + i + "].baseKey = "
-              + mapRep[j][i].getBaseKey() + ";\n");
-        	mapData.concat("mapRep[" + j + "][" + i + "].fringeKey = "
-              + mapRep[j][i].getFringeKey() + ";\n");
-        }
-      }
-      
       MethodSpec constructor = MethodSpec.constructorBuilder()
     		  .addModifiers(Modifier.PUBLIC)
     		  .addParameter(state, "s")
     		  .addParameter(logic, "l")
     		  .addStatement("$N = s", "state")
     		  .addStatement("$N = l", "logic")
-    		  .addStatement("int x = MapData.X_MAPSIZE")
-    		  .addStatement("$N = new TileData[MapData.X_MAPSIZE][MapData.Y_MAPSIZE]", "mapRep")
-    		  .beginControlFlow("for(int i=0; i<MapData.Y_MAPSIZE; i++)")
-    		  .beginControlFlow("for(int j=0; j<MapData.X_MAPSIZE; j++)")
-    		  .addStatement("mapRep[j][i] = new TileData(MapData.TILE_GRID, MapData.TRANSPARENT)")
-    		  .endControlFlow()
-    		  .endControlFlow()
     		  .addStatement("$N = new ArrayList<DisplayedEmployee>()", "sopUsers")
     		  .addStatement("// get all of the employees from the state:")
     		  .addStatement("Vector<Employee> allEmps = $N.getEmployeeStateRepository().getAll()", "state")
@@ -179,7 +158,6 @@ public class SimSEMapGenerator implements CodeGeneratorConstants {
     		  .addStatement("$N.add(tmpUser)", "sopUsers")
     		  .endControlFlow()
     		  .addCode(usrData)
-    		  .addCode(mapData)
     		  .build();
       
       String gi = "";
@@ -403,7 +381,6 @@ public class SimSEMapGenerator implements CodeGeneratorConstants {
     		  .addField(state, "state", Modifier.PROTECTED)
     		  .addField(logic, "logic", Modifier.PROTECTED)
     		  .addField(String.class, "sopFile", Modifier.PROTECTED)
-    		  .addField(a2, "mapRep")
     		  .addField(listOfDisplayed, "sopUsers")
     		  .addField(int.class, "ssObjCount")
     		  .addMethod(constructor)

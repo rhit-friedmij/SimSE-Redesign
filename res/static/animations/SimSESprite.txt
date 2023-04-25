@@ -48,7 +48,7 @@ public abstract class SimSESprite extends ImageView{
 	}
 	
 	public static String getURL(int num) {
-		return "sprites\\character" + num + "cus_walk.png";
+		return "src\\simse\\sprites\\character" + num + "cus_walk.png";
 	}
 
 	public void startAnim() {

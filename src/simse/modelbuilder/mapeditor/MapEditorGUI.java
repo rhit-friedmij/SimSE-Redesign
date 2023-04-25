@@ -25,7 +25,7 @@ import javax.swing.Box;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
 
-public class MapEditorGUI extends JPanel {
+public class MapEditorGUI {
   private MapEditorMap map;
   private WarningListPane warningPane;
 
@@ -37,20 +37,6 @@ public class MapEditorGUI extends JPanel {
     map = new MapEditorMap(owner, options, objectTypes, objects, actions, 
         startStateObjsToImages, ruleObjsToImages);
     warningPane = new WarningListPane();
-
-    Box mainPane = Box.createVerticalBox();
-    mainPane.setPreferredSize(new Dimension(1024, 650));
-
-    // Add panes and separators to main pane:
-    mainPane.add(map);
-    JSeparator separator = new JSeparator();
-    separator.setMaximumSize(new Dimension(2700, 1));
-    mainPane.add(separator);
-    mainPane.add(warningPane);
-    add(mainPane);
-    setNoOpenFile();
-    validate();
-    repaint();
   }
 
   public ArrayList<UserData> getUserDatas() {

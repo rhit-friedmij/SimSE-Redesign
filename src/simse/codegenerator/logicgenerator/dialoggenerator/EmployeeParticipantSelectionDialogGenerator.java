@@ -76,6 +76,9 @@ public class EmployeeParticipantSelectionDialogGenerator implements
 	  ClassName alertClass = ClassName.get("javafx.scene.control", "Alert");
 	  ClassName alertTypeClass = ClassName.get("javafx.scene.control.Alert", "AlertType");
 	  ClassName windowClass = ClassName.get("javafx.stage", "Window");
+	  ClassName employee = ClassName.get("simse.adts.objects", "Employee");
+	  ClassName softwareEngineer = ClassName.get("simse.adts.objects", "SoftwareEngineer");
+	  ClassName imageView = ClassName.get("javafx.scene.image", "ImageView");
 	  TypeName mouseHandler = ParameterizedTypeName.get(eventHandler, mouseEvent);
 	  TypeName windowHandler = ParameterizedTypeName.get(eventHandler, windowEvent);
 	  TypeName dialogAction = ParameterizedTypeName.get(dialogClass, actionClass);
@@ -149,10 +152,18 @@ public class EmployeeParticipantSelectionDialogGenerator implements
 			  .addStatement("$T tempCheckBox = new $T(label)", checkboxClass, checkboxClass)
 			  .addStatement("tempPane.setLeft(tempCheckBox)")
 			  .addStatement("$N.add(tempCheckBox)", "checkBoxes")
-			  .addStatement("$T icon = $T.getImageFromURL($T.getImage(tempObj))", imageViewClass,
-					  imageLoaderClass, tabPanelClass)
+			  .addStatement("$T<$T> allEmp = state.getEmployeeStateRepository().getAll()", vector, employee)
+			  .beginControlFlow("for(int k = 0; k < allEmp.size(); k++)")
+			  .beginControlFlow("if(allEmp.get(k).getName() != null)")
+			  .beginControlFlow("if(allEmp.get(k).getName().equals(((Employee) tempObj).getName()))")
+			  .addStatement("$T icon = allEmp.get(k).getCharacterModel().getDisplayedCharacter(true)", imageView)
+			  .addStatement("icon.setScaleX(1.5)")
+			  .addStatement("icon.setScaleY(1.5)")
 			  .addStatement("tempPane.setRight(new $T($S, icon))", labelClass, "")
 			  .addStatement("middlePane.getChildren().add(tempPane)")
+			  .endControlFlow()
+			  .endControlFlow()
+			  .endControlFlow()
 			  .endControlFlow()
 			  .addStatement("$T checkPane = new $T()", hBoxClass, hBoxClass)
 			  .addStatement("$N = new $T($S)", "checkAllButton", buttonClass, "Check All")

@@ -501,10 +501,12 @@ public class TabPanelGenerator implements CodeGeneratorConstants {
     		  .beginControlFlow("for (int i=0; i<objs.size(); i++)")
     		  .addStatement("String filename = getImage(objs.elementAt(i))")
     		  .addStatement("$T scaledImage = $T.createImageView(filename)", imageview, javafxhelpers)
+    		  .beginControlFlow("if (scaledImage != null)")
     		  .addStatement("scaledImage.setFitHeight(30)")
     		  .addStatement("scaledImage.setFitWidth(30)")
     		  .addStatement("scaledImage.setPreserveRatio(true)")
     		  .addStatement("$N.put(objs.elementAt(i), scaledImage)", "objsToImages")
+    		  .endControlFlow()
     		  .endControlFlow()
     		  .build();
 

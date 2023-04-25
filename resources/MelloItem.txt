@@ -28,7 +28,10 @@ public class MelloItem extends Pane implements Cloneable{
 		for (Object worker : workers) {
 			String imgName = TabPanel.getImage(worker);
 			ImageView img = JavaFXHelpers.createImageView(imgName);
-			box.getChildren().add(img);
+			if(img != null) {
+				box.getChildren().add(img);
+			}
+			
 		}
 		
 		this.getChildren().add(box);

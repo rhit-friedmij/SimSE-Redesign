@@ -61,6 +61,7 @@ public class ADTGenerator implements CodeGeneratorConstants {
 		ClassName customerClass = ClassName.get("simse.adts.objects", "Customer");
 		ClassName actionClass = ClassName.get("simse.adts.actions", "Action");
 		ClassName idGeneratorClass = ClassName.get("simse.util", "IDGenerator");
+		ClassName displayableCharacter = ClassName.get("simse.animation", "DisplayableCharacter");
 		TypeName stringVector = ParameterizedTypeName.get(vector, stringClass);
 		TypeName ssObjectVector = ParameterizedTypeName.get(vector, ssObjectClass);
 
@@ -157,6 +158,8 @@ public class ADTGenerator implements CodeGeneratorConstants {
 			employeeConstructorBuilder.addParameter(getTypeAsClass(compare), compare.getName().toLowerCase())
 					.addStatement("this.$N = $N", compare.getName().toLowerCase(), compare.getName().toLowerCase());
 		}
+		employeeConstructorBuilder.addParameter(displayableCharacter, "characterModel");
+		employeeConstructorBuilder.addStatement("this.characterModel = characterModel");
 
 		MethodSpec employeeConstructor = employeeConstructorBuilder.build();
 
@@ -171,6 +174,7 @@ public class ADTGenerator implements CodeGeneratorConstants {
 		for (Attribute compare : compareAttributes) {
 			clone2Builder.addStatement("cl.$N = $N", compare.getName().toLowerCase(), compare.getName().toLowerCase());
 		}
+		clone2Builder.addStatement("cl.characterModel = characterModel");
 
 		MethodSpec clone2 = clone2Builder.addStatement("return cl").build();
 
@@ -181,6 +185,18 @@ public class ADTGenerator implements CodeGeneratorConstants {
 				.addStatement("$N.removeAllElements()", "menu")
 				.addStatement("$N.add($S)", "menu", "Everyone stop what you're doing").build();
 
+		MethodSpec getCharacterModel = MethodSpec.methodBuilder("getCharacterModel")
+				.addModifiers(Modifier.PUBLIC)
+				.returns(displayableCharacter)
+				.addStatement("return this.characterModel")
+				.build();
+		
+		MethodSpec setCharacterModel = MethodSpec.methodBuilder("setCharacterModel")
+				.addModifiers(Modifier.PUBLIC)
+				.addParameter(displayableCharacter, "model")
+				.addStatement("this.characterModel = model")
+				.build();
+		
 		MethodSpec addMenuItem = MethodSpec.methodBuilder("addMenuItem").returns(boolean.class)
 				.addModifiers(Modifier.PUBLIC).addParameter(String.class, "s")
 				.beginControlFlow("for (int i = 0; i < $N.size(); i++) ", "menu")
@@ -233,6 +249,7 @@ public class ADTGenerator implements CodeGeneratorConstants {
 				.addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT).superclass(ssObjectClass)
 				.addSuperinterface(Cloneable.class).addField(stringVector, "menu", Modifier.PRIVATE)
 				.addField(String.class, "overheadText", Modifier.PRIVATE).addField(idle)
+				.addField(displayableCharacter, "characterModel")
 				.addField(trackClass, "track", Modifier.PRIVATE);
 
 		for (Attribute compare : compareAttributes) {
@@ -241,7 +258,8 @@ public class ADTGenerator implements CodeGeneratorConstants {
 
 		employeeBuilder.addMethod(employeeConstructor).addMethod(clone2).addMethod(getMenu).addMethod(clearMenu)
 				.addMethod(addMenuItem).addMethod(removeMenuItem).addMethod(getOverheadText).addMethod(setOverheadText1)
-				.addMethod(setOverheadText2).addMethod(clearOverheadText);
+				.addMethod(setOverheadText2).addMethod(clearOverheadText).addMethod(getCharacterModel)
+				.addMethod(setCharacterModel);
 
 		if (CodeGenerator.allowHireFire) {
 			// setHired function - this function will be overridden by subclasses
@@ -726,6 +744,7 @@ public class ADTGenerator implements CodeGeneratorConstants {
 		String name = CodeGeneratorUtils.getUpperCaseLeading(objType.getName());
 		ClassName vectorClass = ClassName.get("java.util", "Vector");
 		ClassName superClass = ClassName.get("simse.adts.objects", SimSEObjectTypeTypes.getText(objType.getType()));
+		ClassName displayableCharacter = ClassName.get("simse.animation", "DisplayableCharacter");
 		ClassName thisClass = ClassName.get("simse.adts.objects", name);
 		ClassName state = ClassName.get("simse.state", "State");
 
@@ -804,6 +823,11 @@ public class ADTGenerator implements CodeGeneratorConstants {
 		if (superConstructorAtts.size() > 0) {
 			superConstructor += superConstructorAtts.get(superConstructorAtts.size() - 1);
 		}
+		
+		if(objType.getType() == SimSEObjectTypeTypes.EMPLOYEE) {
+			superConstructor += ", model";
+		}
+		
 		superConstructor += ");\n";
 
 		constructorBuilder.addCode(superConstructor);
@@ -813,6 +837,11 @@ public class ADTGenerator implements CodeGeneratorConstants {
 			constructorBuilder.addParameter(getTypeAsClass(att), att.getName().substring(0, 1).toLowerCase() + i);
 			constructorBuilder.addStatement("set$L($L)", CodeGeneratorUtils.getUpperCaseLeading(att.getName()),
 					att.getName().substring(0, 1).toLowerCase() + i);
+		}
+		
+		if(objType.getType() == SimSEObjectTypeTypes.EMPLOYEE) {
+			constructorBuilder.addParameter(displayableCharacter, "model");
+			constructorBuilder.addStatement("setCharacterModel(model)");
 		}
 
 		MethodSpec constructor = constructorBuilder.build();
@@ -824,6 +853,10 @@ public class ADTGenerator implements CodeGeneratorConstants {
 			Attribute att = attributes.elementAt(i);
 			cloneBuilder.addStatement("cl.$L = $L", att.getName().toLowerCase(), att.getName().toLowerCase());
 		}
+		
+		if(objType.getType() == SimSEObjectTypeTypes.EMPLOYEE) {
+			cloneBuilder.addStatement("cl.characterModel = characterModel");
+		}
 
 		MethodSpec clone = cloneBuilder.addStatement("return cl").build();
 
@@ -831,6 +864,18 @@ public class ADTGenerator implements CodeGeneratorConstants {
 				.addModifiers(Modifier.PUBLIC).returns(void.class).addParameter(String.class, "s")
 				.addParameter(state, "state")
 				.addStatement("super.setOverheadText(s, this, state)")
+				.build();
+		
+		MethodSpec getCharacterModel = MethodSpec.methodBuilder("getCharacterModel")
+				.addModifiers(Modifier.PUBLIC)
+				.returns(displayableCharacter)
+				.addStatement("return this.characterModel")
+				.build();
+		
+		MethodSpec setCharacterModel = MethodSpec.methodBuilder("setCharacterModel")
+				.addModifiers(Modifier.PUBLIC)
+				.addParameter(displayableCharacter, "model")
+				.addStatement("this.characterModel = model")
 				.build();
 
 		TypeSpec.Builder adtBuilder = TypeSpec.classBuilder(name).addModifiers(Modifier.PUBLIC).superclass(superClass)
@@ -912,6 +957,10 @@ public class ADTGenerator implements CodeGeneratorConstants {
 
 		if (objType.getType() == SimSEObjectTypeTypes.EMPLOYEE || objType.getType() == SimSEObjectTypeTypes.CUSTOMER) {
 			adtBuilder.addMethod(setText);
+		}
+		
+		if(objType.getType() == SimSEObjectTypeTypes.EMPLOYEE) {
+			adtBuilder.addMethod(setCharacterModel).addMethod(getCharacterModel);
 		}
 		
 		MethodSpec getKey = MethodSpec.methodBuilder("getKeyAsString")

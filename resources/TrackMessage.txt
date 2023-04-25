@@ -26,7 +26,10 @@ public class TrackMessage extends Pane implements Cloneable{
 		String imageUrl = TabPanel.getImage(this.sender);
 		
 		ImageView img = JavaFXHelpers.createImageView(imageUrl);
-		pane.add(img, 0, 0);
+		if(img != null) {
+			pane.add(img, 0, 0);
+		}
+		
 		
 		String key = "";
 		if (sender instanceof Employee) {
