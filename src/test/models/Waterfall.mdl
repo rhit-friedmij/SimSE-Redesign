@@ -3,8 +3,8 @@ false
 <endAllowHireFire>
 <beginModelOptions>
 true
-C:\Users\Emily\Documents\workspace\res\models\waterfall\icons
-C:\Users\Emily\Documents\workspace\waterfallGame
+C:\Users\jurgenkr\Documents\GitHub\SeniorProject\WaterfallModelRedesign\src\simse\gui\icons
+C:\Users\jurgenkr\Documents\GitHub\SeniorProject\Waterfall
 true
 true
 <endModelOptions>
@@ -24765,7 +24765,7 @@ Emp
 SoftwareEngineer
 <beginActionTypeParticipantAttributeConstraint>
 Name
-<
+=
 <>
 false
 <endActionTypeParticipantAttributeConstraint>
@@ -24789,25 +24789,25 @@ false
 <endActionTypeParticipantAttributeConstraint>
 <beginActionTypeParticipantAttributeConstraint>
 RequirementsExperience
-<
+=
 <>
 false
 <endActionTypeParticipantAttributeConstraint>
 <beginActionTypeParticipantAttributeConstraint>
 DesignExperience
-<
+=
 <>
 false
 <endActionTypeParticipantAttributeConstraint>
 <beginActionTypeParticipantAttributeConstraint>
 CodingExperience
-<
+=
 <>
 false
 <endActionTypeParticipantAttributeConstraint>
 <beginActionTypeParticipantAttributeConstraint>
 TestingExperience
-<
+=
 <>
 false
 <endActionTypeParticipantAttributeConstraint>
@@ -24909,7 +24909,7 @@ false
 <endActionTypeParticipantAttributeConstraint>
 <beginActionTypeParticipantAttributeConstraint>
 OnBreak
-<
+=
 <>
 false
 <endActionTypeParticipantAttributeConstraint>
@@ -24935,7 +24935,7 @@ Emp
 SoftwareEngineer
 <beginActionTypeParticipantAttributeConstraint>
 Name
-<
+=
 <>
 false
 <endActionTypeParticipantAttributeConstraint>
@@ -24959,25 +24959,25 @@ false
 <endActionTypeParticipantAttributeConstraint>
 <beginActionTypeParticipantAttributeConstraint>
 RequirementsExperience
-<
+=
 <>
 false
 <endActionTypeParticipantAttributeConstraint>
 <beginActionTypeParticipantAttributeConstraint>
 DesignExperience
-<
+=
 <>
 false
 <endActionTypeParticipantAttributeConstraint>
 <beginActionTypeParticipantAttributeConstraint>
 CodingExperience
-<
+=
 <>
 false
 <endActionTypeParticipantAttributeConstraint>
 <beginActionTypeParticipantAttributeConstraint>
 TestingExperience
-<
+=
 <>
 false
 <endActionTypeParticipantAttributeConstraint>
@@ -25079,7 +25079,7 @@ false
 <endActionTypeParticipantAttributeConstraint>
 <beginActionTypeParticipantAttributeConstraint>
 OnBreak
-<
+=
 <>
 false
 <endActionTypeParticipantAttributeConstraint>
@@ -43443,23 +43443,11 @@ eddie_murphy.gif
 <endGraphics>
 <beginMap>
 <beginSOPUsers>
-- Employee - SoftwareEngineer - Andre
+- Employee - SoftwareEngineer - Pedro
 true
 true
-3
-1
-
-- Employee - SoftwareEngineer - Anita
-true
-true
-13
-8
-
-- Employee - SoftwareEngineer - Mimi
-true
-true
-2
 7
+1
 
 - Employee - SoftwareEngineer - Calvin
 true
@@ -43467,23 +43455,35 @@ true
 9
 4
 
-- Employee - SoftwareEngineer - Pedro
+- Employee - SoftwareEngineer - Mimi
 true
 true
+2
 7
-1
 
-- Employee - SoftwareEngineer - Roger
+- Employee - SoftwareEngineer - Andre
 true
 true
-5
-8
+3
+1
 
 - Employee - SoftwareEngineer - Emily
 true
 true
 13
 2
+
+- Employee - SoftwareEngineer - Anita
+true
+true
+13
+8
+
+- Employee - SoftwareEngineer - Roger
+true
+true
+5
+8
 
 <endSOPUsers>
 401
