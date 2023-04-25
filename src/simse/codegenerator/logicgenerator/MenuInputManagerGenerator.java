@@ -408,7 +408,7 @@ public class MenuInputManagerGenerator implements CodeGeneratorConstants {
 							lambda.addStatement("d.setContentText(($S + v$L))", "Your score is ", j);
 							lambda.addStatement("d.setTitle($S)", "Game over!");
 							lambda.addStatement("d.setHeaderText(null)");
-							lambda.addStatement("d.showAndWait()");
+							lambda.addStatement("d.show()");
 							lambda.endControlFlow();
 							lambda.endControlFlow(); // game ending if condition
 						}
@@ -875,7 +875,7 @@ public class MenuInputManagerGenerator implements CodeGeneratorConstants {
 							effectCode.addStatement("d.setContentText(($S + v))", "Your score is ");
 							effectCode.addStatement("d.setTitle($S)", "Game over!");
 							effectCode.addStatement("d.setHeaderText(null)");
-							effectCode.addStatement("d.showAndWait()");
+							effectCode.addStatement("d.show()");
 							effectCode.endControlFlow();
 							effectCode.endControlFlow(); // game ending if condition
 						}
