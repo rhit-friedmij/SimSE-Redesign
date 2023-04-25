@@ -140,7 +140,7 @@ public class EmployeesPanelGenerator implements CodeGeneratorConstants {
     		  .addStatement("$N.setId(\"actionPanelVBox\")", "layout")
     		  .addStatement("$N = new $T()", "employeePane", scrollpane)
     		  .addStatement("$N.setId(\"scrollPaneActionPanel\")", "employeePane")
-    		  .addStatement("$N.setPrefSize(225, 425)", "employeePane")
+    		  .addStatement("$N.setPrefSize(225, 600)", "employeePane")
     		  .addStatement("$N.setId(\"ActionPanelMain\")", "employeePane")
     		  .addStatement("empsToEmpPanels = new $T()", hashEmpVB)
     		  .addStatement("empsToPicPanels = new $T()", hashEmpHB)
