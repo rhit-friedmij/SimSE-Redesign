@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
@@ -43,12 +44,11 @@ public class LogoPanel extends Pane implements EventHandler<MouseEvent> {
 		this.setBackground(JavaFXHelpers.createBackgroundColor(Color.rgb(102, 102, 102, 1)));
 	
 		aboutButton = new Button("", JavaFXHelpers.createImageView(path + "simselogo-about.gif"));
-		aboutButton.setPadding(new Insets(0,-5,-5,0));
+		aboutButton.setPadding(new Insets(-1,-5,-5,-5));
 		aboutButton.addEventHandler(MouseEvent.ANY, this);
 	
 		
 		this.getChildren().add(aboutButton);
-		
 
 	}
 
