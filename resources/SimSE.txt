@@ -42,7 +42,7 @@ public class SimSE extends Application {
     state.getClock().setGUI(gui);
     gui.setX(0);
     gui.setY(0);
-    gui.setWidth(1300);
+    gui.setWidth(1500);
     gui.setHeight(760);
     gui.setResizable(false);
     RuleCategories.initializeRuleCategories();
