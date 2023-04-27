@@ -65,6 +65,7 @@ public class TabPanelGenerator implements CodeGeneratorConstants {
     try {
     	
     	ClassName enumeration = ClassName.get("java.util", "Enumeration");
+    	ClassName hBox = ClassName.get("javafx.scene.layout", "HBox");
     	ClassName hashtable = ClassName.get("java.util", "Hashtable");
     	ClassName vector = ClassName.get("java.util", "Vector");
     	ClassName actionevent = ClassName.get("javafx.event", "ActionEvent");
@@ -233,11 +234,9 @@ public class TabPanelGenerator implements CodeGeneratorConstants {
     		  .addStatement("$N = new $T().getBorder()", "defaultBorder", button)
     		  .addStatement("$N = new $T(new $T($T.BLACK, $T.SOLID, $T.EMPTY, $T.DEFAULT))", "selectedBorder", border, borderstroke, color, borderstrokestyle, cornerradii, borderwidths)
     		  .addStatement("// Create main panel:")
-    		  .addStatement("$N = new $T()", "gridPane", gridpane)
-    		  .addStatement("$N.setPrefWidth(1024)", "gridPane")
+    		  .addStatement("$N = new $T", "mainPane", hbox)
     		  .addStatement("$N = new LogoPanel($N)", "logoPane", "gui")
-    		  .addStatement("$N.setMinSize(340, 90)", "logoPane")
-    		  .addStatement("$N.setPrefSize(340, 90)", "logoPane")
+    		  .addStatement("$N.setPrefSize(540, 90)", "logoPane")
     		  .addStatement("$N.setTabPanel(this)", "logoPane")
     		  .addStatement("// Create buttons pane:")
     		  .addStatement("$N = new $T()", "buttonsPane", flowpane)
@@ -248,14 +247,7 @@ public class TabPanelGenerator implements CodeGeneratorConstants {
     		  .addStatement("$N = new ClockPanel(gui, s, e)", "clockPane")
     		  .addStatement("$N.setPrefSize(250, 100)", "clockPane")
     		  .addStatement("// Add panes and labels to main pane:")
-    		  .addStatement("$N.setHgap(10)", "gridPane")
-    		  .addStatement("$N.setVgap(10)", "gridPane")
-    		  .addStatement("$N.setPadding(new $T(0, 0, 0, 0))", "gridPane", insets)
-    		  .addStatement("$N.get$T().add(new ColumnConstraints($N.getWidth() + 100))", "gridPane", columnconstraints, "logoPane")
-    		  .addStatement("// Add Logo Pane:")
-    		  .addStatement("$T.setConstraints(logoPane, 0, 0, 2, 1, $T.LEFT, $T.TOP, $T.NEVER, $T.NEVER, new $T(0, 0, 0, 0))", gridpane, hpos, vpos, priority, priority, insets)
-    		  .addStatement("$N.add(logoPane, 0, 0)", "gridPane")
-    		  .addStatement("// Add panes and labels to main pane")
+    		  .addStatement("$N.getChildren().add($N)", "mainPane", "logoPane")
     		  .addStatement("$T buttons = new $T()", hbox, hbox)
     		  .addStatement("buttons.setSpacing(40)")
     		  .addStatement("$T $N = new $T(\"Project\")", button, "projectButton", button)
@@ -288,8 +280,8 @@ public class TabPanelGenerator implements CodeGeneratorConstants {
     		  .addStatement("$T.setMargin(panelsButton, new $T(15, 0, 0, 0))", hbox, insets)
     		  .addStatement("panelsButton.setOnAction($L)", panelButt)
     		  .addStatement("buttons.getChildren().add(panelsButton)")
-    		  .addStatement("$N.add(buttons, 2, 0)", "gridPane")
-    		  .addStatement("$N.add(clockPane, 4, 0)", "gridPane")
+    		  .addStatement("$N.getChildren.add(buttons)", "mainPane")
+    		  .addStatement("$N.getChildren.add(clockPane)", "mainPane")
     		  .addStatement("setPrefSize(1920, 100)")
     		  .addStatement("updateImages(EMPLOYEE)")
     		  .addStatement("this.getChildren().add($N)", "gridPane")
@@ -576,7 +568,7 @@ public class TabPanelGenerator implements CodeGeneratorConstants {
     		  .addField(clockpanel, "clockPane", Modifier.PRIVATE)
     		  .addField(trackpanel, "trackPane", Modifier.PRIVATE)
     		  .addField(mellopanel, "melloPane", Modifier.PRIVATE)
-    		  .addField(gridpane, "gridPane", Modifier.PRIVATE)
+    		  .addField(hbox, "mainPane", Modifier.PRIVATE)
     		  .addField(boolean.class, "guiChanged", Modifier.PRIVATE)
     		  .addField(buttonArray, "artifactButton", Modifier.PRIVATE)
     		  .addField(buttonArray, "customerButton", Modifier.PRIVATE)
