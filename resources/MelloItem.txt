@@ -2,11 +2,18 @@ package simse.gui;
 
 import java.util.Vector;
 
+import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
+import simse.adts.objects.Employee;
 import simse.gui.util.JavaFXHelpers;
 
 public class MelloItem extends Pane implements Cloneable{
@@ -17,22 +24,31 @@ public class MelloItem extends Pane implements Cloneable{
 	public MelloItem(String item, Vector<Object> workers) {
 		this.task = item;
 		this.employees = workers;
-		HBox box = new HBox();
+		VBox box = new VBox();
 		
-		HBox textBox = new HBox();
-		textBox.setBackground(JavaFXHelpers.createBackgroundColor(Color.rgb(128, 128, 128)));
-		textBox.getChildren().add(new Text(task));
+		Font nameFont = Font.font("Helvetica", FontWeight.BOLD, 10);
+		Label textBox = new Label(task);
+		textBox.setTextAlignment(TextAlignment.CENTER);
+		textBox.setFont(nameFont);
+		textBox.setBackground(JavaFXHelpers.createBackgroundColor(Color.rgb(255, 255, 255)));
+		box.setBackground(JavaFXHelpers.createBackgroundColor(Color.rgb(255, 255, 255)));
 		
 		box.getChildren().add(textBox);
 		
+		FlowPane imgPane = new FlowPane();
+		imgPane.setPrefWrapLength(130);
+		
 		for (Object worker : workers) {
-			String imgName = TabPanel.getImage(worker);
-			ImageView img = JavaFXHelpers.createImageView(imgName);
+			ImageView img = null;
+			if(worker instanceof Employee) {
+				img = ((Employee) worker).getCharacterModel().getDisplayedCharacter(true);
+			}
 			if(img != null) {
-				box.getChildren().add(img);
+				imgPane.getChildren().add(img);
 			}
 			
 		}
+		box.getChildren().add(imgPane);
 		
 		this.getChildren().add(box);
 	}
