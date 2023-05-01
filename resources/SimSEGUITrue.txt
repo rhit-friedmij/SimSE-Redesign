@@ -101,7 +101,11 @@ public class SimSEGUI extends Stage implements EventHandler<Event> {
 					engine.stopTimer();
 				}
 				close();
-				SimSE.main(new String[] {});
+				State newState = new State();
+				Logic newLogic = new Logic(newState);
+				Engine newEngine = new Engine(newLogic, newState);
+				newEngine.giveGUI(SimSEGUI.this);
+				SimSEGUI.this.reset(newEngine, newState, newLogic);
 			}
     	}
     };
