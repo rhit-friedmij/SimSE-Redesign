@@ -39,7 +39,7 @@ public class TrackPanel extends Pane implements SimSEPanel, Cloneable {
 		track.setBackground(JavaFXHelpers.createBackgroundColor(Color.rgb(217, 217, 217)));
 		scroll.setBackground(JavaFXHelpers.createBackgroundColor(Color.rgb(217, 217, 217)));
 		scroll.setContent(track);
-		scroll.setPrefHeight(158);
+		scroll.setPrefHeight(110);
 		scroll.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
 		scroll.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
 		scroll.setVvalue(1.0);

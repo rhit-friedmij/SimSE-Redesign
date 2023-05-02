@@ -149,6 +149,7 @@ public class EmployeesPanelGenerator implements CodeGeneratorConstants {
     		  .addStatement("$T titlePanel = new $T(\"$T Panel\", $N)", titledpane, titledpane, employee, "employeePane")
     		  .addStatement("titlePanel.set$T(Border.EMPTY)", border)
     		  .addStatement("titlePanel.setId(\"ActionTitlePanel\")")
+    		  .addStatement("titlePanel.setCollapsible(false)")
     		  .addStatement("titlePanel.setBackground($T.createBackground$T(Color.rgb(102, 102, 102, 1)))", javafxhelpers, color)
     		  .addStatement("$N = null", "selectedEmp")
     		  .addStatement("$N = new $T()", "popup", contextmenu)
