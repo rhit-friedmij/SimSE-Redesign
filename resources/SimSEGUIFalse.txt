@@ -168,13 +168,14 @@ public class SimSEGUI extends Stage implements EventHandler<Event> {
 		panel1.getChildren().add(infoPanel);
 		panel2.getChildren().add(trackPanel);
 		panelContainer.setPrefWidth(bPane.getWidth());
+		panelContainer.setPrefHeight(150);
 		bPane.setBottom(panelContainer);
 		panel3.getChildren().add(employeesPanel);
 		panel3.setPrefHeight(450);
 		bPane.setRight(panel3);
 		tabPanel.update();
 		
-		bPane.setPrefSize(1024, 710);
+		bPane.setPrefSize(1500, 800);
 		VBox panes = new VBox();
 		panes.getChildren().addAll(menuBar, bPane);
 		Scene mainPane = new Scene(panes);

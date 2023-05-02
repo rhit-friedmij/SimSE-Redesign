@@ -3,14 +3,19 @@ package simse.gui;
 import java.util.HashMap;
 import java.util.Vector;
 
+import javafx.geometry.HPos;
 import javafx.scene.Node;
+import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
 import simse.gui.util.JavaFXHelpers;
 import simse.state.State;
 
@@ -27,11 +32,12 @@ public class MelloPanel extends Pane implements SimSEPanel, Cloneable{
 		VBox pane = new VBox();
 		HBox top = new HBox();
 		top.getChildren().add(JavaFXHelpers.createImageView("src/simse/gui/icons/mello.png"));
-		top.getChildren().add(new Text("Mello"));
 		top.setPrefWidth(600);
-		top.setBackground(JavaFXHelpers.createBackgroundColor(Color.rgb(128, 128, 128)));
+		top.setBackground(JavaFXHelpers.createBackgroundColor(Color.rgb(247, 247, 247)));
 		
 		inProgress = new ScrollPane();
+		inProgress.setPrefHeight(91);
+		inProgress.setPrefWidth(150);
 		prog = new VBox();
 		prog.heightProperty().addListener(observable -> inProgress.setVvalue(1D));
 		prog.setBackground(JavaFXHelpers.createBackgroundColor(Color.rgb(217, 217, 217)));
@@ -43,6 +49,8 @@ public class MelloPanel extends Pane implements SimSEPanel, Cloneable{
 		inProgress.setFitToWidth(true);
 		
 		complete = new ScrollPane();
+		complete.setPrefHeight(91);
+		complete.setPrefWidth(150);
 		comp = new VBox();
 		comp.heightProperty().addListener(observable -> complete.setVvalue(1D));
 		comp.setBackground(JavaFXHelpers.createBackgroundColor(Color.rgb(217, 217, 217)));
@@ -54,14 +62,27 @@ public class MelloPanel extends Pane implements SimSEPanel, Cloneable{
 		complete.setFitToWidth(true);
 		
 		mello = new GridPane();
-		mello.setBackground(JavaFXHelpers.createBackgroundColor(Color.rgb(217, 217, 217)));
-		inProgress.setBackground(JavaFXHelpers.createBackgroundColor(Color.rgb(217, 217, 217)));
-		complete.setBackground(JavaFXHelpers.createBackgroundColor(Color.rgb(217, 217, 217)));
-		prog.setBackground(JavaFXHelpers.createBackgroundColor(Color.rgb(217, 217, 217)));
-		comp.setBackground(JavaFXHelpers.createBackgroundColor(Color.rgb(217, 217, 217)));
+		mello.setHgap(5);
+		mello.setBackground(JavaFXHelpers.createBackgroundColor(Color.rgb(96, 164, 214)));
+		inProgress.setBackground(JavaFXHelpers.createBackgroundColor(Color.rgb(247,248,249)));
+		complete.setBackground(JavaFXHelpers.createBackgroundColor(Color.rgb(247,248,249)));
+		prog.setBackground(JavaFXHelpers.createBackgroundColor(Color.rgb(247,248,249)));
+		comp.setBackground(JavaFXHelpers.createBackgroundColor(Color.rgb(247,248,249)));
 		
-		mello.add(new Text("In Progress"), 0, 0);
-		mello.add(new Text("Complete"), 1, 0);
+		
+		Font nameFont = Font.font("Helvetica", FontWeight.BOLD, 14);
+		
+		Label inProgText = new Label("In Progress");
+		Label completeText = new Label("Complete");
+		inProgText.setFont(nameFont);
+		completeText.setFont(nameFont);
+		
+		
+		GridPane.setHalignment(inProgText, HPos.CENTER);
+		GridPane.setHalignment(completeText, HPos.CENTER);
+		
+		mello.add(inProgText, 0, 0);
+		mello.add(completeText, 1, 0);
 		mello.add(inProgress, 0, 1);
 		mello.add(complete, 1, 1);
 		
@@ -69,7 +90,7 @@ public class MelloPanel extends Pane implements SimSEPanel, Cloneable{
 		pane.getChildren().add(mello);
 		
 		
-
+		this.setPrefHeight(10);
 		this.getChildren().add(pane);
 	}
 	

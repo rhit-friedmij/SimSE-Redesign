@@ -36,8 +36,8 @@ public class World extends SimSEMap implements EventHandler<Event> {
 	public final int xViewable = 9;
 	public final int yViewable = 9;
 	
-	private final double width = 1180;
-	private final double height = 720;
+	private final double width = 1300;
+	private final double height = 760;
 	private final double MOUSE_SPACER_X = 23.6;
 	private final double MOUSE_SPACER_Y = 163.3;
 

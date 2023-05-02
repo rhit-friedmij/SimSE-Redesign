@@ -17,7 +17,7 @@ public class StyleSheetGenerator {
 	public void generate() {
 		// TODO Auto-generated method stub
 	    File stylesheetFile = new File(dir,
-	            ("styles.css"));
+	            ("style.css"));
 	    
 	        if (stylesheetFile.exists()) {
 	        	stylesheetFile.delete(); // delete old version of file
