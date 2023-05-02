@@ -119,10 +119,10 @@ public class SimSEGUI extends Stage implements EventHandler<Event> {
 		engine = e;
 
 		expTool = new ExplanatoryTool(state.getLogger().getLog(), branch, timelinesBrowser);
-
+		esp = EmployeeStateRepository.getInstance(state);
 		infoPanel = new InformationPanel(this, state, engine);
 		tabPanel = new TabPanel(this, state, logic, engine, infoPanel, expTool);
-		employeesPanel = new EmployeesPanel(this, state, logic);
+		employeesPanel = new EmployeesPanel(this, state, logic, esp.getAll());
 		artifactsPanel = new ArtifactsPanel(this, state, logic);
 		projectsPanel = new ProjectsPanel(this, state, logic);
 		objGraphPanel = new ObjectGraphPanel(this);
@@ -158,7 +158,7 @@ public class SimSEGUI extends Stage implements EventHandler<Event> {
 		// Create main panel:
         BorderPane bPane = new BorderPane();
 		bPane.setTop(tabPanel);
-		world = new World(state, logic, this);
+		world = new World(state, logic, this, esp.getAll());
 		bPane.setCenter(world);
 		HBox panelContainer = new HBox(panel1, panel2);
 		panel1.getChildren().add(infoPanel);

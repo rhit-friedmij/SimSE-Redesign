@@ -172,9 +172,9 @@ public abstract class DisplayableCharacter extends Group{
 		   
 		   if(currentX == previousX && currentY == previousY) {
 			   if(starting) {
-				   displayedCharacter = pathToFollow.getEndingAnimation();
+				   displayedCharacter = animationList.get(0);
 			   } else {
-				   displayedCharacter = pathToFollow.getStartingAnimation();
+				   displayedCharacter = animationList.get(0);
 			   }
 		   }
 		   

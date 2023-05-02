@@ -56,6 +56,7 @@ public class World extends SimSEMap implements EventHandler<Event> {
 	private ContextMenu popup;
 	private PopupListener popupListener;
 
+	private Vector<Employee> employeeList;
 	private Employee selectedEmployee;
 
 	// how much to shift the map when a resize of the screen occurs:
@@ -74,8 +75,9 @@ public class World extends SimSEMap implements EventHandler<Event> {
 		}
 	};
 
-	public World(State s, Logic l, SimSEGUI parent) {
+	public World(State s, Logic l, SimSEGUI parent, Vector<Employee> employeeList) {
 		super(s, l);
+		this.employeeList = employeeList;
 		mainGUIFrame = parent;
 		overheadTextDisplayed = false;
 		
@@ -111,8 +113,8 @@ public class World extends SimSEMap implements EventHandler<Event> {
 		mapView.setImage(new Image(inputStream));
 		
 		this.getChildren().add(mapView);
-		
-		Vector<Employee> allEmp = state.getEmployeeStateRepository().getAll();
+				
+		Vector<Employee> allEmp = employeeList;
 		
 		for (int i = 0; i < allEmp.size(); i++) {
 			DisplayableCharacter tmpChar = allEmp.get(i).getCharacterModel();
@@ -223,7 +225,7 @@ public class World extends SimSEMap implements EventHandler<Event> {
 		// check if any new emps have been added:
 		if (sopUsers.size() < state.getEmployeeStateRepository().getAll().size()) // new emps have been added
 		{
-			Vector<Employee> allEmps = state.getEmployeeStateRepository().getAll();
+			Vector<Employee> allEmps = employeeList;
 			for (int i = 0; i < allEmps.size(); i++) {
 				Employee tempEmp = allEmps.elementAt(i);
 				boolean newEmp = true;

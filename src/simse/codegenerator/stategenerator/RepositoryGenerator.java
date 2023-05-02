@@ -451,6 +451,10 @@ public class RepositoryGenerator implements CodeGeneratorConstants {
     
     MethodSpec.Builder constructorBuilder = MethodSpec.constructorBuilder();
     
+    ClassName employeeStateRepoClass = ClassName.get("simse.state", "EmployeeStateRepository");
+    ClassName state = ClassName.get("simse.state", "State");
+    ClassName hashMap = ClassName.get("java.util", "HashMap");
+    
     for (int i = 0; i < objs.size(); i++) {
         SimSEObjectType tempType = objs.elementAt(i);
         ClassName tempClass = ClassName.get("simse.state", CodeGeneratorUtils.
@@ -497,6 +501,8 @@ public class RepositoryGenerator implements CodeGeneratorConstants {
     MethodSpec getAll = getAllBuilder
     		.addStatement("return all")
     		.build();
+    
+
     		
     TypeSpec.Builder repStateRepoBuilder = TypeSpec.classBuilder(typeName + "StateRepository")
     		.addModifiers(Modifier.PUBLIC)
@@ -527,6 +533,47 @@ public class RepositoryGenerator implements CodeGeneratorConstants {
         		.build();
         
         repStateRepoBuilder.addMethod(tempMethod);
+      }
+    
+    MethodSpec getInstance = MethodSpec.methodBuilder("getInstance")
+    		.addModifiers(Modifier.PUBLIC, Modifier.STATIC)
+    		.addParameter(state, "state")
+    		.returns(employeeStateRepoClass)
+    		.addStatement("return instances.get(state)")
+    		.build();
+    
+    MethodSpec createInstanceOneState = MethodSpec.methodBuilder("createInstance")
+    		.addModifiers(Modifier.PUBLIC, Modifier.STATIC)
+    		.addParameter(state, "state")
+    		.addStatement("instances.put(state, new $T())", employeeStateRepoClass)
+    		.build();
+    		
+    MethodSpec createInstanceOldState = MethodSpec.methodBuilder("createInstance")
+    		.addModifiers(Modifier.PUBLIC, Modifier.STATIC)
+    		.addParameter(state, "newState")
+    		.addParameter(state, "oldState")
+    		.addStatement("$T oldInstance = instances.get(oldState)", employeeStateRepoClass)
+    		.addStatement("instances.put(newState, ($T)oldInstance.clone())", employeeStateRepoClass)
+    		.build();
+    
+    MethodSpec stateExists = MethodSpec.methodBuilder("stateExists")
+    		.addModifiers(Modifier.PUBLIC, Modifier.STATIC)
+    		.returns(boolean.class)
+    		.addStatement("return instances.containsKey(state)")
+    		.build();
+    
+    for (int i = 0; i < objs.size(); i++) {
+        SimSEObjectType tempType = objs.elementAt(i);
+        if(tempType.equals("Employee")) {
+        	repStateRepoBuilder.addMethod(getInstance)
+        					.addMethod(createInstanceOneState)
+        					.addMethod(createInstanceOldState)
+        					.addMethod(stateExists)
+        					.addField(FieldSpec.builder(
+        							ParameterizedTypeName.get(hashMap, state, employeeStateRepoClass), "instances", Modifier.PRIVATE, Modifier.STATIC)
+        							.initializer("new $T<>()", hashMap).build());
+        							
+        }
       }
     
     TypeSpec repStateRepo = repStateRepoBuilder.build();
