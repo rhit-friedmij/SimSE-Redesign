@@ -251,7 +251,6 @@ public class SimSEGUI extends Stage implements EventHandler<Event> {
 			close();
 		} else if (event.getEventType() ==  ActionEvent.ACTION) {
 			Object source = event.getSource(); // get which component the action came from
-			System.out.println("Got action event from " + source.toString());
 			if (source == analyzeSimItem) {
 				if (expTool.isIconified()) {
 					expTool.setIconified(false);
