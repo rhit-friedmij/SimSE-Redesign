@@ -823,7 +823,7 @@ public class EffectRuleInfoForm extends JDialog implements ActionListener,
   }
 
   private void refreshTimingButtons() {
-    int timing = ruleInFocus.getTiming();
+	int timing = ruleInFocus.getTiming();
     if (timing == RuleTiming.CONTINUOUS) {
       continuousButton.setSelected(true);
       triggerButton.setSelected(false);
@@ -1046,6 +1046,10 @@ public class EffectRuleInfoForm extends JDialog implements ActionListener,
           }
         }
       }
+    }
+    // Due to current limitations with JavaFX Animations, rule inputs can only be used on trigger rules
+    if (ruleInFocus.getTiming() != RuleTiming.TRIGGER && ruleInputList.getModel().getSize() != 0) {
+    	messages.add("Rules with inputs must be a trigger rule");
     }
     return messages;
   }
