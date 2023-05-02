@@ -16,6 +16,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
+import simse.adts.objects.Employee;
 import simse.adts.objects.Project;
 import simse.adts.objects.Tool;
 import simse.state.State;
@@ -35,7 +36,7 @@ public class ProjectOverviewScreen extends Stage implements EventHandler<MouseEv
 	private TableModel<Tool> tableModel2;
 	private TableView<Tool> table2;
 	
-	private Button rules, projectTab, toolsTab, changeGraph, updateGraph;
+	private Button info, rules, projectTab, toolsTab, changeGraph, updateGraph;
 	private boolean lastClickedProject;
 	private int lastClickedToolIndex, lastClickedProjectIndex;
 	
@@ -71,6 +72,10 @@ public class ProjectOverviewScreen extends Stage implements EventHandler<MouseEv
 		mainPane.getChildren().add(graphPane);
 		
 		HBox buttonPane = new HBox();
+		
+		info = new Button ("More Detail on Selected Project/Tool");
+		info.addEventHandler(MouseEvent.MOUSE_CLICKED, this);
+		buttonPane.getChildren().add(info);
 		
 		rules = new Button("Rules for Projects/Tools");
 		rules.addEventHandler(MouseEvent.MOUSE_CLICKED, this);
@@ -142,7 +147,6 @@ public class ProjectOverviewScreen extends Stage implements EventHandler<MouseEv
 			name = tableModel.getData().get(lastClickedProjectIndex).getKeyAsString();
 		} else if(tableModel2.getData().size() > 0){
 			objType = tableModel2.getData().get(lastClickedToolIndex).getClass().getSimpleName();
-			System.out.println();
 			objTypeType = "Tool";
 			name = tableModel2.getData().get(lastClickedToolIndex).getKeyAsString();
 		}
@@ -187,7 +191,35 @@ public class ProjectOverviewScreen extends Stage implements EventHandler<MouseEv
 	@Override
 	public void handle(MouseEvent event) {
 		Object source = event.getSource();
-		if (source == rules) {
+		if (source == info) {
+			if (lastClickedProject) {
+				Project proj = null;
+				try {
+					proj =(Project) table.getSelectionModel().getSelectedItem();
+				} catch (ClassCastException ex) {}
+				
+				if (proj == null) {
+					Alert alert = new Alert(AlertType.WARNING, "Please select a project to get detailed information on");
+					alert.show();
+				} else {
+					ProjectInfoScreen infoScreen = new ProjectInfoScreen(state, gui, proj);
+					infoScreen.show();
+				}
+			} else {
+				Tool tool = null;
+				try {
+					tool = (Tool) table2.getSelectionModel().getSelectedItem();
+				} catch (ClassCastException ex) {}
+				
+				if (tool == null) {
+					Alert alert = new Alert(AlertType.WARNING, "Please select a tool to get detailed information on");
+					alert.show();
+				} else {
+					ToolInfoScreen infoScreen = new ToolInfoScreen(state, gui, tool);
+					infoScreen.show();
+				}
+			}
+		} else if (source == rules) {
 			RulesInfoScreen info = new RulesInfoScreen(state, RuleType.PROJECT);
 			info.show();
 		} else if (source == projectTab) {
@@ -224,5 +256,4 @@ public class ProjectOverviewScreen extends Stage implements EventHandler<MouseEv
 			updateGraph();
 		}
 	}
-
 }

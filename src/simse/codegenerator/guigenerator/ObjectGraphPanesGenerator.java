@@ -433,6 +433,11 @@ public class ObjectGraphPanesGenerator {
 		          al = al.concat("}");
 		          al = al.concat("\n");
 		        }
+		        
+		        al = al.concat(" else {\n");
+		        al = al.concat("String[] currAttributes = {};\n");
+		        al = al.concat("this.attributes = currAttributes;\n");
+		        al = al.concat("}\n");
 		  
 		  return al;
 	  }

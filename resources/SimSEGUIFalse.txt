@@ -101,7 +101,11 @@ public class SimSEGUI extends Stage implements EventHandler<Event> {
 					engine.stopTimer();
 				}
 				close();
-				SimSE.main(new String[] {});
+				State newState = new State();
+				Logic newLogic = new Logic(newState);
+				Engine newEngine = new Engine(newLogic, newState);
+				newEngine.giveGUI(SimSEGUI.this);
+				SimSEGUI.this.reset(newEngine, newState, newLogic);
 			}
     	}
     };
@@ -162,12 +166,14 @@ public class SimSEGUI extends Stage implements EventHandler<Event> {
 		bPane.setCenter(world);
 		HBox panelContainer = new HBox(panel1, panel2);
 		panel1.getChildren().add(infoPanel);
+		panel2.getChildren().add(trackPanel);
 		panelContainer.setPrefWidth(bPane.getWidth());
 		panelContainer.setPrefHeight(150);
 		bPane.setBottom(panelContainer);
 		panel3.getChildren().add(employeesPanel);
 		panel3.setPrefHeight(450);
 		bPane.setRight(panel3);
+		tabPanel.update();
 		
 		bPane.setPrefSize(1500, 800);
 		VBox panes = new VBox();
@@ -251,7 +257,6 @@ public class SimSEGUI extends Stage implements EventHandler<Event> {
 			close();
 		} else if (event.getEventType() ==  ActionEvent.ACTION) {
 			Object source = event.getSource(); // get which component the action came from
-			System.out.println("Got action event from " + source.toString());
 			if (source == analyzeSimItem) {
 				if (expTool.isIconified()) {
 					expTool.setIconified(false);

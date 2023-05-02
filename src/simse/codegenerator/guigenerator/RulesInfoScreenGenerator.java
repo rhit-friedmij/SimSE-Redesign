@@ -89,6 +89,7 @@ public class RulesInfoScreenGenerator {
 	    		  .addStatement("actionComboBoxPane.getChildren().add(new $T(\"Actions:\"))", label)
 	    		  .addStatement("$N = new ComboBox<String>(actions)", "actionComboBox")
 	    		  .addStatement("$N.setOnAction(event)", "actionComboBox")
+	    		  .addStatement("actionComboBoxPane.minWidthProperty().bind($N.widthProperty())", "actionComboBox")
 	    		  .addStatement("$NPane.getChildren().add(actionComboBox)", "actionComboBox")
 	    		  .addStatement("ruleSelectorPane.getChildren().add(actionComboBoxPane)")
 	    		  .addStatement("$T advancedRulesPane = new $T()", tilepane, tilepane)
