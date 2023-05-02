@@ -133,6 +133,7 @@ public class EmployeesPanelGenerator implements CodeGeneratorConstants {
     		  .addParameter(simsegui, "gui")
     		  .addParameter(state, "s")
     		  .addParameter(logic, "l")
+    		  .addParameter(ParameterizedTypeName.get(vector, employee), "employeeList")
     		  .addStatement("$N = s", "state")
     		  .addStatement("$N = l", "logic")
     		  .addStatement("$N = gui", "mainGUIFrame")
