@@ -43,6 +43,7 @@ public class SimSEGUI extends Stage implements EventHandler<Event> {
 	private EmployeesPanel employeesPanel;
 	private ArtifactsPanel artifactsPanel;
 	private ProjectsPanel projectsPanel;
+	private EmployeeStateRepository esp;
 	private TrackPanel trackPanel;
 	private MelloPanel melloPanel;
 	private ObjectGraphPanel objGraphPanel;

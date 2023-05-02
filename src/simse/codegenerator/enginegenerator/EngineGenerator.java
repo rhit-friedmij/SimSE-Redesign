@@ -123,7 +123,7 @@ public class EngineGenerator implements CodeGeneratorConstants {
 					objsBuilder.addStatement(strToWrite + ")", tempName);
 					if(objs.get(i).getSimSEObjectType().getType() == SimSEObjectTypeTypes.EMPLOYEE) {
 						objsBuilder.addStatement(SimSEObjectTypeTypes.getText(tempObj.getSimSEObjectType().getType())
-						+ "StateRepository().getInstance(state).get" + objTypeName + "StateRepository().add(a" + i + ")");
+						+ "StateRepository.getInstance(state).get" + objTypeName + "StateRepository().add(a" + i + ")");
 					} 
 					else {
 						objsBuilder.addStatement("state.get" + SimSEObjectTypeTypes.getText(tempObj.getSimSEObjectType().getType())
