@@ -28,8 +28,9 @@ public class SimSE extends Application {
   private static Engine engine;
 
   public static void startNewBranch(State state, Branch branch) {
+    String branchName = branch.getName();
     for (int i = 0; i < branches.size(); i++) {
-      if (branch.getName().equals(branches.get(i).getName())) {
+      if (branchName.equals(branches.get(i).getName()) || branchName.equals("")) {
         Alert alert = new Alert(AlertType.ERROR, "Please choose a unique name for your new branch", ButtonType.OK);
         alert.showAndWait();
         return;
@@ -42,8 +43,9 @@ public class SimSE extends Application {
     state.getClock().setGUI(gui);
     gui.setX(0);
     gui.setY(0);
-    gui.setWidth(1180);
-    gui.setHeight(720);
+    gui.setWidth(1300);
+    gui.setHeight(800);
+    gui.setResizable(false);
     RuleCategories.initializeRuleCategories();
     engine.giveGUI(gui);
     logic.getTriggerChecker().update(false, gui);

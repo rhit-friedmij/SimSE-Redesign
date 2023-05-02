@@ -12,20 +12,20 @@ public class MapData {
 	static final int Y_MAPSIZE = 10; // number of tiles along Y axis for map
 	
 	static final int MAPSIZE_SPACER_Y = 135;
-	static final int[] MAP_POS_0S = {629, 452 - MAPSIZE_SPACER_Y};
-	static final int[] MAP_POS_0E = {802, 526 - MAPSIZE_SPACER_Y};
-	static final int[] MAP_POS_1S = {588, 377 - MAPSIZE_SPACER_Y};
-	static final int[] MAP_POS_1E = {438, 292 - MAPSIZE_SPACER_Y};
-	static final int[] MAP_POS_2S = {672, 377 - MAPSIZE_SPACER_Y};
-	static final int[] MAP_POS_2E = {373, 251 - MAPSIZE_SPACER_Y};
-	static final int[] MAP_POS_3S = {842, 377 - MAPSIZE_SPACER_Y};
-	static final int[] MAP_POS_3E = {752, 481 - MAPSIZE_SPACER_Y};
-	static final int[] MAP_POS_4S = {698, 273 - MAPSIZE_SPACER_Y};
-	static final int[] MAP_POS_4E = {465, 256 - MAPSIZE_SPACER_Y};
-	static final int[] MAP_POS_5S = {782, 273 - MAPSIZE_SPACER_Y};
-	static final int[] MAP_POS_5E = {894, 203 - MAPSIZE_SPACER_Y};
-	static final int[] MAP_POS_6S = {52, 384 - MAPSIZE_SPACER_Y};
-	static final int[] MAP_POS_6E = {262, 296 - MAPSIZE_SPACER_Y};
+	static final int[] MAP_POS_0S = {700, 502 - MAPSIZE_SPACER_Y};
+	static final int[] MAP_POS_0E = {688, 572 - MAPSIZE_SPACER_Y};
+	static final int[] MAP_POS_1S = {655, 415 - MAPSIZE_SPACER_Y};
+	static final int[] MAP_POS_1E = {494, 304 - MAPSIZE_SPACER_Y};
+	static final int[] MAP_POS_2S = {692, 415 - MAPSIZE_SPACER_Y};
+	static final int[] MAP_POS_2E = {391, 265 - MAPSIZE_SPACER_Y};
+	static final int[] MAP_POS_3S = {940, 420 - MAPSIZE_SPACER_Y};
+	static final int[] MAP_POS_3E = {850, 524 - MAPSIZE_SPACER_Y};
+	static final int[] MAP_POS_4S = {698, 285 - MAPSIZE_SPACER_Y};
+	static final int[] MAP_POS_4E = {465, 268 - MAPSIZE_SPACER_Y};
+	static final int[] MAP_POS_5S = {782, 285 - MAPSIZE_SPACER_Y};
+	static final int[] MAP_POS_5E = {1010, 195 - MAPSIZE_SPACER_Y};
+	static final int[] MAP_POS_6S = {52, 414 - MAPSIZE_SPACER_Y};
+	static final int[] MAP_POS_6E = {292, 326 - MAPSIZE_SPACER_Y};
 
 	static final int TRANSPARENT = -1;
 	static final int TILE_GRID = 0;

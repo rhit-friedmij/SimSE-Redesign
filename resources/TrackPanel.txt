@@ -3,6 +3,7 @@ package simse.gui;
 import java.util.HashMap;
 
 import javafx.scene.control.ScrollPane;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -23,19 +24,22 @@ public class TrackPanel extends Pane implements SimSEPanel, Cloneable {
 		
 		VBox pane = new VBox();
 		HBox top = new HBox();
-		top.getChildren().add(JavaFXHelpers.createImageView("src/simse/gui/icons/track.png"));
-		top.getChildren().add(new Text("Track"));
-		top.setMaxHeight(50);
+		ImageView logo = JavaFXHelpers.createImageView("src/simse/gui/icons/track.png");
+		top.getChildren().add(logo);
+//		top.getChildren().add(new Text("Track"));
+		top.setPrefHeight(10);
 		top.setPrefWidth(500);
-		top.setBackground(JavaFXHelpers.createBackgroundColor(Color.rgb(128, 128, 128)));
+		pane.setPrefHeight(300);
+		top.setBackground(JavaFXHelpers.createBackgroundColor(Color.rgb(74, 21, 75)));
 		
 		scroll = new ScrollPane();
 		track = new VBox();
+		track.setSpacing(6);
 		track.heightProperty().addListener(observable -> scroll.setVvalue(1D));
 		track.setBackground(JavaFXHelpers.createBackgroundColor(Color.rgb(217, 217, 217)));
 		scroll.setBackground(JavaFXHelpers.createBackgroundColor(Color.rgb(217, 217, 217)));
 		scroll.setContent(track);
-		scroll.setMaxHeight(100);
+		scroll.setPrefHeight(110);
 		scroll.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
 		scroll.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
 		scroll.setVvalue(1.0);
@@ -44,7 +48,7 @@ public class TrackPanel extends Pane implements SimSEPanel, Cloneable {
 		pane.getChildren().add(scroll);
 		
 		
-
+		this.setPrefHeight(400);
 		this.getChildren().add(pane);
 	}
 	

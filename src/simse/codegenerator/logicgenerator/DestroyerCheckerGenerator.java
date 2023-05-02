@@ -232,7 +232,7 @@ public class DestroyerCheckerGenerator implements CodeGeneratorConstants {
 						conditions.addStatement("d.setContentText(($S + v))", "Your score is ");
 						conditions.addStatement("d.setTitle($S)", "Game over!");
 						conditions.addStatement("d.setHeaderText(null)");
-						conditions.addStatement("d.showAndWait()");
+						conditions.addStatement("d.show()");
 						conditions.endControlFlow(); // game ending if condition
 					}
 				}
@@ -419,7 +419,7 @@ public class DestroyerCheckerGenerator implements CodeGeneratorConstants {
 							conditions.addStatement("d.setContentText(($S + v))", "Your score is ");
 							conditions.addStatement("d.setTitle($S)", "Game over!");
 							conditions.addStatement("d.setHeaderText(null)");
-							conditions.addStatement("d.showAndWait()");
+							conditions.addStatement("d.show()");
 							conditions.endControlFlow(); // t != null
 							conditions.endControlFlow(); // game ending if condition
 						}

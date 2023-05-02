@@ -6,7 +6,10 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import simse.adts.objects.Customer;
 import simse.adts.objects.Employee;
@@ -25,25 +28,55 @@ public class TrackMessage extends Pane implements Cloneable{
 		
 		String imageUrl = TabPanel.getImage(this.sender);
 		
-		ImageView img = JavaFXHelpers.createImageView(imageUrl);
+		ImageView img = null;
+		
+		VBox trackMessage = new VBox();
+		
+		
+		String name = "";
+		if (sender instanceof Employee) {
+			name = ((Employee) sender).getKeyAsString();
+			img = ((Employee) sender).getCharacterModel().getDisplayedCharacter(true);
+		} else if (sender instanceof Customer) {
+			img = JavaFXHelpers.createImageView(TabPanel.getImage(this.sender));
+			name = ((Customer) sender).getKeyAsString();
+		}
+		
 		if(img != null) {
+			img.setScaleX(1.25);
+			img.setScaleY(1.25);
 			pane.add(img, 0, 0);
 		}
 		
+		Font nameFont = Font.font("Helvetica", FontWeight.BOLD, 20);
+		Font messageFont = Font.font("Helvetica", 11);
 		
-		String key = "";
-		if (sender instanceof Employee) {
-			key = ((Employee) sender).getKeyAsString();
-		} else if (sender instanceof Customer) {
-			key = ((Customer) sender).getKeyAsString();
-		}
-		pane.add(new Text(key), 1, 0);
+		
+		
+		Text messageSender = new Text(name);
+		messageSender.setFont(nameFont);
+		
+		trackMessage.getChildren().add(new Text(name));
+		
+//		pane.add(new Text(key), 1, 0);
 
 		HBox textBox = new HBox();
-		textBox.setBackground(JavaFXHelpers.createBackgroundColor(Color.rgb(255, 255, 255)));
-		textBox.getChildren().add(new Text(message));
-		pane.add(textBox, 1, 1);
+		textBox.setBackground(JavaFXHelpers.createBackgroundColor(Color.WHITE));
+		textBox.setPrefWidth(500);
 		
+		Text messageText = new Text(message);
+		messageText.setFont(messageFont);
+		
+		textBox.getChildren().add(messageText);
+//		pane.add(textBox, 1, 1);
+		
+		trackMessage.getChildren().add(textBox);
+		trackMessage.setBackground(JavaFXHelpers.createBackgroundColor(Color.WHITE));
+		
+		pane.add(trackMessage, 1, 0);
+		pane.setBackground(JavaFXHelpers.createBackgroundColor(Color.WHITE));
+		
+		this.setPrefWidth(500);
 		this.getChildren().add(pane);
 	}
 	

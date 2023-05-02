@@ -60,6 +60,7 @@ public class MultipleTimelinesBrowser extends Stage implements EventHandler<Mous
     			td.setTitle("Name New Branch");
     			td.setContentText("Please name this new game:");
     			td.setHeaderText(null);
+    			newBranchName = null;
     			Optional<String> result = td.showAndWait();
     			result.ifPresent(name -> {
     				this.newBranchName = name;
