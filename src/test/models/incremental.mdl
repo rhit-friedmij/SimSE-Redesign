@@ -3,7 +3,7 @@ false
 <endAllowHireFire>
 <beginModelOptions>
 true
-C:\Users\jurgenkr\Documents\GitHub\SeniorProject\WaterfallModelRedesign\src\simse\gui\icons
+C:\Users\jurgenkr\Documents\GitHub\SeniorProject\simse-redesign\src\test\models\resources
 C:\Users\jurgenkr\Documents\GitHub\SeniorProject\ModelGeneration
 true
 true
@@ -11,7 +11,7 @@ true
 <beginDefinedObjectTypes>
 <beginObjectType>
 2
-Module
+ModuleDoc
 <beginAttribute>
 Name
 1
@@ -520,7 +520,7 @@ Try not to get frustrated if the customer's changes confound your progress, over
 <endStartingNarrative>
 <beginObject>
 2
-Module
+ModuleDoc
 <beginInstantiatedAttribute>
 Name
 Module1
@@ -640,7 +640,7 @@ KnownIntegrationDifficulty
 <endObject>
 <beginObject>
 2
-Module
+ModuleDoc
 <beginInstantiatedAttribute>
 Name
 Module2
@@ -760,7 +760,7 @@ KnownIntegrationDifficulty
 <endObject>
 <beginObject>
 2
-Module
+ModuleDoc
 <beginInstantiatedAttribute>
 Name
 Module3
@@ -880,7 +880,7 @@ KnownIntegrationDifficulty
 <endObject>
 <beginObject>
 2
-Module
+ModuleDoc
 <beginInstantiatedAttribute>
 Name
 Module4
@@ -1222,7 +1222,7 @@ exactly
 <>
 <endActionTypeParticipantQuantity>
 <beginSSObjTypeNames>
-Module
+ModuleDoc
 <endSSObjTypeNames>
 <endActionTypeParticipant>
 <beginActionTypeParticipant>
@@ -1248,7 +1248,7 @@ false
 <beginActionTypeParticipantTrigger>
 Advance
 <beginActionTypeParticipantConstraint>
-Module
+ModuleDoc
 <beginActionTypeParticipantAttributeConstraint>
 Name
 =
@@ -1501,7 +1501,7 @@ false
 <beginActionTypeParticipantDestroyer>
 Advance
 <beginActionTypeParticipantConstraint>
-Module
+ModuleDoc
 <beginActionTypeParticipantAttributeConstraint>
 Name
 =
@@ -1778,7 +1778,7 @@ exactly
 <>
 <endActionTypeParticipantQuantity>
 <beginSSObjTypeNames>
-Module
+ModuleDoc
 <endSSObjTypeNames>
 <endActionTypeParticipant>
 <beginActionTypeParticipant>
@@ -1871,7 +1871,7 @@ false
 <beginActionTypeParticipantTrigger>
 TheModule
 <beginActionTypeParticipantConstraint>
-Module
+ModuleDoc
 <beginActionTypeParticipantAttributeConstraint>
 Name
 =
@@ -2167,7 +2167,7 @@ false
 <beginActionTypeParticipantDestroyer>
 TheModule
 <beginActionTypeParticipantConstraint>
-Module
+ModuleDoc
 <beginActionTypeParticipantAttributeConstraint>
 Name
 <
@@ -2462,7 +2462,7 @@ false
 <beginActionTypeParticipantDestroyer>
 TheModule
 <beginActionTypeParticipantConstraint>
-Module
+ModuleDoc
 <beginActionTypeParticipantAttributeConstraint>
 Name
 =
@@ -2715,7 +2715,7 @@ exactly
 <>
 <endActionTypeParticipantQuantity>
 <beginSSObjTypeNames>
-Module
+ModuleDoc
 <endSSObjTypeNames>
 <endActionTypeParticipant>
 <beginActionTypeParticipant>
@@ -2808,7 +2808,7 @@ false
 <beginActionTypeParticipantTrigger>
 TheModule
 <beginActionTypeParticipantConstraint>
-Module
+ModuleDoc
 <beginActionTypeParticipantAttributeConstraint>
 Name
 =
@@ -3103,7 +3103,7 @@ false
 <beginActionTypeParticipantDestroyer>
 TheModule
 <beginActionTypeParticipantConstraint>
-Module
+ModuleDoc
 <beginActionTypeParticipantAttributeConstraint>
 Name
 =
@@ -3399,7 +3399,7 @@ false
 <beginActionTypeParticipantDestroyer>
 TheModule
 <beginActionTypeParticipantConstraint>
-Module
+ModuleDoc
 <beginActionTypeParticipantAttributeConstraint>
 Name
 <
@@ -3638,7 +3638,7 @@ exactly
 <>
 <endActionTypeParticipantQuantity>
 <beginSSObjTypeNames>
-Module
+ModuleDoc
 <endSSObjTypeNames>
 <endActionTypeParticipant>
 <beginActionTypeParticipant>
@@ -3663,7 +3663,7 @@ false
 <beginActionTypeParticipantTrigger>
 Module
 <beginActionTypeParticipantConstraint>
-Module
+ModuleDoc
 <beginActionTypeParticipantAttributeConstraint>
 Name
 <
@@ -3916,7 +3916,7 @@ exactly
 <>
 <endActionTypeParticipantQuantity>
 <beginSSObjTypeNames>
-Module
+ModuleDoc
 <endSSObjTypeNames>
 <endActionTypeParticipant>
 <beginActionTypeParticipant>
@@ -4009,7 +4009,7 @@ false
 <beginActionTypeParticipantTrigger>
 Module
 <beginActionTypeParticipantConstraint>
-Module
+ModuleDoc
 <beginActionTypeParticipantAttributeConstraint>
 Name
 =
@@ -4304,7 +4304,7 @@ false
 <beginActionTypeParticipantDestroyer>
 Module
 <beginActionTypeParticipantConstraint>
-Module
+ModuleDoc
 <beginActionTypeParticipantAttributeConstraint>
 Name
 =
@@ -4600,7 +4600,7 @@ false
 <beginActionTypeParticipantDestroyer>
 Module
 <beginActionTypeParticipantConstraint>
-Module
+ModuleDoc
 <beginActionTypeParticipantAttributeConstraint>
 Name
 <
@@ -4853,7 +4853,7 @@ exactly
 <>
 <endActionTypeParticipantQuantity>
 <beginSSObjTypeNames>
-Module
+ModuleDoc
 <endSSObjTypeNames>
 <endActionTypeParticipant>
 <beginActionTypeParticipant>
@@ -4946,7 +4946,7 @@ false
 <beginActionTypeParticipantTrigger>
 Module
 <beginActionTypeParticipantConstraint>
-Module
+ModuleDoc
 <beginActionTypeParticipantAttributeConstraint>
 Name
 =
@@ -5242,7 +5242,7 @@ false
 <beginActionTypeParticipantDestroyer>
 Module
 <beginActionTypeParticipantConstraint>
-Module
+ModuleDoc
 <beginActionTypeParticipantAttributeConstraint>
 Name
 <
@@ -5537,7 +5537,7 @@ false
 <beginActionTypeParticipantDestroyer>
 Module
 <beginActionTypeParticipantConstraint>
-Module
+ModuleDoc
 <beginActionTypeParticipantAttributeConstraint>
 Name
 =
@@ -5776,7 +5776,7 @@ exactly
 <>
 <endActionTypeParticipantQuantity>
 <beginSSObjTypeNames>
-Module
+ModuleDoc
 <endSSObjTypeNames>
 <endActionTypeParticipant>
 <beginActionTypeParticipant>
@@ -5801,7 +5801,7 @@ false
 <beginActionTypeParticipantTrigger>
 Module
 <beginActionTypeParticipantConstraint>
-Module
+ModuleDoc
 <beginActionTypeParticipantAttributeConstraint>
 Name
 <
@@ -6030,7 +6030,7 @@ false
 <beginActionTypeParticipantDestroyer>
 Module
 <beginActionTypeParticipantConstraint>
-Module
+ModuleDoc
 <beginActionTypeParticipantAttributeConstraint>
 Name
 <
@@ -6283,7 +6283,7 @@ exactly
 <>
 <endActionTypeParticipantQuantity>
 <beginSSObjTypeNames>
-Module
+ModuleDoc
 <endSSObjTypeNames>
 <endActionTypeParticipant>
 <beginActionTypeParticipant>
@@ -6376,7 +6376,7 @@ false
 <beginActionTypeParticipantTrigger>
 Module
 <beginActionTypeParticipantConstraint>
-Module
+ModuleDoc
 <beginActionTypeParticipantAttributeConstraint>
 Name
 =
@@ -6672,7 +6672,7 @@ false
 <beginActionTypeParticipantDestroyer>
 Module
 <beginActionTypeParticipantConstraint>
-Module
+ModuleDoc
 <beginActionTypeParticipantAttributeConstraint>
 Name
 <
@@ -6967,7 +6967,7 @@ false
 <beginActionTypeParticipantDestroyer>
 Module
 <beginActionTypeParticipantConstraint>
-Module
+ModuleDoc
 <beginActionTypeParticipantAttributeConstraint>
 Name
 =
@@ -7206,7 +7206,7 @@ exactly
 <>
 <endActionTypeParticipantQuantity>
 <beginSSObjTypeNames>
-Module
+ModuleDoc
 <endSSObjTypeNames>
 <endActionTypeParticipant>
 <beginActionTypeParticipant>
@@ -7231,7 +7231,7 @@ false
 <beginActionTypeParticipantTrigger>
 Module
 <beginActionTypeParticipantConstraint>
-Module
+ModuleDoc
 <beginActionTypeParticipantAttributeConstraint>
 Name
 =
@@ -7484,7 +7484,7 @@ false
 <beginActionTypeParticipantDestroyer>
 Module
 <beginActionTypeParticipantConstraint>
-Module
+ModuleDoc
 <beginActionTypeParticipantAttributeConstraint>
 Name
 =
@@ -7832,7 +7832,7 @@ exactly
 <>
 <endActionTypeParticipantQuantity>
 <beginSSObjTypeNames>
-Module
+ModuleDoc
 <endSSObjTypeNames>
 <endActionTypeParticipant>
 <beginActionTypeParticipant>
@@ -7925,7 +7925,7 @@ false
 <beginActionTypeParticipantTrigger>
 Module
 <beginActionTypeParticipantConstraint>
-Module
+ModuleDoc
 <beginActionTypeParticipantAttributeConstraint>
 Name
 =
@@ -8220,7 +8220,7 @@ false
 <beginActionTypeParticipantDestroyer>
 Module
 <beginActionTypeParticipantConstraint>
-Module
+ModuleDoc
 <beginActionTypeParticipantAttributeConstraint>
 Name
 =
@@ -8516,7 +8516,7 @@ false
 <beginActionTypeParticipantDestroyer>
 Module
 <beginActionTypeParticipantConstraint>
-Module
+ModuleDoc
 <beginActionTypeParticipantAttributeConstraint>
 Name
 <
@@ -8755,7 +8755,7 @@ at least
 <>
 <endActionTypeParticipantQuantity>
 <beginSSObjTypeNames>
-Module
+ModuleDoc
 <endSSObjTypeNames>
 <endActionTypeParticipant>
 <beginActionTypeTrigger>
@@ -8767,7 +8767,7 @@ false
 <beginActionTypeParticipantTrigger>
 Module
 <beginActionTypeParticipantConstraint>
-Module
+ModuleDoc
 <beginActionTypeParticipantAttributeConstraint>
 Name
 =
@@ -8964,7 +8964,7 @@ exactly
 <>
 <endActionTypeParticipantQuantity>
 <beginSSObjTypeNames>
-Module
+ModuleDoc
 <endSSObjTypeNames>
 <endActionTypeParticipant>
 <beginActionTypeTrigger>
@@ -8976,7 +8976,7 @@ false
 <beginActionTypeParticipantTrigger>
 Module
 <beginActionTypeParticipantConstraint>
-Module
+ModuleDoc
 <beginActionTypeParticipantAttributeConstraint>
 Name
 =
@@ -9187,7 +9187,7 @@ exactly
 <>
 <endActionTypeParticipantQuantity>
 <beginSSObjTypeNames>
-Module
+ModuleDoc
 <endSSObjTypeNames>
 <endActionTypeParticipant>
 <beginActionTypeParticipant>
@@ -9280,7 +9280,7 @@ false
 <beginActionTypeParticipantTrigger>
 Module
 <beginActionTypeParticipantConstraint>
-Module
+ModuleDoc
 <beginActionTypeParticipantAttributeConstraint>
 Name
 =
@@ -9575,7 +9575,7 @@ false
 <beginActionTypeParticipantDestroyer>
 Module
 <beginActionTypeParticipantConstraint>
-Module
+ModuleDoc
 <beginActionTypeParticipantAttributeConstraint>
 Name
 =
@@ -9871,7 +9871,7 @@ false
 <beginActionTypeParticipantDestroyer>
 Module
 <beginActionTypeParticipantConstraint>
-Module
+ModuleDoc
 <beginActionTypeParticipantAttributeConstraint>
 Name
 <
@@ -10123,7 +10123,7 @@ exactly
 <>
 <endActionTypeParticipantQuantity>
 <beginSSObjTypeNames>
-Module
+ModuleDoc
 <endSSObjTypeNames>
 <endActionTypeParticipant>
 <beginActionTypeParticipant>
@@ -10216,7 +10216,7 @@ false
 <beginActionTypeParticipantTrigger>
 Module
 <beginActionTypeParticipantConstraint>
-Module
+ModuleDoc
 <beginActionTypeParticipantAttributeConstraint>
 Name
 <
@@ -10511,7 +10511,7 @@ false
 <beginActionTypeParticipantDestroyer>
 Module
 <beginActionTypeParticipantConstraint>
-Module
+ModuleDoc
 <beginActionTypeParticipantAttributeConstraint>
 Name
 <
@@ -10750,7 +10750,7 @@ at least
 <>
 <endActionTypeParticipantQuantity>
 <beginSSObjTypeNames>
-Module
+ModuleDoc
 <endSSObjTypeNames>
 <endActionTypeParticipant>
 <beginActionTypeParticipant>
@@ -10790,7 +10790,7 @@ true
 <beginActionTypeParticipantTrigger>
 Module
 <beginActionTypeParticipantConstraint>
-Module
+ModuleDoc
 <beginActionTypeParticipantAttributeConstraint>
 Name
 =
@@ -11095,7 +11095,7 @@ at least
 <>
 <endActionTypeParticipantQuantity>
 <beginSSObjTypeNames>
-Module
+ModuleDoc
 <endSSObjTypeNames>
 <endActionTypeParticipant>
 <beginActionTypeParticipant>
@@ -11134,7 +11134,7 @@ at least, at most
 2
 <endActionTypeParticipantQuantity>
 <beginSSObjTypeNames>
-Module
+ModuleDoc
 <endSSObjTypeNames>
 <endActionTypeParticipant>
 <beginActionTypeTrigger>
@@ -11148,7 +11148,7 @@ false
 <beginActionTypeParticipantTrigger>
 Module
 <beginActionTypeParticipantConstraint>
-Module
+ModuleDoc
 <beginActionTypeParticipantAttributeConstraint>
 Name
 =
@@ -11436,7 +11436,7 @@ false
 <beginActionTypeParticipantTrigger>
 OtherModule
 <beginActionTypeParticipantConstraint>
-Module
+ModuleDoc
 <beginActionTypeParticipantAttributeConstraint>
 Name
 <
@@ -11623,7 +11623,7 @@ false
 <beginActionTypeParticipantDestroyer>
 Module
 <beginActionTypeParticipantConstraint>
-Module
+ModuleDoc
 <beginActionTypeParticipantAttributeConstraint>
 Name
 <
@@ -11911,7 +11911,7 @@ false
 <beginActionTypeParticipantDestroyer>
 OtherModule
 <beginActionTypeParticipantConstraint>
-Module
+ModuleDoc
 <beginActionTypeParticipantAttributeConstraint>
 Name
 <
@@ -12121,7 +12121,7 @@ exactly
 <>
 <endActionTypeParticipantQuantity>
 <beginSSObjTypeNames>
-Module
+ModuleDoc
 <endSSObjTypeNames>
 <endActionTypeParticipant>
 <beginActionTypeParticipant>
@@ -12147,7 +12147,7 @@ at least, at most
 4
 <endActionTypeParticipantQuantity>
 <beginSSObjTypeNames>
-Module
+ModuleDoc
 <endSSObjTypeNames>
 <endActionTypeParticipant>
 <beginActionTypeTrigger>
@@ -12227,7 +12227,7 @@ false
 <beginActionTypeParticipantTrigger>
 Module
 <beginActionTypeParticipantConstraint>
-Module
+ModuleDoc
 <beginActionTypeParticipantAttributeConstraint>
 Name
 =
@@ -12449,7 +12449,7 @@ false
 <beginActionTypeParticipantTrigger>
 OtherModules
 <beginActionTypeParticipantConstraint>
-Module
+ModuleDoc
 <beginActionTypeParticipantAttributeConstraint>
 Name
 <
@@ -12702,7 +12702,7 @@ false
 <beginActionTypeParticipantDestroyer>
 Module
 <beginActionTypeParticipantConstraint>
-Module
+ModuleDoc
 <beginActionTypeParticipantAttributeConstraint>
 Name
 =
@@ -12924,7 +12924,7 @@ false
 <beginActionTypeParticipantDestroyer>
 OtherModules
 <beginActionTypeParticipantConstraint>
-Module
+ModuleDoc
 <beginActionTypeParticipantAttributeConstraint>
 Name
 <
@@ -13119,7 +13119,7 @@ false
 Advance
 <beginParticipantTypeRuleEffect>
 2
-Module
+ModuleDoc
 None
 <beginParticipantAttributeRuleEffect>
 KnownIntegrationDifficulty
@@ -13235,7 +13235,7 @@ Modifiability
 <endParticipantAttributeRuleEffect>
 <beginParticipantAttributeRuleEffect>
 ChangeTicks
-thisModule-Artifact:ChangeTicks + ( 1000 / thisModule-Artifact:Changability )
+thisModuleDoc-Artifact:ChangeTicks + ( 1000 / thisModuleDoc-Artifact:Changability )
 <endParticipantAttributeRuleEffect>
 <endParticipantTypeRuleEffect>
 <endParticipantRuleEffect>
@@ -13350,7 +13350,7 @@ Description
 TheModule
 <beginParticipantTypeRuleEffect>
 2
-Module
+ModuleDoc
 None
 <beginParticipantAttributeRuleEffect>
 KnownIntegrationDifficulty
@@ -13386,7 +13386,7 @@ ChangeTicks
 <endParticipantAttributeRuleEffect>
 <beginParticipantAttributeRuleEffect>
 Modifiability
-thisModule-Artifact:Modifiability +  ( 7 / ( (5 - (allActive-Designer-SoftwareEngineer-Employee:Design / numActive-Designer) / 25) * (1 / numActive-Designer) * (2 - thisModule-Artifact:RequirementsProgress / 100)  ) ) * (1 + 0.2 * (1 - numActive-Designer) )
+thisModuleDoc-Artifact:Modifiability +  ( 7 / ( (5 - (allActive-Designer-SoftwareEngineer-Employee:Design / numActive-Designer) / 25) * (1 / numActive-Designer) * (2 - thisModuleDoc-Artifact:RequirementsProgress / 100)  ) ) * (1 + 0.2 * (1 - numActive-Designer) )
 <endParticipantAttributeRuleEffect>
 <beginParticipantAttributeRuleEffect>
 Name
@@ -13398,15 +13398,15 @@ RequirementsProgress
 <endParticipantAttributeRuleEffect>
 <beginParticipantAttributeRuleEffect>
 DesignProgress
-thisModule-Artifact:DesignProgress +  ( 20 / ( (5 - (allActive-Designer-SoftwareEngineer-Employee:Design / numActive-Designer) / 25) * (1 / numActive-Designer) * (5 - (100 - all-TheModule-Module-Artifact:DesignDifficulty ) / 25) * (2 - thisModule-Artifact:RequirementsProgress / 100)  ) ) * (1 + 0.2 * (1 - numActive-Designer) )
+thisModuleDoc-Artifact:DesignProgress +  ( 20 / ( (5 - (allActive-Designer-SoftwareEngineer-Employee:Design / numActive-Designer) / 25) * (1 / numActive-Designer) * (5 - (100 - all-TheModule-ModuleDoc-Artifact:DesignDifficulty ) / 25) * (2 - thisModuleDoc-Artifact:RequirementsProgress / 100)  ) ) * (1 + 0.2 * (1 - numActive-Designer) )
 <endParticipantAttributeRuleEffect>
 <beginParticipantAttributeRuleEffect>
 ImplementationProgress
-thisModule-Artifact:ImplementationProgress - 0.5
+thisModuleDoc-Artifact:ImplementationProgress - 0.5
 <endParticipantAttributeRuleEffect>
 <beginParticipantAttributeRuleEffect>
 Accuracy
-thisModule-Artifact:Accuracy + ( 3 / (5 - (allActive-Designer-SoftwareEngineer-Employee:Design / numActive-Designer ) / 25) * (1 / numActive-Designer)  ) * (1 + 0.2 * (1 - numActive-Designer) )
+thisModuleDoc-Artifact:Accuracy + ( 3 / (5 - (allActive-Designer-SoftwareEngineer-Employee:Design / numActive-Designer ) / 25) * (1 / numActive-Designer)  ) * (1 + 0.2 * (1 - numActive-Designer) )
 <endParticipantAttributeRuleEffect>
 <beginParticipantAttributeRuleEffect>
 RequirementsDifficulty
@@ -13565,7 +13565,7 @@ Description
 TheModule
 <beginParticipantTypeRuleEffect>
 2
-Module
+ModuleDoc
 None
 <beginParticipantAttributeRuleEffect>
 KnownIntegrationDifficulty
@@ -13681,7 +13681,7 @@ RiskAnalysisProgress
 <endParticipantAttributeRuleEffect>
 <beginParticipantAttributeRuleEffect>
 DifficultyAnalysisProgress
-thisModule-Artifact:DifficultyAnalysisProgress +  ( 20 / ( (5 - (allActive-Analyser-SoftwareEngineer-Employee:RiskAnalysis / numActive-Analyser) / 25) * (1 / numActive-Analyser) ) ) * (1 + 0.2 * (1 - numActive-Analyser) )
+thisModuleDoc-Artifact:DifficultyAnalysisProgress +  ( 20 / ( (5 - (allActive-Analyser-SoftwareEngineer-Employee:RiskAnalysis / numActive-Analyser) / 25) * (1 / numActive-Analyser) ) ) * (1 + 0.2 * (1 - numActive-Analyser) )
 <endParticipantAttributeRuleEffect>
 <endParticipantTypeRuleEffect>
 <endParticipantRuleEffect>
@@ -13732,7 +13732,7 @@ false
 Module
 <beginParticipantTypeRuleEffect>
 2
-Module
+ModuleDoc
 None
 <beginParticipantAttributeRuleEffect>
 Name
@@ -13872,7 +13872,7 @@ CurrentTime
 <endParticipantAttributeRuleEffect>
 <beginParticipantAttributeRuleEffect>
 Satisfaction
-allActive-Module-Module-Artifact:TotalSatisfaction / numActive-Module-Module-Artifact 
+allActive-Module-ModuleDoc-Artifact:TotalSatisfaction / numActive-Module-ModuleDoc-Artifact 
 <endParticipantAttributeRuleEffect>
 <beginParticipantAttributeRuleEffect>
 Score
@@ -13899,7 +13899,7 @@ false
 Module
 <beginParticipantTypeRuleEffect>
 2
-Module
+ModuleDoc
 None
 <beginParticipantAttributeRuleEffect>
 Name
@@ -13947,7 +13947,7 @@ Changability
 <endParticipantAttributeRuleEffect>
 <beginParticipantAttributeRuleEffect>
 TotalSatisfaction
-thisModule-Artifact:ImplementationProgress - (     (100 - thisModule-Artifact:Accuracy) * (0.5 + (thisModule-Artifact:Inflexibility * thisModule-Artifact:Inflexibility / 3000 ) )      )
+thisModuleDoc-Artifact:ImplementationProgress - (     (100 - thisModuleDoc-Artifact:Accuracy) * (0.5 + (thisModuleDoc-Artifact:Inflexibility * thisModuleDoc-Artifact:Inflexibility / 3000 ) )      )
 <endParticipantAttributeRuleEffect>
 <beginParticipantAttributeRuleEffect>
 KnownValue
@@ -14114,7 +14114,7 @@ Description
 Module
 <beginParticipantTypeRuleEffect>
 2
-Module
+ModuleDoc
 None
 <beginParticipantAttributeRuleEffect>
 KnownIntegrationDifficulty
@@ -14142,7 +14142,7 @@ IntegrationDifficulty
 <endParticipantAttributeRuleEffect>
 <beginParticipantAttributeRuleEffect>
 IntegrationProgress
-thisModule-Artifact:IntegrationProgress - 0.7
+thisModuleDoc-Artifact:IntegrationProgress - 0.7
 <endParticipantAttributeRuleEffect>
 <beginParticipantAttributeRuleEffect>
 ChangeTicks
@@ -14158,7 +14158,7 @@ RequirementsProgress
 <endParticipantAttributeRuleEffect>
 <beginParticipantAttributeRuleEffect>
 DesignProgress
-thisModule-Artifact:DesignProgress - 0.3
+thisModuleDoc-Artifact:DesignProgress - 0.3
 <endParticipantAttributeRuleEffect>
 <beginParticipantAttributeRuleEffect>
 ImplementationProgress
@@ -14166,7 +14166,7 @@ ImplementationProgress
 <endParticipantAttributeRuleEffect>
 <beginParticipantAttributeRuleEffect>
 Accuracy
-thisModule-Artifact:Accuracy +  ( 25 / ( (5 - (allActive-Implementer-SoftwareEngineer-Employee:Implementation / numActive-Implementer) / 25) * (1 / numActive-Implementer) * (5 - (100 - all-Module-Module-Artifact:ImplementationDifficulty ) / 25) * (9 - thisModule-Artifact:Modifiability / 12.5)  *  ( thisModule-Artifact:ImplementationProgress / 100 )  ) ) * (1 + 0.2 * (1 - numActive-Implementer) )
+thisModuleDoc-Artifact:Accuracy +  ( 25 / ( (5 - (allActive-Implementer-SoftwareEngineer-Employee:Implementation / numActive-Implementer) / 25) * (1 / numActive-Implementer) * (5 - (100 - all-Module-ModuleDoc-Artifact:ImplementationDifficulty ) / 25) * (9 - thisModuleDoc-Artifact:Modifiability / 12.5)  *  ( thisModuleDoc-Artifact:ImplementationProgress / 100 )  ) ) * (1 + 0.2 * (1 - numActive-Implementer) )
 <endParticipantAttributeRuleEffect>
 <beginParticipantAttributeRuleEffect>
 RequirementsDifficulty
@@ -14230,7 +14230,7 @@ DifficultyAnalysisProgress
 <endParticipantAttributeRuleEffect>
 <beginParticipantAttributeRuleEffect>
 Modifiability
-thisModule-Artifact:Modifiability - 0.3
+thisModuleDoc-Artifact:Modifiability - 0.3
 <endParticipantAttributeRuleEffect>
 <endParticipantTypeRuleEffect>
 <endParticipantRuleEffect>
@@ -14329,7 +14329,7 @@ Description
 Module
 <beginParticipantTypeRuleEffect>
 2
-Module
+ModuleDoc
 None
 <beginParticipantAttributeRuleEffect>
 KnownIntegrationDifficulty
@@ -14377,7 +14377,7 @@ DesignProgress
 <endParticipantAttributeRuleEffect>
 <beginParticipantAttributeRuleEffect>
 ImplementationProgress
-thisModule-Artifact:ImplementationProgress +  ( 20 / ( (5 - (allActive-Implementer-SoftwareEngineer-Employee:Implementation / numActive-Implementer) / 25) * (1 / numActive-Implementer) * (5 - (100 - all-Module-Module-Artifact:ImplementationDifficulty ) / 25) * (2 - thisModule-Artifact:DesignProgress / 100)  ) ) * (1 + 0.2 * (1 - numActive-Implementer) )
+thisModuleDoc-Artifact:ImplementationProgress +  ( 20 / ( (5 - (allActive-Implementer-SoftwareEngineer-Employee:Implementation / numActive-Implementer) / 25) * (1 / numActive-Implementer) * (5 - (100 - all-Module-ModuleDoc-Artifact:ImplementationDifficulty ) / 25) * (2 - thisModuleDoc-Artifact:DesignProgress / 100)  ) ) * (1 + 0.2 * (1 - numActive-Implementer) )
 <endParticipantAttributeRuleEffect>
 <beginParticipantAttributeRuleEffect>
 Accuracy
@@ -14496,7 +14496,7 @@ false
 Module
 <beginParticipantTypeRuleEffect>
 2
-Module
+ModuleDoc
 None
 <beginParticipantAttributeRuleEffect>
 KnownIntegrationDifficulty
@@ -14663,7 +14663,7 @@ false
 Module
 <beginParticipantTypeRuleEffect>
 2
-Module
+ModuleDoc
 None
 <beginParticipantAttributeRuleEffect>
 KnownIntegrationDifficulty
@@ -14691,15 +14691,15 @@ Accuracy
 <endParticipantAttributeRuleEffect>
 <beginParticipantAttributeRuleEffect>
 RequirementsDifficulty
-thisModule-Artifact:InitialRequirementsDifficulty 
+thisModuleDoc-Artifact:InitialRequirementsDifficulty 
 <endParticipantAttributeRuleEffect>
 <beginParticipantAttributeRuleEffect>
 DesignDifficulty
-thisModule-Artifact:InitialDesignDifficulty 
+thisModuleDoc-Artifact:InitialDesignDifficulty 
 <endParticipantAttributeRuleEffect>
 <beginParticipantAttributeRuleEffect>
 ImplementationDifficulty
-thisModule-Artifact:InitialImplementationDifficulty 
+thisModuleDoc-Artifact:InitialImplementationDifficulty 
 <endParticipantAttributeRuleEffect>
 <beginParticipantAttributeRuleEffect>
 Value
@@ -14759,7 +14759,7 @@ ChangeTicks
 <endParticipantAttributeRuleEffect>
 <beginParticipantAttributeRuleEffect>
 IntegrationDifficulty
-thisModule-Artifact:InitialIntegrationDifficulty 
+thisModuleDoc-Artifact:InitialIntegrationDifficulty 
 <endParticipantAttributeRuleEffect>
 <beginParticipantAttributeRuleEffect>
 IntegrationProgress
@@ -14878,7 +14878,7 @@ Description
 Module
 <beginParticipantTypeRuleEffect>
 2
-Module
+ModuleDoc
 None
 <beginParticipantAttributeRuleEffect>
 KnownIntegrationDifficulty
@@ -14994,7 +14994,7 @@ IntegrationDifficulty
 <endParticipantAttributeRuleEffect>
 <beginParticipantAttributeRuleEffect>
 IntegrationProgress
-thisModule-Artifact:IntegrationProgress +  ( 40 / ( (5 - (allActive-Implementer-SoftwareEngineer-Employee:Implementation / numActive-Implementer) / 25) * (1 / numActive-Implementer) * (5 - (100 - all-Module-Module-Artifact:IntegrationDifficulty ) / 25) * (2 - thisModule-Artifact:DesignProgress / 100)  ) ) * (1 + 0.2 * (1 - numActive-Implementer) )
+thisModuleDoc-Artifact:IntegrationProgress +  ( 40 / ( (5 - (allActive-Implementer-SoftwareEngineer-Employee:Implementation / numActive-Implementer) / 25) * (1 / numActive-Implementer) * (5 - (100 - all-Module-ModuleDoc-Artifact:IntegrationDifficulty ) / 25) * (2 - thisModuleDoc-Artifact:DesignProgress / 100)  ) ) * (1 + 0.2 * (1 - numActive-Implementer) )
 <endParticipantAttributeRuleEffect>
 <endParticipantTypeRuleEffect>
 <endParticipantRuleEffect>
@@ -15045,7 +15045,7 @@ false
 Module
 <beginParticipantTypeRuleEffect>
 2
-Module
+ModuleDoc
 None
 <beginParticipantAttributeRuleEffect>
 KnownIntegrationDifficulty
@@ -15093,7 +15093,7 @@ ImplementationProgress
 <endParticipantAttributeRuleEffect>
 <beginParticipantAttributeRuleEffect>
 Accuracy
-thisModule-Artifact:Accuracy - (40 - (thisModule-Artifact:Changability / 10)) 
+thisModuleDoc-Artifact:Accuracy - (40 - (thisModuleDoc-Artifact:Changability / 10)) 
 <endParticipantAttributeRuleEffect>
 <beginParticipantAttributeRuleEffect>
 RequirementsDifficulty
@@ -15319,7 +15319,7 @@ Description
 Module
 <beginParticipantTypeRuleEffect>
 2
-Module
+ModuleDoc
 None
 <beginParticipantAttributeRuleEffect>
 KnownIntegrationDifficulty
@@ -15363,7 +15363,7 @@ Name
 <endParticipantAttributeRuleEffect>
 <beginParticipantAttributeRuleEffect>
 RequirementsProgress
-thisModule-Artifact:RequirementsProgress +  ( 20 / ( (5 - (allActive-ReqEngineer-SoftwareEngineer-Employee:Requirements / numActive-ReqEngineer) / 25) * (1 / numActive-ReqEngineer) * (5 - (100 - all-Module-Module-Artifact:RequirementsDifficulty ) / 25) ) ) * (1 + 0.2 * (1 - numActive-ReqEngineer) )
+thisModuleDoc-Artifact:RequirementsProgress +  ( 20 / ( (5 - (allActive-ReqEngineer-SoftwareEngineer-Employee:Requirements / numActive-ReqEngineer) / 25) * (1 / numActive-ReqEngineer) * (5 - (100 - all-Module-ModuleDoc-Artifact:RequirementsDifficulty ) / 25) ) ) * (1 + 0.2 * (1 - numActive-ReqEngineer) )
 <endParticipantAttributeRuleEffect>
 <beginParticipantAttributeRuleEffect>
 DesignProgress
@@ -15375,7 +15375,7 @@ ImplementationProgress
 <endParticipantAttributeRuleEffect>
 <beginParticipantAttributeRuleEffect>
 Accuracy
-thisModule-Artifact:Accuracy +  ( 7 / ( (5 - (allActive-ReqEngineer-SoftwareEngineer-Employee:Requirements / numActive-ReqEngineer) / 25) * (1 / numActive-ReqEngineer)  ) ) * (1 + 0.2 * (1 - numActive-ReqEngineer) )
+thisModuleDoc-Artifact:Accuracy +  ( 7 / ( (5 - (allActive-ReqEngineer-SoftwareEngineer-Employee:Requirements / numActive-ReqEngineer) / 25) * (1 / numActive-ReqEngineer)  ) ) * (1 + 0.2 * (1 - numActive-ReqEngineer) )
 <endParticipantAttributeRuleEffect>
 <beginParticipantAttributeRuleEffect>
 RequirementsDifficulty
@@ -15399,7 +15399,7 @@ Inflexibility
 <endParticipantAttributeRuleEffect>
 <beginParticipantAttributeRuleEffect>
 Changability
-thisModule-Artifact:Changability - (thisModule-Artifact:Changability / 150) 
+thisModuleDoc-Artifact:Changability - (thisModuleDoc-Artifact:Changability / 150) 
 <endParticipantAttributeRuleEffect>
 <beginParticipantAttributeRuleEffect>
 TotalSatisfaction
@@ -15486,11 +15486,11 @@ false
 Module
 <beginParticipantTypeRuleEffect>
 2
-Module
+ModuleDoc
 None
 <beginParticipantAttributeRuleEffect>
 KnownIntegrationDifficulty
-thisModule-Artifact:IntegrationDifficulty - random:0,20 + random:0,20
+thisModuleDoc-Artifact:IntegrationDifficulty - random:0,20 + random:0,20
 <endParticipantAttributeRuleEffect>
 <beginParticipantAttributeRuleEffect>
 InitialIntegrationDifficulty
@@ -15582,15 +15582,15 @@ KnownInflexibility
 <endParticipantAttributeRuleEffect>
 <beginParticipantAttributeRuleEffect>
 KnownRequirementsDifficulty
-thisModule-Artifact:RequirementsDifficulty - random:0,20 + random:0,20
+thisModuleDoc-Artifact:RequirementsDifficulty - random:0,20 + random:0,20
 <endParticipantAttributeRuleEffect>
 <beginParticipantAttributeRuleEffect>
 KnownDesignDifficulty
-thisModule-Artifact:DesignDifficulty - random:0,20 + random:0,20
+thisModuleDoc-Artifact:DesignDifficulty - random:0,20 + random:0,20
 <endParticipantAttributeRuleEffect>
 <beginParticipantAttributeRuleEffect>
 KnownImplementationDifficulty
-thisModule-Artifact:ImplementationDifficulty - random:0,20 + random:0,20
+thisModuleDoc-Artifact:ImplementationDifficulty - random:0,20 + random:0,20
 <endParticipantAttributeRuleEffect>
 <beginParticipantAttributeRuleEffect>
 KnownChangability
@@ -15621,7 +15621,7 @@ false
 Module
 <beginParticipantTypeRuleEffect>
 2
-Module
+ModuleDoc
 None
 <beginParticipantAttributeRuleEffect>
 KnownIntegrationDifficulty
@@ -15713,11 +15713,11 @@ TotalSatisfaction
 <endParticipantAttributeRuleEffect>
 <beginParticipantAttributeRuleEffect>
 KnownValue
-thisModule-Artifact:Value  - random:0,20 + random:0,20
+thisModuleDoc-Artifact:Value  - random:0,20 + random:0,20
 <endParticipantAttributeRuleEffect>
 <beginParticipantAttributeRuleEffect>
 KnownInflexibility
-thisModule-Artifact:Inflexibility - random:0,20 + random:0,20
+thisModuleDoc-Artifact:Inflexibility - random:0,20 + random:0,20
 <endParticipantAttributeRuleEffect>
 <beginParticipantAttributeRuleEffect>
 KnownRequirementsDifficulty
@@ -15733,7 +15733,7 @@ KnownImplementationDifficulty
 <endParticipantAttributeRuleEffect>
 <beginParticipantAttributeRuleEffect>
 KnownChangability
-thisModule-Artifact:Changability - random:0,20 + random:0,20
+thisModuleDoc-Artifact:Changability - random:0,20 + random:0,20
 <endParticipantAttributeRuleEffect>
 <beginParticipantAttributeRuleEffect>
 RiskAnalysisProgress
@@ -15804,7 +15804,7 @@ Description
 Module
 <beginParticipantTypeRuleEffect>
 2
-Module
+ModuleDoc
 None
 <beginParticipantAttributeRuleEffect>
 KnownIntegrationDifficulty
@@ -15868,7 +15868,7 @@ Accuracy
 <endParticipantAttributeRuleEffect>
 <beginParticipantAttributeRuleEffect>
 RequirementsDifficulty
-thisModule-Artifact:InitialRequirementsDifficulty - .1
+thisModuleDoc-Artifact:InitialRequirementsDifficulty - .1
 <endParticipantAttributeRuleEffect>
 <beginParticipantAttributeRuleEffect>
 DesignDifficulty
@@ -15920,7 +15920,7 @@ KnownChangability
 <endParticipantAttributeRuleEffect>
 <beginParticipantAttributeRuleEffect>
 RiskAnalysisProgress
-thisModule-Artifact:RiskAnalysisProgress +  ( 20 / ( (5 - (allActive-Analyser-SoftwareEngineer-Employee:RiskAnalysis / numActive-Analyser) / 25) * (1 / numActive-Analyser) ) ) * (1 + 0.2 * (1 - numActive-Analyser) ) 
+thisModuleDoc-Artifact:RiskAnalysisProgress +  ( 20 / ( (5 - (allActive-Analyser-SoftwareEngineer-Employee:RiskAnalysis / numActive-Analyser) / 25) * (1 / numActive-Analyser) ) ) * (1 + 0.2 * (1 - numActive-Analyser) ) 
 <endParticipantAttributeRuleEffect>
 <endParticipantTypeRuleEffect>
 <endParticipantRuleEffect>
@@ -16019,7 +16019,7 @@ Description
 Module
 <beginParticipantTypeRuleEffect>
 2
-Module
+ModuleDoc
 None
 <beginParticipantAttributeRuleEffect>
 KnownIntegrationDifficulty
@@ -16055,11 +16055,11 @@ Name
 <endParticipantAttributeRuleEffect>
 <beginParticipantAttributeRuleEffect>
 RequirementsProgress
-thisModule-Artifact:RequirementsProgress / 7
+thisModuleDoc-Artifact:RequirementsProgress / 7
 <endParticipantAttributeRuleEffect>
 <beginParticipantAttributeRuleEffect>
 DesignProgress
-thisModule-Artifact:DesignProgress / 20
+thisModuleDoc-Artifact:DesignProgress / 20
 <endParticipantAttributeRuleEffect>
 <beginParticipantAttributeRuleEffect>
 ImplementationProgress
@@ -16067,7 +16067,7 @@ ImplementationProgress
 <endParticipantAttributeRuleEffect>
 <beginParticipantAttributeRuleEffect>
 Accuracy
-thisModule-Artifact:Accuracy / 7
+thisModuleDoc-Artifact:Accuracy / 7
 <endParticipantAttributeRuleEffect>
 <beginParticipantAttributeRuleEffect>
 RequirementsDifficulty
@@ -16186,7 +16186,7 @@ false
 Module
 <beginParticipantTypeRuleEffect>
 2
-Module
+ModuleDoc
 None
 <beginParticipantAttributeRuleEffect>
 KnownIntegrationDifficulty
@@ -16202,7 +16202,7 @@ Name
 <endParticipantAttributeRuleEffect>
 <beginParticipantAttributeRuleEffect>
 RequirementsProgress
-thisModule-Artifact:RequirementsProgress + ( ( 32  * (thisModule-Artifact:ImplementationProgress / 100)) * ( 0.8 + ( ( 4 * thisModule-Artifact:Accuracy ) / 1000 ) ) )
+thisModuleDoc-Artifact:RequirementsProgress + ( ( 32  * (thisModuleDoc-Artifact:ImplementationProgress / 100)) * ( 0.8 + ( ( 4 * thisModuleDoc-Artifact:Accuracy ) / 1000 ) ) )
 <endParticipantAttributeRuleEffect>
 <beginParticipantAttributeRuleEffect>
 DesignProgress
@@ -16218,15 +16218,15 @@ Accuracy
 <endParticipantAttributeRuleEffect>
 <beginParticipantAttributeRuleEffect>
 RequirementsDifficulty
-thisModule-Artifact:InitialRequirementsDifficulty * (1 - ( thisModule-Artifact:ImplementationProgress / 150 ) * ( 0.8 + ( ( 4 * thisModule-Artifact:Accuracy ) / 1000 ) ) ) 
+thisModuleDoc-Artifact:InitialRequirementsDifficulty * (1 - ( thisModuleDoc-Artifact:ImplementationProgress / 150 ) * ( 0.8 + ( ( 4 * thisModuleDoc-Artifact:Accuracy ) / 1000 ) ) ) 
 <endParticipantAttributeRuleEffect>
 <beginParticipantAttributeRuleEffect>
 DesignDifficulty
-thisModule-Artifact:InitialDesignDifficulty * (1 - ( thisModule-Artifact:ImplementationProgress / 200 )* ( 0.8 + ( ( 4 * thisModule-Artifact:Accuracy ) / 1000 ) ) ) 
+thisModuleDoc-Artifact:InitialDesignDifficulty * (1 - ( thisModuleDoc-Artifact:ImplementationProgress / 200 )* ( 0.8 + ( ( 4 * thisModuleDoc-Artifact:Accuracy ) / 1000 ) ) ) 
 <endParticipantAttributeRuleEffect>
 <beginParticipantAttributeRuleEffect>
 ImplementationDifficulty
-thisModule-Artifact:InitialImplementationDifficulty * (1 - ( thisModule-Artifact:ImplementationProgress / 300 ) * ( 0.8 + ( ( 4 * thisModule-Artifact:Accuracy ) / 1000 ) ) ) 
+thisModuleDoc-Artifact:InitialImplementationDifficulty * (1 - ( thisModuleDoc-Artifact:ImplementationProgress / 300 ) * ( 0.8 + ( ( 4 * thisModuleDoc-Artifact:Accuracy ) / 1000 ) ) ) 
 <endParticipantAttributeRuleEffect>
 <beginParticipantAttributeRuleEffect>
 Value
@@ -16238,19 +16238,19 @@ Inflexibility
 <endParticipantAttributeRuleEffect>
 <beginParticipantAttributeRuleEffect>
 Changability
-thisModule-Artifact:Changability * 3
+thisModuleDoc-Artifact:Changability * 3
 <endParticipantAttributeRuleEffect>
 <beginParticipantAttributeRuleEffect>
 TotalSatisfaction
-thisModule-Artifact:ImplementationProgress - (     (100 - thisModule-Artifact:Accuracy) * (0.5 + (thisModule-Artifact:Inflexibility * thisModule-Artifact:Inflexibility / 3000 ) )      )
+thisModuleDoc-Artifact:ImplementationProgress - (     (100 - thisModuleDoc-Artifact:Accuracy) * (0.5 + (thisModuleDoc-Artifact:Inflexibility * thisModuleDoc-Artifact:Inflexibility / 3000 ) )      )
 <endParticipantAttributeRuleEffect>
 <beginParticipantAttributeRuleEffect>
 KnownValue
-thisModule-Artifact:Value + (random:1,10 * (1 + (2 * (1 - (thisModule-Artifact:ImplementationProgress / 100)))) * (1 + (2 * (1 - (thisModule-Artifact:Accuracy / 100))))  ) - (random:1,10 * (1 + (2 * (1 - (thisModule-Artifact:ImplementationProgress / 100)))) * (1 + (2 * (1 - (thisModule-Artifact:Accuracy / 100))))    )
+thisModuleDoc-Artifact:Value + (random:1,10 * (1 + (2 * (1 - (thisModuleDoc-Artifact:ImplementationProgress / 100)))) * (1 + (2 * (1 - (thisModuleDoc-Artifact:Accuracy / 100))))  ) - (random:1,10 * (1 + (2 * (1 - (thisModuleDoc-Artifact:ImplementationProgress / 100)))) * (1 + (2 * (1 - (thisModuleDoc-Artifact:Accuracy / 100))))    )
 <endParticipantAttributeRuleEffect>
 <beginParticipantAttributeRuleEffect>
 KnownInflexibility
-thisModule-Artifact:Inflexibility + (random:1,10 * (1 + (2 * (1 - (thisModule-Artifact:ImplementationProgress / 100)))) * (1 + (2 * (1 - (thisModule-Artifact:Accuracy / 100))))   ) - (random:1,10 * (1 + (2 * (1 - (thisModule-Artifact:ImplementationProgress / 100)))) * (1 + (2 * (1 - (thisModule-Artifact:Accuracy / 100))))    )
+thisModuleDoc-Artifact:Inflexibility + (random:1,10 * (1 + (2 * (1 - (thisModuleDoc-Artifact:ImplementationProgress / 100)))) * (1 + (2 * (1 - (thisModuleDoc-Artifact:Accuracy / 100))))   ) - (random:1,10 * (1 + (2 * (1 - (thisModuleDoc-Artifact:ImplementationProgress / 100)))) * (1 + (2 * (1 - (thisModuleDoc-Artifact:Accuracy / 100))))    )
 <endParticipantAttributeRuleEffect>
 <beginParticipantAttributeRuleEffect>
 KnownRequirementsDifficulty
@@ -16286,7 +16286,7 @@ ChangeTicks
 <endParticipantAttributeRuleEffect>
 <beginParticipantAttributeRuleEffect>
 IntegrationDifficulty
-thisModule-Artifact:InitialIntegrationDifficulty * (1 - ( thisModule-Artifact:ImplementationProgress / 200 ) * ( 0.8 + ( ( 4 * thisModule-Artifact:Accuracy ) / 1000 ) ) ) 
+thisModuleDoc-Artifact:InitialIntegrationDifficulty * (1 - ( thisModuleDoc-Artifact:ImplementationProgress / 200 ) * ( 0.8 + ( ( 4 * thisModuleDoc-Artifact:Accuracy ) / 1000 ) ) ) 
 <endParticipantAttributeRuleEffect>
 <beginParticipantAttributeRuleEffect>
 IntegrationProgress
@@ -16390,7 +16390,7 @@ Score
 OtherModule
 <beginParticipantTypeRuleEffect>
 2
-Module
+ModuleDoc
 None
 <beginParticipantAttributeRuleEffect>
 KnownIntegrationDifficulty
@@ -16406,7 +16406,7 @@ Name
 <endParticipantAttributeRuleEffect>
 <beginParticipantAttributeRuleEffect>
 RequirementsProgress
-thisModule-Artifact:RequirementsProgress + ( ( 32 * ( (all-Module-Module-Artifact:ImplementationProgress /  numActive-Module ) / 100)) * ( 0.8 + ( ( 4 * ( all-Module-Module-Artifact:Accuracy  /  numActive-Module ) ) / 1000 ) ) )
+thisModuleDoc-Artifact:RequirementsProgress + ( ( 32 * ( (all-Module-ModuleDoc-Artifact:ImplementationProgress /  numActive-Module ) / 100)) * ( 0.8 + ( ( 4 * ( all-Module-ModuleDoc-Artifact:Accuracy  /  numActive-Module ) ) / 1000 ) ) )
 <endParticipantAttributeRuleEffect>
 <beginParticipantAttributeRuleEffect>
 DesignProgress
@@ -16418,15 +16418,15 @@ ImplementationProgress
 <endParticipantAttributeRuleEffect>
 <beginParticipantAttributeRuleEffect>
 Accuracy
-thisModule-Artifact:Accuracy + ( ( 32 * ( (all-Module-Module-Artifact:ImplementationProgress /  numActive-Module ) / 100)) * ( 0.8 + ( ( 4 * ( all-Module-Module-Artifact:Accuracy  /  numActive-Module ) ) / 1000 ) ) )
+thisModuleDoc-Artifact:Accuracy + ( ( 32 * ( (all-Module-ModuleDoc-Artifact:ImplementationProgress /  numActive-Module ) / 100)) * ( 0.8 + ( ( 4 * ( all-Module-ModuleDoc-Artifact:Accuracy  /  numActive-Module ) ) / 1000 ) ) )
 <endParticipantAttributeRuleEffect>
 <beginParticipantAttributeRuleEffect>
 RequirementsDifficulty
-thisModule-Artifact:InitialRequirementsDifficulty * (1 - ( all-Module-Module-Artifact:ImplementationProgress  / 150 ) * ( 0.8 + ( ( 4 * all-Module-Module-Artifact:Accuracy ) / 1000 ) ) ) 
+thisModuleDoc-Artifact:InitialRequirementsDifficulty * (1 - ( all-Module-ModuleDoc-Artifact:ImplementationProgress  / 150 ) * ( 0.8 + ( ( 4 * all-Module-ModuleDoc-Artifact:Accuracy ) / 1000 ) ) ) 
 <endParticipantAttributeRuleEffect>
 <beginParticipantAttributeRuleEffect>
 DesignDifficulty
-thisModule-Artifact:InitialDesignDifficulty * (1 - ( all-Module-Module-Artifact:ImplementationProgress  / 200 ) * ( 0.8 + ( ( 4 * all-Module-Module-Artifact:Accuracy ) / 1000 ) ) ) 
+thisModuleDoc-Artifact:InitialDesignDifficulty * (1 - ( all-Module-ModuleDoc-Artifact:ImplementationProgress  / 200 ) * ( 0.8 + ( ( 4 * all-Module-ModuleDoc-Artifact:Accuracy ) / 1000 ) ) ) 
 <endParticipantAttributeRuleEffect>
 <beginParticipantAttributeRuleEffect>
 ImplementationDifficulty
@@ -16442,7 +16442,7 @@ Inflexibility
 <endParticipantAttributeRuleEffect>
 <beginParticipantAttributeRuleEffect>
 Changability
-thisModule-Artifact:Changability * 1.8
+thisModuleDoc-Artifact:Changability * 1.8
 <endParticipantAttributeRuleEffect>
 <beginParticipantAttributeRuleEffect>
 TotalSatisfaction
@@ -16486,11 +16486,11 @@ Modifiability
 <endParticipantAttributeRuleEffect>
 <beginParticipantAttributeRuleEffect>
 ChangeTicks
-thisModule-Artifact:ChangeTicks * 0.5 
+thisModuleDoc-Artifact:ChangeTicks * 0.5 
 <endParticipantAttributeRuleEffect>
 <beginParticipantAttributeRuleEffect>
 IntegrationDifficulty
-thisModule-Artifact:InitialIntegrationDifficulty * (1 - ( all-Module-Module-Artifact:ImplementationProgress / 200 ) * ( 0.8 + ( ( 4 * thisModule-Artifact:Accuracy ) / 1000 ) ) ) 
+thisModuleDoc-Artifact:InitialIntegrationDifficulty * (1 - ( all-Module-ModuleDoc-Artifact:ImplementationProgress / 200 ) * ( 0.8 + ( ( 4 * thisModuleDoc-Artifact:Accuracy ) / 1000 ) ) ) 
 <endParticipantAttributeRuleEffect>
 <beginParticipantAttributeRuleEffect>
 IntegrationProgress
@@ -16573,7 +16573,7 @@ Description
 Module
 <beginParticipantTypeRuleEffect>
 2
-Module
+ModuleDoc
 None
 <beginParticipantAttributeRuleEffect>
 KnownIntegrationDifficulty
@@ -16601,7 +16601,7 @@ Name
 <endParticipantAttributeRuleEffect>
 <beginParticipantAttributeRuleEffect>
 RequirementsProgress
-thisModule-Artifact:RequirementsProgress + ( ( 24 * (thisModule-Artifact:ImplementationProgress / 100)) * ( 0.8 + ( ( 4 * thisModule-Artifact:Accuracy ) / 1000 ) ) )
+thisModuleDoc-Artifact:RequirementsProgress + ( ( 24 * (thisModuleDoc-Artifact:ImplementationProgress / 100)) * ( 0.8 + ( ( 4 * thisModuleDoc-Artifact:Accuracy ) / 1000 ) ) )
 <endParticipantAttributeRuleEffect>
 <beginParticipantAttributeRuleEffect>
 DesignProgress
@@ -16617,15 +16617,15 @@ Accuracy
 <endParticipantAttributeRuleEffect>
 <beginParticipantAttributeRuleEffect>
 RequirementsDifficulty
-thisModule-Artifact:InitialRequirementsDifficulty * (1 - ( thisModule-Artifact:ImplementationProgress / 200 ) * ( 0.8 + ( ( 4 * thisModule-Artifact:Accuracy ) / 1000 ) ) ) 
+thisModuleDoc-Artifact:InitialRequirementsDifficulty * (1 - ( thisModuleDoc-Artifact:ImplementationProgress / 200 ) * ( 0.8 + ( ( 4 * thisModuleDoc-Artifact:Accuracy ) / 1000 ) ) ) 
 <endParticipantAttributeRuleEffect>
 <beginParticipantAttributeRuleEffect>
 DesignDifficulty
-thisModule-Artifact:InitialDesignDifficulty * (1 - ( thisModule-Artifact:ImplementationProgress / 300 )* ( 0.8 + ( ( 4 * thisModule-Artifact:Accuracy ) / 1000 ) ) ) 
+thisModuleDoc-Artifact:InitialDesignDifficulty * (1 - ( thisModuleDoc-Artifact:ImplementationProgress / 300 )* ( 0.8 + ( ( 4 * thisModuleDoc-Artifact:Accuracy ) / 1000 ) ) ) 
 <endParticipantAttributeRuleEffect>
 <beginParticipantAttributeRuleEffect>
 ImplementationDifficulty
-thisModule-Artifact:InitialImplementationDifficulty * (1 - ( thisModule-Artifact:ImplementationProgress / 400 ) * ( 0.8 + ( ( 4 * thisModule-Artifact:Accuracy ) / 1000 ) ) ) 
+thisModuleDoc-Artifact:InitialImplementationDifficulty * (1 - ( thisModuleDoc-Artifact:ImplementationProgress / 400 ) * ( 0.8 + ( ( 4 * thisModuleDoc-Artifact:Accuracy ) / 1000 ) ) ) 
 <endParticipantAttributeRuleEffect>
 <beginParticipantAttributeRuleEffect>
 Value
@@ -16637,19 +16637,19 @@ Inflexibility
 <endParticipantAttributeRuleEffect>
 <beginParticipantAttributeRuleEffect>
 Changability
-thisModule-Artifact:Changability * 2
+thisModuleDoc-Artifact:Changability * 2
 <endParticipantAttributeRuleEffect>
 <beginParticipantAttributeRuleEffect>
 TotalSatisfaction
-thisModule-Artifact:ImplementationProgress - (     (100 - thisModule-Artifact:Accuracy) * (0.5 + (thisModule-Artifact:Inflexibility * thisModule-Artifact:Inflexibility / 3000 ) )      )
+thisModuleDoc-Artifact:ImplementationProgress - (     (100 - thisModuleDoc-Artifact:Accuracy) * (0.5 + (thisModuleDoc-Artifact:Inflexibility * thisModuleDoc-Artifact:Inflexibility / 3000 ) )      )
 <endParticipantAttributeRuleEffect>
 <beginParticipantAttributeRuleEffect>
 KnownValue
-thisModule-Artifact:Value + (random:1,20 * (1 + (2 * (1 - (thisModule-Artifact:ImplementationProgress / 100)))) * (1 + (2 * (1 - (thisModule-Artifact:Accuracy / 100))))  ) - (random:1,20 * (1 + (2 * (1 - (thisModule-Artifact:ImplementationProgress / 100)))) * (1 + (2 * (1 - (thisModule-Artifact:Accuracy / 100))))    )
+thisModuleDoc-Artifact:Value + (random:1,20 * (1 + (2 * (1 - (thisModuleDoc-Artifact:ImplementationProgress / 100)))) * (1 + (2 * (1 - (thisModuleDoc-Artifact:Accuracy / 100))))  ) - (random:1,20 * (1 + (2 * (1 - (thisModuleDoc-Artifact:ImplementationProgress / 100)))) * (1 + (2 * (1 - (thisModuleDoc-Artifact:Accuracy / 100))))    )
 <endParticipantAttributeRuleEffect>
 <beginParticipantAttributeRuleEffect>
 KnownInflexibility
-thisModule-Artifact:Inflexibility + (random:1,20 * (1 + (2 * (1 - (thisModule-Artifact:ImplementationProgress / 100)))) * (1 + (2 * (1 - (thisModule-Artifact:Accuracy / 100))))   ) - (random:1,20 * (1 + (2 * (1 - (thisModule-Artifact:ImplementationProgress / 100)))) * (1 + (2 * (1 - (thisModule-Artifact:Accuracy / 100))))    )
+thisModuleDoc-Artifact:Inflexibility + (random:1,20 * (1 + (2 * (1 - (thisModuleDoc-Artifact:ImplementationProgress / 100)))) * (1 + (2 * (1 - (thisModuleDoc-Artifact:Accuracy / 100))))   ) - (random:1,20 * (1 + (2 * (1 - (thisModuleDoc-Artifact:ImplementationProgress / 100)))) * (1 + (2 * (1 - (thisModuleDoc-Artifact:Accuracy / 100))))    )
 <endParticipantAttributeRuleEffect>
 <beginParticipantAttributeRuleEffect>
 KnownRequirementsDifficulty
@@ -16729,7 +16729,7 @@ Score
 OtherModules
 <beginParticipantTypeRuleEffect>
 2
-Module
+ModuleDoc
 None
 <beginParticipantAttributeRuleEffect>
 KnownIntegrationDifficulty
@@ -16745,7 +16745,7 @@ Name
 <endParticipantAttributeRuleEffect>
 <beginParticipantAttributeRuleEffect>
 RequirementsProgress
-thisModule-Artifact:RequirementsProgress + ( ( 24 * (all-Module-Module-Artifact:ImplementationProgress  / 100)) * ( 0.8 + ( ( 4 * all-Module-Module-Artifact:Accuracy ) / 1000 ) ) )
+thisModuleDoc-Artifact:RequirementsProgress + ( ( 24 * (all-Module-ModuleDoc-Artifact:ImplementationProgress  / 100)) * ( 0.8 + ( ( 4 * all-Module-ModuleDoc-Artifact:Accuracy ) / 1000 ) ) )
 <endParticipantAttributeRuleEffect>
 <beginParticipantAttributeRuleEffect>
 DesignProgress
@@ -16761,7 +16761,7 @@ Accuracy
 <endParticipantAttributeRuleEffect>
 <beginParticipantAttributeRuleEffect>
 RequirementsDifficulty
-thisModule-Artifact:InitialRequirementsDifficulty * (1 - ( all-Module-Module-Artifact:ImplementationProgress  / 200 ) * ( 0.8 + ( ( 4 * all-Module-Module-Artifact:Accuracy ) / 1000 ) ) ) 
+thisModuleDoc-Artifact:InitialRequirementsDifficulty * (1 - ( all-Module-ModuleDoc-Artifact:ImplementationProgress  / 200 ) * ( 0.8 + ( ( 4 * all-Module-ModuleDoc-Artifact:Accuracy ) / 1000 ) ) ) 
 <endParticipantAttributeRuleEffect>
 <beginParticipantAttributeRuleEffect>
 DesignDifficulty
@@ -16781,7 +16781,7 @@ Inflexibility
 <endParticipantAttributeRuleEffect>
 <beginParticipantAttributeRuleEffect>
 Changability
-thisModule-Artifact:Changability * 1.8
+thisModuleDoc-Artifact:Changability * 1.8
 <endParticipantAttributeRuleEffect>
 <beginParticipantAttributeRuleEffect>
 TotalSatisfaction
@@ -16853,22 +16853,22 @@ InitialImplementationDifficulty
 <endRules>
 <beginGraphics>
 Artifact
-Module
+ModuleDoc
 Module1
 10.gif
 
 Artifact
-Module
+ModuleDoc
 Module2
 10.gif
 
 Artifact
-Module
+ModuleDoc
 Module3
 10.gif
 
 Artifact
-Module
+ModuleDoc
 Module4
 10.gif
 
@@ -16906,11 +16906,11 @@ true
 12
 2
 
-- Employee - SoftwareEngineer - Amy
+- Employee - SoftwareEngineer - Lola
 true
 true
-10
-3
+1
+6
 
 - Employee - SoftwareEngineer - Karl
 true
@@ -16918,331 +16918,10 @@ true
 7
 2
 
-- Employee - SoftwareEngineer - Lola
+- Employee - SoftwareEngineer - Amy
 true
 true
-1
-6
+10
+3
 
 <endSOPUsers>
-401
--1
-402
--1
-402
-4
-403
--1
-604
--1
-401
--1
-402
-4
-403
--1
-604
--1
--3
--1
--3
--1
-603
--1
-401
--1
-402
-4
-402
-4
-403
--1
-401
--1
-408
--1
-408
-102
-409
--1
-604
--1
-407
--1
-408
--1
-409
--1
-604
--1
--3
--1
--3
--1
-603
--1
-407
--1
-408
--1
-408
-104
-409
--1
-407
--1
--3
--1
--3
--1
--3
--1
-604
--1
--3
-103
--3
--1
--3
--1
-604
--1
--3
--1
--3
--1
-603
--1
--3
--1
--3
-102
--3
--1
--3
--1
--3
-2
--3
--1
--3
--1
--3
--1
-604
--1
--3
--1
--3
--1
--3
--1
-604
-3
--3
--1
--3
--1
-603
-3
--3
--1
--3
--1
--3
--1
--3
--1
-602
--1
-602
--1
-602
--1
-612
--1
-608
--1
-602
--1
-602
--1
-612
--1
-608
--1
--3
--1
--3
--1
-607
--1
-602
--1
-602
--1
-602
--1
-612
--1
--3
--1
--3
--1
--3
--1
--3
--1
--3
--1
--3
--1
--3
--1
--3
--1
--3
--1
--3
--1
--3
--1
--3
--1
--3
--1
--3
--1
--3
--1
--3
--1
--3
--1
--3
--1
--3
-101
--3
--1
--3
-101
--3
--1
--3
--1
--3
--1
--3
--1
--3
--1
--3
--1
--3
--1
--3
--1
--3
--1
--3
--1
--3
--1
--3
-103
-401
--1
-402
--1
-402
--1
-402
--1
-403
--1
--3
--1
--3
--1
-603
--1
--3
--1
-401
--1
-402
-4
-402
--1
-402
-4
-403
--1
--3
--1
--3
--1
-401
--1
-402
--1
-402
--1
-402
--1
-403
--1
--3
-104
--3
--1
-603
--1
--3
--1
-407
--1
-408
--1
-408
--1
-408
-102
-409
--1
--3
--1
--3
--1
-407
--1
-408
--1
-408
-102
-408
--1
-409
--1
--3
--1
--3
--1
-603
-3
--3
--1
--3
--1
--3
-104
--3
--1
--3
--1
--3
--1
--3
--1
-<endMap>
