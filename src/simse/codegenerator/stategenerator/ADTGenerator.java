@@ -143,11 +143,23 @@ public class ADTGenerator implements CodeGeneratorConstants {
 				}
 			}
 			
+			Vector<Attribute> compareKeys = new Vector<Attribute>();
+			compareKeys.add(compareType.getKey());
 			for (SimSEObjectType type : employeeTypes) {
-				if (!type.getKey().attributeEquals(compareType.getKey())) {
-					compareAttributes.add(type.getKey());
+				boolean shared = false;
+				for (Attribute key : compareKeys) {
+					if (key.attributeEquals(type.getKey())) {
+						shared = true;
+						break;
+					}
+				}
+				
+				if (!shared) {
+					compareKeys.add(type.getKey());
 				}
 			}
+			
+			
 		}
 
 		MethodSpec.Builder employeeConstructorBuilder = MethodSpec.constructorBuilder().addModifiers(Modifier.PUBLIC)
@@ -375,9 +387,19 @@ public class ADTGenerator implements CodeGeneratorConstants {
 				}
 			}
 			
+			Vector<Attribute> compareKeys = new Vector<Attribute>();
+			compareKeys.add(compareType.getKey());
 			for (SimSEObjectType type : customerTypes) {
-				if (!type.getKey().attributeEquals(compareType.getKey())) {
-					compareAttributes.add(type.getKey());
+				boolean shared = false;
+				for (Attribute key : compareKeys) {
+					if (key.attributeEquals(type.getKey())) {
+						shared = true;
+						break;
+					}
+				}
+				
+				if (!shared) {
+					compareKeys.add(type.getKey());
 				}
 			}
 		}
@@ -634,9 +656,19 @@ public class ADTGenerator implements CodeGeneratorConstants {
 				}
 			}
 			
+			Vector<Attribute> compareKeys = new Vector<Attribute>();
+			compareKeys.add(compareType.getKey());
 			for (SimSEObjectType type : objSpecificTypes) {
-				if (!type.getKey().attributeEquals(compareType.getKey())) {
-					compareAttributes.add(type.getKey());
+				boolean shared = false;
+				for (Attribute key : compareKeys) {
+					if (key.attributeEquals(type.getKey())) {
+						shared = true;
+						break;
+					}
+				}
+				
+				if (!shared) {
+					compareKeys.add(type.getKey());
 				}
 			}
 		}
@@ -790,9 +822,19 @@ public class ADTGenerator implements CodeGeneratorConstants {
 				}
 			}
 			
+			Vector<Attribute> compareKeys = new Vector<Attribute>();
+			compareKeys.add(compareType.getKey());
 			for (SimSEObjectType type : objSpecificTypes) {
-				if (!type.getKey().attributeEquals(compareType.getKey())) {
-					compareAttributes.add(type.getKey());
+				boolean shared = false;
+				for (Attribute key : compareKeys) {
+					if (key.attributeEquals(type.getKey())) {
+						shared = true;
+						break;
+					}
+				}
+				
+				if (!shared) {
+					compareKeys.add(type.getKey());
 				}
 			}
 		}
