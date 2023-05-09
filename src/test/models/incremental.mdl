@@ -16900,17 +16900,17 @@ emily.gif
 <endGraphics>
 <beginMap>
 <beginSOPUsers>
-- Employee - SoftwareEngineer - Bob
-true
-true
-12
-2
-
 - Employee - SoftwareEngineer - Lola
 true
 true
 1
 6
+
+- Employee - SoftwareEngineer - Bob
+true
+true
+12
+2
 
 - Employee - SoftwareEngineer - Karl
 true
