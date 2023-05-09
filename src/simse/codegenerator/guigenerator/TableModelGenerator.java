@@ -595,10 +595,28 @@ public class TableModelGenerator implements CodeGeneratorConstants {
 	            }
 	        }
 	        
+			Vector<Attribute> compareKeys = new Vector<Attribute>();
+			compareKeys.add(compareType.getKey());
 			for (SimSEObjectType type : typeTypes) {
-				if (!type.getKey().attributeEquals(compareType.getKey())) {
-					compareAttributes.add(type.getKey());
+				boolean shared = false;
+				for (Attribute key : compareKeys) {
+					if (key.attributeEquals(type.getKey())) {
+						shared = true;
+						break;
+					}
 				}
+				
+				if (!shared) {
+					compareKeys.add(type.getKey());
+				}
+			}
+			
+			if (compareAttributes.contains(compareType.getKey())) {
+				compareKeys.remove(compareType.getKey());
+			}
+			
+			for (Attribute key: compareKeys) {
+				compareAttributes.add(key);
 			}
 	  }
 	        

@@ -159,6 +159,13 @@ public class ADTGenerator implements CodeGeneratorConstants {
 				}
 			}
 			
+			if (compareAttributes.contains(compareType.getKey())) {
+				compareKeys.remove(compareType.getKey());
+			}
+			
+			for (Attribute key: compareKeys) {
+				compareAttributes.add(key);
+			}
 			
 		}
 
@@ -401,6 +408,14 @@ public class ADTGenerator implements CodeGeneratorConstants {
 				if (!shared) {
 					compareKeys.add(type.getKey());
 				}
+			}
+			
+			if (compareAttributes.contains(compareType.getKey())) {
+				compareKeys.remove(compareType.getKey());
+			}
+			
+			for (Attribute key: compareKeys) {
+				compareAttributes.add(key);
 			}
 		}
 
@@ -671,6 +686,14 @@ public class ADTGenerator implements CodeGeneratorConstants {
 					compareKeys.add(type.getKey());
 				}
 			}
+			
+			if (compareAttributes.contains(compareType.getKey())) {
+				compareKeys.remove(compareType.getKey());
+			}
+			
+			for (Attribute key: compareKeys) {
+				compareAttributes.add(key);
+			}
 		}
 		
 		
@@ -836,6 +859,14 @@ public class ADTGenerator implements CodeGeneratorConstants {
 				if (!shared) {
 					compareKeys.add(type.getKey());
 				}
+			}
+			
+			if (compareAttributes.contains(compareType.getKey())) {
+				compareKeys.remove(compareType.getKey());
+			}
+			
+			for (Attribute key: compareKeys) {
+				compareAttributes.add(key);
 			}
 		}
 
