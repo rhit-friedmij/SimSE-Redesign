@@ -20,6 +20,7 @@ import simse.modelbuilder.objectbuilder.SimSEObjectTypeTypes;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Vector;
 
 import javax.lang.model.element.Modifier;
@@ -69,6 +70,7 @@ public class ActionInfoPanelGenerator implements CodeGeneratorConstants {
       ClassName fxCollections = ClassName.get("javafx.collections", "FXCollections");
       
       String initalizeActionDescriptionActions = "";
+      ArrayList<String> actionAnnotations = new ArrayList<>();
       
       // go through all actions:
       Vector<ActionType> actions = actTypes.getAllActionTypes();
@@ -83,9 +85,8 @@ public class ActionInfoPanelGenerator implements CodeGeneratorConstants {
             writeElse = true;
           }
           initalizeActionDescriptionActions += "if (action instanceof " + uCaseName + "Action) {\n";
-          initalizeActionDescriptionActions += "text = \"" + 
-                  act.getAnnotation().replaceAll("\n", "\\\\n").
-                  replaceAll("\"", "\\\\\"") + "\";\n";
+          actionAnnotations.add(act.getAnnotation().replaceAll("\n", "\\\\n").replaceAll("\"", "\\\\\""));
+          initalizeActionDescriptionActions += "text = $S;\n";
           initalizeActionDescriptionActions += "}";
         }
       }
@@ -94,7 +95,7 @@ public class ActionInfoPanelGenerator implements CodeGeneratorConstants {
       MethodSpec initializeActionDescription = MethodSpec.methodBuilder("initializeActionDescription")
     		  .addModifiers(Modifier.PRIVATE)
     		  .addStatement("String text = \"\"")
-    		  .addCode(initalizeActionDescriptionActions)
+    		  .addCode(initalizeActionDescriptionActions, actionAnnotations.toArray())
     		  .addStatement("actionDescriptionArea.setText(text)")
     		  .addStatement("actionDescriptionArea.positionCaret(0)")
     		  .build();
