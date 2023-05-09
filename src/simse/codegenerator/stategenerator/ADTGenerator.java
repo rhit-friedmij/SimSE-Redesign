@@ -72,11 +72,20 @@ public class ADTGenerator implements CodeGeneratorConstants {
 		if (objClass.exists()) {
 			objClass.delete(); // delete old version of file
 		}
-
+		
 		MethodSpec clone1 = MethodSpec.methodBuilder("clone").addModifiers(Modifier.PUBLIC).returns(Object.class)
-				.beginControlFlow("try").addStatement("$T cl = ($T) (super.clone())", ssObjectClass, ssObjectClass)
-				.addStatement("return cl").nextControlFlow("catch ($T c)", CloneNotSupportedException.class)
-				.addStatement("System.out.println(c.getMessage())").endControlFlow().addStatement("return null")
+				.beginControlFlow("try")
+				.addStatement("$T cl = null", ssObjectClass)
+				.beginControlFlow("if (this instanceof Employee)")
+				.addStatement("cl = this")
+				.nextControlFlow("else ")
+				.addStatement("cl = (SSObject) (super.clone())")
+				.endControlFlow()
+				.addStatement("return cl")
+				.nextControlFlow("catch ($T c)", CloneNotSupportedException.class)
+				.addStatement("System.out.println(c.getMessage())")
+				.endControlFlow()
+				.addStatement("return null")
 				.build();
 
 		TypeSpec ssObject = TypeSpec.classBuilder("SSObject").addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)

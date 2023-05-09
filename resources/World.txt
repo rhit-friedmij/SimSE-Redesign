@@ -27,6 +27,7 @@ import javafx.scene.paint.Color;
 import simse.adts.objects.Employee;
 import simse.gui.util.JavaFXHelpers;
 import simse.logic.Logic;
+import simse.state.EmployeeStateRepository;
 import simse.state.State;
 
 public class World extends SimSEMap implements EventHandler<Event> {
@@ -200,7 +201,7 @@ public class World extends SimSEMap implements EventHandler<Event> {
 			String overheadText = tempEmp.getEmployee().getOverheadText();
 			if ((overheadText != null) && (overheadText.length() > 0)) {
 				numOverheadTexts++;
-				if (state.getEmployeeStateRepository().getAll().contains(tempEmp.getEmployee()) == false) {
+				if (EmployeeStateRepository.getInstance(state).getAll().contains(tempEmp.getEmployee()) == false) {
 					employeeGone = true;
 				}
 			}
@@ -218,14 +219,14 @@ public class World extends SimSEMap implements EventHandler<Event> {
 		// (haven't been destroyed):
 		for (int i = 0; i < oldSopUsers.size(); i++) {
 			DisplayedEmployee tempDisEmp = oldSopUsers.get(i);
-			if (state.getEmployeeStateRepository().getAll().contains(tempDisEmp.getEmployee())) // employee is still
+			if (EmployeeStateRepository.getInstance(state).getAll().contains(tempDisEmp.getEmployee())) // employee is still
 																								// there
 			{
 				sopUsers.add(tempDisEmp);
 			}
 		}
 		// check if any new emps have been added:
-		if (sopUsers.size() < state.getEmployeeStateRepository().getAll().size()) // new emps have been added
+		if (sopUsers.size() < EmployeeStateRepository.getInstance(state).getAll().size()) // new emps have been added
 		{
 			Vector<Employee> allEmps = employeeList;
 			for (int i = 0; i < allEmps.size(); i++) {
@@ -273,7 +274,7 @@ public class World extends SimSEMap implements EventHandler<Event> {
 			// -5 is the offset for the border around the GUI
 			clickedX = mEvent.getSceneX() - MOUSE_SPACER_X;
 			clickedY = mEvent.getSceneY() - MOUSE_SPACER_Y;
-			Vector<Employee> allEmp = state.getEmployeeStateRepository().getAll();
+			Vector<Employee> allEmp = EmployeeStateRepository.getInstance(state).getAll();
 			if (mEvent.isPrimaryButtonDown()) // left button clicked
 			{
 				for(int i = 0; i < allEmp.size(); i++) {
