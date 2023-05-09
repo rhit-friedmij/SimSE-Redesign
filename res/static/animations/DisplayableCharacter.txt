@@ -20,6 +20,7 @@ import simse.gui.MapData;
 public abstract class DisplayableCharacter extends Group{
 	
 	private SimSESprite displayedCharacter;
+	private Timeline directionTimer;
 	protected int velocity, height, width, characterNum;
 	private double previousX, previousY;
 	private PathTransition transition;
@@ -137,7 +138,7 @@ public abstract class DisplayableCharacter extends Group{
 	
 	public void directionCheck(){
 		
-		Timeline directionTimer = new Timeline(
+		directionTimer = new Timeline(
                 new KeyFrame(Duration.seconds(0.1), 
                 new EventHandler<ActionEvent>() {
 
@@ -192,6 +193,16 @@ public abstract class DisplayableCharacter extends Group{
 		directionTimer.play();
 	}
 	
+	public void stopActions() {
+		directionTimer.stop();
+		transition.stop();
+		displayedCharacter.stopAnim();
+		this.getChildren().remove(displayedCharacter);
+	}
+	
+	public int getCharacterNum() {
+		return this.characterNum;
+	}
 	
 	abstract void initalizeAnimationList(int characterNum);
 

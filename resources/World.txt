@@ -117,8 +117,6 @@ public class World extends SimSEMap implements EventHandler<Event> {
 				
 		Vector<Employee> allEmp = employeeList;
 		
-		Vector<Employee> allEmp = state.getEmployeeStateRepository().getAll();
-		
 		for (int i = 0; i < allEmp.size(); i++) {
 			DisplayableCharacter tmpChar = allEmp.get(i).getCharacterModel();
 			this.getChildren().add(tmpChar);

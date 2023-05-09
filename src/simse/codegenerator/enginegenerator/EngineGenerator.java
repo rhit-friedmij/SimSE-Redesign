@@ -142,8 +142,9 @@ public class EngineGenerator implements CodeGeneratorConstants {
 					if(i == employeeCount) {
 						objsBuilder.nextControlFlow("else ");
 						objsBuilder.beginControlFlow("for(int i = 0; i < employees.size(); i++)");
-						objsBuilder.addStatement("this.generateNewPath(i)");
-						objsBuilder.addStatement("employees.get(i).setCharacterModel(new $T(characterPath, i, 50, 75))", simSECharacter);
+						objsBuilder.addStatement("int characterNum = employees.get(i).getCharacterModel().getCharacterNum()");
+						objsBuilder.addStatement("this.generateNewPath(characterNum)");
+						objsBuilder.addStatement("employees.get(i).setCharacterModel(new $T(characterPath, characterNum, 50, 75))", simSECharacter);
 						objsBuilder.endControlFlow();
 						objsBuilder.endControlFlow();
 					}

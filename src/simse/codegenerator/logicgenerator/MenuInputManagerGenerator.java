@@ -594,6 +594,10 @@ public class MenuInputManagerGenerator implements CodeGeneratorConstants {
 			for (int j = 0; j < triggers.size(); j++) {
 				ActionTypeParticipantTrigger trig = triggers.elementAt(j);
 				ActionTypeParticipant part = trig.getParticipant();
+				if(actType.equals("Fire"))
+				{
+					effectCode3.addStatement("selectedEmp.getCharacterModel().stopActions()");
+				}
 				effectCode3.addStatement("d.add(" + part.getName().toLowerCase() + "s" + j + ")");
 			}
 			effectCode3.addStatement("$T f = new $T()", actName, actName);
