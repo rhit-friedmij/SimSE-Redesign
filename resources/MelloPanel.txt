@@ -16,6 +16,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
+import simse.adts.actions.Action;
 import simse.gui.util.JavaFXHelpers;
 import simse.state.State;
 
@@ -107,21 +108,21 @@ public class MelloPanel extends Pane implements SimSEPanel, Cloneable{
 		instances.put(newState, (MelloPanel)oldInstance.clone());
 	}
 	
-	public void addTaskInProgress(String task, Vector<Object> participants) {
+	public void addTaskInProgress(String task, Action action, Vector<Object> participants) {
 		if (participants.isEmpty()) return;
-		removeTask(task);
-		prog.getChildren().add(new MelloItem(task, participants));
+		removeTask(action.getId());
+		prog.getChildren().add(new MelloItem(task, action.getId(), participants));
 	}
 	
-	public void addEmployeeToTask(String task, Object employee) {
-		MelloItem inProg = findTaskInProgress(task);
+	public void addEmployeeToTask(Action action, Object employee) {
+		MelloItem inProg = findTaskInProgress(action.getId());
 		if (inProg == null) return;
 		prog.getChildren().remove(inProg);
 		prog.getChildren().add(inProg.addEmp(employee));
 	}
 	
-	public void removeEmployeeFromTask(String task, Object employee) {
-		MelloItem inProg = findTaskInProgress(task);
+	public void removeEmployeeFromTask(Action action, Object employee) {
+		MelloItem inProg = findTaskInProgress(action.getId());
 		if (inProg == null) return;
 		prog.getChildren().remove(inProg);
 		inProg = inProg.removeEmp(employee);
@@ -132,17 +133,17 @@ public class MelloPanel extends Pane implements SimSEPanel, Cloneable{
 		prog.getChildren().removeAll(prog.getChildren());
 	}
 	
-	public void completeTask(String task) {
-		MelloItem found = findTaskInProgress(task);
+	public void completeTask(int id) {
+		MelloItem found = findTaskInProgress(id);
 		if (found != null) {
 			prog.getChildren().remove(found);
 			comp.getChildren().add(found);
 		}
 	}
 	
-	public void removeTask(String task) {
-		MelloItem inProg = findTaskInProgress(task);
-		if (findTaskInProgress(task) != null) prog.getChildren().remove(inProg);
+	public void removeTask(int id) {
+		MelloItem inProg = findTaskInProgress(id);
+		if (inProg != null) prog.getChildren().remove(inProg);
 	}
 	
 	private void addTaskInProgress(MelloItem mi) {
@@ -171,10 +172,10 @@ public class MelloPanel extends Pane implements SimSEPanel, Cloneable{
 		return clone;
 	}
 	
-	private MelloItem findTaskInProgress(String task) {
+	private MelloItem findTaskInProgress(int id) {
 		for (Node n : prog.getChildren()) {
 			if (n instanceof MelloItem) {
-				if (((MelloItem) n).isTask(task)) return (MelloItem) n;
+				if (((MelloItem) n).isAction(id)) return (MelloItem) n;
 			}
 		}
 		return null;

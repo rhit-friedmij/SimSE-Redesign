@@ -13,6 +13,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
+import simse.adts.actions.Action;
 import simse.adts.objects.Employee;
 import simse.gui.util.JavaFXHelpers;
 
@@ -20,10 +21,12 @@ public class MelloItem extends Pane implements Cloneable{
 	
 	String task;
 	Vector<Object> employees;
+	int actionId;
 	
-	public MelloItem(String item, Vector<Object> workers) {
+	public MelloItem(String item, int actionId, Vector<Object> workers) {
 		this.task = item;
 		this.employees = workers;
+		this.actionId = actionId;
 		VBox box = new VBox();
 		
 		Font nameFont = Font.font("Helvetica", FontWeight.BOLD, 10);
@@ -55,7 +58,7 @@ public class MelloItem extends Pane implements Cloneable{
 	
 	@Override
 	public Object clone() {
-		return new MelloItem(this.task, (Vector<Object>)this.employees.clone());
+		return new MelloItem(this.task, this.actionId, (Vector<Object>)this.employees.clone());
 	}
 	
 	public MelloItem(String item) {
@@ -74,18 +77,18 @@ public class MelloItem extends Pane implements Cloneable{
 	
 	public MelloItem addEmp(Object emp) {
 		employees.add(emp);
-		return new MelloItem(task, employees);
+		return new MelloItem(task, actionId, employees);
 	}
 	
 	public MelloItem removeEmp(Object emp) {
 		employees.remove(emp);
 		if (employees.isEmpty()) return null;
-		return new MelloItem(task, employees);
+		return new MelloItem(task, actionId, employees);
 	}
 	
 
-	public boolean isTask(String task) {
-		return this.task.equals(task);
+	public boolean isAction(int id) {
+		return this.actionId == id;
 	}
 
 }

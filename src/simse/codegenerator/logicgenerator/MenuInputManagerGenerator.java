@@ -702,7 +702,7 @@ public class MenuInputManagerGenerator implements CodeGeneratorConstants {
 								
 								Attribute keyAttribute = sObjType.getKey();
 								String keyName = keyAttribute.getName();
-								effectCode1.addStatement("mello.addEmployeeToTask($S, (($T)selectedEmp))", actType, currObjType);
+//								effectCode1.addStatement("mello.addEmployeeToTask($S, (($T)selectedEmp))", actType, currObjType);
 								if (k == objTypes.size() - 1) {
 									effectCode1.endControlFlow();
 								}
@@ -774,7 +774,7 @@ public class MenuInputManagerGenerator implements CodeGeneratorConstants {
 						
 						Attribute keyAttribute = sObjType.getKey();
 						String keyName = keyAttribute.getName();
-						effectCode.addStatement("mello.removeEmployeeFromTask($S, selectedEmp)", actType);
+						effectCode.addStatement("mello.removeEmployeeFromTask(b, selectedEmp)");
 						if (i == objTypes.size() - 1) {
 							effectCode.endControlFlow();
 						}
