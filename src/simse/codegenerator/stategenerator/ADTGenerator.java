@@ -152,11 +152,30 @@ public class ADTGenerator implements CodeGeneratorConstants {
 				}
 			}
 			
+			Vector<Attribute> compareKeys = new Vector<Attribute>();
+			compareKeys.add(compareType.getKey());
 			for (SimSEObjectType type : employeeTypes) {
-				if (!type.getKey().attributeEquals(compareType.getKey())) {
-					compareAttributes.add(type.getKey());
+				boolean shared = false;
+				for (Attribute key : compareKeys) {
+					if (key.attributeEquals(type.getKey())) {
+						shared = true;
+						break;
+					}
+				}
+				
+				if (!shared) {
+					compareKeys.add(type.getKey());
 				}
 			}
+			
+			if (compareAttributes.contains(compareType.getKey())) {
+				compareKeys.remove(compareType.getKey());
+			}
+			
+			for (Attribute key: compareKeys) {
+				compareAttributes.add(key);
+			}
+			
 		}
 
 		MethodSpec.Builder employeeConstructorBuilder = MethodSpec.constructorBuilder().addModifiers(Modifier.PUBLIC)
@@ -244,7 +263,7 @@ public class ADTGenerator implements CodeGeneratorConstants {
 				.returns(void.class).addParameter(String.class, "s")
 				.addParameter(Object.class, "sender").addParameter(state, "state")
 				.addStatement("$T track = $T.getInstance(state)", trackClass, trackClass)
-				.addStatement("$N.addText(s, sender)", "track")
+				.addStatement("$N.addText(state, s, sender)", "track")
 				.addStatement("$N = s", "overheadText").build();
 
 		MethodSpec clearOverheadText = MethodSpec.methodBuilder("clearOverheadText").addModifiers(Modifier.PUBLIC)
@@ -384,10 +403,28 @@ public class ADTGenerator implements CodeGeneratorConstants {
 				}
 			}
 			
+			Vector<Attribute> compareKeys = new Vector<Attribute>();
+			compareKeys.add(compareType.getKey());
 			for (SimSEObjectType type : customerTypes) {
-				if (!type.getKey().attributeEquals(compareType.getKey())) {
-					compareAttributes.add(type.getKey());
+				boolean shared = false;
+				for (Attribute key : compareKeys) {
+					if (key.attributeEquals(type.getKey())) {
+						shared = true;
+						break;
+					}
 				}
+				
+				if (!shared) {
+					compareKeys.add(type.getKey());
+				}
+			}
+			
+			if (compareAttributes.contains(compareType.getKey())) {
+				compareKeys.remove(compareType.getKey());
+			}
+			
+			for (Attribute key: compareKeys) {
+				compareAttributes.add(key);
 			}
 		}
 
@@ -423,7 +460,7 @@ public class ADTGenerator implements CodeGeneratorConstants {
 				.returns(void.class).addParameter(String.class, "s").addParameter(Object.class, "sender")
 				.addParameter(state, "state")
 				.addStatement("$T track = $T.getInstance(state)", trackClass, trackClass)
-				.addStatement("$N.addText(s, sender)", "track")
+				.addStatement("$N.addText(state, s, sender)", "track")
 				.build();
 
 		MethodSpec hasOverheadText2 = MethodSpec.methodBuilder("hasOverheadText").addModifiers(Modifier.PUBLIC)
@@ -643,10 +680,28 @@ public class ADTGenerator implements CodeGeneratorConstants {
 				}
 			}
 			
+			Vector<Attribute> compareKeys = new Vector<Attribute>();
+			compareKeys.add(compareType.getKey());
 			for (SimSEObjectType type : objSpecificTypes) {
-				if (!type.getKey().attributeEquals(compareType.getKey())) {
-					compareAttributes.add(type.getKey());
+				boolean shared = false;
+				for (Attribute key : compareKeys) {
+					if (key.attributeEquals(type.getKey())) {
+						shared = true;
+						break;
+					}
 				}
+				
+				if (!shared) {
+					compareKeys.add(type.getKey());
+				}
+			}
+			
+			if (compareAttributes.contains(compareType.getKey())) {
+				compareKeys.remove(compareType.getKey());
+			}
+			
+			for (Attribute key: compareKeys) {
+				compareAttributes.add(key);
 			}
 		}
 		
@@ -799,10 +854,28 @@ public class ADTGenerator implements CodeGeneratorConstants {
 				}
 			}
 			
+			Vector<Attribute> compareKeys = new Vector<Attribute>();
+			compareKeys.add(compareType.getKey());
 			for (SimSEObjectType type : objSpecificTypes) {
-				if (!type.getKey().attributeEquals(compareType.getKey())) {
-					compareAttributes.add(type.getKey());
+				boolean shared = false;
+				for (Attribute key : compareKeys) {
+					if (key.attributeEquals(type.getKey())) {
+						shared = true;
+						break;
+					}
 				}
+				
+				if (!shared) {
+					compareKeys.add(type.getKey());
+				}
+			}
+			
+			if (compareAttributes.contains(compareType.getKey())) {
+				compareKeys.remove(compareType.getKey());
+			}
+			
+			for (Attribute key: compareKeys) {
+				compareAttributes.add(key);
 			}
 		}
 

@@ -219,16 +219,7 @@ public class ArtifactsPanelGenerator implements CodeGeneratorConstants {
     		  .beginControlFlow("if(!artPanel.getChildren().contains(picPanel))")
     		  .addStatement("artPanel.getChildren().add(picPanel)")
     		  .endControlFlow()
-    		  .addStatement("$T actsPanel = new $T()", vbox, vbox)
-    		  .addStatement("actsPanel.setBackground($T.createBackground$T(Color.rgb(102, 102, 102, 1)))", javafxhelpers, color)
     		  .addStatement("artPanel.set$T(new Border(new $T($T.rgb(102, 102, 102, 1), $T.SOLID, $T.EMPTY, $T.FULL)))", border, borderstroke, color, borderstrokestyle, cornerradii, borderwidths)
-    		  .addStatement("Vector<Action> acts = $N.getActionStateRepository().getAllActions(art)", "state")
-    		  .beginControlFlow("for (int j = 0; j < acts.size(); j++)")
-    		  .addStatement("$T tempAct = acts.elementAt(j)", action)
-    		  .addCode(getActionLables())
-    		  .endControlFlow()
-    		  .addStatement("actsPanel.setPrefSize(150, (int) (actsPanel.getPrefHeight()))")
-    		  .addStatement("artPanel.getChildren().add(actsPanel)")
     		  .addStatement("artPanel.setBorder(new $T(new $T($T.BLACK,\n"
     		  		+ "$T.SOLID,\n"
     		  		+ "$T.EMPTY, $T.THIN)))", border, borderstroke, color, borderstrokestyle, cornerradii, borderstroke)
@@ -355,45 +346,6 @@ public class ArtifactsPanelGenerator implements CodeGeneratorConstants {
           + actPanelFile.getPath() + ": " + e.toString()), "File IO Error",
           JOptionPane.WARNING_MESSAGE);
     }
-  }
-  
-  private String getActionLables() {
-	  String actions = "";
-	  Vector<ActionType> allActs = actTypes.getAllActionTypes();
-	        boolean putElse = false;
-	        for (ActionType tempActType : allActs) {
-	          if ((tempActType.isVisibleInSimulation())
-	              && (tempActType.getDescription() != null)
-	              && (tempActType.getDescription().length() > 0)) {
-	        	if (!this.impActions.contains(CodeGeneratorUtils.getUpperCaseLeading(tempActType.getName()))) {
-	        		this.impActions.add(CodeGeneratorUtils.getUpperCaseLeading(tempActType.getName()));
-	        	}
-	            if (putElse) {
-	            	actions = actions.concat("else ");
-	            } else {
-	              putElse = true;
-	            }
-	            actions = actions.concat("if(tempAct instanceof "
-	                + CodeGeneratorUtils.getUpperCaseLeading(tempActType.getName()) + 
-	                "Action)");
-	            actions = actions.concat("\n");
-	            actions = actions.concat("{");
-	            actions = actions.concat("\n");
-	            actions = actions.concat("Label tempLabel = new Label(\""
-	                + tempActType.getDescription() + "\");");
-	            actions = actions.concat("\n");
-	            actions = actions.concat("tempLabel.setFont(new Font(tempLabel.getFont().getName(), 10));");
-	            actions = actions.concat("\n");
-	            actions = actions.concat("tempLabel.setTextFill(Color.WHITE);");
-	            actions = actions.concat("\n");
-	            actions = actions.concat("actsPanel.getChildren().add(tempLabel);");
-	            actions = actions.concat("\n");
-	            actions = actions.concat("}");
-	            actions = actions.concat("\n");
-	          }
-	        }
-	       return actions;
-	      
   }
   
   private String continueIfHire() {

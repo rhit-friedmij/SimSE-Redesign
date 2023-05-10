@@ -19,6 +19,7 @@ public class TrackPanel extends Pane implements SimSEPanel, Cloneable {
 	VBox track;
 	ScrollPane scroll;
 	private static HashMap<State, TrackPanel> instances = new HashMap<>();
+	private int lastTick;
 	
 	private TrackPanel() {
 		
@@ -50,6 +51,7 @@ public class TrackPanel extends Pane implements SimSEPanel, Cloneable {
 		
 		this.setPrefHeight(400);
 		this.getChildren().add(pane);
+		lastTick = 0;
 	}
 	
 	public static TrackPanel getInstance(State s) {
@@ -62,11 +64,23 @@ public class TrackPanel extends Pane implements SimSEPanel, Cloneable {
 	
 	public static void createInstance(State newState, State oldState) {
 		TrackPanel oldInstance = instances.get(oldState);
-		instances.put(newState, (TrackPanel) oldInstance.clone());
+		instances.put(newState, (TrackPanel) oldInstance);
 	}
 	
-	public void addText(String message, Object sender) {
-		track.getChildren().add(new TrackMessage(sender, message));
+	public void addText(State curState, String message, Object sender) {
+		int curTick = curState.getClock().getTime();
+		if (curTick > lastTick) {
+			TrackPanel curPanel = getInstance(curState);
+			TrackMessage tm = new TrackMessage(sender, message, curTick);
+			curPanel.addMessage(tm);
+			TrackPanel newPanel = (TrackPanel) curPanel.clone();
+			instances.put(curState, newPanel);
+			lastTick = curTick;
+		} else {
+			TrackPanel curPanel = getInstance(curState);
+			TrackMessage tm = new TrackMessage(sender, message, curTick);
+			curPanel.addMessage(tm);
+		}
 	}
 	
 	private void addMessage(TrackMessage tm) {
