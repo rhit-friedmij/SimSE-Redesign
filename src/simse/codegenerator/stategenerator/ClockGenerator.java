@@ -29,8 +29,7 @@ public class ClockGenerator implements CodeGeneratorConstants {
       clockFile.delete(); // delete old version of file
     }
     try {
-    	FileReader reader = new FileReader(new File("src/simse/codegenerator/"
-    			+ "resources/Clock.txt"));
+    	FileReader reader = new FileReader("res\\static\\state\\Clock.txt");
     	FileWriter writer = new FileWriter(clockFile);
     	char[] buf = new char[256];
     	int length;

@@ -29,7 +29,7 @@ public class MapDataGenerator implements CodeGeneratorConstants {
     }
     try {
       FileWriter writer = new FileWriter(mdFile);
-      FileReader reader = new FileReader("resources\\MapData.txt");
+      FileReader reader = new FileReader("res\\static\\gui\\MapData.txt");
       Scanner s = new Scanner(reader);
       
       while (s.hasNextLine()) {

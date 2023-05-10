@@ -86,7 +86,7 @@ public class LogicGenerator implements CodeGeneratorConstants {
           logicFile.delete(); // delete old version of file
         }
         FileWriter writer = new FileWriter(logicFile);
-        FileReader reader = new FileReader(new File("src/simse/codegenerator/resources/Logic.txt"));
+        FileReader reader = new FileReader("res\\static\\logic\\Logic.txt");
         Scanner s = new Scanner(reader);
         
         while (s.hasNextLine()) {

@@ -64,10 +64,7 @@ public class TabPanelGenerator implements CodeGeneratorConstants {
     }
     try {
     	
-    	ClassName enumeration = ClassName.get("java.util", "Enumeration");
-    	ClassName hBox = ClassName.get("javafx.scene.layout", "HBox");
     	ClassName hashtable = ClassName.get("java.util", "Hashtable");
-    	ClassName vector = ClassName.get("java.util", "Vector");
     	ClassName actionevent = ClassName.get("javafx.event", "ActionEvent");
     	ClassName event = ClassName.get("javafx.event", "Event");
     	ClassName eventhandler = ClassName.get("javafx.event", "EventHandler");
@@ -85,7 +82,6 @@ public class TabPanelGenerator implements CodeGeneratorConstants {
     	ClassName borderstroke = ClassName.get("javafx.scene.layout", "BorderStroke");
     	ClassName borderstrokestyle = ClassName.get("javafx.scene.layout", "BorderStrokeStyle");
     	ClassName borderwidths = ClassName.get("javafx.scene.layout", "BorderWidths");
-    	ClassName columnconstraints = ClassName.get("javafx.scene.layout", "ColumnConstraints");
     	ClassName cornerradii = ClassName.get("javafx.scene.layout", "CornerRadii");
     	ClassName flowpane = ClassName.get("javafx.scene.layout", "FlowPane");
     	ClassName gridpane = ClassName.get("javafx.scene.layout", "GridPane");
@@ -93,19 +89,8 @@ public class TabPanelGenerator implements CodeGeneratorConstants {
     	ClassName pane = ClassName.get("javafx.scene.layout", "Pane");
     	ClassName priority = ClassName.get("javafx.scene.layout", "Priority");
     	ClassName color = ClassName.get("javafx.scene.paint", "Color");
-    	ClassName acustomer = ClassName.get("simse.adts.objects", "ACustomer");
-    	ClassName automatedtestingtool = ClassName.get("simse.adts.objects", "AutomatedTestingTool");
-    	ClassName code = ClassName.get("simse.adts.objects", "Code");
-    	ClassName designdocument = ClassName.get("simse.adts.objects", "DesignDocument");
-    	ClassName designenvironment = ClassName.get("simse.adts.objects", "DesignEnvironment");
     	ClassName employee = ClassName.get("simse.adts.objects", "Employee");
-    	ClassName ide = ClassName.get("simse.adts.objects", "IDE");
-    	ClassName requirementscapturetool = ClassName.get("simse.adts.objects", "RequirementsCaptureTool");
-    	ClassName requirementsdocument = ClassName.get("simse.adts.objects", "RequirementsDocument");
-    	ClassName seproject = ClassName.get("simse.adts.objects", "SEProject");
     	ClassName ssobject = ClassName.get("simse.adts.objects", "SSObject");
-    	ClassName softwareengineer = ClassName.get("simse.adts.objects", "SoftwareEngineer");
-    	ClassName systemtestplan = ClassName.get("simse.adts.objects", "SystemTestPlan");
     	ClassName engine = ClassName.get("simse.engine", "Engine");
     	ClassName explanatorytool = ClassName.get("simse.explanatorytool", "ExplanatoryTool");
     	ClassName javafxhelpers = ClassName.get("simse.gui.util", "JavaFXHelpers");

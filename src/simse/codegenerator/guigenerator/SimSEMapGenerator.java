@@ -75,12 +75,10 @@ public class SimSEMapGenerator implements CodeGeneratorConstants {
       ssmFile.delete(); // delete old version of file
     }
     try {
-    	ClassName arraylist = ClassName.get("java.util", "ArrayList");
-    	ClassName vector = ClassName.get("java.util", "Vector");       
+    	ClassName arraylist = ClassName.get("java.util", "ArrayList");    
     	ClassName image = ClassName.get("javafx.scene.image", "Image");
     	ClassName pane = ClassName.get("javafx.scene.layout", "Pane");
     	ClassName employee = ClassName.get("simse.adts.objects", "Employee");
-    	ClassName softwareengineer = ClassName.get("simse.adts.objects", "SoftwareEngineer");
     	ClassName logic = ClassName.get("simse.logic", "Logic");
     	ClassName state = ClassName.get("simse.state", "State");
     	ClassName displayedemployee = ClassName.get("simse.gui", "DisplayedEmployee");

@@ -29,7 +29,7 @@ public class PopupListenerGenerator implements CodeGeneratorConstants {
     }
     try {
       FileWriter writer = new FileWriter(pulFile);
-      FileReader reader = new FileReader("resources\\PopupListener.txt");
+      FileReader reader = new FileReader("res\\static\\gui\\PopupListener.txt");
       Scanner s = new Scanner(reader);
       
       while (s.hasNextLine()) {

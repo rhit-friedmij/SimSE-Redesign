@@ -792,6 +792,7 @@ public class ExplanatoryToolGenerator implements CodeGeneratorConstants {
   // copies the JFreeChart jars into the generated code directory
   private void copyJFreeChartJars() {
     try {
+    // TODO: Libraries
       ZipInputStream zis = new ZipInputStream(ExplanatoryToolGenerator.class
           .getResourceAsStream("res/libraries.zip"));
       while (true) {

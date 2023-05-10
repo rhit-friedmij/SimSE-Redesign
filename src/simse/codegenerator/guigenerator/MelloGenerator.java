@@ -27,7 +27,7 @@ public class MelloGenerator {
 	    	mPaneFile.delete(); // delete old version of file
 	    }
 	    try {
-	      FileReader reader = new FileReader("resources\\MelloPanel.txt");
+	      FileReader reader = new FileReader("res\\static\\gui\\MelloPanel.txt");
 	      Scanner s = new Scanner(reader);
 	      FileWriter writer = new FileWriter(mPaneFile);
 	      
@@ -50,7 +50,7 @@ public class MelloGenerator {
 		    	mItemFile.delete(); // delete old version of file
 		    }
 		    try {
-		      FileReader reader = new FileReader("resources\\MelloItem.txt");
+		      FileReader reader = new FileReader("res\\static\\gui\\MelloItem.txt");
 		      Scanner s = new Scanner(reader);
 		      FileWriter writer = new FileWriter(mItemFile);
 		      

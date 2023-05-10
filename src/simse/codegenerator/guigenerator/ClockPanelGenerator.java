@@ -29,7 +29,7 @@ public class ClockPanelGenerator implements CodeGeneratorConstants {
     }
     try {
       FileWriter writer = new FileWriter(clockPanelFile);
-      FileReader reader = new FileReader("resources\\ClockPanel.txt");
+      FileReader reader = new FileReader("res\\static\\gui\\ClockPanel.txt");
       Scanner s = new Scanner(reader);
       
       while (s.hasNextLine()) {

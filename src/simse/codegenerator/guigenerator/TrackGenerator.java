@@ -27,7 +27,7 @@ public class TrackGenerator {
 	    	tPaneFile.delete(); // delete old version of file
 	    }
 	    try {
-	      FileReader reader = new FileReader("resources\\TrackPanel.txt");
+	      FileReader reader = new FileReader("res\\static\\gui\\TrackPanel.txt");
 	      Scanner s = new Scanner(reader);
 	      FileWriter writer = new FileWriter(tPaneFile);
 	      
@@ -50,7 +50,7 @@ public class TrackGenerator {
 		    	tItemFile.delete(); // delete old version of file
 		    }
 		    try {
-		      FileReader reader = new FileReader("resources\\TrackMessage.txt");
+		      FileReader reader = new FileReader("res\\static\\gui\\TrackMessage.txt");
 		      Scanner s = new Scanner(reader);
 		      FileWriter writer = new FileWriter(tItemFile);
 		      

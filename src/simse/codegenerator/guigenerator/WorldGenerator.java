@@ -27,7 +27,7 @@ public class WorldGenerator {
       worldFile.delete(); // delete old version of file
     }
     try {
-      FileReader reader = new FileReader("resources\\World.txt");
+      FileReader reader = new FileReader("res\\static\\gui\\World.txt");
       Scanner s = new Scanner(reader);
       FileWriter writer = new FileWriter(worldFile);
       

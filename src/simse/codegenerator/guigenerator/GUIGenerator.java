@@ -186,7 +186,7 @@ public class GUIGenerator implements CodeGeneratorConstants {
     }
     try {
       FileWriter writer = new FileWriter(mainGUIFile);
-      String readfile = (!options.getExplanatoryToolAccessOption()) ? "resources\\SimSEGUIFalse.txt" : "resources\\SimSEGUITrue.txt";
+      String readfile = (!options.getExplanatoryToolAccessOption()) ? "res\\static\\gui\\SimSEGUIFalse.txt" : "res\\static\\gui\\SimSEGUITrue.txt";
       FileReader reader = new FileReader(readfile);
       Scanner s = new Scanner(reader);
       

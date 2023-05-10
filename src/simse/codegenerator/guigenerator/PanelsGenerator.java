@@ -28,7 +28,7 @@ public class PanelsGenerator {
 	    	panelFile.delete(); // delete old version of file
 	    }
 	    try {
-	      FileReader reader = new FileReader("resources\\Panels.txt");
+	      FileReader reader = new FileReader("res\\static\\gui\\Panels.txt");
 	      Scanner s = new Scanner(reader);
 	      FileWriter writer = new FileWriter(panelFile);
 	      
@@ -51,7 +51,7 @@ public class PanelsGenerator {
 		    	simSEPanelFile.delete(); // delete old version of file
 		    }
 		    try {
-		      FileReader reader = new FileReader("resources\\SimSEPanel.txt");
+		      FileReader reader = new FileReader("res\\static\\gui\\SimSEPanel.txt");
 		      Scanner s = new Scanner(reader);
 		      FileWriter writer = new FileWriter(simSEPanelFile);
 		      
@@ -74,7 +74,7 @@ public class PanelsGenerator {
 		    	panelScreenFile.delete(); // delete old version of file
 		    }
 		    try {
-		      FileReader reader = new FileReader("resources\\PanelsScreen.txt");
+		      FileReader reader = new FileReader("res\\static\\gui\\PanelsScreen.txt");
 		      Scanner s = new Scanner(reader);
 		      FileWriter writer = new FileWriter(panelScreenFile);
 		      
