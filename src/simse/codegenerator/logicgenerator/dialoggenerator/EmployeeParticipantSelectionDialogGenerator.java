@@ -162,7 +162,7 @@ public class EmployeeParticipantSelectionDialogGenerator implements
 			  .addStatement("icon.setScaleX(1.5)")
 			  .addStatement("icon.setScaleY(1.5)")
 			  .endControlFlow()
-			  .addStatement("$T iconPane = new $T(icon)", hBoxClass)
+			  .addStatement("$T iconPane = new $T(icon)", hBoxClass, hBoxClass)
 			  .addStatement("iconPane.setAlignment($T.CENTER)", posClass)
 			  .addStatement("iconPane.setPrefWidth(40)")
 			  .addStatement("tempPane.setRight(new $T($S, iconPane))", labelClass, "")
