@@ -61,16 +61,32 @@ public class ChooseActionToDestroyDialogGenerator implements CodeGeneratorConsta
 		ClassName buttonClass = ClassName.get("javafx.scene.control", "Button");
 		ClassName dialogClass = ClassName.get("javafx.scene.control", "Dialog");
 		ClassName vBoxClass = ClassName.get("javafx.scene.layout", "VBox");
+		  ClassName hBoxClass = ClassName.get("javafx.scene.layout", "HBox");
 		ClassName labelClass = ClassName.get("javafx.scene.control", "Label");
 		ClassName paneClass = ClassName.get("javafx.scene.layout", "Pane");
 		ClassName gridPaneClass = ClassName.get("javafx.scene.layout", "GridPane");
 		ClassName point2DClass = ClassName.get("javafx.geometry", "Point2D");
 		ClassName alertClass = ClassName.get("javafx.scene.control", "Alert");
 		ClassName alertTypeClass = ClassName.get("javafx.scene.control.Alert", "AlertType");
+		  ClassName windowClass = ClassName.get("javafx.stage", "Window");
+		  ClassName windowEvent = ClassName.get("javafx.stage", "WindowEvent");
 		TypeName mouseHandler = ParameterizedTypeName.get(eventHandler, mouseEvent);
+		TypeName windowHandler = ParameterizedTypeName.get(eventHandler, windowEvent);
 		TypeName actionWildcard = WildcardTypeName.subtypeOf(actionClass);
 		TypeName actionsType = ParameterizedTypeName.get(vector, actionWildcard);
 		TypeName checkboxType = ParameterizedTypeName.get(vector, checkboxClass);
+		
+		TypeSpec exitListener = TypeSpec.classBuilder("ExitListener")
+	    		  .addModifiers(Modifier.PUBLIC)
+	    		  .addSuperinterface(windowHandler)
+	    		  .addMethod(MethodSpec.methodBuilder("handle")
+	    				  .addAnnotation(Override.class)
+	    				  .addModifiers(Modifier.PUBLIC)
+	    				  .returns(void.class)
+	    				  .addParameter(windowEvent, "evt")
+	    				  .addStatement("close()")
+	    				  .build())
+	    		  .build();
 
 		// make a Vector of all the action types with user destroyers:
 		Vector<ActionType> userDestActs = new Vector<ActionType>();
@@ -101,45 +117,74 @@ public class ChooseActionToDestroyDialogGenerator implements CodeGeneratorConsta
 				.addCode(generateNames(userDestActs))
 				.addStatement("topPane.getChildren().add(new $T($S + actionName + $S))", labelClass, "Choose which ",
 						" Action to stop:")
-				.addStatement("$T middlePane = new $T()", gridPaneClass, gridPaneClass)
+				.addStatement("topPane.setMinWidth(300)")
+				.addStatement("$T middlePane = new $T()", vBoxClass, vBoxClass)
 				.addCode(generateActionConstructor(userDestActs))
-				.addStatement("$T bottomPane = new $T()", paneClass, paneClass)
+				.addStatement("$T bottomPane = new $T()", hBoxClass, hBoxClass)
 				.addStatement("$N = new $T($S)", "okButton", buttonClass, "OK")
 				.addStatement("$N.addEventHandler($T.MOUSE_CLICKED, this)", "okButton", mouseEvent)
 				.addStatement("bottomPane.getChildren().add($N)", "okButton")
+				.addStatement("$N.setMinWidth(75)", "okButton")
 				.addStatement("$N = new $T($S)", "cancelButton", buttonClass, "Cancel")
 				.addStatement("$N.addEventHandler($T.MOUSE_CLICKED, this)", "cancelButton", mouseEvent)
 				.addStatement("bottomPane.getChildren().add($N)", "cancelButton")
-				.addStatement("mainPane.getChildren().addAll(topPane, middlePane, bottomPane)")
+				.addStatement("$N.setMinWidth(75)", "cancelButton")
+				.addStatement("mainPane.getChildren().addAll(topPane)")
+				.addStatement("mainPane.getChildren().addAll(middlePane)")
+				.addStatement("mainPane.getChildren().addAll(bottomPane)")
 				.addStatement("$T ownerLoc = new $T(parent.getX(), parent.getY())", point2DClass, point2DClass)
-				.addStatement(
-						"$T thisLoc = new $T((ownerLoc.getX() + (parent.getWidth() / 2) - (this.getWidth() / 2)),"
+				.addStatement("$T thisLoc = new $T((ownerLoc.getX() + (parent.getWidth() / 2) - (this.getWidth() / 2)),"
 								+ "(ownerLoc.getY() + (parent.getHeight() / 2) - (this.getHeight() / 2)))",
 						point2DClass, point2DClass)
-				.addStatement("this.setX(thisLoc.getX())").addStatement("this.setY(thisLoc.getY())")
-				.addStatement("show()").build();
+				.addStatement("this.setX(thisLoc.getX())")
+				.addStatement("this.setY(thisLoc.getY())")
+				.addStatement("this.getDialogPane().getChildren().add(mainPane)")
+				  .addStatement("this.getDialogPane().getScene().getWindow().setOnCloseRequest(new ExitListener())")
+				  .addStatement("this.setResizable(true)")
+				  .addStatement("this.getDialogPane().setPrefSize(400, middlePane.getChildren().size() * 60 + 100)")
+				  .addStatement("showAndWait()")
+				  .addStatement("$T window = this.getDialogPane().getScene().getWindow()", windowClass)
+				  .addStatement("window.fireEvent(new $T(window, $T.WINDOW_CLOSE_REQUEST))", windowEvent, windowEvent)
+				.build();
 
 		MethodSpec handle = MethodSpec.methodBuilder("handle").addModifiers(Modifier.PUBLIC).returns(void.class)
-				.addParameter(mouseEvent, "evt").addAnnotation(Override.class)
+				.addParameter(mouseEvent, "evt")
+				.addAnnotation(Override.class)
 				.addStatement("$T source = evt.getSource()", Object.class)
-				.beginControlFlow("if (source == cancelButton)").addStatement("hide()")
-				.nextControlFlow("else if (source == $N)", "okButton").addStatement("$T numChecked = 0", int.class)
+				.beginControlFlow("if (source == cancelButton)")
+				  .addStatement("$T window = this.getDialogPane().getScene().getWindow()", windowClass)
+				  .addStatement("window.fireEvent(new $T(window, $T.WINDOW_CLOSE_REQUEST))", windowEvent, windowEvent)
+				.nextControlFlow("else if (source == $N)", "okButton")
+				.addStatement("$T numChecked = 0", int.class)
 				.beginControlFlow("for (int i = 0; i < $N.size(); i++)", "checkBoxes")
 				.addStatement("$T tempCBox = $N.elementAt(i)", checkboxClass, "checkBoxes")
-				.beginControlFlow("if (tempCBox.isSelected())").addStatement("numChecked++").endControlFlow()
-				.endControlFlow().beginControlFlow("if (numChecked == 0)")
+				.beginControlFlow("if (tempCBox.isSelected())")
+				.addStatement("numChecked++")
+				.endControlFlow()
+				.endControlFlow()
+				.beginControlFlow("if (numChecked == 0)")
 				.addStatement("$T alert = new $T($T.WARNING, $S)", alertClass, alertClass, alertTypeClass,
 						"You must choose at least one action")
-				.addStatement("alert.setTitle($S)", "Invalid Input").addStatement("alert.show()")
-				.nextControlFlow("else").beginControlFlow("for (int i = 0; i < $N.size(); i++)", "checkBoxes")
+				.addStatement("alert.setTitle($S)", "Invalid Input")
+				.addStatement("alert.show()")
+				.nextControlFlow("else")
+				.beginControlFlow("for (int i = 0; i < $N.size(); i++)", "checkBoxes")
 				.addStatement("$T cBox = $N.elementAt(i)", checkboxClass, "checkBoxes")
 				.beginControlFlow("if (cBox.isSelected())")
 				.addStatement("$T tempAct = $N.elementAt(i)", actionClass, "actions")
-				.addCode(generateActionHandle(userDestActs)).endControlFlow().endControlFlow().addStatement("hide()")
-				.endControlFlow().endControlFlow().build();
+				.addCode(generateActionHandle(userDestActs))
+				.endControlFlow()
+				.endControlFlow()
+				  .addStatement("$T window = this.getDialogPane().getScene().getWindow()", windowClass)
+				  .addStatement("window.fireEvent(new $T(window, $T.WINDOW_CLOSE_REQUEST))", windowEvent, windowEvent)
+				.endControlFlow()
+				.endControlFlow()
+				.build();
 
 		TypeSpec destroyDialog = TypeSpec.classBuilder("ChooseActionToDestroyDialog").addModifiers(Modifier.PUBLIC)
-				.superclass(dialogClass).addSuperinterface(mouseHandler)
+				.superclass(dialogClass)
+				.addSuperinterface(mouseHandler)
+				  .addType(exitListener)
 				.addField(actionsType, "actions", Modifier.PRIVATE).addField(stateClass, "state", Modifier.PRIVATE)
 				.addField(ruleExecClass, "ruleExec", Modifier.PRIVATE).addField(employeeClass, "emp", Modifier.PRIVATE)
 				.addField(String.class, "menuText", Modifier.PRIVATE).addField(stageClass, "gui", Modifier.PRIVATE)
