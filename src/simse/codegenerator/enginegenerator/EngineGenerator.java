@@ -202,7 +202,6 @@ public class EngineGenerator implements CodeGeneratorConstants {
 				.addStatement("timer.setCycleCount($T.INDEFINITE)", timeline)
 				.addStatement("timer.setDelay($T.millis(100))", duration)
 				.addStatement("timer.play()")
-				.addStatement("$T.getInstance(state).getSoftwareEngineerStateRepository().getAll().clear()", employeeStateRepository)
 				.addCode("$L", "\n")
 				.addCode(objsBuilder.build())
 				.build();
