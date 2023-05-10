@@ -76,14 +76,7 @@ public class PanelsScreen extends Stage implements EventHandler<MouseEvent> {
 				gui.removePanel(Panels.MELLO);
 				melloButton.setText("Add");
 			}
-		} else if (src == progGraphButton) {
-			if (progGraphButton.getText().equals("Add")) {
-				gui.addBottomPanel(Panels.GRAPH);
-			} else {
-				gui.removePanel(Panels.GRAPH);
-				progGraphButton.setText("Add");
-			}
-		}
+		} 
 	}
 
 	public PanelsScreen(State state, SimSEGUI gui, Logic logic) {
@@ -155,37 +148,27 @@ public class PanelsScreen extends Stage implements EventHandler<MouseEvent> {
 		melloButton.addEventHandler(MouseEvent.MOUSE_CLICKED, this);
 		mainPane.add(melloButton, 3, 4);
 		
-		mainPane.add(new Label("Project Progress Graph"), 0, 5);
-		Label progGraphLabel = new Label("Graph displaying the current progress of the project");
-		progGraphLabel.setWrapText(true);
-		GridPane.setMargin(progGraphLabel, new Insets(5));
-		mainPane.add(progGraphLabel, 1, 5);
-		mainPane.add(new Label("Bottom"), 2, 5);
-		progGraphButton = new Button("Add");
-		progGraphButton.addEventHandler(MouseEvent.MOUSE_CLICKED, this);
-		mainPane.add(progGraphButton, 3, 5);
-		
-		mainPane.add(new Label("Artifact Reference"), 0, 6);
+		mainPane.add(new Label("Artifact Reference"), 0, 5);
 		Label artifactLabel = new Label("Provides quick access to artifacts to see the full list"
 				+ " and display their information on the detailed information panel");
 		artifactLabel.setWrapText(true);
 		GridPane.setMargin(artifactLabel, new Insets(5));
-		mainPane.add(artifactLabel, 1, 6);
-		mainPane.add(new Label("Side"), 2, 6);
+		mainPane.add(artifactLabel, 1, 5);
+		mainPane.add(new Label("Side"), 2, 5);
 		artifactButton = new Button("Add");
 		artifactButton.addEventHandler(MouseEvent.MOUSE_CLICKED, this);
-		mainPane.add(artifactButton, 3, 6);
+		mainPane.add(artifactButton, 3, 5);
 		
-		mainPane.add(new Label("Project Reference"), 0, 7);
+		mainPane.add(new Label("Project Reference"), 0, 6);
 		Label projectLabel = new Label("Provides quick access to project to see the full list"
 				+ " and display their information on the detailed information panel");
 		projectLabel.setWrapText(true);
 		GridPane.setMargin(projectLabel, new Insets(5));
-		mainPane.add(projectLabel, 1, 7);
-		mainPane.add(new Label("Side"), 2, 7);
+		mainPane.add(projectLabel, 1, 6);
+		mainPane.add(new Label("Side"), 2, 6);
 		projectButton = new Button("Add");
 		projectButton.addEventHandler(MouseEvent.MOUSE_CLICKED, this);
-		mainPane.add(projectButton, 3, 7);
+		mainPane.add(projectButton, 3, 6);
 		
 		this.setScene(new Scene(mainPane));
 	}
@@ -218,9 +201,6 @@ public class PanelsScreen extends Stage implements EventHandler<MouseEvent> {
 			case MELLO:
 				melloButton.setText("Remove");
 				break;
-				
-			case GRAPH:
-				progGraphButton.setText("Remove");
 				
 			default:
 				break;

@@ -46,7 +46,6 @@ public class SimSEGUI extends Stage implements EventHandler<Event> {
 	private EmployeeStateRepository esp;
 	private TrackPanel trackPanel;
 	private MelloPanel melloPanel;
-	private ObjectGraphPanel objGraphPanel;
 	private VBox objGraphWrapper;
 	private Pane panel1 = new Pane();
 	private Pane panel2 = new Pane();
@@ -130,7 +129,6 @@ public class SimSEGUI extends Stage implements EventHandler<Event> {
 		employeesPanel = new EmployeesPanel(this, state, logic, esp.getAll());
 		artifactsPanel = new ArtifactsPanel(this, state, logic);
 		projectsPanel = new ProjectsPanel(this, state, logic);
-		objGraphPanel = new ObjectGraphPanel(this);
 		trackPanel = TrackPanel.getInstance(state);
 		melloPanel = MelloPanel.getInstance(state);
 
@@ -238,7 +236,6 @@ public class SimSEGUI extends Stage implements EventHandler<Event> {
 		projectsPanel.update();
 		expTool.update();
 		branch.update(state);
-		objGraphPanel.update();
 		updateTrack();
 		if (analyzeMenu.isDisabled() && state.getClock().isStopped()) {
 			analyzeMenu.setDisabled(false);
@@ -311,11 +308,6 @@ public class SimSEGUI extends Stage implements EventHandler<Event> {
 				panel1.getChildren().add(melloPanel);
 				break;
 				
-			case GRAPH:
-				objGraphPanel.update();
-				panel1.getChildren().add(objGraphPanel);
-				break;
-				
 			default:
 				break;
 			}
@@ -332,11 +324,6 @@ public class SimSEGUI extends Stage implements EventHandler<Event> {
 				
 			case MELLO:
 				panel2.getChildren().add(melloPanel);
-				break;
-				
-			case GRAPH:
-				objGraphPanel.update();
-				panel2.getChildren().add(objGraphPanel);
 				break;
 				
 			default:
@@ -434,14 +421,6 @@ public class SimSEGUI extends Stage implements EventHandler<Event> {
 			if (!p1Empty && panel1.getChildren().get(0) instanceof MelloPanel) {
 				panel1.getChildren().clear();
 			} else if (!p2Empty && panel2.getChildren().get(0) instanceof MelloPanel) {
-				panel2.getChildren().clear();
-			}
-			break;
-			
-		case GRAPH:
-			if (!p1Empty && panel1.getChildren().get(0) instanceof ObjectGraphPanel) {
-				panel1.getChildren().clear();
-			} else if (!p2Empty && panel2.getChildren().get(0) instanceof ObjectGraphPanel) {
 				panel2.getChildren().clear();
 			}
 			break;
