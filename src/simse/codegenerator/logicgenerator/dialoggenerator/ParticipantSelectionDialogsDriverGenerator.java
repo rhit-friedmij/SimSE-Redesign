@@ -231,10 +231,10 @@ public class ParticipantSelectionDialogsDriverGenerator implements CodeGenerator
 			actions += "destChecker.update(false, parent);\n";
 			if (hasTimedDestroyer(tempAct)) {
 				actions += "if ((("+CodeGeneratorUtils.getUpperCaseLeading(tempAct.getName()) +"Action) action).getTimeToLive() > 1) mello.addTaskInProgress(\"" + CodeGeneratorUtils.getUpperCaseLeading(tempAct.getName())
-				+ "\", people);\n";
+				+ "\", action, people);\n";
 			}
 			else actions += "mello.addTaskInProgress(\"" + CodeGeneratorUtils.getUpperCaseLeading(tempAct.getName())
-					+ "\", people);\n";
+					+ "\", action, people);\n";
 
 			// game-ending:
 			if (tempAct.hasGameEndingTrigger()) {

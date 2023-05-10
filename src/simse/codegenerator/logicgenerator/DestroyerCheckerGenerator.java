@@ -177,7 +177,7 @@ public class DestroyerCheckerGenerator implements CodeGeneratorConstants {
 						+ "StateRepository().remove(" + tempActName + ")");
 				conditions.addStatement("trigCheck.update(true, gui)");
 				conditions.addStatement("update(false, gui)");
-				conditions.addStatement("mello.completeTask($S)", actType);
+				conditions.addStatement("mello.completeTask(tempAct.getId())");
 
 				// game-ending:
 				if (tempDest.isGameEndingDestroyer()) {
@@ -363,7 +363,7 @@ public class DestroyerCheckerGenerator implements CodeGeneratorConstants {
 							+ "StateRepository().remove(" + tempActName + ")");
 					conditions.addStatement("trigCheck.update(true, gui)");
 					conditions.addStatement("update(false, gui)");
-					conditions.addStatement("mello.completeTask($S)", actType);
+					conditions.addStatement("mello.completeTask(tempAct.getId())");
 
 					// game-ending:
 					if (tempDest.isGameEndingDestroyer()) {
