@@ -142,7 +142,7 @@ public class EngineGenerator implements CodeGeneratorConstants {
 				.addStatement("logic = l")
 				.addStatement("state = s")
 				.addCode("$L", "\n")
-				.addStatement("timer = new $T(new $T($T.millis(50), this))", timeline, keyFrame, duration)
+				.addStatement("timer = new $T(new $T($T.millis(100), this))", timeline, keyFrame, duration)
 				.addStatement("timer.setCycleCount($T.INDEFINITE)", timeline)
 				.addStatement("timer.setDelay($T.millis(100))", duration)
 				.addStatement("timer.play()")
