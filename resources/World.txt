@@ -118,7 +118,16 @@ public class World extends SimSEMap implements EventHandler<Event> {
 				
 		Vector<Employee> allEmp = employeeList;
 		
-		for (int i = 0; i < MAX_EMPLOYEE; i++) {
+		int index = 0;
+		
+		if(allEmp.size() < MAX_EMPLOYEE) {
+			index = allEmp.size();
+		}
+		else {
+			index = MAX_EMPLOYEE;
+		}
+		
+		for (int i = 0; i < index; i++) {
 			DisplayableCharacter tmpChar = allEmp.get(i).getCharacterModel();
 			this.getChildren().add(tmpChar);
 			tmpChar.requestFocus();
