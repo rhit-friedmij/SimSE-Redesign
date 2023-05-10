@@ -7,7 +7,6 @@ package simse.codegenerator.logicgenerator.dialoggenerator;
 
 import simse.codegenerator.CodeGeneratorConstants;
 import simse.codegenerator.CodeGeneratorUtils;
-
 import simse.modelbuilder.actionbuilder.ActionType;
 import simse.modelbuilder.actionbuilder.ActionTypeParticipant;
 import simse.modelbuilder.actionbuilder.ActionTypeParticipantAttributeConstraint;
@@ -63,6 +62,7 @@ public class ChooseActionToJoinDialogGenerator implements
 	  ClassName stageClass = ClassName.get("javafx.stage", "Stage");
 	  ClassName dialogClass = ClassName.get("javafx.scene.control", "Dialog");
 	  ClassName vBoxClass = ClassName.get("javafx.scene.layout", "VBox");
+	  ClassName hBoxClass = ClassName.get("javafx.scene.layout", "HBox");
 	  ClassName labelClass = ClassName.get("javafx.scene.control", "Label");
 	  ClassName paneClass = ClassName.get("javafx.scene.layout", "Pane");
 	  ClassName gridPaneClass = ClassName.get("javafx.scene.layout", "GridPane");
@@ -71,11 +71,26 @@ public class ChooseActionToJoinDialogGenerator implements
 	  ClassName alertTypeClass = ClassName.get("javafx.scene.control.Alert", "AlertType");
 	  ClassName toggleGroupClass = ClassName.get("javafx.scene.control", "ToggleGroup");
 	  ClassName radioButtonClass = ClassName.get("javafx.scene.control", "RadioButton");
+	  ClassName windowClass = ClassName.get("javafx.stage", "Window");
+	  ClassName windowEvent = ClassName.get("javafx.stage", "WindowEvent");
 	  TypeName mouseHandler = ParameterizedTypeName.get(eventHandler, mouseEvent);
+	  TypeName windowHandler = ParameterizedTypeName.get(eventHandler, windowEvent);
 	  TypeName actionWildcard = WildcardTypeName.subtypeOf(actionClass);
 	  TypeName actionsVectorWildcard = ParameterizedTypeName.get(vector, actionWildcard);
 	  TypeName radioVector = ParameterizedTypeName.get(vector, radioButton);
 	  TypeName stringVector = ParameterizedTypeName.get(vector, stringClass);
+	  
+	  TypeSpec exitListener = TypeSpec.classBuilder("ExitListener")
+    		  .addModifiers(Modifier.PUBLIC)
+    		  .addSuperinterface(windowHandler)
+    		  .addMethod(MethodSpec.methodBuilder("handle")
+    				  .addAnnotation(Override.class)
+    				  .addModifiers(Modifier.PUBLIC)
+    				  .returns(void.class)
+    				  .addParameter(windowEvent, "evt")
+    				  .addStatement("close()")
+    				  .build())
+    		  .build();
 	  
 	// make a Vector of all the action types with user triggers:
       Vector<ActionType> userTrigActs = new Vector<ActionType>();
@@ -110,31 +125,43 @@ public class ChooseActionToJoinDialogGenerator implements
 			  .addStatement("$N = new $T()", "radioButtonGroup", toggleGroupClass)
 			  .addStatement("setTitle($S)", "Join Action")
 			  .addStatement("$T mainPane = new $T()", vBoxClass, vBoxClass)
-			  .addStatement("$T topPane = new $T()", paneClass, paneClass)
+			  .addStatement("$T topPane = new $T()", vBoxClass, vBoxClass)
 			  .addStatement("$T actionName = new $T()", String.class, String.class)
 			  .addStatement("$T tempAct = $N.elementAt(0)", actionClass, "actions")
 			  .addCode(generateNames(userTrigActs))
 			  .addStatement("topPane.getChildren().add(new $T($S + actionName + $S))",
 					  labelClass, "Choose which ", " Action to join:")
-			  .addStatement("$T middlePane = new $T()", gridPaneClass, gridPaneClass)
+			  .addStatement("topPane.setMinWidth(300)")
+			  .addStatement("$T middlePane = new $T()", vBoxClass, vBoxClass)
 			  .addCode(generateActionConstructor(userTrigActs))
-			  .addStatement("$T bottomPane = new $T()", paneClass, paneClass)
+			  .addStatement("middlePane.setMinHeight(140)")
+			  .addStatement("$T bottomPane = new $T()", hBoxClass, hBoxClass)
 			  .addStatement("$N = new $T($S)", "okButton", buttonClass, "OK")
 			  .addStatement("$N.addEventHandler($T.MOUSE_CLICKED, this)", "okButton", mouseEvent)
+			  .addStatement("$N.setMinWidth(75);\n", "okButton")
 			  .addStatement("bottomPane.getChildren().add($N)", "okButton")
 			  .addStatement("$N = new $T($S)", "cancelButton", buttonClass, "Cancel")
 			  .addStatement("$N.addEventHandler($T.MOUSE_CLICKED, this)", "cancelButton", mouseEvent)
+			  .addStatement("$N.setMinWidth(75);\n", "cancelButton")
 			  .addStatement("bottomPane.getChildren().add($N)", "cancelButton")
-			  .addStatement("mainPane.getChildren().addAll(topPane, middlePane, bottomPane)")
+			  .addStatement("mainPane.getChildren().add(topPane)")
+			  .addStatement("mainPane.getChildren().add(middlePane)")
+			  .addStatement("mainPane.getChildren().add(bottomPane)")
 			  .addStatement("$T ownerLoc = new $T(parent.getX(), parent.getY())", point2DClass, point2DClass)
 			  .addStatement("$T thisLoc = new $T((ownerLoc.getX() + (parent.getWidth() / 2) - (this.getWidth() / 2)),"
 			  		+ "(ownerLoc.getY() + (parent.getHeight() / 2) - (this.getHeight() / 2)))", point2DClass, point2DClass)
 			  .addStatement("this.setX(thisLoc.getX())")
 			  .addStatement("this.setY(thisLoc.getY())")
+			  .addStatement("this.getDialogPane().getChildren().add(mainPane)")
+			  .addStatement("this.getDialogPane().getScene().getWindow().setOnCloseRequest(new ExitListener())")
+			  .addStatement("this.setResizable(true)")
+			  .addStatement("this.getDialogPane().setPrefSize(400, middlePane.getChildren().size() * 60 + 100)")
 			  .beginControlFlow("if ($N.size() == 1)", "radioButtons")
 			  .addStatement("onlyOneChoice(parent)")
 			  .nextControlFlow("else ")
-			  .addStatement("show()")
+			  .addStatement("showAndWait()")
+			  .addStatement("$T window = this.getDialogPane().getScene().getWindow()", windowClass)
+			  .addStatement("window.fireEvent(new $T(window, $T.WINDOW_CLOSE_REQUEST))", windowEvent, windowEvent)
 			  .endControlFlow()
 			  .build();
       
@@ -146,7 +173,8 @@ public class ChooseActionToJoinDialogGenerator implements
 			  .addAnnotation(Override.class)
 			  .addStatement("$T source = evt.getSource()", Object.class)
 			  .beginControlFlow("if (source == cancelButton)")
-			  .addStatement("close()")
+			  .addStatement("$T window = this.getDialogPane().getScene().getWindow()", windowClass)
+			  .addStatement("window.fireEvent(new $T(window, $T.WINDOW_CLOSE_REQUEST))", windowEvent, windowEvent)
 			  .nextControlFlow("else if (source == $N)", "okButton")
 			  .addStatement("$T anySelected = false", boolean.class)
 			  .beginControlFlow("for (int i = 0; i < $N.size(); i++)", "radioButtons")
@@ -170,7 +198,8 @@ public class ChooseActionToJoinDialogGenerator implements
 			  .addCode(generateActionHandle(userTrigActs))
 			  .addStatement("new $T($N, participantNames, $N, tempAct, $N, $N, $N)",
 					  roleDialog, "gui", "emp", "menuText", "ruleExec", "state")
-			  .addStatement("close()")
+			  .addStatement("$T window = this.getDialogPane().getScene().getWindow()", windowClass)
+			  .addStatement("window.fireEvent(new $T(window, $T.WINDOW_CLOSE_REQUEST))", windowEvent, windowEvent)
 			  .addStatement("break")
 			  .endControlFlow()
 			  .endControlFlow()
@@ -198,6 +227,7 @@ public class ChooseActionToJoinDialogGenerator implements
 			  .addModifiers(Modifier.PUBLIC)
 			  .superclass(dialogClass)
 			  .addSuperinterface(mouseHandler)
+			  .addType(exitListener)
 			  .addField(stageClass, "gui", Modifier.PRIVATE)
 			  .addField(actionsVectorWildcard, "actions", Modifier.PRIVATE)
 			  .addField(stateClass, "state", Modifier.PRIVATE)
@@ -229,7 +259,7 @@ public class ChooseActionToJoinDialogGenerator implements
 		  		+ "\n"
 		  		+ "import simse.adts.actions.*;\n"
 		  		+ "import simse.adts.objects.*;\n"
-		  		+ "import javafx.scene.layout.BorderPane;\n";
+		  		+ "import javafx.scene.layout.Pane;\n";
 		  
 	      writer.write(toAppend + javaFile.toString());
       writer.close();
@@ -273,12 +303,12 @@ public class ChooseActionToJoinDialogGenerator implements
           		"Action act = ("
               + CodeGeneratorUtils.getUpperCaseLeading(act.getName())
               + "Action)actions.elementAt(i);\n";
-          actions += "StringBuffer label = new StringBuffer(\"<html>\");\n";
+          actions += "StringBuffer label = new StringBuffer(\" \");\n";
           // go through all participants:
           Vector<ActionTypeParticipant> parts = act.getAllParticipants();
           for (int k = 0; k < parts.size(); k++) {
             if (k > 0) { // not on first element
-              actions += "label.append(\"; <br>\");\n";
+              actions += "label.append(\"; \\n\");\n";
             }
             ActionTypeParticipant tempPart = parts.elementAt(k);
             String metaTypeName = CodeGeneratorUtils.getUpperCaseLeading(
@@ -311,12 +341,12 @@ public class ChooseActionToJoinDialogGenerator implements
             }
             actions += "}\n";
           }
-          actions += "label.append(\"</HTML>\");\n";
-          actions += "BorderPane tempPane = new BorderPane();\n";
+          actions += "Pane tempPane = new Pane();\n";
           actions += "RadioButton tempRadioButton = new RadioButton(\n"
           		+ "label.toString());\n";
+          actions += "tempRadioButton.setMinHeight(60);\n";
           actions += "tempRadioButton.setToggleGroup(radioButtonGroup);\n";
-          actions += "tempPane.setLeft(tempRadioButton);\n";
+          actions += "tempPane.getChildren().add(tempRadioButton);\n";
           actions += "radioButtons.add(tempRadioButton);\n";
           actions += "middlePane.getChildren().add(tempPane);\n}\n}\n";
         }
