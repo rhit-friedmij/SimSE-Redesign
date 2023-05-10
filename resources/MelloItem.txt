@@ -45,6 +45,10 @@ public class MelloItem extends Pane implements Cloneable{
 			ImageView img = null;
 			if(worker instanceof Employee) {
 				img = ((Employee) worker).getCharacterModel().getDisplayedCharacter(true);
+				if(((Employee) worker).getCharacterModel().getCharacterNum() < 8) {
+					img.setScaleX(1.25);
+					img.setScaleY(1.25);
+				}
 			}
 			if(img != null) {
 				imgPane.getChildren().add(img);

@@ -2,6 +2,7 @@ package simse.gui;
 
 import java.util.Vector;
 
+import javafx.geometry.Pos;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -39,15 +40,20 @@ public class TrackMessage extends Pane implements Cloneable{
 		if (sender instanceof Employee) {
 			name = ((Employee) sender).getKeyAsString();
 			img = ((Employee) sender).getCharacterModel().getDisplayedCharacter(true);
+			if(((Employee) sender).getCharacterModel().getCharacterNum() < 8) {
+				img.setScaleX(1.25);
+				img.setScaleY(1.25);
+			}
 		} else if (sender instanceof Customer) {
 			img = JavaFXHelpers.createImageView(TabPanel.getImage(this.sender));
 			name = ((Customer) sender).getKeyAsString();
 		}
 		
 		if(img != null) {
-			img.setScaleX(1.25);
-			img.setScaleY(1.25);
-			pane.add(img, 0, 0);
+			HBox imagePane = new HBox(img);
+			imagePane.setPrefWidth(40);
+			imagePane.setAlignment(Pos.CENTER);
+			pane.add(imagePane, 0, 0);
 		}
 		
 		Font nameFont = Font.font("Helvetica", FontWeight.BOLD, 16);

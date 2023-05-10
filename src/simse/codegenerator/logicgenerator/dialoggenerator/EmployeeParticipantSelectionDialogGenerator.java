@@ -68,6 +68,7 @@ public class EmployeeParticipantSelectionDialogGenerator implements
 	  ClassName stageClass = ClassName.get("javafx.stage", "Stage");
 	  ClassName vBoxClass = ClassName.get("javafx.scene.layout", "VBox");
 	  ClassName hBoxClass = ClassName.get("javafx.scene.layout", "HBox");
+	  ClassName posClass = ClassName.get("javafx.geometry", "Pos");
 	  ClassName labelClass = ClassName.get("javafx.scene.control", "Label");
 	  ClassName separatorClass = ClassName.get("javafx.scene.control", "Separator");
 	  ClassName borderPaneClass = ClassName.get("javafx.scene.layout", "BorderPane");
@@ -157,9 +158,14 @@ public class EmployeeParticipantSelectionDialogGenerator implements
 			  .beginControlFlow("if(allEmp.get(k).getKeyAsString() != null)")
 			  .beginControlFlow("if(allEmp.get(k).getKeyAsString().equals(((Employee) tempObj).getKeyAsString()))")
 			  .addStatement("$T icon = allEmp.get(k).getCharacterModel().getDisplayedCharacter(true)", imageView)
+			  .beginControlFlow("if(k < 8)")
 			  .addStatement("icon.setScaleX(1.5)")
 			  .addStatement("icon.setScaleY(1.5)")
-			  .addStatement("tempPane.setRight(new $T($S, icon))", labelClass, "")
+			  .endControlFlow()
+			  .addStatement("$T iconPane = new $T(icon)", hBoxClass)
+			  .addStatement("iconPane.setAlignment($T.CENTER)", posClass)
+			  .addStatement("iconPane.setPrefWidth(40)")
+			  .addStatement("tempPane.setRight(new $T($S, iconPane))", labelClass, "")
 			  .addStatement("middlePane.getChildren().add(tempPane)")
 			  .endControlFlow()
 			  .endControlFlow()
