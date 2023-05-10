@@ -136,7 +136,7 @@ public class CodeGenerator {
 				  Paths.get(options.getCodeGenerationDestinationDirectory() + "\\" + "simse\\SimSEMap\\SimSESpriteSheet.png"),
 				  StandardCopyOption.REPLACE_EXISTING);
 	
-		  for(int i = 0; i <= 7; i++) {
+		  for(int i = 0; i <= 32; i++) {
 			  Files.copy(
 					  Paths.get("sprites\\character" + i + "cus_walk.png"),
 					  Paths.get(options.getCodeGenerationDestinationDirectory() + "\\" + "simse\\sprites\\character" + i + "cus_walk.png"),

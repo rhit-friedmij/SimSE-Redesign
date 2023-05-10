@@ -37,6 +37,8 @@ public class EngineGenerator implements CodeGeneratorConstants {
 	private File engineFile; // file to generate
 	private CreatedObjects createdObjs; // start state objects
 	private StartingNarrativeDialogGenerator sndg;
+	
+	private final int MAX_EMPLOYEES = 8;
 
 	public EngineGenerator(ModelOptions options, CreatedObjects createdObjs) {
 		directory = options.getCodeGenerationDestinationDirectory();
@@ -44,6 +46,31 @@ public class EngineGenerator implements CodeGeneratorConstants {
 		sndg = new StartingNarrativeDialogGenerator(createdObjs, directory);
 	}
 
+	public int getEmployeeCount(Vector<SimSEObject> objects) {
+		int count = 0;
+		for(SimSEObject obj : objects) {
+			if(obj.getSimSEObjectType().getType() == SimSEObjectTypeTypes.EMPLOYEE) count++;
+		}
+		return count - 1;
+	}
+	
+	public Vector<SimSEObject> moveEmployeesToFront(Vector<SimSEObject> objects) {
+	
+		Vector<SimSEObject> newVector = new Vector<>();
+		
+		for(SimSEObject obj : objects) {
+			if(obj.getSimSEObjectType().getType() != SimSEObjectTypeTypes.EMPLOYEE) {
+				newVector.add(obj);
+			}
+		}
+		for(SimSEObject obj : objects) {
+			if(obj.getSimSEObjectType().getType() == SimSEObjectTypeTypes.EMPLOYEE) {
+				newVector.insertElementAt(obj, 0);
+			}
+		}
+		return newVector;
+	}
+	
 	// causes the engine component to be generated
 	public void generate() {
 		// generate starting narrative dialog:
@@ -64,22 +91,36 @@ public class EngineGenerator implements CodeGeneratorConstants {
 		ClassName pathData = ClassName.get("simse.animation", "PathData");
 		ClassName simSECharacter = ClassName.get("simse.animation", "SimSECharacter");
 		ClassName mapData = ClassName.get("simse.gui", "MapData");
+		ClassName employeeStateResp = ClassName.get("simse.state", "EmployeeStateRepository");
+		ClassName vector = ClassName.get("java.util", "Vector");
+		
 		TypeName actionHandler = ParameterizedTypeName.get(eventHandler, actionEvent);
 
 		CodeBlock.Builder objsBuilder = CodeBlock.builder();
-		Vector<SimSEObject> objs = createdObjs.getAllObjects();
+		objsBuilder.addStatement("$T<Employee> employees = $T.getInstance(state).getAll()", vector, employeeStateResp);
+		objsBuilder.beginControlFlow("if(employees.size() == 0)");
+		Vector<SimSEObject> objs = this.moveEmployeesToFront(createdObjs.getAllObjects());
+		int employeeCount = this.getEmployeeCount(objs);
 		for (int i = 0; i < objs.size(); i++) {
 			StringBuffer strToWrite = new StringBuffer();
-			int pathCounter = 0;
 			SimSEObject tempObj = objs.elementAt(i);
 			String objTypeName = CodeGeneratorUtils.getUpperCaseLeading(tempObj.getSimSEObjectType().getName());
 			
 			if(objs.get(i).getSimSEObjectType().getType() == SimSEObjectTypeTypes.EMPLOYEE) {
-				strToWrite.append("this.generateNewPath(" + i + "); \n");
-				pathCounter++;
+				if(i < MAX_EMPLOYEES) {
+					strToWrite.append("this.generateNewPath(" + i + "); \n");
+					strToWrite.append("$T a" + i + " = new " + objTypeName + "(");
+				}
+				else {
+					strToWrite.append("$T a" + i + " = new " + objTypeName + "(\"Remote - \" + ");
+				}
+				
+			}
+			else {
+				strToWrite.append("$T a" + i + " = new " + objTypeName + "(");
 			}
 			
-			strToWrite.append("$T a" + i + " = new " + objTypeName + "(");
+			
 			Vector<Attribute> atts = tempObj.getSimSEObjectType().getAllAttributes();
 			
 			// all attributes are instantiated
@@ -117,14 +158,29 @@ public class EngineGenerator implements CodeGeneratorConstants {
 				// if valid, finish writing:
 				if (validObj) { 
 					if(objs.get(i).getSimSEObjectType().getType() == SimSEObjectTypeTypes.EMPLOYEE) {
-						strToWrite.append(", new SimSECharacter(characterPath, " + i + ", 50, 75)");
+						if(i < MAX_EMPLOYEES) {
+							strToWrite.append(", new SimSECharacter(characterPath, " + i + ", 50, 75)");
+						}
+						else {
+							strToWrite.append(", new SimSECharacter(" + i + ", " + " 50, 75)");
+						}
+						
 					}
 					ClassName tempName = ClassName.get("simse.adts.objects", objTypeName);
 					objsBuilder.addStatement(strToWrite + ")", tempName);
 					if(objs.get(i).getSimSEObjectType().getType() == SimSEObjectTypeTypes.EMPLOYEE) {
 						objsBuilder.addStatement(SimSEObjectTypeTypes.getText(tempObj.getSimSEObjectType().getType())
 						+ "StateRepository.getInstance(state).get" + objTypeName + "StateRepository().add(a" + i + ")");
-					} 
+					}
+					if(i == employeeCount) {
+						objsBuilder.nextControlFlow("else ");
+						objsBuilder.beginControlFlow("for(int i = 0; i < employees.size(); i++)");
+						objsBuilder.addStatement("int characterNum = employees.get(i).getCharacterModel().getCharacterNum()");
+						objsBuilder.addStatement("this.generateNewPath(characterNum)");
+						objsBuilder.addStatement("employees.get(i).setCharacterModel(new $T(characterPath, characterNum, 50, 75))", simSECharacter);
+						objsBuilder.endControlFlow();
+						objsBuilder.endControlFlow();
+					}
 					else {
 						objsBuilder.addStatement("state.get" + SimSEObjectTypeTypes.getText(tempObj.getSimSEObjectType().getType())
 						+ "StateRepository().get" + objTypeName + "StateRepository().add(a" + i + ")");
@@ -157,10 +213,8 @@ public class EngineGenerator implements CodeGeneratorConstants {
 				.addStatement("this.characterPath = new $T(\r\n" + 
 						"				$T.getStartingMapLocation(characterNum)[0] + 5, \r\n" + 
 						"				$T.getStartingMapLocation(characterNum)[1],\r\n" + 
-						"				pathDirections,\r\n" + 
-						"				$T.getAnimationData(characterNum)[0],\r\n" + 
-						"				$T.getAnimationData(characterNum)[1]\r\n" + 
-						"				)", creatablePath, mapData, mapData, pathData, pathData)
+						"				pathDirections\r\n" +
+						"				)", creatablePath, mapData, mapData)
 				.build();
 		
 		MethodSpec giveGui = MethodSpec.methodBuilder("giveGUI")
