@@ -38,7 +38,7 @@ public abstract class DisplayableCharacter extends Group{
 		this.directionCheck();
 		animationList = new ArrayList<>();
 		initalizeAnimationList(characterNum);
-		displayedCharacter = pathToFollow.getStartingAnimation();
+		displayedCharacter = new CharacterIdleFront(characterNum, false);
 		displayedCharacter.setFitHeight(height);
 		displayedCharacter.setFitWidth(width);
 		this.getChildren().add(displayedCharacter);
@@ -47,19 +47,29 @@ public abstract class DisplayableCharacter extends Group{
 		this.beginPathing();
 	}
 	
-	public DisplayableCharacter(int characterNum, int width, int height) {
+	public DisplayableCharacter(int characterNum, int width, int height, boolean remote) {
 		this.height = height;
 		this.width = width;
 		this.characterNum = characterNum;
 		animationList = new ArrayList<>();
-		initalizeAnimationList(characterNum);
-		displayedCharacter = animationList.get(0);
+		if(remote) {
+			displayedCharacter = initalizeRemotePhoto(characterNum);
+		}
+		else {
+			initalizeAnimationList(characterNum);
+			displayedCharacter = animationList.get(0);
+			displayedCharacter.startAnim();	
+		}
 		displayedCharacter.setFitHeight(height);
 		displayedCharacter.setFitWidth(width);
 		this.getChildren().add(displayedCharacter);
-		displayedCharacter.startAnim();	
+		
 	}
 	
+	private SimSESprite initalizeRemotePhoto(int characterNum) {
+		return new CharacterIdleFront(characterNum, true);
+	}
+
 	public Point2D getPointOfSprite() {
 		return displayedCharacter.localToParent(getTranslateX(), getTranslateY());
 	}
@@ -85,7 +95,7 @@ public abstract class DisplayableCharacter extends Group{
 	
 	public ImageView getDisplayedCharacter(boolean staticImage) {
 		if(staticImage) {
-			return new CharacterIdleFront(characterNum);
+			return new CharacterIdleFront(characterNum, false);
 		} else {
 			return this.displayedCharacter;
 		}
@@ -110,9 +120,7 @@ public abstract class DisplayableCharacter extends Group{
 				newPath = new CreatablePath(
 						MapData.getStartingMapLocation(characterNum)[0] + 5,
 						MapData.getStartingMapLocation(characterNum)[1],
-						pathDirections,
-						PathData.getAnimationData(characterNum)[0],
-						PathData.getAnimationData(characterNum)[1]
+						pathDirections
 						);
 				this.starting = false;
 			} else {
@@ -120,9 +128,7 @@ public abstract class DisplayableCharacter extends Group{
 				newPath = new CreatablePath(
 						MapData.getEndingMapLocation(characterNum)[0] + 5,
 						MapData.getEndingMapLocation(characterNum)[1],
-						pathDirections,
-						PathData.getAnimationData(characterNum)[0],
-						PathData.getAnimationData(characterNum)[1]
+						pathDirections
 						);
 				this.starting = true;
 			}

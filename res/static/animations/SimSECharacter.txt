@@ -9,13 +9,13 @@ public class SimSECharacter extends DisplayableCharacter{
 	}
 
 	public SimSECharacter(int characterNum, int height, int width) {
-		super(characterNum, height, width);
+		super(characterNum, height, width, false);
 	}
 	
 	@Override
 	void initalizeAnimationList(int characterNum) {
 		// TODO Auto-generated method stub
-		animationList.add(new CharacterIdleFront(characterNum));
+		animationList.add(new CharacterIdleFront(characterNum, false));
 		animationList.add(new CharacterWalkForward(characterNum));
 		animationList.add(new CharacterWalkBack(characterNum));
 		animationList.add(new CharacterWalkLeft(characterNum));

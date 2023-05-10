@@ -2,6 +2,7 @@ package simse.animation;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import javafx.animation.Animation;
@@ -22,7 +23,8 @@ public abstract class SimSESprite extends ImageView{
 			int offsetY,
 			int width,
 			int height,
-			String url) {
+			String url,
+			boolean remote) {
 		this.speed = 1000;
 		FileInputStream inputStream = null;
 		try {
@@ -36,15 +38,24 @@ public abstract class SimSESprite extends ImageView{
         
 //        spriteImage = new ImageView();
         this.setImage(image);
-        this.setViewport(new Rectangle2D(offsetX, offsetY, width, height));
-        spriteAnimation = new SpriteAnimation(
-        		this,
-                Duration.millis(speed),
-                spriteSheetCount, spriteSheetColumns,
-                offsetX, offsetY,
-                width, height
-        );
-        spriteAnimation.setCycleCount(Animation.INDEFINITE);
+        try {
+			inputStream.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        if(!remote) {
+            this.setViewport(new Rectangle2D(offsetX, offsetY, width, height));
+            spriteAnimation = new SpriteAnimation(
+            		this,
+                    Duration.millis(speed),
+                    spriteSheetCount, spriteSheetColumns,
+                    offsetX, offsetY,
+                    width, height
+            );
+            spriteAnimation.setCycleCount(Animation.INDEFINITE);
+        }
+
 	}
 	
 	public static String getURL(int num) {

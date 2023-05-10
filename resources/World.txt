@@ -50,6 +50,7 @@ public class World extends SimSEMap implements EventHandler<Event> {
 	public static final int RIGHT = 1;
 	public static final int TOP = -1;
 	public static final int BOTTOM = 1;
+	public static final int MAX_EMPLOYEE = 8;
 
 	private boolean overheadTextDisplayed; // whether or not there is overhead
 											// text to display
@@ -117,7 +118,7 @@ public class World extends SimSEMap implements EventHandler<Event> {
 				
 		Vector<Employee> allEmp = employeeList;
 		
-		for (int i = 0; i < allEmp.size(); i++) {
+		for (int i = 0; i < MAX_EMPLOYEE; i++) {
 			DisplayableCharacter tmpChar = allEmp.get(i).getCharacterModel();
 			this.getChildren().add(tmpChar);
 			tmpChar.requestFocus();
