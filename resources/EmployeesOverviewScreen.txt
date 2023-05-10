@@ -1,11 +1,17 @@
 package simse.gui;
 
+import java.util.Vector;
+
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.Separator;
 import javafx.scene.control.TableView;
 import javafx.scene.control.Alert.AlertType;
@@ -15,7 +21,8 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
-import simse.adts.objects.SoftwareEngineer;
+import simse.adts.objects.Customer;
+import simse.adts.objects.Employee;
 import simse.logic.Logic;
 import simse.state.State;
 import simse.util.RuleType;
@@ -28,14 +35,26 @@ public class EmployeesOverviewScreen extends Stage implements EventHandler<Mouse
 	Label titleLabel;
 	Button employeeTab;
 	Button customerTab;
-	Button moreDetail, rules;
+	Button empInfo, rules, assign, custInfo;
 	BorderPane tablePane;
 	
 	TableModel tableModel;
 	TableView table;
 	
+	Employee selected;
+	private ContextMenu popup;
+	
 	VBox mainPane;
-	HBox buttonPaneEmp;
+	HBox buttonPaneEmp, buttonPaneCust;
+	
+	private EventHandler<ActionEvent> menuItemEvent = new EventHandler<ActionEvent>() {
+	    public void handle(ActionEvent event) {
+	      Object source = event.getSource();
+	      if (source instanceof MenuItem) {
+	        popupMenuActions((MenuItem) source);
+	      }
+	    }
+	  };
 
 	public EmployeesOverviewScreen(State s, SimSEGUI gui, Logic l) {
 		this.state = s;
@@ -49,6 +68,9 @@ public class EmployeesOverviewScreen extends Stage implements EventHandler<Mouse
 		titleLabel.setFont(new Font(36));
 		title.setCenter(titleLabel);
 		mainPane.getChildren().add(title);
+		
+		selected = null;
+		popup = new ContextMenu();
 		
 		HBox tabsPane = new HBox();
 		tabsPane.setSpacing(0);
@@ -75,18 +97,54 @@ public class EmployeesOverviewScreen extends Stage implements EventHandler<Mouse
 		
 		buttonPaneEmp = new HBox();
 		
-		moreDetail = new Button ("More Detail on Selected Employee");
-		moreDetail.addEventHandler(MouseEvent.MOUSE_CLICKED, this);
-		buttonPaneEmp.getChildren().add(moreDetail);
+		empInfo = new Button ("More Detail on Selected Employee");
+		empInfo.addEventHandler(MouseEvent.MOUSE_CLICKED, this);
+		buttonPaneEmp.getChildren().add(empInfo);
 		
 		rules = new Button("Rules for Employees");
 		rules.addEventHandler(MouseEvent.MOUSE_CLICKED, this);
 		buttonPaneEmp.getChildren().add(rules);
+		
+		assign = new Button("Assign Selected Employee to Task");
+		assign.addEventHandler(MouseEvent.MOUSE_CLICKED, this);
+		buttonPaneEmp.getChildren().add(assign);
 		mainPane.getChildren().add(buttonPaneEmp);
+		
+		buttonPaneCust = new HBox();
+		
+		custInfo = new Button ("More Detail on Selected Customer");
+		custInfo.addEventHandler(MouseEvent.MOUSE_CLICKED, this);
+		buttonPaneCust.getChildren().add(custInfo);
 		
 		Scene scene = new Scene(mainPane, 900, 500);
 		this.setScene(scene);
 	}
+	
+	 public void createPopupMenu(Node node, double x, double y) {
+		    popup.getItems().clear();
+		    if (gui.getEngine().isRunning()) {
+		      return;
+		    }
+		    if (selected != null) {
+		      Vector<String> menuItems = selected.getMenu();
+		      for (int i = 0; i < menuItems.size(); i++) {
+		        String item = menuItems.elementAt(i);
+		        MenuItem tempItem = new MenuItem(item);
+		        tempItem.setOnAction(menuItemEvent);
+		        popup.getItems().addAll(tempItem);
+		      }
+		      if (menuItems.size() >= 1) {
+		        popup.show(node, x, y);
+		      }
+		    }
+	  }
+	
+	 
+	 public void popupMenuActions(MenuItem source) {
+		    MenuItem item = (MenuItem) source;
+		    logic.getMenuInputManager().menuItemSelected(selected, item.getText(), gui);
+		    gui.getWorld().update();
+	  }
 
 	@Override
 	public void handle(MouseEvent evt) {
@@ -95,36 +153,65 @@ public class EmployeesOverviewScreen extends Stage implements EventHandler<Mouse
 			update(true);
 		} else if (source == customerTab) {
 			update(false);
-		} else if (source == moreDetail) {
-			SoftwareEngineer selected = null;
+		} else if (source == empInfo) {
+			Employee emp = null;
 			try {
-				selected =(SoftwareEngineer) table.getSelectionModel().getSelectedItem();
+				emp =(Employee) table.getSelectionModel().getSelectedItem();
 			} catch (ClassCastException ex) {}
 			
-			if (selected == null) {
+			if (emp == null) {
 				Alert alert = new Alert(AlertType.WARNING, "Please select an employee to get detailed information on");
 				alert.show();
 			} else {
-				EmployeeInfoScreen info = new EmployeeInfoScreen(state, gui, logic, selected);
+				selected = emp;
+				EmployeeInfoScreen info = new EmployeeInfoScreen(state, gui, logic, emp);
+				info.show();
+			}
+		}  else if (source == custInfo) {
+			Customer cust = null;
+			try {
+				cust =(Customer) table.getSelectionModel().getSelectedItem();
+			} catch (ClassCastException ex) {}
+			
+			if (cust == null) {
+				Alert alert = new Alert(AlertType.WARNING, "Please select a customer to get detailed information on");
+				alert.show();
+			} else {
+				CustomerInfoScreen info = new CustomerInfoScreen(state, gui, cust);
 				info.show();
 			}
 		} else if (source == rules) {
 			RulesInfoScreen info = new RulesInfoScreen(state, RuleType.PEOPLE);
 			info.show();
+		} else if (source == assign) {
+			Employee emp = null;
+			try {
+				emp =(Employee) table.getSelectionModel().getSelectedItem();
+			} catch (ClassCastException ex) {}
+			
+			if (emp == null) {
+				Alert alert = new Alert(AlertType.WARNING, "Please select an employee to assign");
+				alert.show();
+			} else {
+				selected = emp;
+				createPopupMenu(assign, evt.getScreenX(), evt.getScreenY());
+			}
 		}
 	}
 	
 	public void update(boolean isEmployee) {
 		mainPane.getChildren().remove(tablePane);
 		if (isEmployee) {
-			tableModel = new SoftwareEngineerTableModel(state);
+			tableModel = new EmployeeTableModel(state);
 			if (!mainPane.getChildren().contains(buttonPaneEmp)) {
+				mainPane.getChildren().remove(buttonPaneCust);
 				mainPane.getChildren().add(buttonPaneEmp);
 			}
 		} else {
 			tableModel = new CustomerTableModel(state);
 			if (mainPane.getChildren().contains(buttonPaneEmp)) {
 				mainPane.getChildren().remove(buttonPaneEmp);
+				mainPane.getChildren().add(buttonPaneCust);
 			}
 		}
 		table = tableModel.createTable();
@@ -132,5 +219,13 @@ public class EmployeesOverviewScreen extends Stage implements EventHandler<Mouse
 		tablePane.setCenter(table);
 		mainPane.getChildren().add(3, tablePane);
 	}
-
+	
+		
+	public boolean isEmployee() {
+		if (tableModel instanceof EmployeeTableModel) {
+			return true;
+		}
+		
+		return false;
+	}
 }

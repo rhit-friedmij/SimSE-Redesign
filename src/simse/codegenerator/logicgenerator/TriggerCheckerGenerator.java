@@ -106,7 +106,6 @@ public class TriggerCheckerGenerator implements CodeGeneratorConstants {
 				trigFile.delete(); // delete old version of file
 			}
 			FileWriter writer = new FileWriter(trigFile);
-			System.out.println(javaFile.toString());
 			javaFile.writeTo(writer);
 			writer.close();
 		} catch (IOException e) {
@@ -261,7 +260,9 @@ public class TriggerCheckerGenerator implements CodeGeneratorConstants {
 			}
 		}
 		condition += ")";
-		checker.beginControlFlow(condition);
+		if (parts.size() > 0) {
+			checker.beginControlFlow(condition);
+		}
 		
 		if (outerTrig instanceof UserActionTypeTrigger) {
 			// go through each participant, and if it's an employee, add the text to their menu:
@@ -294,7 +295,8 @@ public class TriggerCheckerGenerator implements CodeGeneratorConstants {
 				checker.beginControlFlow("if(" + partVarName + ".size() > 0)");
 				
 				String objManipulation = "";
-				if (partObjType == SimSEObjectTypeTypes.ARTIFACT || partObjType == SimSEObjectTypeTypes.EMPLOYEE) { 
+				if (partObjType == SimSEObjectTypeTypes.ARTIFACT || partObjType == SimSEObjectTypeTypes.EMPLOYEE 
+						|| part.getQuantity().isMaxValBoundless()) { 
 					// can't be in more than one action of the same type at a time
 					objManipulation = ".remove(0)";
 				} else {
@@ -317,16 +319,16 @@ public class TriggerCheckerGenerator implements CodeGeneratorConstants {
 			}
 			checker.add("// set all overhead texts:\n");
 			checker.addStatement("$T allPart = a.getAllParticipants()", vectorOfObjects);
-			checker.beginControlFlow("for (int i = 0; i < allPart.size(); i++) {");
+			checker.beginControlFlow("for (int i = 0; i < allPart.size(); i++)");
 			checker.addStatement("$T tempObj = allPart.elementAt(i)", ssObject);
 			checker.beginControlFlow("if (tempObj instanceof $T)", employee);
 			
 			if ((outerTrig.getTriggerText() != null) && (outerTrig.getTriggerText().length() > 0)) { 
 				// has trigger text
-				checker.addStatement("(($T) tempObj).setOverheadText(\"" + outerTrig.getTriggerText() + "\")", employee);
+				checker.addStatement("(($T) tempObj).setOverheadText($S, state)", employee, outerTrig.getTriggerText());
 			}
 			checker.nextControlFlow("else if (tempObj instanceof $T)", customer);
-			checker.addStatement("(($T) tempObj).setOverheadText(\"" + outerTrig.getTriggerText() + "\")", customer);
+			checker.addStatement("(($T) tempObj).setOverheadText($S, state)", customer, outerTrig.getTriggerText());
 			checker.endControlFlow();
 			checker.endControlFlow();
 			checker.addStatement("state.getActionStateRepository().get" + actTypeName + "StateRepository().add(a)");
@@ -373,15 +375,15 @@ public class TriggerCheckerGenerator implements CodeGeneratorConstants {
 					checker.addStatement("$T t = ($T)(t111.getAll" + scoringPartVarName + "().elementAt(0))"
 							, scoringPartConstObjName, scoringPartConstObjName);
 					checker.beginControlFlow("if (t != null)");
-					ClassName scoreType = null;
+					Class scoreType = null;
 					if (scoringAttConst.getAttribute().getType() == AttributeTypes.INTEGER) {
-						scoreType = ClassName.get(int.class);
+						scoreType = int.class;
 					} else if (scoringAttConst.getAttribute().getType() == AttributeTypes.DOUBLE) {
-						scoreType = ClassName.get(double.class);
+						scoreType = double.class;
 					} else if (scoringAttConst.getAttribute().getType() == AttributeTypes.STRING) {
-						scoreType = ClassName.get(String.class);
+						scoreType = String.class;
 					} else if (scoringAttConst.getAttribute().getType() == AttributeTypes.BOOLEAN) {
-						scoreType = ClassName.get(boolean.class);
+						scoreType = boolean.class;
 					}
 					checker.addStatement("$T v = t.get" + scoringAttConst.getAttribute().getName() + "()", scoreType);
 					checker.addStatement("state.getClock().stop()");
@@ -403,9 +405,14 @@ public class TriggerCheckerGenerator implements CodeGeneratorConstants {
 				// triggered (if ran num is 100 and frequency is 100)
 				checker.endControlFlow();
 			}
+		}
+		if (parts.size() > 0) {
 			checker.endControlFlow();
 		}
-		checker.endControlFlow();
+		if (!(outerTrig instanceof UserActionTypeTrigger)) { 
+			// not a user trigger
+			checker.endControlFlow();
+		}
 
 		// JOINING existing actions:
 		if ((outerTrig instanceof UserActionTypeTrigger) && (action.isJoiningAllowed())) {
@@ -420,7 +427,7 @@ public class TriggerCheckerGenerator implements CodeGeneratorConstants {
 			checker.addStatement("$T $L = state.getEmployeeStateRepository().getAll()", vector, empCntVar);
 			checker.beginControlFlow("for (int i = 0; i < $L.size(); i++)", empCntVar);
 			checker.addStatement("(($T) $L.elementAt(i)).removeMenuItem($S)", employee, empCntVar,
-					((UserActionTypeTrigger) outerTrig).getMenuText());
+					"JOIN " + ((UserActionTypeTrigger) outerTrig).getMenuText());
 			checker.endControlFlow();
 			checker.endControlFlow();
 			checker.beginControlFlow("for (int i = 0; i < $L.size(); i++)", actCntVar);
@@ -522,9 +529,9 @@ public class TriggerCheckerGenerator implements CodeGeneratorConstants {
 					checker.endControlFlow();
 					checker.endControlFlow();
 					checker.endControlFlow();
+					checker.endControlFlow();
 				}
 			}
-			checker.endControlFlow();
 			checker.endControlFlow();
 		}
 		return checker;

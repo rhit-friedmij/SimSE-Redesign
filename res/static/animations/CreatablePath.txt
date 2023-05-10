@@ -1,7 +1,7 @@
 /**
  * 
  */
-package animations;
+package simse.animation;
 
 import javafx.scene.shape.ClosePath;
 import javafx.scene.shape.LineTo;
@@ -16,10 +16,7 @@ public class CreatablePath extends Path {
 	
 	private SimSESprite startingAnimation, endingAnimation;
 
-	public CreatablePath(double x, double y, double[][] xyChanges, SimSESprite startingAnimation, SimSESprite endingAnimation) {
-		
-		this.startingAnimation = startingAnimation;
-		this.endingAnimation = endingAnimation;
+	public CreatablePath(double x, double y, double[][] xyChanges) {
 		
         this.getElements().add(new MoveTo(x, y));
 		        

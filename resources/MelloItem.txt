@@ -2,43 +2,72 @@ package simse.gui;
 
 import java.util.Vector;
 
+import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
+import simse.adts.actions.Action;
+import simse.adts.objects.Employee;
 import simse.gui.util.JavaFXHelpers;
 
-public class MelloItem extends Pane{
+public class MelloItem extends Pane implements Cloneable{
 	
 	String task;
-	Vector<String> employees;
+	Vector<Object> employees;
+	int actionId;
 	
-	public MelloItem(String item, Vector<String> workers) {
+	public MelloItem(String item, int actionId, Vector<Object> workers) {
 		this.task = item;
 		this.employees = workers;
-		HBox box = new HBox();
+		this.actionId = actionId;
+		VBox box = new VBox();
 		
-		HBox textBox = new HBox();
-		textBox.setBackground(JavaFXHelpers.createBackgroundColor(Color.rgb(128, 128, 128)));
-		textBox.getChildren().add(new Text(task));
+		Font nameFont = Font.font("Helvetica", FontWeight.BOLD, 10);
+		Label textBox = new Label(task);
+		textBox.setTextAlignment(TextAlignment.CENTER);
+		textBox.setFont(nameFont);
+		textBox.setBackground(JavaFXHelpers.createBackgroundColor(Color.rgb(255, 255, 255)));
+		box.setBackground(JavaFXHelpers.createBackgroundColor(Color.rgb(255, 255, 255)));
 		
 		box.getChildren().add(textBox);
 		
-		for (String employee : employees) {
-			ImageView img = JavaFXHelpers.createImageView("src/simse/gui/icons/" + employee + ".gif");
-			if (img == null) {
-				img = JavaFXHelpers.createImageView("src/simse/gui/icons/alex.gif");
+		FlowPane imgPane = new FlowPane();
+		imgPane.setPrefWrapLength(240);
+		
+		for (Object worker : workers) {
+			ImageView img = null;
+			if(worker instanceof Employee) {
+				img = ((Employee) worker).getCharacterModel().getDisplayedCharacter(true);
+				if(((Employee) worker).getCharacterModel().getCharacterNum() < 8) {
+					img.setScaleX(1.25);
+					img.setScaleY(1.25);
+				}
 			}
-			box.getChildren().add(img);
+			if(img != null) {
+				imgPane.getChildren().add(img);
+			}
+			
 		}
+		box.getChildren().add(imgPane);
 		
 		this.getChildren().add(box);
+	}
+	
+	@Override
+	public Object clone() {
+		return new MelloItem(this.task, this.actionId, (Vector<Object>)this.employees.clone());
 	}
 	
 	public MelloItem(String item) {
 		this.task = item;
-		this.employees = new Vector<String>();
+		this.employees = new Vector<Object>();
 		HBox box = new HBox();
 		
 		HBox textBox = new HBox();
@@ -50,20 +79,20 @@ public class MelloItem extends Pane{
 		this.getChildren().add(box);
 	}
 	
-	public MelloItem addEmp(String emp) {
+	public MelloItem addEmp(Object emp) {
 		employees.add(emp);
-		return new MelloItem(task, employees);
+		return new MelloItem(task, actionId, employees);
 	}
 	
-	public MelloItem removeEmp(String emp) {
+	public MelloItem removeEmp(Object emp) {
 		employees.remove(emp);
 		if (employees.isEmpty()) return null;
-		return new MelloItem(task, employees);
+		return new MelloItem(task, actionId, employees);
 	}
 	
 
-	public boolean isTask(String task) {
-		return this.task.equals(task);
+	public boolean isAction(int id) {
+		return this.actionId == id;
 	}
 
 }

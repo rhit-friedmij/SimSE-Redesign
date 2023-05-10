@@ -70,9 +70,9 @@ public class MiscUpdaterGenerator implements CodeGeneratorConstants {
     	  String varName = act.getName().toLowerCase() + "Actions";
     	  actsBuilder.addStatement("$T<$T> " + varName + " = state.getActionStateRepository().get" +
     			  actTypeName + "StateRepository().getAllActions()", vector, actName);
-    	  actsBuilder.beginControlFlow("for (int i = 0; i < " + varName + ".size(); i++) {");
-    	  actsBuilder.addStatement("$T act = " + varName + ".elementAt(i);", actName);
-    	  actsBuilder.addStatement("act.decrementTimeToLive();");
+    	  actsBuilder.beginControlFlow("for (int i = 0; i < " + varName + ".size(); i++)");
+    	  actsBuilder.addStatement("$T act = " + varName + ".elementAt(i)", actName);
+    	  actsBuilder.addStatement("act.decrementTimeToLive()");
     	  actsBuilder.endControlFlow();
       }
 	  
@@ -118,7 +118,6 @@ public class MiscUpdaterGenerator implements CodeGeneratorConstants {
 	        muFile.delete(); // delete old version of file
 	      }
 	      FileWriter writer = new FileWriter(muFile);
-	      System.out.println(javaFile.toString());
 	      javaFile.writeTo(writer);
 	      writer.close();
     } catch (IOException e) {

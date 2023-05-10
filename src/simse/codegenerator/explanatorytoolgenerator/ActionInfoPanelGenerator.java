@@ -20,11 +20,12 @@ import simse.modelbuilder.objectbuilder.SimSEObjectTypeTypes;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Vector;
 
-import javax.swing.JOptionPane;
-
+import javax.lang.model.element.Modifier;
 import com.squareup.javapoet.ClassName;
+import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.ParameterizedTypeName;
@@ -54,16 +55,22 @@ public class ActionInfoPanelGenerator implements CodeGeneratorConstants {
       ClassName titledPane = ClassName.get("javafx.scene.control", "TitledPane");
       ClassName textArea = ClassName.get("javafx.scene.control", "TextArea");
       ClassName scrollPane = ClassName.get("javafx.scene.control", "ScrollPane");
-      ClassName scrollPanePolicy = ClassName.get("javafx.scene.control.ScrollPane", "ScrollPanePolicy");
       ClassName pos = ClassName.get("javafx.geometry", "Pos");
       ClassName tableView = ClassName.get("javafx.scene.control", "TableView");
+      ClassName tableColumn = ClassName.get("javafx.scene.control", "TableColumn");
       ClassName participant = ClassName.get("simse.explanatorytool", "Participant");
       ClassName scrollBarPolicy = ClassName.get("javafx.scene.control.ScrollPane", "ScrollBarPolicy");
       ClassName gridPane = ClassName.get("javafx.scene.layout", "GridPane");
       ClassName listView = ClassName.get("javafx.scene.control", "ListView");
       ClassName selectionMode = ClassName.get("javafx.scene.control", "SelectionMode");
+      ClassName string = ClassName.get("java.lang", "String");
+      ClassName ruleCategories = ClassName.get("simse.util", "RuleCategories");
+      ClassName propertyValueFactory = ClassName.get("javafx.scene.control.cell", "PropertyValueFactory");
+      ClassName observableList = ClassName.get("javafx.collections", "ObservableList");
+      ClassName fxCollections = ClassName.get("javafx.collections", "FXCollections");
       
       String initalizeActionDescriptionActions = "";
+      ArrayList<String> actionAnnotations = new ArrayList<>();
       
       // go through all actions:
       Vector<ActionType> actions = actTypes.getAllActionTypes();
@@ -78,81 +85,32 @@ public class ActionInfoPanelGenerator implements CodeGeneratorConstants {
             writeElse = true;
           }
           initalizeActionDescriptionActions += "if (action instanceof " + uCaseName + "Action) {\n";
-          initalizeActionDescriptionActions += "text = \"" + 
-                  act.getAnnotation().replaceAll("\n", "\\\\n").
-                  replaceAll("\"", "\\\\\"") + "\";\n";
+          actionAnnotations.add(act.getAnnotation().replaceAll("\n", "\\\\n").replaceAll("\"", "\\\\\""));
+          initalizeActionDescriptionActions += "text = $S;\n";
           initalizeActionDescriptionActions += "}";
         }
       }
 
       
       MethodSpec initializeActionDescription = MethodSpec.methodBuilder("initializeActionDescription")
+    		  .addModifiers(Modifier.PRIVATE)
     		  .addStatement("String text = \"\"")
-    		  .addCode(initalizeActionDescriptionActions)
+    		  .addCode(initalizeActionDescriptionActions, actionAnnotations.toArray())
     		  .addStatement("actionDescriptionArea.setText(text)")
     		  .addStatement("actionDescriptionArea.positionCaret(0)")
     		  .build();
       
-      String initalizeDestroyerListBlock = "";
-
-      // go through all actions:
-      writeElse = false;
-      for (ActionType act : actions) {
-        if (act.isVisibleInExplanatoryTool()) {
-          String uCaseName = 
-          	CodeGeneratorUtils.getUpperCaseLeading(act.getName());
-          if (writeElse) {
-            initalizeDestroyerListBlock += "else ";
-          } else {
-            writeElse = true;
-          }
-          initalizeDestroyerListBlock += "if (action instanceof " + uCaseName + "Action) {\n";
-          initalizeDestroyerListBlock += "String [] list = {\n";
-          Vector<ActionTypeDestroyer> destroyers = act.getAllDestroyers();
-          for (ActionTypeDestroyer destroyer : destroyers) {
-            initalizeDestroyerListBlock += "\"" + destroyer.getName() + "\",\n";
-          }
-          initalizeDestroyerListBlock += "};\n";
-          initalizeDestroyerListBlock += "destroyerList.setListData(list);\n";
-          initalizeDestroyerListBlock += "}\n";
-        }
-      }
-      
       MethodSpec initializeDestroyerList = MethodSpec.methodBuilder("initializeDestroyerList")
+    		  .addModifiers(Modifier.PRIVATE)
     		  .addStatement("String actionName = action.getActionName()")
-    		  .addCode(initalizeDestroyerListBlock)
+    		  .addStatement("destroyerList.getItems().setAll($T.getBackendDestRulesForAction(actionName))", ruleCategories)
     		  .build();
       
-      // "initializeTriggerList" method:
-
-      String initalizeTriggerListBlock = "";
-      
-      // go through all actions:
-      writeElse = false;
-      for (ActionType act : actions) {
-        if (act.isVisibleInExplanatoryTool()) {
-          String uCaseName = 
-          	CodeGeneratorUtils.getUpperCaseLeading(act.getName());
-          if (writeElse) {
-        	  initalizeTriggerListBlock += "else ";
-          } else {
-            writeElse = true;
-          }
-          initalizeTriggerListBlock += "if (action instanceof " + uCaseName + "Action) {\n";
-          initalizeTriggerListBlock += "\"String [] list = {\"\n";
-          Vector<ActionTypeTrigger> triggers = act.getAllTriggers();
-          for (ActionTypeTrigger trigger : triggers) {
-        	  initalizeTriggerListBlock += "\"" + trigger.getName() + "\",\n";
-          }
-          initalizeTriggerListBlock += "};\n";
-          initalizeTriggerListBlock += "triggerList.setListData(list);\n";
-          initalizeTriggerListBlock += "}\n";
-        }
-      }
       
       MethodSpec initializeTriggerList = MethodSpec.methodBuilder("initializeTriggerList")
+    		  .addModifiers(Modifier.PRIVATE)
     		  .addStatement("String actionName = action.getActionName()")
-    		  .addCode(initalizeTriggerListBlock)
+    		  .addStatement("triggerList.getItems().setAll($T.getBackendTrigRulesForAction(actionName))", ruleCategories)
     		  .build();
       
       String participantsTableActions = "";
@@ -189,7 +147,8 @@ public class ActionInfoPanelGenerator implements CodeGeneratorConstants {
                     + "s.size(); i++) {\n";
             participantsTableActions += metaType + " " + lCasePartName + " = " + 
             		lCasePartName + "s.get(i);\n";
-            participantsTableActions += "data[index][0] = \"" + part.getName() + "\";\n";
+            participantsTableActions += "String title = \"" + part.getName() + "\";\n";
+            participantsTableActions += "String title1 = \"\";\n";
 
             // go through all allowable SimSEObjectTypes:
             Vector<SimSEObjectType> types = part.getAllSimSEObjectTypes();
@@ -206,11 +165,13 @@ public class ActionInfoPanelGenerator implements CodeGeneratorConstants {
               Attribute keyAtt = type.getKey();
               String uCaseAttName = 
               	CodeGeneratorUtils.getUpperCaseLeading(keyAtt.getName());
-              participantsTableActions += uCaseTypeName + " " + uCaseTypeName.toLowerCase() +
-                		uCasePartName + " = (" + uCaseTypeName + ")" + lCasePartName +
+              String singlePartName = uCaseTypeName.toLowerCase() + uCasePartName;
+              participantsTableActions += uCaseTypeName + " " + singlePartName + " = (" + uCaseTypeName + ")" + lCasePartName +
                   		";\n";
+              participantsTableActions += "title1 = \"" + uCaseTypeName + " " + uCasePartName + " \" + " + singlePartName 
+            		  + ".get" + type.getKey().getName() + "();";
+              
               participantsTableActions +="// find out whether it's active or not:\n";
-              participantsTableActions += "boolean active = false;\n";
               participantsTableActions += "boolean active = false;\n";
               participantsTableActions += "for (int j = 0; j < active" + part.getName()
               + "s.size(); j++) {\n";
@@ -231,14 +192,13 @@ public class ActionInfoPanelGenerator implements CodeGeneratorConstants {
                 participantsTableActions += ")";
               }
               participantsTableActions += " {\n";
-              participantsTableActions += "active = true\n";
+              participantsTableActions += "active = true;\n";
               participantsTableActions += "break;\n";
               participantsTableActions += "}\n";
               participantsTableActions += "}\n";
-              participantsTableActions += "data[index][2] = active ? \"Active\" : \"Inactive\";\n";
+              participantsTableActions += "data.add(new Participant(title, title1, active ? \"Active\" : \"Inactive\"));";
               participantsTableActions += "}\n";
             }
-            participantsTableActions += "index++;\n";
             participantsTableActions += "}\n";
           }
           participantsTableActions += "}\n";
@@ -246,24 +206,28 @@ public class ActionInfoPanelGenerator implements CodeGeneratorConstants {
       }
       
       MethodSpec createParticipantsTable = MethodSpec.methodBuilder("createParticipantsTable")
+    		  .addModifiers(Modifier.PRIVATE)
     		  .returns(ParameterizedTypeName.get(tableView, participant))
-    		  .addStatement("TableView<Participant> newView = new TableView<Participant>()")
-    		  .addStatement("TableColumn<Participant, String> name = new TableColumn<>(\"Participant Name\")")
-    		  .addStatement("name.setCellValueFactory(new PropertyValueFactory<>(\"title1\"))")
-    		  .addStatement("TableColumn<Participant, String> participant = new TableColumn<>(\"Participant\")")
-    		  .addStatement("participant.setCellValueFactory(new PropertyValueFactory<>(\"title2\"))")
-    		  .addStatement("TableColumn<Participant, String> status = new TableColumn<>(\"Status\")")
-    		  .addStatement("status.setCellValueFactory(new PropertyValueFactory<>(\"status\"))")
-    		  .addStatement("ObservableList<Participant> data = FXCollections.observableArrayList()")
+    		  .addStatement("$T<$T> newView = new $T<$T>()", tableView, participant, tableView, participant)
+    		  .addStatement("$T<$T, $T> name = new $T<>(\"Participant Name\")", tableColumn, participant, String.class, tableColumn)
+    		  .addStatement("name.setCellValueFactory(new $T<>(\"title1\"))", propertyValueFactory)
+    		  .addStatement("$T<$T, $T> participant = new $T<>(\"Participant\")", tableColumn, participant, String.class, tableColumn)
+    		  .addStatement("participant.setCellValueFactory(new $T<>(\"title2\"))", propertyValueFactory)
+    		  .addStatement("$T<$T, $T> status = new $T<>(\"Status\")", tableColumn, participant, String.class, tableColumn)
+    		  .addStatement("status.setCellValueFactory(new $T<>(\"status\"))", propertyValueFactory)
+    		  .addStatement("$T<$T> data = $T.observableArrayList()", observableList, participant, fxCollections)
     		  .addCode(participantsTableActions)
-    		  .addStatement("return new JTable(data, columnNames)")
+    		  .addStatement("newView.getColumns().setAll(name, participant, status)")
+    		  .addStatement("newView.setItems(data)")
+    		  .addStatement("return newView")
     		  .build();
       
       MethodSpec constructor = MethodSpec.constructorBuilder()
+    		  .addModifiers(Modifier.PUBLIC)
     		  .addParameter(action, "action")
     		  .addStatement("this.action = action")
     		  .addStatement("$T mainPane = new $T()", vBox, vBox)
-    		  .addStatement("$T actionDescriptionPane = new $T()", pane, pane)
+    		  .addStatement("$T actionDescriptionPane = new $T()", vBox, vBox)
     		  .addStatement("$T actionDescriptionTitlePane = new $T(\"ActionDescription: \", actionDescriptionPane)", titledPane, titledPane)
     		  .addStatement("actionDescriptionArea = new $T()", textArea)
     		  .addStatement("actionDescriptionArea.setWrapText(true)")
@@ -271,8 +235,8 @@ public class ActionInfoPanelGenerator implements CodeGeneratorConstants {
     		  .addStatement("actionDescriptionArea.setPrefColumnCount(50)")
     		  .addStatement("actionDescriptionArea.setEditable(false)")
     		  .addStatement("$T actionDescriptionScrollPane = new $T(actionDescriptionArea)", scrollPane, scrollPane)
-    		  .addStatement("actionDescriptionScrollPane.setVbarPolicy($T.AS_NEEDED)", scrollPanePolicy)
-    		  .addStatement("actionDescriptionScrollPane.setHbarPolicy($T.NEVER)", scrollPanePolicy)
+    		  .addStatement("actionDescriptionScrollPane.setVbarPolicy($T.AS_NEEDED)", scrollBarPolicy)
+    		  .addStatement("actionDescriptionScrollPane.setHbarPolicy($T.NEVER)", scrollBarPolicy)
     		  .addStatement("initializeActionDescription()")
     		  .addStatement("actionDescriptionPane.getChildren().add(actionDescriptionScrollPane)")
     		  .addStatement("actionDescriptionPane.setAlignment($T.CENTER)", pos)
@@ -394,16 +358,18 @@ public class ActionInfoPanelGenerator implements CodeGeneratorConstants {
       }
       
       MethodSpec refreshDescriptionArea = MethodSpec.methodBuilder("refreshDescriptionArea")
+    		  .addModifiers(Modifier.PRIVATE)
     		  .addParameter(int.class, "trigOrDest")
     		  .addStatement("$T name = trigOrDest == TRIGGER ? ($T) triggerList.getSelectionModel().getSelectedItem() : ($T) destroyerList.getSelectionModel().getSelectedItem()", String.class, String.class, String.class)
     		  .beginControlFlow("if (name != null)")
-    		  .addCode(refreshDescriptionAreaBlock)
-    		  .addStatement("descriptionArea.setText(text)")
-    		  .addStatement("descriptionArea.setCaretPosition(0)")
+    		  .addStatement("$T actionName = this.action.getActionName()", String.class)
+    		  .addStatement("descriptionArea.setText($T.getBackendRuleMappings(actionName, name))", ruleCategories)
+    		  .addStatement("descriptionArea.positionCaret(0)")
     		  .endControlFlow()
     		  .build();
       
       MethodSpec handle = MethodSpec.methodBuilder("handle")
+    		  .addModifiers(Modifier.PUBLIC)
     		  .addParameter(mouseEvent, "event")
     		  .beginControlFlow("if (event.getSource() == triggerList && triggerList.getSelectionModel().getSelectedIndex() >= 0)")
     		  .addStatement("$N(TRIGGER)", refreshDescriptionArea)
@@ -416,7 +382,17 @@ public class ActionInfoPanelGenerator implements CodeGeneratorConstants {
     		  .build();
       
     	TypeSpec actionInfoPanel = TypeSpec.classBuilder("ActionInfoPanel")
+    			.addModifiers(Modifier.PUBLIC)
+    			.addField(action, "action")
+    			.addField(ParameterizedTypeName.get(tableView, participant), "table", Modifier.PRIVATE)
+    			.addField(ParameterizedTypeName.get(listView, string), "triggerList", Modifier.PRIVATE)
+    			.addField(ParameterizedTypeName.get(listView, string), "destroyerList", Modifier.PRIVATE)
+    			.addField(textArea, "descriptionArea", Modifier.PRIVATE)
+    			.addField(textArea, "actionDescriptionArea", Modifier.PRIVATE)
+    			.addField(FieldSpec.builder(int.class, "TRIGGER", Modifier.PRIVATE, Modifier.FINAL).initializer("0").build())
+    			.addField(FieldSpec.builder(int.class, "DESTROYER", Modifier.PRIVATE, Modifier.FINAL).initializer("1").build())
     			.superclass(pane)
+    			.addSuperinterface(ParameterizedTypeName.get(eventHandler, mouseEvent))
     			.addMethod(constructor)
     			.addMethod(initializeActionDescription)
     			.addMethod(initializeTriggerList)
@@ -426,12 +402,20 @@ public class ActionInfoPanelGenerator implements CodeGeneratorConstants {
     			.addMethod(handle)
     			.build();
       
-      JavaFile javaFile = JavaFile.builder("simse.explanatorytool", actionInfoPanel)
+      JavaFile javaFile = JavaFile.builder("", actionInfoPanel)
   		    .build();
 
     try {
     	FileWriter writer = new FileWriter(actInfoFile);
-		javaFile.writeTo(writer);
+    	
+  	  	String toAppend = "/* File generated by: simse.codegenerator.explanatorytool.ActionInfoPanelGenerator */\n"
+  	  		+ "package simse.explanatorytool;\n"
+  	  		+ "\n"
+  	  		+ "import simse.adts.actions.*;\n"
+  	  		+ "import simse.adts.objects.*;\n"
+  	  		+ "import java.util.Vector;";
+    	
+		writer.write(toAppend + javaFile.toString());
 		
 		writer.close();
 	} catch (IOException e) {

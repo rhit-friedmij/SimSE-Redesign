@@ -1,11 +1,11 @@
-package animations;
+package simse.animation;
 
 public class CharacterWalkRight extends SimSESprite{
 	
-	public final static String URL = "sprites\\character1cus_walk.png";
+	public final static String URL = "simse\\sprites\\character1cus_walk.png";
 
 	public CharacterWalkRight(int characterNum) {
-		super(8, 8, 0, 72, 32, 32, getURL(characterNum));
+		super(8, 8, 0, 72, 32, 32, getURL(characterNum), false);
 		// TODO Auto-generated constructor stub
 	}
 

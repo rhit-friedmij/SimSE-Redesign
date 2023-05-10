@@ -19,11 +19,14 @@ import simse.modelbuilder.objectbuilder.AttributeTypes;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Vector;
 
+import javax.lang.model.element.Modifier;
 import javax.swing.JOptionPane;
 
 import com.squareup.javapoet.CodeBlock;
+import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.TypeSpec;
 
@@ -44,31 +47,36 @@ public class TriggerDescriptionsGenerator implements CodeGeneratorConstants {
       trigDescFile.delete(); // delete old version of file
     }
 
-      String actionsString = "";
+    	ArrayList<FieldSpec> actionFields = new ArrayList<>();
+    
+      
       
       // go through all actions:
       Vector<ActionType> actions = actTypes.getAllActionTypes();
+      
       for (ActionType act : actions) {
+    	String initalization = "";
         if (act.isVisibleInExplanatoryTool()) {
           Vector<ActionTypeTrigger> triggers = act.getAllTriggers();
-          for (ActionTypeTrigger trigger : triggers) {
-            actionsString += "static final String " + act.getName().toUpperCase()
-                    + "_" + trigger.getName().toUpperCase() + " = ";
-            
-            actionsString += "\n";
-            actionsString += "\"This action occurs ";
-            if (trigger instanceof RandomActionTypeTrigger) {
-              actionsString += ((RandomActionTypeTrigger) trigger).getFrequency()
+          for (int i = 0; i < triggers.size(); i++) {
+        	if(i == 0) {
+        		initalization += "\"This action stops ";
+        	}
+        	else {
+        		initalization += " This action stops ";
+        	}
+            if (triggers.get(i) instanceof RandomActionTypeTrigger) {
+            	initalization += ((RandomActionTypeTrigger) triggers.get(i)).getFrequency()
                       + "% of the time ";
-            } else if (trigger instanceof UserActionTypeTrigger) {
-              actionsString += "when the user chooses the menu item \\\""
-                      + ((UserActionTypeTrigger) trigger).getMenuText()
+            } else if (triggers.get(i) instanceof UserActionTypeTrigger) {
+            	initalization += "when the user chooses the menu item \\\""
+                      + ((UserActionTypeTrigger) triggers.get(i)).getMenuText()
                       + "\\\" and ";
             }
-            actionsString += "when the following conditions are met: \\n";
+            initalization += "when the following conditions are met:";
             // go through all participant conditions:
             Vector<ActionTypeParticipantTrigger> partTriggers = 
-            	trigger.getAllParticipantTriggers();
+            		triggers.get(i).getAllParticipantTriggers();
             for (int k = 0; k < partTriggers.size(); k++) {
               ActionTypeParticipantTrigger partTrigger = partTriggers.get(k);
               String partName = partTrigger.getParticipant().getName();
@@ -93,38 +101,39 @@ public class TriggerDescriptionsGenerator implements CodeGeneratorConstants {
                   String attGuard = attConstraint.getGuard();
                   if (attConstraint.isConstrained()) {
                     String condVal = attConstraint.getValue().toString();
-                    actionsString += partName + "." + attName + " (" + typeName
+                    initalization += partName + "." + attName + " (" + typeName
                             + ") " + attGuard + " ";
                     if (attConstraint.getAttribute().getType() == 
                     	AttributeTypes.STRING) {
-                      actionsString += "\\\"" + condVal + "\\\"";
+                    	initalization += "\\\"" + condVal + "\\\"";
                     } else {
-                      actionsString += condVal;
+                    	initalization += condVal;
                     }
-                    actionsString += " \\n";
+                    initalization += " \\n";
                   }
                 }
               }
             }
-            actionsString += "\";";
-            actionsString += "\n";
+            
+            actionFields.add(FieldSpec.builder(String.class, 
+            		act.getName().toUpperCase()
+                    + "_" + triggers.get(i).getName().toUpperCase(), Modifier.STATIC, Modifier.PUBLIC, Modifier.FINAL).initializer(initalization + "\"").build());
           }
         }
       }
       
       TypeSpec triggerDescriptions = TypeSpec.classBuilder("TriggerDescriptions")
-    		  .addStaticBlock(CodeBlock.builder()
-    				  .add(actionsString)
-    				  .build())
+    		  .addModifiers(Modifier.PUBLIC)
+    		  .addFields(actionFields)
     		  .build();
       
       JavaFile javaFile = JavaFile.builder("simse.util", triggerDescriptions).build();
       
       try {
-    	FileWriter writer = new FileWriter(trigDescFile);
-		javaFile.writeTo(writer);
-		
-		writer.close();
+      	FileWriter writer = new FileWriter(trigDescFile);
+  		javaFile.writeTo(writer);
+  		
+  		writer.close();
 	} catch (IOException e) {
 		// TODO Auto-generated catch block
 		e.printStackTrace();

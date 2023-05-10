@@ -36,21 +36,6 @@ import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
 import com.squareup.javapoet.WildcardTypeName;
 
-import javafx.geometry.Point2D;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.Button;
-import javafx.scene.control.Dialog;
-import javafx.scene.control.Label;
-import javafx.scene.control.Separator;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
-import javafx.stage.Window;
-import javafx.stage.WindowEvent;
-
 public class EmployeeParticipantSelectionDialogGenerator implements
     CodeGeneratorConstants {
   private File directory; // directory to generate into
@@ -83,6 +68,7 @@ public class EmployeeParticipantSelectionDialogGenerator implements
 	  ClassName stageClass = ClassName.get("javafx.stage", "Stage");
 	  ClassName vBoxClass = ClassName.get("javafx.scene.layout", "VBox");
 	  ClassName hBoxClass = ClassName.get("javafx.scene.layout", "HBox");
+	  ClassName posClass = ClassName.get("javafx.geometry", "Pos");
 	  ClassName labelClass = ClassName.get("javafx.scene.control", "Label");
 	  ClassName separatorClass = ClassName.get("javafx.scene.control", "Separator");
 	  ClassName borderPaneClass = ClassName.get("javafx.scene.layout", "BorderPane");
@@ -91,6 +77,9 @@ public class EmployeeParticipantSelectionDialogGenerator implements
 	  ClassName alertClass = ClassName.get("javafx.scene.control", "Alert");
 	  ClassName alertTypeClass = ClassName.get("javafx.scene.control.Alert", "AlertType");
 	  ClassName windowClass = ClassName.get("javafx.stage", "Window");
+	  ClassName employee = ClassName.get("simse.adts.objects", "Employee");
+	  ClassName softwareEngineer = ClassName.get("simse.adts.objects", "SoftwareEngineer");
+	  ClassName imageView = ClassName.get("javafx.scene.image", "ImageView");
 	  TypeName mouseHandler = ParameterizedTypeName.get(eventHandler, mouseEvent);
 	  TypeName windowHandler = ParameterizedTypeName.get(eventHandler, windowEvent);
 	  TypeName dialogAction = ParameterizedTypeName.get(dialogClass, actionClass);
@@ -132,7 +121,7 @@ public class EmployeeParticipantSelectionDialogGenerator implements
 			  .addStatement("$N = false", "dialogAccepted")
 			  .addStatement("setMinAndMax()")
 			  .beginControlFlow("if ((($N != null) && ($N > 0) && "
-			  		+ "($N.size() > 0 || (($N == null) && "
+			  		+ "($N.size() > 0)) || (($N == null) && "
 			  		+ "($N.size() > $N))) ", "selectedEmp", "maxNumParts",
 			  		"participants", "selectedEmp", "participants", "minNumParts")
 			  .addStatement("$N = new $T()", "checkBoxes", checkboxVector)
@@ -148,7 +137,7 @@ public class EmployeeParticipantSelectionDialogGenerator implements
 			  .addStatement("title = title.concat($S + $N)", "exactly ", "minNumParts")
 			  .nextControlFlow("else ")
 			  .addStatement("title = title.concat($S + $N)", "at least ", "minNumParts")
-			  .beginControlFlow("if ($N < 999999) // not boundle", "maxNumParts")
+			  .beginControlFlow("if ($N < 999999)", "maxNumParts")
 			  .addStatement("title = title.concat($S + $N)", ", at most ", "maxNumParts")
 			  .endControlFlow()
 			  .endControlFlow()
@@ -162,12 +151,25 @@ public class EmployeeParticipantSelectionDialogGenerator implements
 			  .addCode(generateNames(objs))
 			  .addStatement("$T tempPane = new $T()", borderPaneClass, borderPaneClass)
 			  .addStatement("$T tempCheckBox = new $T(label)", checkboxClass, checkboxClass)
-			  .addStatement("tempPane.setLeft(tempCheckBoxes)")
+			  .addStatement("tempPane.setLeft(tempCheckBox)")
 			  .addStatement("$N.add(tempCheckBox)", "checkBoxes")
-			  .addStatement("$T icon = $T.getImageFromURL($T.getImage(tempObj))", imageViewClass,
-					  imageLoaderClass, tabPanelClass)
-			  .addStatement("tempPane.setRight(new $T($S, icon))", labelClass, "")
+			  .addStatement("$T<$T> allEmp = state.getEmployeeStateRepository().getAll()", vector, employee)
+			  .beginControlFlow("for(int k = 0; k < allEmp.size(); k++)")
+			  .beginControlFlow("if(allEmp.get(k).getKeyAsString() != null)")
+			  .beginControlFlow("if(allEmp.get(k).getKeyAsString().equals(((Employee) tempObj).getKeyAsString()))")
+			  .addStatement("$T icon = allEmp.get(k).getCharacterModel().getDisplayedCharacter(true)", imageView)
+			  .beginControlFlow("if(k < 8)")
+			  .addStatement("icon.setScaleX(1.5)")
+			  .addStatement("icon.setScaleY(1.5)")
+			  .endControlFlow()
+			  .addStatement("$T iconPane = new $T(icon)", hBoxClass, hBoxClass)
+			  .addStatement("iconPane.setAlignment($T.CENTER)", posClass)
+			  .addStatement("iconPane.setPrefWidth(40)")
+			  .addStatement("tempPane.setRight(new $T($S, iconPane))", labelClass, "")
 			  .addStatement("middlePane.getChildren().add(tempPane)")
+			  .endControlFlow()
+			  .endControlFlow()
+			  .endControlFlow()
 			  .endControlFlow()
 			  .addStatement("$T checkPane = new $T()", hBoxClass, hBoxClass)
 			  .addStatement("$N = new $T($S)", "checkAllButton", buttonClass, "Check All")
@@ -195,12 +197,12 @@ public class EmployeeParticipantSelectionDialogGenerator implements
 			  .addStatement("separator2.setMaxSize(900, 5)")
 			  .addStatement("mainPane.getChildren().addAll(separator2, bottomPane)")
 			  .addStatement("this.getDialogPane().getChildren().add(mainPane)")
-			  .addStatement("this.getDialogPane().setPrefSize(400, 400)")
+			  .addStatement("this.getDialogPane().setPrefSize(400, middlePane.getChildren().size() * 40 + 100)")
 			  .addStatement("this.getDialogPane().getScene().getWindow().setOnCloseRequest(new ExitListener())")
+			  .addStatement("this.setResizable(true)")
 			  .addStatement("$T ownerLoc = new $T(owner.getX(), owner.getY())", point2DClass, point2DClass)
-			  .addStatement("$T thisLoc = new $T((ownerLoc.getX() + (owner.getWidth() / 2) - (this.getWidth() / 2))",
-					  point2DClass, point2DClass)
-			  .addStatement("(ownerLoc.getY() + (owner.getHeight() / 2) - (this.getHeight() / 2)))")
+			  .addStatement("$T thisLoc = new $T((ownerLoc.getX() + (owner.getWidth() / 2) - (this.getWidth() / 2)),\n "
+			  		+ "(ownerLoc.getY() + (owner.getHeight() / 2) - (this.getHeight() / 2)))", point2DClass, point2DClass)
 			  .addStatement("this.setX(thisLoc.getX())")
 			  .addStatement("this.setY(thisLoc.getY())")
 			  .addStatement("showAndWait()")
@@ -222,7 +224,7 @@ public class EmployeeParticipantSelectionDialogGenerator implements
 			  .addParameter(boolean.class, "accepted")
 			  .addStatement("$N = accepted", "dialogAccepted")
 			  .addStatement("$T window = this.getDialogPane().getScene().getWindow()", windowClass)
-			  .addStatement("window.fireEvent(new $T(window, $T.WINDOW_CLOSEREQUEST))",
+			  .addStatement("window.fireEvent(new $T(window, $T.WINDOW_CLOSE_REQUEST))",
 					  windowEvent, windowEvent)
 			  .build();
 	  
@@ -260,9 +262,9 @@ public class EmployeeParticipantSelectionDialogGenerator implements
 			  .beginControlFlow("for (int i = 0; i < checkedBoxes.size(); i++) ")
 			  .addStatement("$T checkedBox = checkedBoxes.elementAt(i)", checkboxClass)
 			  .addStatement("$T cBoxText = checkedBox.getText()", String.class)
-			  .addStatement("$T objTypeName = cBoxText.substring(0(cBoxText"
+			  .addStatement("$T objTypeName = cBoxText.substring(0, (cBoxText"
 			  		+ ".indexOf('(') - 1))", String.class)
-			  .addStatement("$T keyValStr = cBoxText.substring(cBoxText"
+			  .addStatement("$T keyValStr = cBoxText.substring((cBoxText"
 			  		+ ".indexOf('(') + 1), cBoxText.lastIndexOf(')'))", String.class)
 			  .addStatement("addParticipant(objTypeName, keyValStr);", String.class)
 			  .endControlFlow()
@@ -300,6 +302,7 @@ public class EmployeeParticipantSelectionDialogGenerator implements
 			  .build();
 	  
 	  TypeSpec employeeDialog = TypeSpec.classBuilder("EmployeeParticipantSelectionDialog")
+			  .addModifiers(Modifier.PUBLIC)
 	  			.superclass(dialogAction)
 	  			.addSuperinterface(mouseHandler)
 	  			.addType(exitListener)
@@ -325,10 +328,7 @@ public class EmployeeParticipantSelectionDialogGenerator implements
 	  			.addMethod(actionCancelled)
 	  			.build();
 		  
-
-	  ClassName actions = ClassName.get("simse.adts", "actions");
-	  JavaFile javaFile = JavaFile.builder("simse.logic.dialogs", employeeDialog)
-				.addStaticImport(actions, "*")    
+	  JavaFile javaFile = JavaFile.builder("", employeeDialog)   
 			  .build();
 	  
     try {
@@ -339,8 +339,13 @@ public class EmployeeParticipantSelectionDialogGenerator implements
       }
       
       FileWriter writer = new FileWriter(psdFile);
-      
-      javaFile.writeTo(writer);
+	  String toAppend = "/* File generated by: simse.codegenerator.logicgenerator.dialoggenerator.EmployeeParticipantSelectionDialogGenerator */\n"
+	  		+ "package simse.logic.dialogs;\n"
+		  		+ "\n"
+		  		+ "import simse.adts.actions.*;\n"
+		  		+ "import simse.adts.objects.*;\n";
+		  
+	  writer.write(toAppend + javaFile.toString());
       writer.close();
       
     } catch (IOException e) {

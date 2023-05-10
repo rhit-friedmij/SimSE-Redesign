@@ -37,6 +37,8 @@ public class GUIGenerator implements CodeGeneratorConstants {
   private LogoPanelGenerator logoPanelGen; // generates the logo panel
   private InformationPanelGenerator attPanelGen; // generates the attribute panel
   private EmployeesPanelGenerator actPanelGen; // generates the action panel
+  private ArtifactsPanelGenerator artPanGen;
+  private ProjectsPanelGenerator projPanGen;
   private PopupListenerGenerator popupListGen; // generates the PopupListener
                                                // class
   private DisplayedEmployeeGenerator dispEmpGen; // generates the
@@ -63,11 +65,14 @@ public class GUIGenerator implements CodeGeneratorConstants {
   private InfoScreenGenerator infoGen;
   
   private ObjectGraphPanesGenerator objGraphGen;
+  
+  private JavaFXHelpersGenerator fxHelpGen;
+  
+  private RulesInfoScreenGenerator ruleInfoGen;
 
   public GUIGenerator(ModelOptions options, DefinedObjectTypes objTypes, 
       CreatedObjects objs, DefinedActionTypes acts, Hashtable<SimSEObject, 
-      String> stsObjs, Hashtable<SimSEObject, String> ruleObjs, 
-      TileData[][] map, ArrayList<UserData> userDatas) {
+      String> stsObjs, Hashtable<SimSEObject, String> ruleObjs, ArrayList<UserData> userDatas) {
     this.options = options;
     Hashtable<SimSEObject, String> allObjsToImages = 
     	new Hashtable<SimSEObject, String>();
@@ -86,13 +91,17 @@ public class GUIGenerator implements CodeGeneratorConstants {
         options.getCodeGenerationDestinationDirectory());
     actPanelGen = new EmployeesPanelGenerator(objTypes, acts, 
         options.getCodeGenerationDestinationDirectory());
+    artPanGen = new ArtifactsPanelGenerator(objTypes, acts,
+    		options.getCodeGenerationDestinationDirectory());
+    projPanGen = new ProjectsPanelGenerator(objTypes, acts,
+    		options.getCodeGenerationDestinationDirectory());
     popupListGen = new PopupListenerGenerator(
         options.getCodeGenerationDestinationDirectory());
     dispEmpGen = new DisplayedEmployeeGenerator(
         options.getCodeGenerationDestinationDirectory());
     mapDataGen = new MapDataGenerator(
         options.getCodeGenerationDestinationDirectory());
-    ssmGen = new SimSEMapGenerator(objTypes, allObjsToImages, map, userDatas,
+    ssmGen = new SimSEMapGenerator(objTypes, allObjsToImages, userDatas,
         options.getCodeGenerationDestinationDirectory());
     worldGen = new WorldGenerator(
         options.getCodeGenerationDestinationDirectory());
@@ -112,6 +121,9 @@ public class GUIGenerator implements CodeGeneratorConstants {
     		options.getCodeGenerationDestinationDirectory());
     objGraphGen = new ObjectGraphPanesGenerator(objs, objTypes, 
     		options.getCodeGenerationDestinationDirectory());
+    fxHelpGen = new JavaFXHelpersGenerator(options.getCodeGenerationDestinationDirectory());
+    ruleInfoGen = new RulesInfoScreenGenerator(acts,
+    		options.getCodeGenerationDestinationDirectory());
   }
 
   /*
@@ -129,9 +141,8 @@ public class GUIGenerator implements CodeGeneratorConstants {
       return false;
 	  } else {
 	    CodeGeneratorUtils.copyDir(options.getIconDirectory().getPath(),
-	        (options.getCodeGenerationDestinationDirectory().getPath() + 
-	            "\\simse\\gui\\" + (new File(options.getIconDirectory().
-	                getPath())).getName()));
+	        options.getCodeGenerationDestinationDirectory().getPath() + 
+	            "\\simse\\gui\\icons\\");
 	
 	    ImageLoader.copyImagesToDir(
 	    		options.getCodeGenerationDestinationDirectory().getPath() + 
@@ -143,6 +154,8 @@ public class GUIGenerator implements CodeGeneratorConstants {
 	    logoPanelGen.generate();
 	    attPanelGen.generate();
 	    actPanelGen.generate();
+	    artPanGen.generate();
+	    projPanGen.generate();
 	    popupListGen.generate();
 	    dispEmpGen.generate();
 	    mapDataGen.generate();
@@ -156,6 +169,8 @@ public class GUIGenerator implements CodeGeneratorConstants {
 	    panelsGen.generate();
 	    infoGen.generate();
 	    objGraphGen.generate();
+	    fxHelpGen.generate();
+	    ruleInfoGen.generate();
 	    generateMainGUI();
 	    return true;
 	  }
@@ -175,8 +190,8 @@ public class GUIGenerator implements CodeGeneratorConstants {
       FileReader reader = new FileReader(readfile);
       Scanner s = new Scanner(reader);
       
-      while (s.hasNext()) {
-    	  writer.write(s.next());
+      while (s.hasNextLine()) {
+      	  writer.write(s.nextLine() + "\n");
       }
       
       writer.close();

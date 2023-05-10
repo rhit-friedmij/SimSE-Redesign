@@ -13,10 +13,10 @@ public class SimSESpriteGenerator {
 		this.dir = dir;
 	}
 
-	private void generate() {
+	public void generate() {
 		// TODO Auto-generated method stub
 	    File simSESpriteFile = new File(dir,
-	            ("animations\\SimSESprite.java"));
+	            ("simse\\animation\\SimSESprite.java"));
 	    
 	        if (simSESpriteFile.exists()) {
 	        	simSESpriteFile.delete(); // delete old version of file
@@ -24,7 +24,7 @@ public class SimSESpriteGenerator {
 		
 		try {
 	        
-		FileReader reader = new FileReader("C:\\Users\\localmgr\\git\\simse-redesign\\simse-redesign\\res\\static\\animations\\SimSESprite.txt");
+		FileReader reader = new FileReader("res\\static\\animations\\SimSESprite.txt");
 		FileWriter writer = new FileWriter(simSESpriteFile);
 	
 		String fileContents = "";

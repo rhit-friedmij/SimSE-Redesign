@@ -20,11 +20,14 @@ import simse.modelbuilder.objectbuilder.AttributeTypes;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Vector;
 
+import javax.lang.model.element.Modifier;
 import javax.swing.*;
 
 import com.squareup.javapoet.CodeBlock;
+import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.TypeSpec;
 
@@ -44,30 +47,33 @@ public class DestroyerDescriptionsGenerator implements CodeGeneratorConstants {
     if (destDescFile.exists()) {
       destDescFile.delete(); // delete old version of file
     }  
-      String actionsString = "";
+      ArrayList<FieldSpec> actionFields = new ArrayList<>();
 
       // go through all actions:
       Vector<ActionType> actions = actTypes.getAllActionTypes();
       for (ActionType act : actions) {
+    	  String actionsString = "";
         if (act.isVisibleInExplanatoryTool()) {
           Vector<ActionTypeDestroyer> destroyers = act.getAllDestroyers();
-          for (ActionTypeDestroyer destroyer : destroyers) {
-    	    actionsString += "static final String " + act.getName().toUpperCase()
-                      + "_" + destroyer.getName().toUpperCase() + " = ";
-            actionsString += "\n";
-
-            actionsString += "\"This action stops ";
-            if (destroyer instanceof TimedActionTypeDestroyer) {
+          for(int i = 0; i < destroyers.size(); i++) {
+        	if(i == 0) {
+        		actionsString += "\"This action stops ";
+        	}
+        	else {
+        		actionsString += " This action stops ";
+        	}
+            
+            if (destroyers.get(i) instanceof TimedActionTypeDestroyer) {
               actionsString += "when the action has been occuring for "
-                      + ((TimedActionTypeDestroyer) destroyer).getTime()
+                      + ((TimedActionTypeDestroyer) destroyers.get(i)).getTime()
                       + " clock ticks.";
             } else {
-              if (destroyer instanceof RandomActionTypeDestroyer) {
-                actionsString += ((RandomActionTypeDestroyer) destroyer)
+              if (destroyers.get(i) instanceof RandomActionTypeDestroyer) {
+                actionsString += ((RandomActionTypeDestroyer) destroyers.get(i))
                         .getFrequency() + "% of the time ";
-              } else if (destroyer instanceof UserActionTypeDestroyer) {
+              } else if (destroyers.get(i) instanceof UserActionTypeDestroyer) {
                 actionsString += "when the user chooses the menu item \\\""
-                        + ((UserActionTypeDestroyer) destroyer).getMenuText()
+                        + ((UserActionTypeDestroyer) destroyers.get(i)).getMenuText()
                         + "\\\" and ";
               }
 
@@ -75,7 +81,7 @@ public class DestroyerDescriptionsGenerator implements CodeGeneratorConstants {
 
               // go through all participant conditions:
               Vector<ActionTypeParticipantDestroyer> partDestroyers = 
-              	destroyer.getAllParticipantDestroyers();
+            		  destroyers.get(i).getAllParticipantDestroyers();
               for (ActionTypeParticipantDestroyer partDestroyer : 
               	partDestroyers) {
                 String partName = partDestroyer.getParticipant().getName();
@@ -103,35 +109,35 @@ public class DestroyerDescriptionsGenerator implements CodeGeneratorConstants {
                               + ") " + attGuard + " ";
                       if (attConstraint.getAttribute().getType() == 
                       	AttributeTypes.STRING) {
-
                         actionsString += "\\\"" + condVal + "\\\"";
                       } else {
-
                         actionsString += condVal;
                       }
-
                       actionsString += " \\n";
                     }
                   }
                 }
               }
-            }
-            actionsString += "\";";
-            actionsString += "\n";
+              
+              }
+            actionFields.add(FieldSpec.builder(String.class, 
+              		act.getName().toUpperCase()
+                      + "_" + destroyers.get(i).getName().toUpperCase(), Modifier.STATIC, Modifier.FINAL, Modifier.PUBLIC).initializer(actionsString + "\"").build());
           }
         }
       }
       
-      TypeSpec destroyerDescriptions = TypeSpec.classBuilder("DestroyerDescription")
-    		  .addStaticBlock(CodeBlock.builder()
-    				  .add(actionsString)
-    				  .build())
+      TypeSpec destroyerDescriptions = TypeSpec.classBuilder("DestroyerDescriptions")
+    		  .addModifiers(Modifier.PUBLIC)
+    		  .addFields(actionFields)
     		  .build();
       
       JavaFile javaFile = JavaFile.builder("simse.util", destroyerDescriptions).build();
       try {
     	FileWriter writer = new FileWriter(destDescFile);
 		javaFile.writeTo(writer);
+		
+		writer.close();
 	} catch (IOException e) {
 		// TODO Auto-generated catch block
 		e.printStackTrace();

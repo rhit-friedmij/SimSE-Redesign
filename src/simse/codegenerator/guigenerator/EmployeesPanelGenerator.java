@@ -15,6 +15,7 @@ import simse.codegenerator.CodeGenerator;
 import simse.codegenerator.CodeGeneratorConstants;
 import simse.codegenerator.CodeGeneratorUtils;
 
+import java.util.ArrayList;
 import java.util.Vector;
 import java.io.File;
 import java.io.FileWriter;
@@ -38,12 +39,18 @@ public class EmployeesPanelGenerator implements CodeGeneratorConstants {
   private DefinedActionTypes actTypes; // holds all of the defined action types
                                        // from an ssa file
   private File directory; // directory to save generated code into
+  
+  private ArrayList<String> impTypes;
+  
+  private ArrayList<String> impActions;
 
   public EmployeesPanelGenerator(DefinedObjectTypes objTypes, 
   		DefinedActionTypes actTypes, File directory) {
     this.objTypes = objTypes;
     this.actTypes = actTypes;
     this.directory = directory;
+    this.impTypes = new ArrayList<>();
+    this.impActions = new ArrayList<>();
   }
 
   public void generate() {
@@ -59,8 +66,8 @@ public class EmployeesPanelGenerator implements CodeGeneratorConstants {
       ClassName enumeration = ClassName.get("java.util", "Enumeration");
       ClassName hashtable = ClassName.get("java.util", "Hashtable");
       ClassName vector = ClassName.get("java.util", "Vector");
-      ClassName displayablecharacter = ClassName.get("animations", "DisplayableCharacter");
-      ClassName simsecharacter = ClassName.get("animations", "SimSECharacter");
+      ClassName displayablecharacter = ClassName.get("simse.animation", "DisplayableCharacter");
+      ClassName simsecharacter = ClassName.get("simse.animation", "SimSECharacter");
       ClassName actionevent = ClassName.get("javafx.event", "ActionEvent");
       ClassName eventhandler = ClassName.get("javafx.event", "EventHandler");
       ClassName pos = ClassName.get("javafx.geometry", "Pos");
@@ -126,46 +133,32 @@ public class EmployeesPanelGenerator implements CodeGeneratorConstants {
     		  .addParameter(simsegui, "gui")
     		  .addParameter(state, "s")
     		  .addParameter(logic, "l")
+    		  .addParameter(ParameterizedTypeName.get(vector, employee), "employeeList")
     		  .addStatement("$N = s", "state")
     		  .addStatement("$N = l", "logic")
     		  .addStatement("$N = gui", "mainGUIFrame")
-    		  .addStatement("")
     		  .addStatement("$N = new $T()", "layout", vbox)
     		  .addStatement("$N.setId(\"actionPanelVBox\")", "layout")
-    		  .addStatement("")
     		  .addStatement("$N = new $T()", "employeePane", scrollpane)
     		  .addStatement("$N.setId(\"scrollPaneActionPanel\")", "employeePane")
-    		  .addStatement("$N.setPrefSize(225, 425)", "employeePane")
+    		  .addStatement("$N.setPrefSize(225, 630)", "employeePane")
     		  .addStatement("$N.setId(\"ActionPanelMain\")", "employeePane")
-    		  .addStatement("")
     		  .addStatement("empsToEmpPanels = new $T()", hashEmpVB)
     		  .addStatement("empsToPicPanels = new $T()", hashEmpHB)
     		  .addStatement("empsToPicLabels = new $T()", hashEmpLab)
     		  .addStatement("empsToKeyLabels = new $T()", hashEmpLab)
-    		  .addStatement("")
-    		  .addStatement("")
-    		  .addStatement("")
-    		  .addStatement("")
-    		  .addStatement("")
     		  .addStatement("$T titlePanel = new $T(\"$T Panel\", $N)", titledpane, titledpane, employee, "employeePane")
     		  .addStatement("titlePanel.set$T(Border.EMPTY)", border)
     		  .addStatement("titlePanel.setId(\"ActionTitlePanel\")")
+    		  .addStatement("titlePanel.setCollapsible(false)")
     		  .addStatement("titlePanel.setBackground($T.createBackground$T(Color.rgb(102, 102, 102, 1)))", javafxhelpers, color)
-    		  .addStatement("")
-    		  .addStatement("")
     		  .addStatement("$N = null", "selectedEmp")
     		  .addStatement("$N = new $T()", "popup", contextmenu)
-    		  .addStatement("")
     		  .addStatement("$N.getChildren().add(titlePanel)", "layout")
-    		  .addStatement("")
     		  .addStatement("$T allEmps = $N.getEmployeeStateRepository().getAll()", vOfE, "state")
     		  .addStatement("$N = new $T()", "characters", listOfDC)
-    		  .beginControlFlow("for (int i=0; i<allEmps.size(); i++)")
-    		  .addStatement("$T char1 = new $T(i, 50, 75)", displayablecharacter, simsecharacter)
-    		  .addStatement("$N.add(char1)", "characters")
-    		  .endControlFlow()
-    		  .addStatement("$T char1 = new $T(i, 50, 75)", displayablecharacter, simsecharacter)
-    		  .addStatement("$N.add(char1)", "characters")
+    		  .addStatement("update()")
+    		  .addStatement("this.getChildren().add(layout)")
     		  .build();
 
       // createPopupMenu function:
@@ -201,7 +194,7 @@ public class EmployeesPanelGenerator implements CodeGeneratorConstants {
     		  .addStatement("")
     		  .addStatement("empsToEmpPanels.clear()")
     		  .addStatement("")
-    		  .addStatement("$T titleLebel = new $T(\"Current Activities:\")", label, label)
+    		  .addStatement("$T titleLabel = new $T(\"Current Activities:\")", label, label)
     		  .addStatement("$T f = titleLabel.getFont()", font)
     		  .addStatement("$T newFont = new $T(f.getName(), 15)", font, font)
     		  .addStatement("titleLabel.setFont(newFont)")
@@ -239,7 +232,7 @@ public class EmployeesPanelGenerator implements CodeGeneratorConstants {
     		  .addStatement("picPanel.prefWidthProperty().bind($N.widthProperty())", "employeePane")
     		  .addStatement("empPanel.prefWidthProperty().bind($N.widthProperty())", "employeePane")
     		  .beginControlFlow("if (empsToPicLabels.get(emp) == null)")
-    		  .addStatement("$T ico = $N.get(i).getStaticImage()", imageview, "characters")
+    		  .addStatement("$T ico = allEmps.get(i).getCharacterModel().getDisplayedCharacter(true)", imageview)
     		  .addStatement("")
     		  .addStatement("ico.setFitHeight(40)")
     		  .addStatement("ico.setFitWidth(40)")
@@ -303,13 +296,13 @@ public class EmployeesPanelGenerator implements CodeGeneratorConstants {
     		  .addModifiers(Modifier.PRIVATE)
     		  .returns(employee)
     		  .addParameter(pane, "panel")
-    		  .beginControlFlow("$T keys = empsToEmpPanels.keys(); keys.hasMoreElements();)", enumOfE)
+    		  .beginControlFlow("for ($T keys = empsToEmpPanels.keys(); keys.hasMoreElements();)", enumOfE)
     		  .addStatement("$T keyEmp = keys.nextElement()", employee)
     		  .beginControlFlow("if (empsToEmpPanels.get(keyEmp) == panel)")
     		  .addStatement("return keyEmp")
     		  .endControlFlow()
     		  .endControlFlow()
-    		  .beginControlFlow("$T keys = empsToPicPanels.keys(); keys.hasMoreElements();)", enumOfE)
+    		  .beginControlFlow("for ($T keys = empsToPicPanels.keys(); keys.hasMoreElements();)", enumOfE)
     		  .addStatement("$T keyEmp = keys.nextElement()", employee)
     		  .beginControlFlow("if (empsToEmpPanels.get(keyEmp) == panel)")
     		  .addStatement("return keyEmp")
@@ -328,27 +321,29 @@ public class EmployeesPanelGenerator implements CodeGeneratorConstants {
     		  .addStatement("$T label = ($T) event.getSource()", label, label)
     		  .addStatement("$T emp = getEmpFromPicLabel(label)", employee)
     		  .beginControlFlow("if (emp != null)")
+    		  .beginControlFlow("if (event.getButton().equals($T.PRIMARY))", mousebutton)
     		  .addStatement("$N.getTabPanel().setGUIChanged()", "mainGUIFrame")
     		  .addStatement("$N.getTabPanel().setObjectInFocus(emp)", "mainGUIFrame")
     		  .addStatement("$N.getAttributePanel().setGUIChanged()", "mainGUIFrame")
     		  .addStatement("$N.getAttributePanel().setObjectInFocus(emp, $T.createImage(TabPanel.getImage(emp)))", "mainGUIFrame", javafxhelpers)
     		  .nextControlFlow("else if (event.isPopupTrigger() && (state.getClock().isStopped() == false))")
     		  .addStatement("$N = emp", "selectedEmp")
-    		  .addStatement("createPopupMenu(label, event.getSceneX(), event.getSceneY())")
+    		  .addStatement("createPopupMenu(label, event.getScreenX(), event.getScreenY())")
     		  .endControlFlow()
     		  .endControlFlow()
     		  .nextControlFlow("else if (event.getSource() instanceof $T)", pane)
     		  .addStatement("$T pane = ($T) event.getSource()", pane, pane)
     		  .addStatement("$T emp = getEmpFromPanel(pane)", employee)
     		  .beginControlFlow("if (emp != null)")
-    		  .beginControlFlow("if (event.isPrimaryButtonDown())")
+    		  .beginControlFlow("if (event.getButton().equals($T.PRIMARY))", mousebutton)
     		  .addStatement("$N.getTabPanel().setGUIChanged()", "mainGUIFrame")
     		  .addStatement("$N.getTabPanel().setObjectInFocus(emp)", "mainGUIFrame")
     		  .addStatement("$N.getAttributePanel().setGUIChanged()", "mainGUIFrame")
     		  .addStatement("$N.getAttributePanel().setObjectInFocus(emp,JavaFXHelpers.createImage(TabPanel.getImage(emp)))", "mainGUIFrame")
     		  .nextControlFlow("else if (event.isPopupTrigger() && (state.getClock().isStopped() == false))")
     		  .addStatement("$N = emp", "selectedEmp")
-    		  .addStatement("createPopupMenu(pane, event.getSceneX(), event.getSceneY())")
+    		  .addStatement("createPopupMenu(pane, event.getScreenX(), event.getScreenY())")
+    		  .endControlFlow()
     		  .endControlFlow()
     		  .endControlFlow()
     		  .endControlFlow()
@@ -358,7 +353,7 @@ public class EmployeesPanelGenerator implements CodeGeneratorConstants {
     		  .addAnnotation(Override.class)
     		  .addModifiers(Modifier.PUBLIC)
     		  .returns(panels)
-    		  .addStatement("returns $T.EMPLOYEES", panels)
+    		  .addStatement("return $T.EMPLOYEES", panels)
     		  .build();
       
       TypeSpec anon = TypeSpec.anonymousClassBuilder("")
@@ -388,7 +383,7 @@ public class EmployeesPanelGenerator implements CodeGeneratorConstants {
     		  .addField(hashEmpVB, "empsToEmpPanels", Modifier.PRIVATE)
     		  .addField(hashEmpHB, "empsToPicPanels", Modifier.PRIVATE)
     		  .addField(hashEmpLab, "empsToPicLabels", Modifier.PRIVATE)
-    		  .addField(hashEmpLab, "empsToPicLabels", Modifier.PRIVATE)
+    		  .addField(hashEmpLab, "empsToKeyLabels", Modifier.PRIVATE)
     		  .addField(listOfDC, "characters")
     		  .addField(vbox, "layout", Modifier.PRIVATE)
     		  .addField(FieldSpec.builder(actionHandler, "menuItemEvent", Modifier.PRIVATE)
@@ -404,10 +399,22 @@ public class EmployeesPanelGenerator implements CodeGeneratorConstants {
     		  .addMethod(getPanelType)
     		  .build();
       
-      JavaFile file = JavaFile.builder("simse.gui", actionPanel)
+      JavaFile file = JavaFile.builder("", actionPanel)
     		  .build();
       
-      file.writeTo(writer);
+      String fileString = "package simse.gui;\n\nimport javafx.scene.text.TextAlignment;\n";
+      for (String type : impTypes) {
+			fileString = fileString + "import simse.adts.objects." + type + ";\n";
+		}
+      
+      for (String actionI : impActions) {
+    	  fileString = fileString + "import simse.adts.actions." + actionI +"Action;\n";
+      }
+		
+		fileString = fileString + file.toString();
+		
+		
+		writer.write(fileString);
       
       writer.close();
     } catch (IOException e) {
@@ -425,28 +432,31 @@ public class EmployeesPanelGenerator implements CodeGeneratorConstants {
 	          if ((tempActType.isVisibleInSimulation())
 	              && (tempActType.getDescription() != null)
 	              && (tempActType.getDescription().length() > 0)) {
+	        	if (!this.impActions.contains(CodeGeneratorUtils.getUpperCaseLeading(tempActType.getName()))) {
+	        		this.impActions.add(CodeGeneratorUtils.getUpperCaseLeading(tempActType.getName()));
+	        	}
 	            if (putElse) {
-	              actions.concat("else ");
+	            	actions = actions.concat("else ");
 	            } else {
 	              putElse = true;
 	            }
-	            actions.concat("if(tempAct instanceof "
+	            actions = actions.concat("if(tempAct instanceof "
 	                + CodeGeneratorUtils.getUpperCaseLeading(tempActType.getName()) + 
 	                "Action)");
-	            actions.concat("\n");
-	            actions.concat("{");
-	            actions.concat("\n");
-	            actions.concat("Label tempLabel = new Label(\""
+	            actions = actions.concat("\n");
+	            actions = actions.concat("{");
+	            actions = actions.concat("\n");
+	            actions = actions.concat("Label tempLabel = new Label(\""
 	                + tempActType.getDescription() + "\");");
-	            actions.concat("\n");
-	            actions.concat("tempLabel.setFont(new Font(tempLabel.getFont().getName(), 10));");
-	            actions.concat("\n");
-	            actions.concat("tempLabel.setTextFill(Color.WHITE);");
-	            actions.concat("\n");
-	            actions.concat("actsPanel.getChildren.add(tempLabel);");
-	            actions.concat("\n");
-	            actions.concat("}");
-	            actions.concat("\n");
+	            actions = actions.concat("\n");
+	            actions = actions.concat("tempLabel.setFont(new Font(tempLabel.getFont().getName(), 10));");
+	            actions = actions.concat("\n");
+	            actions = actions.concat("tempLabel.setTextFill(Color.WHITE);");
+	            actions = actions.concat("\n");
+	            actions = actions.concat("actsPanel.getChildren().add(tempLabel);");
+	            actions = actions.concat("\n");
+	            actions = actions.concat("}");
+	            actions = actions.concat("\n");
 	          }
 	        }
 	       return actions;
@@ -456,8 +466,8 @@ public class EmployeesPanelGenerator implements CodeGeneratorConstants {
   private String continueIfHire() {
 	  String hire = "";
 	  if (CodeGenerator.allowHireFire) {
-		  hire.concat("if (!emp.getHired())\n");
-		  hire.concat("continue;\n");
+		  hire = hire.concat("if (!emp.getHired())\n");
+		  hire = hire.concat("continue;\n");
 	      }
 	  return hire;
   }
@@ -468,8 +478,11 @@ public class EmployeesPanelGenerator implements CodeGeneratorConstants {
 	            .getAllObjectTypesOfType(SimSEObjectTypeTypes.EMPLOYEE);
 	        for (int i = 0; i < empTypes.size(); i++) {
 	          SimSEObjectType tempType = empTypes.elementAt(i);
+	          if (!this.impTypes.contains(CodeGeneratorUtils.getUpperCaseLeading(tempType.getName()))) {
+	        	  this.impTypes.add(CodeGeneratorUtils.getUpperCaseLeading(tempType.getName()));
+	          }
 	          if (i > 0) {
-	            emps.concat("else ");
+	        	  emps = emps.concat("else ");
 	          }
 
 	          Vector<Attribute> v = tempType.getAllAttributes();
@@ -479,47 +492,47 @@ public class EmployeesPanelGenerator implements CodeGeneratorConstants {
 	              keyAtt = att;
 	          }
 
-	          emps.concat("if(emp instanceof "
+	          emps = emps.concat("if(emp instanceof "
 	              + CodeGeneratorUtils.getUpperCaseLeading(tempType.getName()) + ")");
-	          emps.concat("\n");
-	          emps.concat("{");
-	          emps.concat("\n");
-	          emps.concat(CodeGeneratorUtils.getUpperCaseLeading(tempType.getName()) 
+	          emps = emps.concat("\n");
+	          emps = emps.concat("{");
+	          emps = emps.concat("\n");
+	          emps = emps.concat(CodeGeneratorUtils.getUpperCaseLeading(tempType.getName()) 
 	          		+ " e = (" + 
 	          		CodeGeneratorUtils.getUpperCaseLeading(tempType.getName()) + 
 	          		")emp;");
-	          emps.concat("\n");
-	          emps.concat("if(empsToKeyLabels.get(e) == null)");
-	          emps.concat("\n");
-	          emps.concat("{");
-	          emps.concat("\n");
-	          emps.concat("Label temp = new Label(\"\" + e.get"
+	          emps = emps.concat("\n");
+	          emps = emps.concat("if(empsToKeyLabels.get(e) == null)");
+	          emps = emps.concat("\n");
+	          emps = emps.concat("{");
+	          emps = emps.concat("\n");
+	          emps = emps.concat("Label temp = new Label(\"\" + e.get"
 	              + CodeGeneratorUtils.getUpperCaseLeading(keyAtt.getName()) + 
 	              "());");
-	          emps.concat("\n");
-	          emps.concat("temp.setTextFill(Color.BLACK);");
-	          emps.concat("\n");
-	          emps.concat("temp.setAlignment(Pos.BASELINE_LEFT);");
-	          emps.concat("\n");
-	          emps.concat("temp.setTextAlignment(TextAlignment.LEFT)");
-	          emps.concat("\n");
-	          emps.concat("empsToKeyLabels.put(e, temp);");
-	          emps.concat("\n");
-	          emps.concat("}");
-	          emps.concat("\n");
-	          emps.concat("Label keyLabel = empsToKeyLabels.get(e);");
-	          emps.concat("\n");
-	          emps.concat("keyLabel.setId(\"EmployeeName\");");
-	          emps.concat("\n");
-	          emps.concat("if(!picPanel.getChildren().contains(keyLabel))");
-	          emps.concat("{");
-	          emps.concat("\n");
-	          emps.concat("picPanel.getChildren().add(keyLabel);");
-	          emps.concat("\n");
-	          emps.concat("}");
-	          emps.concat("\n");
-	          emps.concat("}");
-	          emps.concat("\n");
+	          emps = emps.concat("\n");
+	          emps = emps.concat("temp.setTextFill(Color.BLACK);");
+	          emps = emps.concat("\n");
+	          emps = emps.concat("temp.setAlignment(Pos.BASELINE_LEFT);");
+	          emps = emps.concat("\n");
+	          emps = emps.concat("temp.setTextAlignment(TextAlignment.LEFT);");
+	          emps = emps.concat("\n");
+	          emps = emps.concat("empsToKeyLabels.put(e, temp);");
+	          emps = emps.concat("\n");
+	          emps = emps.concat("}");
+	          emps = emps.concat("\n");
+	          emps = emps.concat("Label keyLabel = empsToKeyLabels.get(e);");
+	          emps = emps.concat("\n");
+	          emps = emps.concat("keyLabel.setId(\"EmployeeName\");");
+	          emps = emps.concat("\n");
+	          emps = emps.concat("if(!picPanel.getChildren().contains(keyLabel))");
+	          emps = emps.concat("{");
+	          emps = emps.concat("\n");
+	          emps = emps.concat("picPanel.getChildren().add(keyLabel);");
+	          emps = emps.concat("\n");
+	          emps = emps.concat("}");
+	          emps = emps.concat("\n");
+	          emps = emps.concat("}");
+	          emps = emps.concat("\n");
 	        }
 	  return emps;
   }

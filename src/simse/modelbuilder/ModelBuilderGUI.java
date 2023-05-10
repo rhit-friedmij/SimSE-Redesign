@@ -63,7 +63,7 @@ public class ModelBuilderGUI extends JFrame implements ActionListener,
   private ArrayList<UserData> userDatas; // list of UserData objects for each 
   																			 // employee that is displayed in the 
   																			 // map
-  private TileData[][] map; // map
+//  private TileData[][] map; // map
   private ModelOptions options;
   private ModelOptionsFileManipulator optionsFileManip;
   
@@ -158,15 +158,13 @@ public class ModelBuilderGUI extends JFrame implements ActionListener,
     mapEditor = new MapEditorGUI(this, options, objectTypes, objects, 
         actionTypes, graphicsBuilder.getStartStateObjsToImages(), 
         graphicsBuilder.getRuleObjsToImages());
-    mainPane.addTab("Map", mapEditor);
 
     mainPane.setOpaque(true);
 
     userDatas = mapEditor.getUserDatas();
-    map = mapEditor.getMap();
 
     fileManip = new ModelFileManipulator(options, objectTypes, actionTypes, 
-        objects, userDatas, map);
+        objects, userDatas);
 
     // Create menu bar and menus:
     menuBar = new JMenuBar();
@@ -307,17 +305,6 @@ public class ModelBuilderGUI extends JFrame implements ActionListener,
         // bring up model options dialog:
         new ModelOptionsDialog(this, options);
         fileModSinceLastSave = true;
-        
-        Component selectedComp = mainPane.getSelectedComponent();
-        /*
-         * if the graphics builder or map editor are in focus and the model
-         * options (icon dir) have changed, reload: 
-         */
-        if ((selectedComp instanceof JPanel) &&
-            ((selectedComp == graphicsBuilder) ||
-                (selectedComp == mapEditor))) {
-          checkForInconsistencies(true);
-        }
       }
     } else if (source == narrativeItem) {
       if (openFile != null) { // a file is open
@@ -381,12 +368,13 @@ public class ModelBuilderGUI extends JFrame implements ActionListener,
 		          options.setCodeGenerationDestinationDirectory(f);
 		        }
 		      }
+		      
         }
         // generate code:
         CodeGenerator codeGen = new CodeGenerator(options, objectTypes, 
             objects, actionTypes, graphicsBuilder.
             getStartStateObjsToImages(), graphicsBuilder.
-            getRuleObjsToImages(), map, userDatas);
+            getRuleObjsToImages(), userDatas);
         
         codeGen.setAllowHireFire(objectBuilder.allowHireFire());
         mainPane.setCursor(new Cursor(Cursor.WAIT_CURSOR));
@@ -408,6 +396,8 @@ public class ModelBuilderGUI extends JFrame implements ActionListener,
       }
     }
   }
+  
+
 
   public void stateChanged(ChangeEvent e) {
     checkForInconsistencies(true);

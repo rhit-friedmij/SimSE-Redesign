@@ -1,37 +1,103 @@
 package simse.gui;
 
+import java.util.Vector;
+
+import javafx.geometry.Pos;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
+import simse.adts.objects.Customer;
+import simse.adts.objects.Employee;
 import simse.gui.util.JavaFXHelpers;
 
-public class TrackMessage extends Pane{
+public class TrackMessage extends Pane implements Cloneable{
 	
-	String senderName;
+	Object sender;
 	String message;
+	int messageTick;
 	
-	public TrackMessage(String sender, String text) {
-		this.senderName = sender;
+	public TrackMessage(Object sender, String text, int tick) {
+		this.sender = sender;
 		this.message = text;
+		this.messageTick = tick;
 		
 		GridPane pane = new GridPane();
 		
-		ImageView img = JavaFXHelpers.createImageView("src/simse/gui/icons/" + senderName + ".gif");
-		if (img == null) {
-			img = JavaFXHelpers.createImageView("src/simse/gui/icons/alex.gif");
+		String imageUrl = TabPanel.getImage(this.sender);
+		
+		ImageView img = null;
+		
+		VBox trackMessage = new VBox();
+		
+		
+		String name = "";
+		if (sender instanceof Employee) {
+			name = ((Employee) sender).getKeyAsString();
+			img = ((Employee) sender).getCharacterModel().getDisplayedCharacter(true);
+			if(((Employee) sender).getCharacterModel().getCharacterNum() < 8) {
+				img.setScaleX(1.25);
+				img.setScaleY(1.25);
+			}
+		} else if (sender instanceof Customer) {
+			img = JavaFXHelpers.createImageView(TabPanel.getImage(this.sender));
+			name = ((Customer) sender).getKeyAsString();
 		}
-		pane.add(img, 0, 0);
-		pane.add(new Text(senderName), 1, 0);
 		
+		if(img != null) {
+			HBox imagePane = new HBox(img);
+			imagePane.setPrefWidth(40);
+			imagePane.setAlignment(Pos.CENTER);
+			pane.add(imagePane, 0, 0);
+		}
+		
+		Font nameFont = Font.font("Helvetica", FontWeight.BOLD, 16);
+		Font tickFont = Font.font("Helvetica", 16);
+		Font messageFont = Font.font("Helvetica", 11);
+		
+		HBox sendBox = new HBox();
+		
+		Text messageSender = new Text(name);
+		messageSender.setFont(nameFont);
+		
+		sendBox.getChildren().add(messageSender);
+		
+		String tickString = String.format(" Tick - %d", messageTick);
+		
+		Text messageTime = new Text(tickString);
+		messageTime.setFont(tickFont);
+		
+		sendBox.getChildren().add(messageTime);
+
 		HBox textBox = new HBox();
-		textBox.setBackground(JavaFXHelpers.createBackgroundColor(Color.rgb(255, 255, 255)));
-		textBox.getChildren().add(new Text(message));
-		pane.add(textBox, 1, 1);
+		textBox.setBackground(JavaFXHelpers.createBackgroundColor(Color.WHITE));
+		textBox.setPrefWidth(500);
 		
+		Text messageText = new Text(message);
+		messageText.setFont(messageFont);
+		messageText.setWrappingWidth(470);
+		
+		textBox.getChildren().add(messageText);
+		
+		trackMessage.getChildren().add(sendBox);
+		trackMessage.getChildren().add(textBox);
+		trackMessage.setBackground(JavaFXHelpers.createBackgroundColor(Color.WHITE));
+		
+		pane.add(trackMessage, 1, 0);
+		pane.setBackground(JavaFXHelpers.createBackgroundColor(Color.WHITE));
+		
+		this.setPrefWidth(500);
 		this.getChildren().add(pane);
+	}
+	
+	@Override
+	public Object clone() {
+		return new TrackMessage(this.sender, this.message, this.messageTick);
 	}
 
 }

@@ -14,10 +14,10 @@ public class CharacterIdleFrontGenerator {
 
 	}
 
-	private void generate() {
+	public void generate() {
 		// TODO Auto-generated method stub
 	    File characterIdleFrontFile = new File(dir,
-	            ("animations\\CharacterIdleFront.java"));
+	            ("simse\\animation\\CharacterIdleFront.java"));
 	    
 	        if (characterIdleFrontFile.exists()) {
 	        	characterIdleFrontFile.delete(); // delete old version of file
@@ -26,7 +26,7 @@ public class CharacterIdleFrontGenerator {
 	    
 		try {
 		
-		FileReader reader = new FileReader("C:\\Users\\localmgr\\git\\simse-redesign\\simse-redesign\\res\\static\\animations\\CharacterIdleFront.txt");
+		FileReader reader = new FileReader("res\\static\\animations\\CharacterIdleFront.txt");
 		FileWriter writer = new FileWriter(characterIdleFrontFile);
 	
 		String fileContents = "";

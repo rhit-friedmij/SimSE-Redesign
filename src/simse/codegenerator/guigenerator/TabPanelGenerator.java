@@ -19,7 +19,7 @@ import simse.modelbuilder.startstatebuilder.SimSEObject;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Vector;
@@ -42,6 +42,7 @@ public class TabPanelGenerator implements CodeGeneratorConstants {
   private DefinedObjectTypes objTypes; // holds all of the defined object types
                                        // from an sso file
   private Hashtable<SimSEObject, String> objsToImages; // maps SimSEObjects
+  private ArrayList<String> impTypes;
 																												// (keys) to pathname
 																												// (String) of image
 																												// file (values)
@@ -52,6 +53,7 @@ public class TabPanelGenerator implements CodeGeneratorConstants {
     this.directory = directory;
     this.iconDir = iconDir;
     this.objsToImages = objsToImages;
+    this.impTypes = new ArrayList<>();
   }
 
   public void generate() {
@@ -63,6 +65,7 @@ public class TabPanelGenerator implements CodeGeneratorConstants {
     try {
     	
     	ClassName enumeration = ClassName.get("java.util", "Enumeration");
+    	ClassName hBox = ClassName.get("javafx.scene.layout", "HBox");
     	ClassName hashtable = ClassName.get("java.util", "Hashtable");
     	ClassName vector = ClassName.get("java.util", "Vector");
     	ClassName actionevent = ClassName.get("javafx.event", "ActionEvent");
@@ -221,54 +224,30 @@ public class TabPanelGenerator implements CodeGeneratorConstants {
     		  .addStatement("$N = new $T()", "buttonsToObjs", hashButtonObj)
     		  .addStatement("$N = new ArtifactsOverviewScreen(state, gui, l)", "artifactFrame")
     		  .addStatement("$N = new EmployeesOverviewScreen(state, gui, $N)", "employeeFrame", "logic")
-    		  .addStatement("")
-    		  .addStatement("$N = new ToolsAtAGlanceFrame(state, $N)", "toolFrame", "gui")
     		  .addStatement("$N = new ProjectOverviewScreen(state, $N)", "projectFrame", "gui")
-    		  .addStatement("$N = new CustomersAtAGlanceFrame(state, $N)", "customerFrame", "gui")
     		  .addStatement("$N = new PanelsScreen(state, gui, $N)", "panelsFrame", "logic")
-    		  .addStatement("$N = TrackPanel.getInstance()", "trackPane")
-    		  .addStatement("$N = MelloPanel.getInstance()", "melloPane")
-    		  .addStatement("")
+    		  .addStatement("$N = TrackPanel.getInstance($N)", "trackPane", "state")
+    		  .addStatement("$N = MelloPanel.getInstance($N)", "melloPane", "state")
     		  .addStatement("$N = $T.createImage(\"src/simse/gui/images/layout/border.gif\")", "border", javafxhelpers)
     		  .addStatement("$N = $T.createImage(\"src/simse/gui/images/all.GIF\")", "allIcon", javafxhelpers)
-    		  .addStatement("")
     		  .addStatement("// get the $T styles:", border)
     		  .addStatement("$N = new $T().getBorder()", "defaultBorder", button)
     		  .addStatement("$N = new $T(new $T($T.BLACK, $T.SOLID, $T.EMPTY, $T.DEFAULT))", "selectedBorder", border, borderstroke, color, borderstrokestyle, cornerradii, borderwidths)
-    		  .addStatement("")
     		  .addStatement("// Create main panel:")
-    		  .addStatement("$N = new $T()", "gridPane", gridpane)
-    		  .addStatement("$N.setPrefWidth(1024)", "gridPane")
-    		  .addStatement("")
+    		  .addStatement("$N = new $T()", "mainPane", hbox)
     		  .addStatement("$N = new LogoPanel($N)", "logoPane", "gui")
-    		  .addStatement("$N.setMinSize(340, 90)", "logoPane")
-    		  .addStatement("$N.setPrefSize(340, 90)", "logoPane")
+    		  .addStatement("$N.setPrefSize(480, 90)", "logoPane")
     		  .addStatement("$N.setTabPanel(this)", "logoPane")
-    		  .addStatement("")
     		  .addStatement("// Create buttons pane:")
     		  .addStatement("$N = new $T()", "buttonsPane", flowpane)
-    		  .addStatement("$N.setBackground($T.createBackground$T(Color.LIGHTGRAY)) // dark green color", "buttonsPane", javafxhelpers, color)
+    		  .addStatement("$N.setBackground($T.createBackground$T(Color.LIGHTGRAY))", "buttonsPane", javafxhelpers, color)
     		  .addStatement("$T buttons$T = new ScrollPane($N)", scrollpane, scrollpane, "buttonsPane")
     		  .addStatement("buttonsScrollPane.setPrefSize(292, 75)")
-    		  .addStatement("")
     		  .addStatement("generateButtons()")
-    		  .addStatement("")
     		  .addStatement("$N = new ClockPanel(gui, s, e)", "clockPane")
     		  .addStatement("$N.setPrefSize(250, 100)", "clockPane")
-    		  .addStatement("")
     		  .addStatement("// Add panes and labels to main pane:")
-    		  .addStatement("")
-    		  .addStatement("$N.setHgap(10)", "gridPane")
-    		  .addStatement("$N.setVgap(10)", "gridPane")
-    		  .addStatement("$N.setPadding(new $T(0, 0, 0, 0))", "gridPane", insets)
-    		  .addStatement("$N.get$T().add(new ColumnConstraints($N.getWidth() + 100))", "gridPane", columnconstraints, "logoPane")
-    		  .addStatement("")
-    		  .addStatement("// Add Logo Pane:")
-    		  .addStatement("$T.setConstraints(logoPane, 0, 0, 2, 1, $T.LEFT, $T.TOP, $T.NEVER, $T.NEVER, new $T(0, 0, 0, 0))", gridpane, hpos, vpos, priority, priority, insets)
-    		  .addStatement("$N.add(logoPane, 0, 0)", "gridPane")
-    		  .addStatement("")
-    		  .addStatement("// Add panes and labels to main pane")
-    		  .addStatement("")
+    		  .addStatement("$N.getChildren().add($N)", "mainPane", "logoPane")
     		  .addStatement("$T buttons = new $T()", hbox, hbox)
     		  .addStatement("buttons.setSpacing(40)")
     		  .addStatement("$T $N = new $T(\"Project\")", button, "projectButton", button)
@@ -283,33 +262,30 @@ public class TabPanelGenerator implements CodeGeneratorConstants {
     		  .addStatement("$T.setMargin(peopleButton, new $T(15, 0, 0, 0))", hbox, insets)
     		  .addStatement("peopleButton.setOnAction($L)", peopButt)
     		  .addStatement("buttons.getChildren().add(peopleButton)")
-    		  .addStatement("")
     		  .addStatement("$T artifacts$T = new Button(\"Artifacts\")", button, button)
     		  .addStatement("artifactsButton.setId(\"TabButton\")")
     		  .addStatement("artifactsButton.setPrefHeight(40)")
     		  .addStatement("$T.setMargin(artifactsButton, new $T(15, 0, 0, 0))", hbox, insets)
-    		  .addStatement("artifactsButton.setOnAction(artButt)")
+    		  .addStatement("artifactsButton.setOnAction($L)", artButt)
     		  .addStatement("buttons.getChildren().add(artifactsButton)")
-    		  .addStatement("")
     		  .addStatement("$T analyze$T = new Button(\"Analyze\")", button, button)
     		  .addStatement("analyzeButton.setId(\"TabButton\")")
     		  .addStatement("analyzeButton.setPrefHeight(40)")
     		  .addStatement("$T.setMargin(analyzeButton, new $T(15, 0, 0, 0))", hbox, insets)
-    		  .addStatement("analyzeButton.setOnAction$L)", analButt)
+    		  .addStatement("analyzeButton.setOnAction($L)", analButt)
     		  .addStatement("buttons.getChildren().add(analyzeButton)")
-    		  .addStatement("")
-    		  .addStatement("")
     		  .addStatement("$T panels$T = new Button(\"Panels\")", button, button)
     		  .addStatement("panelsButton.setId(\"TabButton\")")
     		  .addStatement("panelsButton.setPrefHeight(40)")
     		  .addStatement("$T.setMargin(panelsButton, new $T(15, 0, 0, 0))", hbox, insets)
     		  .addStatement("panelsButton.setOnAction($L)", panelButt)
     		  .addStatement("buttons.getChildren().add(panelsButton)")
-    		  .addStatement("$N.add(buttons, 2, 0)", "gridPane")
-    		  .addStatement("$N.add(clockPane, 4, 0)", "gridPane")
+    		  .addStatement("buttons.setPrefWidth(560)")
+    		  .addStatement("$N.getChildren().add(buttons)", "mainPane")
+    		  .addStatement("$N.getChildren().add(clockPane)", "mainPane")
     		  .addStatement("setPrefSize(1920, 100)")
     		  .addStatement("updateImages(EMPLOYEE)")
-    		  .addStatement("this.getChildren().add($N)", "gridPane")
+    		  .addStatement("this.getChildren().add($N)", "mainPane")
     		  .addStatement("this.setBackground($T.createBackground$T(Color.rgb(102, 102, 102, 1)))", javafxhelpers, color)
 
     		  .build();
@@ -379,7 +355,7 @@ public class TabPanelGenerator implements CodeGeneratorConstants {
     		  .returns(void.class)
     		  .addParameter(event, "event")
     		  .beginControlFlow("if (event.getEventType() == $T.MOUSE_RELEASED)", mouseevent)
-    		  .beginControlFlow("if (event.getsource() instanceof $T)", button)
+    		  .beginControlFlow("if (event.getSource() instanceof $T)", button)
     		  .addStatement("$T button = ($T) event.getSource()", button, button)
     		  .addStatement("$T ico = ($T) button.getGraphic()", imageview, imageview)
     		  .beginControlFlow("if (ico != null)")
@@ -417,7 +393,7 @@ public class TabPanelGenerator implements CodeGeneratorConstants {
     		  .addStatement("update()")
     		  .build();
 
-      MethodSpec setGuiChanged = MethodSpec.methodBuilder("setGuiChanged")
+      MethodSpec setGuiChanged = MethodSpec.methodBuilder("setGUIChanged")
     		  .addModifiers(Modifier.PUBLIC)
     		  .returns(void.class)
     		  .addStatement("$N=true", "guiChanged")
@@ -427,13 +403,14 @@ public class TabPanelGenerator implements CodeGeneratorConstants {
     		  .addModifiers(Modifier.PUBLIC)
     		  .returns(void.class)
     		  .addStatement("update($N.getSelectedTabIndex())", "logoPane")
-    		  .addStatement("$N.update(false)", "employeeFrame")
-    		  .addStatement("$N.update(true)", "employeeFrame")
+    		  .addStatement("$N.update(employeeFrame.isEmployee())", "employeeFrame")
     		  .addStatement("$N.update()", "projectFrame")
     		  .addStatement("$N.update()", "artifactFrame")
     		  .addStatement("$N.update()", "panelsFrame")
     		  .addStatement("$N.update()", "clockPane")
     		  .build();
+      
+      String switchString = getSwitchStatement();
       
       MethodSpec updateParam = MethodSpec.methodBuilder("update")
     		  .addModifiers(Modifier.PUBLIC)
@@ -451,7 +428,7 @@ public class TabPanelGenerator implements CodeGeneratorConstants {
     		  .addStatement("")
     		  .addStatement("Button[] buttonList")
     		  .addStatement("Vector<? extends SSObject> objs")
-    		  .addCode(getSwitchStatement())
+    		  .addCode(switchString)
     		  .addStatement("setButtonConstraints(buttonList, $N)", "buttonsPane")
     		  .addStatement("boolean atLeastOneObj = false")
     		  .beginControlFlow("if (objs.size()>0)")
@@ -474,7 +451,7 @@ public class TabPanelGenerator implements CodeGeneratorConstants {
     		  .nextControlFlow("else")
     		  .addStatement("button=buttonList[j++]")
     		  .endControlFlow()
-    		  .beginControlFlow("if ((index == EMPLOYEE) && (st$Nate.getClock().isStopped() == false))", "state")
+    		  .beginControlFlow("if ((index == EMPLOYEE) && ($N.getClock().isStopped() == false))", "state")
     		  .addStatement("$T e = ($T) obj", employee, employee)
     		  .addStatement("PopupListener pListener = ((PopupListener) button.getOnMousePressed())")
     		  .beginControlFlow("if (pListener != null)")
@@ -506,32 +483,35 @@ public class TabPanelGenerator implements CodeGeneratorConstants {
     		  .addStatement("$N=false", "guiChanged")
     		  .build();
       
-
+      String imageSwitch = getImageSwitch();
+      
       MethodSpec updateImages = MethodSpec.methodBuilder("updateImages")
     		  .addModifiers(Modifier.PRIVATE)
     		  .returns(void.class)
     		  .addParameter(int.class, "index")
     		  .addStatement("Vector<? extends SSObject> objs")
-    		  .addCode(getImageSwitch())
+    		  .addCode(imageSwitch)
     		  .beginControlFlow("for (int i=0; i<objs.size(); i++)")
     		  .addStatement("String filename = getImage(objs.elementAt(i))")
-    		  .addStatement("")
     		  .addStatement("$T scaledImage = $T.createImageView(filename)", imageview, javafxhelpers)
+    		  .beginControlFlow("if (scaledImage != null)")
     		  .addStatement("scaledImage.setFitHeight(30)")
     		  .addStatement("scaledImage.setFitWidth(30)")
     		  .addStatement("scaledImage.setPreserveRatio(true)")
-    		  .addStatement("")
     		  .addStatement("$N.put(objs.elementAt(i), scaledImage)", "objsToImages")
+    		  .endControlFlow()
     		  .endControlFlow()
     		  .build();
 
+      String urlString = getUrlString();
+      
       MethodSpec getImage = MethodSpec.methodBuilder("getImage")
     		  .addModifiers(Modifier.PUBLIC)
     		  .addModifiers(Modifier.STATIC)
     		  .returns(String.class)
     		  .addParameter(Object.class, "obj")
     		  .addStatement("$T url = \"\"", String.class)
-    		  .addCode(getUrlString())
+    		  .addCode(urlString)
     		  .addStatement("return url")
     		  .build();
 
@@ -549,7 +529,7 @@ public class TabPanelGenerator implements CodeGeneratorConstants {
     				  .addParameter(actionevent, "event")
     				  .addStatement("$N=true", "guiChanged")
     				  .addStatement("Object source = event.getSource()")
-    				  .beginControlFlow("if (source instanceof $T", menuitem)
+    				  .beginControlFlow("if (source instanceof $T)", menuitem)
     				  .addStatement("$T jm = ($T) source", menuitem, menuitem)
     				  .addStatement("$N.getMenuInputManager().menuItemSelected(rightClickedEmployee, jm.getText(), $N)", "logic", "gui")
     				  .addStatement("$N.getWorld().update()", "gui")
@@ -589,7 +569,7 @@ public class TabPanelGenerator implements CodeGeneratorConstants {
     		  .addField(clockpanel, "clockPane", Modifier.PRIVATE)
     		  .addField(trackpanel, "trackPane", Modifier.PRIVATE)
     		  .addField(mellopanel, "melloPane", Modifier.PRIVATE)
-    		  .addField(gridpane, "gridPane", Modifier.PRIVATE)
+    		  .addField(hbox, "mainPane", Modifier.PRIVATE)
     		  .addField(boolean.class, "guiChanged", Modifier.PRIVATE)
     		  .addField(buttonArray, "artifactButton", Modifier.PRIVATE)
     		  .addField(buttonArray, "customerButton", Modifier.PRIVATE)
@@ -627,10 +607,16 @@ public class TabPanelGenerator implements CodeGeneratorConstants {
     		  .addMethod(getClock)
     		  .build();
       
-      JavaFile file = JavaFile.builder("simse.gui", tabPanel)
+      JavaFile file = JavaFile.builder("", tabPanel)
     		  .build();
       
-      file.writeTo(writer);
+      String fileString = "package simse.gui;\n\nimport java.util.Enumeration;\nimport java.util.Vector;\n";
+      for (String type : this.impTypes) {
+    	  fileString = fileString + "import simse.adts.objects." + type + ";\n";
+      }
+      fileString = fileString + file.toString();
+      
+      writer.write(fileString);;
       
       writer.close();
     } catch (IOException e) {
@@ -642,105 +628,105 @@ public class TabPanelGenerator implements CodeGeneratorConstants {
   
   private String getSwitchStatement() {
 	  String switchS = "";
-	  switchS.concat("switch (index)");
-	        switchS.concat("\n");
-	        switchS.concat("{");
-	        switchS.concat("\n");
-	        switchS.concat("case ARTIFACT:");
-	        switchS.concat("\n");
-	        switchS.concat("buttonList = artifactButton;");
-	        switchS.concat("\n");
-	        switchS.concat("objs = state.getArtifactStateRepository().getAll();");
-	        switchS.concat("\n");
-	        switchS.concat("break;");
-	        switchS.concat("\n");
-	        switchS.concat("case CUSTOMER:");
-	        switchS.concat("\n");
-	        switchS.concat("buttonList = customerButton;");
-	        switchS.concat("\n");
-	        switchS.concat("objs = state.getCustomerStateRepository().getAll();");
-	        switchS.concat("\n");
-	        switchS.concat("break;");
-	        switchS.concat("\n");
-	        switchS.concat("case EMPLOYEE:");
-	        switchS.concat("\n");
-	        switchS.concat("buttonList = employeeButton;");
-	        switchS.concat("\n");
-	        switchS.concat("objs = state.getEmployeeStateRepository().getAll();");
-	        switchS.concat("\n");
-	        switchS.concat("break;");
-	        switchS.concat("\n");
-	        switchS.concat("case PROJECT:");
-	        switchS.concat("\n");
-	        switchS.concat("buttonList = projectButton;");
-	        switchS.concat("\n");
-	        switchS.concat("objs = state.getProjectStateRepository().getAll();");
-	        switchS.concat("\n");
-	        switchS.concat("break;");
-	        switchS.concat("\n");
-	        switchS.concat("case TOOL:");
-	        switchS.concat("\n");
-	        switchS.concat("buttonList = toolButton;");
-	        switchS.concat("\n");
-	        switchS.concat("objs = state.getToolStateRepository().getAll();");
-	        switchS.concat("\n");
-	        switchS.concat("break;");
-	        switchS.concat("\n");
-	        switchS.concat("default:");
-	        switchS.concat("\n");
-	        switchS.concat("buttonList = toolButton;");
-	        switchS.concat("\n");
-	        switchS.concat("objs = new Vector<SSObject>();");
-	        switchS.concat("\n");
-	        switchS.concat("}");
-	        switchS.concat("\n");
-	        return switchS;
+	  switchS = switchS.concat("switch (index)");
+	  switchS = switchS.concat("\n");
+	  switchS = switchS.concat("{");
+	  switchS = switchS.concat("\n");
+	  switchS = switchS.concat("case ARTIFACT:");
+	  switchS = switchS.concat("\n");
+	  switchS = switchS.concat("buttonList = artifactButton;");
+	  switchS = switchS.concat("\n");
+	  switchS = switchS.concat("objs = state.getArtifactStateRepository().getAll();");
+	  switchS = switchS.concat("\n");
+	  switchS = switchS.concat("break;");
+	  switchS = switchS.concat("\n");
+	  switchS = switchS.concat("case CUSTOMER:");
+	  switchS = switchS.concat("\n");
+	  switchS = switchS.concat("buttonList = customerButton;");
+	  switchS = switchS.concat("\n");
+	  switchS = switchS.concat("objs = state.getCustomerStateRepository().getAll();");
+	  switchS = switchS.concat("\n");
+	  switchS = switchS.concat("break;");
+	  switchS = switchS.concat("\n");
+	  switchS = switchS.concat("case EMPLOYEE:");
+	  switchS = switchS.concat("\n");
+	  switchS = switchS.concat("buttonList = employeeButton;");
+	  switchS = switchS.concat("\n");
+	  switchS = switchS.concat("objs = state.getEmployeeStateRepository().getAll();");
+	  switchS = switchS.concat("\n");
+	  switchS = switchS.concat("break;");
+	  switchS = switchS.concat("\n");
+	  switchS = switchS.concat("case PROJECT:");
+	  switchS = switchS.concat("\n");
+	  switchS = switchS.concat("buttonList = projectButton;");
+	  switchS = switchS.concat("\n");
+	  switchS = switchS.concat("objs = state.getProjectStateRepository().getAll();");
+	  switchS = switchS.concat("\n");
+	  switchS = switchS.concat("break;");
+	  switchS = switchS.concat("\n");
+	  switchS = switchS.concat("case TOOL:");
+	  switchS = switchS.concat("\n");
+	  switchS = switchS.concat("buttonList = toolButton;");
+	  switchS = switchS.concat("\n");
+	  switchS = switchS.concat("objs = state.getToolStateRepository().getAll();");
+	  switchS = switchS.concat("\n");
+	  switchS = switchS.concat("break;");
+	  switchS = switchS.concat("\n");
+	  switchS = switchS.concat("default:");
+	  switchS = switchS.concat("\n");
+	  switchS = switchS.concat("buttonList = toolButton;");
+	  switchS = switchS.concat("\n");
+	  switchS = switchS.concat("objs = new Vector<SSObject>();");
+	  switchS = switchS.concat("\n");
+	  switchS = switchS.concat("}");
+	  switchS = switchS.concat("\n");
+	  return switchS;
   }
   
   private String getImageSwitch() {
 	  String switchS = "";
-	  switchS.concat("switch(index)");
-	        switchS.concat("\n");
-	        switchS.concat("{");
-	        switchS.concat("\n");
-	        switchS.concat("case ARTIFACT:");
-	        switchS.concat("\n");
-	        switchS.concat("objs = state.getArtifactStateRepository().getAll();");
-	        switchS.concat("\n");
-	        switchS.concat("break;");
-	        switchS.concat("\n");
-	        switchS.concat("case CUSTOMER:");
-	        switchS.concat("\n");
-	        switchS.concat("objs = state.getCustomerStateRepository().getAll();");
-	        switchS.concat("\n");
-	        switchS.concat("break;");
-	        switchS.concat("\n");
-	        switchS.concat("case EMPLOYEE:");
-	        switchS.concat("\n");
-	        switchS.concat("objs = state.getEmployeeStateRepository().getAll();");
-	        switchS.concat("\n");
-	        switchS.concat("break;");
-	        switchS.concat("\n");
-	        switchS.concat("case PROJECT:");
-	        switchS.concat("\n");
-	        switchS.concat("objs = state.getProjectStateRepository().getAll();");
-	        switchS.concat("\n");
-	        switchS.concat("break;");
-	        switchS.concat("\n");
-	        switchS.concat("case TOOL:");
-	        switchS.concat("\n");
-	        switchS.concat("objs = state.getToolStateRepository().getAll();");
-	        switchS.concat("\n");
-	        switchS.concat("break;");
-	        switchS.concat("\n");
-	        switchS.concat("default:");
-	        switchS.concat("\n");
-	        switchS.concat("objs = new Vector<SSObject>();");
-	        switchS.concat("\n");
-	        switchS.concat("break;");
-	        switchS.concat("\n");
-	        switchS.concat("}");
-	        return switchS;
+	  switchS = switchS.concat("switch(index)");
+	  switchS = switchS.concat("\n");
+	  switchS = switchS.concat("{");
+	  switchS = switchS.concat("\n");
+	  switchS = switchS.concat("case ARTIFACT:");
+	  switchS = switchS.concat("\n");
+	  switchS = switchS.concat("objs = state.getArtifactStateRepository().getAll();");
+	  switchS = switchS.concat("\n");
+	  switchS = switchS.concat("break;");
+	  switchS = switchS.concat("\n");
+	  switchS = switchS.concat("case CUSTOMER:");
+	  switchS = switchS.concat("\n");
+	  switchS = switchS.concat("objs = state.getCustomerStateRepository().getAll();");
+	  switchS = switchS.concat("\n");
+	  switchS = switchS.concat("break;");
+	  switchS = switchS.concat("\n");
+	  switchS = switchS.concat("case EMPLOYEE:");
+	  switchS = switchS.concat("\n");
+	  switchS = switchS.concat("objs = state.getEmployeeStateRepository().getAll();");
+	  switchS = switchS.concat("\n");
+	  switchS = switchS.concat("break;");
+	  switchS = switchS.concat("\n");
+	  switchS = switchS.concat("case PROJECT:");
+	  switchS = switchS.concat("\n");
+	  switchS = switchS.concat("objs = state.getProjectStateRepository().getAll();");
+	  switchS = switchS.concat("\n");
+	  switchS = switchS.concat("break;");
+	  switchS = switchS.concat("\n");
+	  switchS = switchS.concat("case TOOL:");
+	  switchS = switchS.concat("\n");
+	  switchS = switchS.concat("objs = state.getToolStateRepository().getAll();");
+	  switchS = switchS.concat("\n");
+	  switchS = switchS.concat("break;");
+	  switchS = switchS.concat("\n");
+	  switchS = switchS.concat("default:");
+	  switchS = switchS.concat("\n");
+	  switchS = switchS.concat("objs = new Vector<SSObject>();");
+	  switchS = switchS.concat("\n");
+	  switchS = switchS.concat("break;");
+	  switchS = switchS.concat("\n");
+	  switchS = switchS.concat("}");
+	  return switchS;
   }
   
   private String getUrlString() {
@@ -749,19 +735,22 @@ public class TabPanelGenerator implements CodeGeneratorConstants {
 	      Vector<SimSEObjectType> ssObjTypes = objTypes.getAllObjectTypes();
 	      for (int j = 0; j < ssObjTypes.size(); j++) {
 	        SimSEObjectType tempType = ssObjTypes.elementAt(j);
-	        if (j > 0) { // not on first element
-	          urlS.concat("else ");
+	        if (!this.impTypes.contains(CodeGeneratorUtils.getUpperCaseLeading(tempType.getName()))) {
+	        	this.impTypes.add(CodeGeneratorUtils.getUpperCaseLeading(tempType.getName()));
 	        }
-	        urlS.concat("if(obj instanceof "
+	        if (j > 0) { // not on first element
+	        	urlS = urlS.concat("else ");
+	        }
+	        urlS = urlS.concat("if(obj instanceof "
 	            + CodeGeneratorUtils.getUpperCaseLeading(tempType.getName()) + ")");
-	        urlS.concat("\n");
-	        urlS.concat("{");
-	        urlS.concat("\n");
-	        urlS.concat(CodeGeneratorUtils.getUpperCaseLeading(tempType.getName()) 
+	        urlS = urlS.concat("\n");
+	        urlS = urlS.concat("{");
+	        urlS = urlS.concat("\n");
+	        urlS = urlS.concat(CodeGeneratorUtils.getUpperCaseLeading(tempType.getName()) 
 	        		+ " p = (" + 
 	        		CodeGeneratorUtils.getUpperCaseLeading(tempType.getName()) + 
 	        		")obj;");
-	        urlS.concat("\n");
+	        urlS = urlS.concat("\n");
 
 	        /*
 	         * go through all of the created objects (and objects created by create
@@ -789,38 +778,38 @@ public class TabPanelGenerator implements CodeGeneratorConstants {
 	            }
 	            if (allAttValuesInit) {
 	              if (putElse) {
-	                urlS.concat("else ");
+	            	  urlS = urlS.concat("else ");
 	              } else {
 	                putElse = true;
 	              }
-	              urlS.concat("if(p.get"
+	              urlS = urlS.concat("if(p.get"
 	                  + CodeGeneratorUtils.getUpperCaseLeading(
 	                  		obj.getKey().getAttribute().getName()) + "()");
 	              if (obj.getKey().getAttribute().getType() == 
 	              	AttributeTypes.STRING) {
-	                urlS.concat(".equals(\"" + obj.getKey().getValue().toString()
+	            	  urlS = urlS.concat(".equals(\"" + obj.getKey().getValue().toString()
 	                    + "\"))");
 	              } else { // integer, double, or boolean att
-	                urlS.concat(" == " + obj.getKey().getValue().toString() + ")");
+	            	  urlS = urlS.concat(" == " + obj.getKey().getValue().toString() + ")");
 	              }
-	              urlS.concat("\n");
-	              urlS.concat("{");
-	              urlS.concat("\n");
+	              urlS = urlS.concat("\n");
+	              urlS = urlS.concat("{");
+	              urlS = urlS.concat("\n");
 	              String imgFilename = (String) objsToImages.get(obj);
 	              if (((imgFilename) != null)
 	                  && ((imgFilename).length() > 0) 
 	                  && ((new File(iconDir, imgFilename)).exists())) {
 	                String imagePath = (iconsDirectory + imgFilename);
-	                urlS.concat("url = \"" + imagePath + "\";");
-	                urlS.concat("\n");
+	                urlS = urlS.concat("url = \"src" + imagePath + "\";");
+	                urlS = urlS.concat("\n");
 	              }
-	              urlS.concat("}");
-	              urlS.concat("\n");
+	              urlS = urlS.concat("}");
+	              urlS = urlS.concat("\n");
 	            }
 	          }
 	        }
-	        urlS.concat("}");
-	        urlS.concat("\n");
+	        urlS = urlS.concat("}");
+	        urlS = urlS.concat("\n");
 	      }
 	      return urlS;
   }

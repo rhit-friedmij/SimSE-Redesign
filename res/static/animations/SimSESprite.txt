@@ -1,7 +1,8 @@
-package animations;
+package simse.animation;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import javafx.animation.Animation;
@@ -10,10 +11,11 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.util.Duration;
 
-abstract class SimSESprite extends ImageView{
+public abstract class SimSESprite extends ImageView{
 
 	Animation spriteAnimation;
 	private int speed;
+	private static int characterNum;
 	
 	public SimSESprite(
 			int spriteSheetColumns,
@@ -22,7 +24,8 @@ abstract class SimSESprite extends ImageView{
 			int offsetY,
 			int width,
 			int height,
-			String url) {
+			String url,
+			boolean remote) {
 		this.speed = 1000;
 		FileInputStream inputStream = null;
 		try {
@@ -34,21 +37,41 @@ abstract class SimSESprite extends ImageView{
 		
         Image image = new Image(inputStream);
         
-//        spriteImage = new ImageView();
         this.setImage(image);
-        this.setViewport(new Rectangle2D(offsetX, offsetY, width, height));
-        spriteAnimation = new SpriteAnimation(
-        		this,
-                Duration.millis(speed),
-                spriteSheetCount, spriteSheetColumns,
-                offsetX, offsetY,
-                width, height
-        );
-        spriteAnimation.setCycleCount(Animation.INDEFINITE);
+        try {
+			inputStream.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        if(characterNum < 8) {
+            this.setViewport(new Rectangle2D(offsetX, offsetY, width, height));
+            spriteAnimation = new SpriteAnimation(
+            		this,
+                    Duration.millis(speed),
+                    spriteSheetCount, spriteSheetColumns,
+                    offsetX, offsetY,
+                    width, height
+            );
+            spriteAnimation.setCycleCount(Animation.INDEFINITE);
+        }
+        else {
+        	this.setViewport(new Rectangle2D(0, 0, 40, 40));
+            spriteAnimation = new SpriteAnimation(
+            		this,
+                    Duration.millis(speed),
+                    spriteSheetCount, spriteSheetColumns,
+                    offsetX, offsetY,
+                    width, height
+            );
+            spriteAnimation.setCycleCount(Animation.INDEFINITE);
+        }
+
 	}
 	
 	public static String getURL(int num) {
-		return "sprites\\character" + num + "cus_walk.png";
+		characterNum = num;
+		return "src\\simse\\sprites\\character" + num + "cus_walk.png";
 	}
 
 	public void startAnim() {

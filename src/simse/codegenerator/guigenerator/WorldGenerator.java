@@ -31,8 +31,8 @@ public class WorldGenerator {
       Scanner s = new Scanner(reader);
       FileWriter writer = new FileWriter(worldFile);
       
-      while (s.hasNext()) {
-    	  writer.write(s.next());
+      while (s.hasNextLine()) {
+      	  writer.write(s.nextLine() + "\n");
       }
       
       writer.close();

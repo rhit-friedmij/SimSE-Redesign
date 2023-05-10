@@ -3,12 +3,14 @@ package simse.codegenerator.guigenerator;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Vector;
 
 import javax.lang.model.element.Modifier;
 import javax.swing.JOptionPane;
 
 import com.squareup.javapoet.ClassName;
+import com.squareup.javapoet.CodeBlock;
 import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.MethodSpec;
@@ -16,7 +18,6 @@ import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
 
-import javafx.scene.input.MouseButton;
 import simse.codegenerator.CodeGeneratorUtils;
 import simse.modelbuilder.objectbuilder.Attribute;
 import simse.modelbuilder.objectbuilder.DefinedObjectTypes;
@@ -39,111 +40,141 @@ public class ObjectGraphPanesGenerator {
 	  }
 	  
 	  public void generate() {
-		  generateGraphPanel();
 		  generateGraphPane();
 	  }
 
-	  private void generateGraphPanel() {
-	    File gPanelFile = new File(directory, ("simse\\gui\\ObjectGraphPanel.java"));
-	    if (gPanelFile.exists()) {
-	    	gPanelFile.delete(); // delete old version of file
-	    }
-	    try {
-	      FileWriter writer = new FileWriter(gPanelFile);
-	      ClassName eventhandler = ClassName.get("javafx.event", "EventHandler");
-	      ClassName button = ClassName.get("javafx.scene.control", "Button");
-	      ClassName mouseevent = ClassName.get("javafx.scene.input", "MouseEvent");
-	      ClassName pane = ClassName.get("javafx.scene.layout", "Pane");
-	      ClassName vbox = ClassName.get("javafx.scene.layout", "VBox");
-	      ClassName simsegui = ClassName.get("simse.gui", "SimSEGUI");
-	      ClassName panels = ClassName.get("simse.gui", "Panels");
-	      ClassName objectgraphpane = ClassName.get("simse.gui", "ObjectGraphPane");
-	      ClassName simsepanel = ClassName.get("sim.gui", "SimSEPanel");
-	      TypeName mousehandler = ParameterizedTypeName.get(eventhandler, mouseevent);
-	      
-	      SimSEObject proj = getProj();
-	      String keyAttVal = proj.getKey().getValue().toString();
-	      String objType = CodeGeneratorUtils.getUpperCaseLeading(proj.getSimSEObjectType().getName());
-	      String objTypeType = CodeGeneratorUtils.getUpperCaseLeading(
-  				SimSEObjectTypeTypes.getText(
-						proj.getSimSEObjectType().getType()));
-	      String title = keyAttVal + " Attributes";
-	      
-	      MethodSpec constructor = MethodSpec.constructorBuilder()
-	    		  .addModifiers(Modifier.PUBLIC)
-	    		  .addParameter(simsegui, "gui")
-	    		  .addStatement("$T mainPane = new $T()", vbox, vbox)
-	    		  .addStatement("this.$N = gui", "gui")
-	    		  .addStatement("this.$N = $S", "title", title)
-	    		  .addStatement("this.$N = $S", "objTypeType", objTypeType)
-	    		  .addStatement("this.$N = $S", "objType", objType)
-	    		  .addStatement("this.$N = $S", "keyAttVal", keyAttVal)
-	    		  .addStatement("this.$N = new ObjectGraphPane(title, $N.getLog(), objTypeType, objType, keyAttVal, $N.getBranch(), $N)", "objGraph", "gui", "gui", "gui")
-	    		  .addStatement("")
-	    		  .addStatement("mainPane.getChildren().add($N)", "objGraph")
-	    		  .addStatement("")
-	    		  .addStatement("$N = new $T(\"Update Graph\")", "updateGraph", button)
-	    		  .addStatement("$N.addEventHandler($T.MOUSE_CLICKED, this)", "updateGraph", mouseevent)
-	    		  .addStatement("mainPane.getChildren().add($N)", "updateGraph")
-	    		  .addStatement("")
-	    		  .addStatement("this.getChildren().add(mainPane)")
-	    		  .build();
-	      
-	      MethodSpec update = MethodSpec.methodBuilder("update")
-	    		  .addModifiers(Modifier.PUBLIC)
-	    		  .returns(void.class)
-	    		  .beginControlFlow("if (!gui.getEngine().isRunning())")
-	    		  .addStatement("this.objGraph.update()")
-	    		  .endControlFlow()
-	    		  .build();
-	      
-	      MethodSpec panelType = MethodSpec.methodBuilder("getPanelType")
-	    		  .addAnnotation(Override.class)
-	    		  .addModifiers(Modifier.PUBLIC)
-	    		  .returns(panels)
-	    		  .addStatement("return $T.GRAPH", panels)
-	    		  .build();
-	      
-	      MethodSpec handle = MethodSpec.methodBuilder("handle")
-	    		  .addAnnotation(Override.class)
-	    		  .addModifiers(Modifier.PUBLIC)
-	    		  .returns(void.class)
-	    		  .addParameter(mouseevent, "e")
-	    		  .beginControlFlow("if (e.getSource() == updateGraph)")
-	    		  .addStatement("this.objGraph.update()")
-	    		  .endControlFlow()
-	    		  .build();
-	      
-	      TypeSpec ogPanel = TypeSpec.classBuilder("ObjectGraphPanel")
-	    		  .superclass(pane)
-	    		  .addSuperinterface(simsepanel)
-	    		  .addSuperinterface(mousehandler)
-	    		  .addModifiers(Modifier.PUBLIC)
-	    		  .addField(String.class, "title", Modifier.PRIVATE)
-	    		  .addField(String.class, "objTypeType", Modifier.PRIVATE)
-	    		  .addField(String.class, "objType", Modifier.PRIVATE)
-	    		  .addField(String.class, "keyAttVal", Modifier.PRIVATE)
-	    		  .addField(objectgraphpane, "objGraph", Modifier.PRIVATE)
-	    		  .addField(button, "updateGraph", Modifier.PRIVATE)
-	    		  .addField(simsegui, "gui", Modifier.PRIVATE)
-	    		  .addMethod(constructor)
-	    		  .addMethod(update)
-	    		  .addMethod(panelType)
-	    		  .addMethod(handle)
-	    		  .build();
-	      
-	      JavaFile file = JavaFile.builder("simse.gui", ogPanel)
-	    		  .build();
-	      
-	      file.writeTo(writer);
-	      
-	      writer.close();
-	    } catch (IOException e) {
-	      JOptionPane.showMessageDialog(null, ("Error writing file "
-	          + gPanelFile.getPath() + ": " + e.toString()), "File IO Error",
-	          JOptionPane.WARNING_MESSAGE);
-	    }
-	  }
+//	  private void generateGraphPanel() {
+//	    File gPanelFile = new File(directory, ("simse\\gui\\ObjectGraphPanel.java"));
+//	    if (gPanelFile.exists()) {
+//	    	gPanelFile.delete(); // delete old version of file
+//	    }
+//	    try {
+//	      FileWriter writer = new FileWriter(gPanelFile);
+//	      ClassName eventhandler = ClassName.get("javafx.event", "EventHandler");
+//	      ClassName button = ClassName.get("javafx.scene.control", "Button");
+//	      ClassName mouseevent = ClassName.get("javafx.scene.input", "MouseEvent");
+//	      ClassName pane = ClassName.get("javafx.scene.layout", "Pane");
+//	      ClassName vbox = ClassName.get("javafx.scene.layout", "VBox");
+//	      ClassName hbox = ClassName.get("javafx.scene.layout", "HBox");
+//	      ClassName simsegui = ClassName.get("simse.gui", "SimSEGUI");
+//	      ClassName panels = ClassName.get("simse.gui", "Panels");
+//	      ClassName objectgraphpane = ClassName.get("simse.gui", "ObjectGraphPane");
+//	      ClassName simsepanel = ClassName.get("simse.gui", "SimSEPanel");
+//	      ClassName arrayList = ClassName.get("java.util", "ArrayList");
+//	  	  TypeName listOfStrings = ParameterizedTypeName.get(arrayList, ClassName.get(String.class));
+//	      TypeName mousehandler = ParameterizedTypeName.get(eventhandler, mouseevent);
+//	      
+//	      String objTypeType = CodeGeneratorUtils.getUpperCaseLeading(
+//	  				SimSEObjectTypeTypes.getText(SimSEObjectTypeTypes.PROJECT));
+//	      
+//	      MethodSpec constructor = MethodSpec.constructorBuilder()
+//	    		  .addModifiers(Modifier.PUBLIC)
+//	    		  .addParameter(simsegui, "gui")
+//	    		  .addStatement("this.mainPane = new $T()", vbox)
+//	    		  .addStatement("this.$N = gui", "gui")
+//	    		  .addStatement("this.$N = 0", "currentProj")
+//	    		  .addStatement("this.$N = new $T()", "titles", listOfStrings)
+//	    		  .addStatement("this.$N = new $T()", "objTypes", listOfStrings)
+//	    		  .addStatement("this.$N = new $T()", "keyAttVals", listOfStrings)
+//	    		  .addStatement("this.$N = $S", "objTypeType", objTypeType)
+//	    		  .addCode(generateProjsList().build())
+//	    		  .addStatement("this.$N = new ObjectGraphPane(titles.get(currentProj), $N.getLog(), objTypeType, "
+//	    		  		+ "objTypes.get(currentProj), keyAttVals.get(currentProj), $N.getBranch(), $N)", "objGraph", "gui", "gui", "gui")
+//	    		  .addStatement("mainPane.getChildren().add($N)", "objGraph")
+//	    		  .addStatement("$T buttonPanel = new $T()", hbox, hbox)
+//	    		  .addStatement("$N = new $T(\"Update Graph\")", "updateGraph", button)
+//	    		  .addStatement("$N.addEventHandler($T.MOUSE_CLICKED, this)", "updateGraph", mouseevent)
+//	    		  .addStatement("buttonPanel.getChildren().add($N)", "updateGraph")
+//	    		  .addStatement("$N = new $T(\"Next Project\")", "nextProj", button)
+//	    		  .addStatement("$N.addEventHandler($T.MOUSE_CLICKED, this)", "nextProj", mouseevent)
+//	    		  .addStatement("buttonPanel.getChildren().add($N)", "nextProj")
+//	    		  .addStatement("this.mainPane.getChildren().add($N)", "buttonPanel")
+//	    		  .addStatement("this.getChildren().add(mainPane)")
+//	    		  .build();
+//	      
+//	      MethodSpec update = MethodSpec.methodBuilder("update")
+//	    		  .addModifiers(Modifier.PUBLIC)
+//	    		  .returns(void.class)
+//	    		  .beginControlFlow("if (!gui.getEngine().isRunning())")
+//	    		  .addStatement("this.objGraph.update()")
+//	    		  .endControlFlow()
+//	    		  .build();
+//	      
+//	      MethodSpec panelType = MethodSpec.methodBuilder("getPanelType")
+//	    		  .addAnnotation(Override.class)
+//	    		  .addModifiers(Modifier.PUBLIC)
+//	    		  .returns(panels)
+//	    		  .addStatement("return $T.GRAPH", panels)
+//	    		  .build();
+//	      
+//	      MethodSpec handle = MethodSpec.methodBuilder("handle")
+//	    		  .addAnnotation(Override.class)
+//	    		  .addModifiers(Modifier.PUBLIC)
+//	    		  .returns(void.class)
+//	    		  .addParameter(mouseevent, "e")
+//	    		  .beginControlFlow("if (e.getSource() == updateGraph)")
+//	    		  .addStatement("this.objGraph.update()")
+//	    		  .nextControlFlow("else if (e.getSource() == nextProj)")
+//	    		  .addStatement("mainPane.getChildren().remove(objGraph)")
+//	    		  .addStatement("currentProj++")
+//	    		  .beginControlFlow("if (currentProj >= titles.size())")
+//	    		  .addStatement("currentProj = 0")
+//	    		  .endControlFlow()
+//	    		  .addStatement("this.$N = new ObjectGraphPane(titles.get(currentProj), $N.getLog(), objTypeType, "
+//		    		  		+ "objTypes.get(currentProj), keyAttVals.get(currentProj), $N.getBranch(), $N)", "objGraph", "gui", "gui", "gui")
+//	    		  .addStatement("mainPane.getChildren().add(0, $N)", "objGraph")
+//	    		  .endControlFlow()
+//	    		  .build();
+//	      
+//	      TypeSpec ogPanel = TypeSpec.classBuilder("ObjectGraphPanel")
+//	    		  .superclass(pane)
+//	    		  .addSuperinterface(simsepanel)
+//	    		  .addSuperinterface(mousehandler)
+//	    		  .addModifiers(Modifier.PUBLIC)
+//	    		  .addField(listOfStrings, "titles", Modifier.PRIVATE)
+//	    		  .addField(listOfStrings, "objTypes", Modifier.PRIVATE)
+//	    		  .addField(listOfStrings, "keyAttVals", Modifier.PRIVATE)
+//	    		  .addField(String.class, "objTypeType", Modifier.PRIVATE)
+//	    		  .addField(int.class, "currentProj", Modifier.PRIVATE)
+//	    		  .addField(objectgraphpane, "objGraph", Modifier.PRIVATE)
+//	    		  .addField(button, "updateGraph", Modifier.PRIVATE)
+//	    		  .addField(button, "nextProj", Modifier.PRIVATE)
+//	    		  .addField(vbox, "mainPane", Modifier.PRIVATE)
+//	    		  .addField(simsegui, "gui", Modifier.PRIVATE)
+//	    		  .addMethod(constructor)
+//	    		  .addMethod(update)
+//	    		  .addMethod(panelType)
+//	    		  .addMethod(handle)
+//	    		  .build();
+//	      
+//	      JavaFile file = JavaFile.builder("simse.gui", ogPanel)
+//	    		  .build();
+//	      
+//	      file.writeTo(writer);
+//	      
+//	      writer.close();
+//	    } catch (IOException e) {
+//	      JOptionPane.showMessageDialog(null, ("Error writing file "
+//	          + gPanelFile.getPath() + ": " + e.toString()), "File IO Error",
+//	          JOptionPane.WARNING_MESSAGE);
+//	    }
+//	  }
+//	  
+//	  private CodeBlock.Builder generateProjsList() {
+//		  CodeBlock.Builder projList = CodeBlock.builder();
+//		  
+//		  
+//		  Vector<SimSEObject> projects = getAllProjs();
+//		  for (SimSEObject proj : projects) {
+//		      String keyAttVal = proj.getKey().getValue().toString();
+//		      String objType = CodeGeneratorUtils.getUpperCaseLeading(proj.getSimSEObjectType().getName());
+//		      String title = keyAttVal + " Attributes";
+//		      projList.addStatement("this.$N.add($S)", "titles", title);
+//		      projList.addStatement("this.$N.add($S)", "objTypes", objType);
+//		      projList.addStatement("this.$N.add($S)", "keyAttVals", keyAttVal);
+//		  }
+//		  return projList;
+//	  }
 	  
 	  private void generateGraphPane() {
 		    File gPaneFile = new File(directory, ("simse\\gui\\ObjectGraphPane.java"));
@@ -232,7 +263,7 @@ public class ObjectGraphPanesGenerator {
 		    		  .addModifiers(Modifier.PUBLIC)
 		    		  .returns(void.class)
 		    		  .addStatement("$N = $N.getLog()", "log", "gui")
-		    		  .beginControlFlow("if ($N = $N.getLog())", "log", "gui")
+		    		  .beginControlFlow("if ($N != null)", "log")
 		    		  .addStatement("this.$N = new $T(title, log, objTypeType, objType, keyAttVal, attributes, false, $N)", "objGraph", objectgraph, "branch")
 		    		  .addStatement("$N = $N.getChart()", "chart", "objGraph")
 		    		  .addStatement("$N.setChart($N)", "chartViewer", "chart")
@@ -295,8 +326,8 @@ public class ObjectGraphPanesGenerator {
 		    				  .addStatement("td.setTitle(\"Name New $T\")", branch)
 		    				  .addStatement("td.setContentText(\"Please name this new game:\")")
 		    				  .addStatement("td.setHeaderText(null)")
-		    				  .addStatement("Optional<String> result = td.showAndWait()")
-		    				  .addStatement("result.ifPresent(name -> {this.newBranchName = name})")
+		    				  .addStatement("$T result = td.showAndWait()", optionalString)
+		    				  .addStatement("result.ifPresent(name -> {this.newBranchName = name;})")
 		    				  .beginControlFlow("if (newBranchName != null)")
 		    				  .addStatement("$T temp$T = (State) $N.get($N).clone()", state, state, "log", "lastRightClickedX")
 		    				  .addStatement("$T temp$T = new Logger(tempState, new ArrayList<State>($N.subList(0, $N)))", logger, logger, "log", "lastRightClickedX")
@@ -328,7 +359,7 @@ public class ObjectGraphPanesGenerator {
 		    		  .addField(branch, "branch", Modifier.PRIVATE)
 		    		  .addField(objectgraph, "objGraph", Modifier.PRIVATE)
 		    		  .addField(simsegui, "gui", Modifier.PRIVATE)
-		    		  .addField(FieldSpec.builder(String.class, "title", Modifier.PRIVATE)
+		    		  .addField(FieldSpec.builder(actionHandler, "menuEvent", Modifier.PRIVATE)
 		    				  .initializer("$L", anon)
 		    				  .build())
 		    		  .addMethod(constructor)
@@ -352,15 +383,16 @@ public class ObjectGraphPanesGenerator {
 		    }
 		  }
 	  
-	  private SimSEObject getProj() {
+	  private Vector<SimSEObject> getAllProjs() {
 		  Vector<SimSEObject> objects = objs.getAllObjects();
+		  Vector<SimSEObject> projects = new Vector<>();
 	      for (int i = 0; i < objects.size(); i++) {
 	        SimSEObject obj = objects.get(i);
 	        if (obj.getSimSEObjectType().getType() == SimSEObjectTypeTypes.PROJECT) {
-	        	return obj;
+	        	projects.add(obj);
 	        }
 	      }
-	      return null;
+	      return projects;
 	  }
 	  
 	  private String attributeList() {
@@ -369,40 +401,42 @@ public class ObjectGraphPanesGenerator {
 		        for (int i = 0; i < objectTypes.size(); i++) {
 		          SimSEObjectType objType = objectTypes.get(i);
 		          if (i > 0) {
-		            al.concat("else ");
+		        	  al = al.concat("else ");
 		          }
-		          al.concat("if (selectedObject.startsWith(\""
+		          al = al.concat("if (selectedObject.startsWith(\""
 		              + CodeGeneratorUtils.getUpperCaseLeading(objType.getName()) + " "
 		              + SimSEObjectTypeTypes.getText(objType.getType())
 		              + "\")) {");
-		          al.concat("\n");
-		          al.concat("String[] currAttributes = {");
-		          al.concat("\n");
+		          al = al.concat("\n");
+		          al = al.concat("String[] currAttributes = {");
+		          al = al.concat("\n");
 		          Vector<Attribute> attributes = objType.getAllAttributes();
 		          int numVisibleNumericalAtts = 0;
 		          for (int j = 0; j < attributes.size(); j++) {
 		            Attribute att = attributes.get(j);
 		            if ((att instanceof NumericalAttribute)
 		                && ((att.isVisible()) || (att.isVisibleOnCompletion()))) {
-		              al.concat("\"" + att.getName() + "\",");
-		              al.concat("\n");
+		            	al = al.concat("\"" + att.getName() + "\",");
+		            	al = al.concat("\n");
 		              numVisibleNumericalAtts++;
 		            }
 		          }
 		          if (numVisibleNumericalAtts == 0) {
-		            al.concat("\"(No numerical attributes)\"");
-		            al.concat("\n");
+		        	  al = al.concat("\"(No numerical attributes)\"");
+		        	  al = al.concat("\n");
 		          }
-		          al.concat("};");
-		          al.concat("\n");
-		          al.concat("this.attributes = currAttributes");
-		          al.concat("\n");
-		          al.concat("}");
-		          al.concat("\n");
+		          al = al.concat("};");
+		          al = al.concat("\n");
+		          al = al.concat("this.attributes = currAttributes;");
+		          al = al.concat("\n");
+		          al = al.concat("}");
+		          al = al.concat("\n");
 		        }
-		        al.concat("}");
-		        al.concat("\n");
-		        al.concat("\n");
+		        
+		        al = al.concat(" else {\n");
+		        al = al.concat("String[] currAttributes = {};\n");
+		        al = al.concat("this.attributes = currAttributes;\n");
+		        al = al.concat("}\n");
 		  
 		  return al;
 	  }

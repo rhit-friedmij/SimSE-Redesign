@@ -13,10 +13,10 @@ public class DisplayableCharacterGenerator {
 		this.dir = dir;
 	}
 
-	private void generate() {
+	public void generate() {
 		// TODO Auto-generated method stub
 	    File displayableCharacterFile = new File(dir,
-	            ("animations\\DisplayableCharacter.java"));
+	            ("simse\\animation\\DisplayableCharacter.java"));
 	    
 	        if (displayableCharacterFile.exists()) {
 	        	displayableCharacterFile.delete(); // delete old version of file
@@ -24,7 +24,7 @@ public class DisplayableCharacterGenerator {
 		
 		try {
 	        
-		FileReader reader = new FileReader("C:\\Users\\localmgr\\git\\simse-redesign\\simse-redesign\\res\\static\\animations\\DisplayableCharacter.txt");
+		FileReader reader = new FileReader("res\\static\\animations\\DisplayableCharacter.txt");
 		FileWriter writer = new FileWriter(displayableCharacterFile);
 	
 		String fileContents = "";

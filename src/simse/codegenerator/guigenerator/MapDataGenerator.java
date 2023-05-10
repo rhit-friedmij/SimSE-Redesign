@@ -32,8 +32,8 @@ public class MapDataGenerator implements CodeGeneratorConstants {
       FileReader reader = new FileReader("resources\\MapData.txt");
       Scanner s = new Scanner(reader);
       
-      while (s.hasNext()) {
-    	  writer.write(s.next());
+      while (s.hasNextLine()) {
+      	  writer.write(s.nextLine() + "\n");
       }
       
       s.close();

@@ -13,10 +13,10 @@ public class PathDataGenerator {
 		this.dir = dir;
 	}
 
-	private void generate() {
+	public void generate() {
 		// TODO Auto-generated method stub
 	    File pathDataFile = new File(dir,
-	            ("animations\\PathData.java"));
+	            ("simse\\animation\\PathData.java"));
 	    
 	        if (pathDataFile.exists()) {
 	        	pathDataFile.delete(); // delete old version of file
@@ -24,7 +24,7 @@ public class PathDataGenerator {
 		
 		try {
 	        
-		FileReader reader = new FileReader("C:\\Users\\localmgr\\git\\simse-redesign\\simse-redesign\\res\\static\\animations\\PathData.txt");
+		FileReader reader = new FileReader("res\\static\\animations\\PathData.txt");
 		FileWriter writer = new FileWriter(pathDataFile);
 	
 		String fileContents = "";

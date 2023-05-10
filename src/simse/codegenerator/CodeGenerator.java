@@ -2,25 +2,47 @@
 
 package simse.codegenerator;
 
+import simse.animations.CharacterIdleBackGenerator;
+import simse.animations.CharacterIdleFrontGenerator;
+import simse.animations.CharacterIdleLeftGenerator;
+import simse.animations.CharacterIdleRightGenerator;
+import simse.animations.CharacterWalkBackGenerator;
+import simse.animations.CharacterWalkForwardGenerator;
+import simse.animations.CharacterWalkLeftGenerator;
+import simse.animations.CharacterWalkRightGenerator;
+import simse.animations.CreatablePathGenerator;
+import simse.animations.DisplayableCharacterGenerator;
+import simse.animations.PathDataGenerator;
+import simse.animations.SimSECharacterGenerator;
+import simse.animations.SimSESpriteGenerator;
+import simse.animations.SpriteAnimationGenerator;
 import simse.codegenerator.enginegenerator.EngineGenerator;
 import simse.codegenerator.explanatorytoolgenerator.ExplanatoryToolGenerator;
 import simse.codegenerator.guigenerator.GUIGenerator;
 import simse.codegenerator.logicgenerator.LogicGenerator;
 import simse.codegenerator.stategenerator.StateGenerator;
 import simse.codegenerator.utilgenerator.IDGeneratorGenerator;
+import simse.codegenerator.utilgenerator.RuleCategoriesGenerator;
+import simse.codegenerator.utilgenerator.RuleTypeGenerator;
 import simse.modelbuilder.ModelOptions;
 import simse.modelbuilder.objectbuilder.DefinedObjectTypes;
 import simse.modelbuilder.actionbuilder.DefinedActionTypes;
 import simse.modelbuilder.startstatebuilder.CreatedObjects;
 import simse.modelbuilder.startstatebuilder.SimSEObject;
+import simse.stylesheet.StyleSheetGenerator;
 import simse.modelbuilder.mapeditor.TileData;
 import simse.modelbuilder.mapeditor.UserData;
 
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.Scanner;
 
 import javax.lang.model.element.Modifier;
 import javax.swing.JOptionPane;
@@ -34,11 +56,6 @@ import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
 
-import javafx.application.Application;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.ButtonType;
-import javafx.stage.Stage;
 
 public class CodeGenerator {
 	public static boolean allowHireFire = false;
@@ -56,25 +73,84 @@ public class CodeGenerator {
   private ExplanatoryToolGenerator expToolGen; // generates the explanatory 
   																						 // tool
   private IDGeneratorGenerator idGen; // generates the IDGenerator
+  private RuleCategoriesGenerator ruleCateGen;
+  private RuleTypeGenerator ruleTypeGen;
+  
+  private CharacterIdleBackGenerator characterIdleBackGen;
+  private CharacterIdleFrontGenerator characterIdleFrontGen;
+  private CharacterIdleLeftGenerator characterIdleLeftGen;
+  private CharacterIdleRightGenerator characterIdleRightGen;
+  private CharacterWalkForwardGenerator characterWalkForwardGen;
+  private CharacterWalkLeftGenerator characterWalkLeftGen;
+  private CharacterWalkRightGenerator characterWalkRightGen;
+  private CharacterWalkBackGenerator characterWalkBackGen;
+  private CreatablePathGenerator creatablePathGen;
+  private DisplayableCharacterGenerator displayableCharacterGen;
+  private PathDataGenerator pathDataGen;
+  private SimSECharacterGenerator simSECharacterGen;
+  private SimSESpriteGenerator simSESpriteGen;
+  private SpriteAnimationGenerator spriteAnimGen;
+  private StyleSheetGenerator stylesGenerator;
 
   public CodeGenerator(ModelOptions options, DefinedObjectTypes objTypes, 
       CreatedObjects objs, DefinedActionTypes actTypes, 
       Hashtable<SimSEObject, String> stsObjsToImages, 
-      Hashtable<SimSEObject, String> ruleObjsToImages, TileData[][] map,
+      Hashtable<SimSEObject, String> ruleObjsToImages,
       ArrayList<UserData> userDatas) {
     this.options = options;
     stateGen = new StateGenerator(options, objTypes, actTypes);
     logicGen = new LogicGenerator(options, objTypes, actTypes);
     engineGen = new EngineGenerator(options, objs);
     guiGen = new GUIGenerator(options, objTypes, objs, actTypes, 
-        stsObjsToImages, ruleObjsToImages, map, userDatas);
+        stsObjsToImages, ruleObjsToImages, userDatas);
     expToolGen = new ExplanatoryToolGenerator(options, objTypes, objs, 
         actTypes);
     idGen = new IDGeneratorGenerator(options.getCodeGenerationDestinationDirectory());
+    ruleCateGen = new RuleCategoriesGenerator(options.getCodeGenerationDestinationDirectory(), actTypes);
+    ruleTypeGen = new RuleTypeGenerator(options.getCodeGenerationDestinationDirectory());
+    characterIdleBackGen = new CharacterIdleBackGenerator(options.getCodeGenerationDestinationDirectory());
+    characterIdleFrontGen = new CharacterIdleFrontGenerator(options.getCodeGenerationDestinationDirectory());
+    characterIdleLeftGen = new CharacterIdleLeftGenerator(options.getCodeGenerationDestinationDirectory());
+    characterIdleRightGen = new CharacterIdleRightGenerator(options.getCodeGenerationDestinationDirectory());
+    characterWalkForwardGen = new CharacterWalkForwardGenerator(options.getCodeGenerationDestinationDirectory());
+    characterWalkLeftGen = new CharacterWalkLeftGenerator(options.getCodeGenerationDestinationDirectory());
+    characterWalkRightGen = new CharacterWalkRightGenerator(options.getCodeGenerationDestinationDirectory());
+    characterWalkBackGen = new CharacterWalkBackGenerator(options.getCodeGenerationDestinationDirectory());
+    creatablePathGen = new CreatablePathGenerator(options.getCodeGenerationDestinationDirectory());
+    displayableCharacterGen = new DisplayableCharacterGenerator(options.getCodeGenerationDestinationDirectory());
+    pathDataGen = new PathDataGenerator(options.getCodeGenerationDestinationDirectory());
+    simSECharacterGen = new SimSECharacterGenerator(options.getCodeGenerationDestinationDirectory());
+    simSESpriteGen = new SimSESpriteGenerator(options.getCodeGenerationDestinationDirectory());
+    spriteAnimGen = new SpriteAnimationGenerator(options.getCodeGenerationDestinationDirectory());
+    stylesGenerator = new StyleSheetGenerator(options.getCodeGenerationDestinationDirectory());
   }
 
   public void setAllowHireFire(boolean b) {
     allowHireFire = false;
+  }
+  
+  public void createImageFiles() {	  
+	  try {
+		Files.copy(
+				  Paths.get("SimSEMap\\SimSESpriteSheet.png"),
+				  Paths.get(options.getCodeGenerationDestinationDirectory() + "\\" + "simse\\SimSEMap\\SimSESpriteSheet.png"),
+				  StandardCopyOption.REPLACE_EXISTING);
+	
+		  for(int i = 0; i <= 32; i++) {
+			  Files.copy(
+					  Paths.get("sprites\\character" + i + "cus_walk.png"),
+					  Paths.get(options.getCodeGenerationDestinationDirectory() + "\\" + "simse\\sprites\\character" + i + "cus_walk.png"),
+					  StandardCopyOption.REPLACE_EXISTING);	  
+		  }
+	  } catch (IOException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+	  
+	  
+
+	  
+
   }
 
   /*
@@ -201,6 +277,16 @@ public class CodeGenerator {
 	    }
 	    gui.mkdir();
 	    
+	    File guiUtil = new File(gui, "util");
+	    // if directory already exists, delete all files in it:
+	    if (guiUtil.exists() && guiUtil.isDirectory()) {
+	      File[] files = guiUtil.listFiles();
+	      for (File f : files) {
+	        f.delete();
+	      }
+	    }
+	    guiUtil.mkdir();
+	    
 	    File expTool = new File(simse, "explanatorytool");
 	    // if directory already exists, delete all files in it:
 	    if (expTool.exists() && expTool.isDirectory()) {
@@ -220,6 +306,34 @@ public class CodeGenerator {
 	      }
 	    }
 	    util.mkdir();
+	    
+	    File animation = new File(simse, "animation");
+	    // if directory already exists, delete all files in it:
+	    if (animation.exists() && animation.isDirectory()) {
+	    	File[] files = animation.listFiles();
+	    	for (File f : files) {
+	    		f.delete();
+	    	}
+	    }
+	    animation.mkdir();
+	    
+	    File map = new File(simse, "SimSEMap");
+	    if(map.exists() && map.isDirectory()) {
+	    	File[] files = map.listFiles();
+	    	for (File f : files) {
+	    		f.delete();
+	    	}
+	    }
+	    map.mkdir();
+	    
+	    File sprites = new File(simse, "sprites");
+	    if(sprites.exists() && sprites.isDirectory()) {
+	    	File[] files = sprites.listFiles();
+	    	for (File f : files) {
+	    		f.delete();
+	    	}
+	    }
+	    sprites.mkdir();
 	
 	    // generate main SimSE component:
 	    File ssFile = new File(options.getCodeGenerationDestinationDirectory(), 
@@ -227,129 +341,35 @@ public class CodeGenerator {
 	    if (ssFile.exists()) {
 	      ssFile.delete(); // delete old version of file
 	    }
-    	ClassName branch = ClassName.get("simse.explanatorytool", "Branch");
-    	ClassName simSEGui = ClassName.get("simse.gui", "SimSEGUI");
-    	ClassName arrayList = ClassName.get("java.util", "ArrayList");
-    	ClassName multipleTimelinesBrowser = ClassName.get("simse.explanatorytool", "MultipleTimelinesBrowser");
-    	ClassName engineClass = ClassName.get("simse.engine", "Engine");
-    	ClassName stateClass = ClassName.get("simse.state", "State");
-    	ClassName logicClass = ClassName.get("simse.logic", "Logic");
-    	ClassName ruleCategories = ClassName.get("simse.util", "RuleCategories");
-    	TypeName listOfBranches = ParameterizedTypeName.get(arrayList, branch);
-    	TypeName listOfGuis = ParameterizedTypeName.get(arrayList, simSEGui);
-    	TypeName stringArray = ArrayTypeName.get(String.class);
+	    
+	    File mapFile = new File(options.getCodeGenerationDestinationDirectory(),
+	    		("simse\\SimSEMap\\SimSESpriteSheet.png"));
+	    if (mapFile.exists()) {
+	    	mapFile.delete();
+	    }
+	    
+	    File stylesheetFile = new File(options.getCodeGenerationDestinationDirectory(), "styles.css");
+	    if(stylesheetFile.exists()) {
+	    	stylesheetFile.delete();
+	    }
+	    
+//	    try {
+//			mapFile.createNewFile();
+//		} catch (IOException e1) {
+//			// TODO Auto-generated catch block
+//			e1.printStackTrace();
+//		}
     	
-    	FieldSpec branches = FieldSpec.builder(listOfBranches, "branches")
-    		    .addModifiers(Modifier.PRIVATE, Modifier.STATIC)
-    		    .initializer("new $T()", listOfBranches)
-    		    .build();
-    	
-    	FieldSpec guis = FieldSpec.builder(listOfGuis, "guis")
-    		    .addModifiers(Modifier.PRIVATE, Modifier.STATIC)
-    		    .initializer("new $T()", listOfGuis)
-    		    .build();
-    	
-    	FieldSpec timelinesBrowser = FieldSpec.builder(multipleTimelinesBrowser, "timelinesBrowser")
-    		    .addModifiers(Modifier.PRIVATE, Modifier.STATIC)
-    		    .initializer("new $T()", multipleTimelinesBrowser)
-    		    .build();
-    	
-    	FieldSpec engineField = FieldSpec.builder(engineClass, "engine")
-    		    .addModifiers(Modifier.PRIVATE, Modifier.STATIC)
-    		    .build();
-    	
-    	MethodSpec startNewBranch = MethodSpec.methodBuilder("startNewBranch")
-    			.addModifiers(Modifier.PUBLIC, Modifier.STATIC)
-    			.returns(void.class)
-    			.addParameter(stateClass, "state")
-    			.addParameter(branch, "branch")
-    			.beginControlFlow("for (int i = 0; i < $N.size(); i++)", branches)
-    			.beginControlFlow("if (branch.getName().equals($N.get(i).getName()))", branches)
-    			.addStatement("$T alert = new $T($T.ERROR, $S, $T.OK)", Alert.class, Alert.class,
-    					AlertType.class, "Please choose a unique name for your new branch", ButtonType.class)
-    			.addStatement("alert.showAndWait()")
-    			.addStatement("return")
-    		    .endControlFlow()
-    		    .endControlFlow()
-    		    .addStatement("$T logic = new $T(state)", logicClass, logicClass)
-    		    .addStatement("$N = new $T(logic, state)", engineField, engineClass)
-    		    .addStatement("$T gui = new $T($N, state, logic, branch, $N)", simSEGui,
-    		    		simSEGui, engineField, timelinesBrowser)
-    		    .addStatement("state.getClock().setGUI(gui)")
-    		    .addStatement("gui.setX(0)")
-    		    .addStatement("gui.setY(0)")
-    		    .addStatement("gui.setWidth(1180))")
-    		    .addStatement("gui.setHeight(720)")
-    		    .addStatement("$T.initializeRuleCategories()", ruleCategories)
-    		    .addStatement("$N.giveGUI(gui)", engineField)
-    		    .addStatement("logic.getTriggerChecker().update(false, gui)")
-    		    .addStatement("$N.add(branch)", branches)
-    		    .addStatement("$N.add(gui)", guis)
-    		    .addStatement("$N.update()", timelinesBrowser)
-    			.build();
-    	
-    	MethodSpec getBranches = MethodSpec.methodBuilder("getBranches")
-    			.addModifiers(Modifier.PUBLIC, Modifier.STATIC)
-    			.returns(listOfBranches)
-    			.addStatement("returns $N", branches)
-    			.build();
-    			
-    	MethodSpec getNumOpenBranches = MethodSpec.methodBuilder("getNumOpenBranches")
-    			.addModifiers(Modifier.PUBLIC, Modifier.STATIC)
-    			.returns(int.class)
-    			.addStatement("$T numOpen = 0", int.class)
-    			.beginControlFlow("for ($T b : $N)", branch, branches)
-    			.beginControlFlow("if (!b.isClosed())")
-    			.addStatement("numOpen++")
-    			.endControlFlow()
-    			.endControlFlow()
-    			.addStatement("return numOpen")
-    			.build();
-    	
-    	MethodSpec getGUIs = MethodSpec.methodBuilder("getGUIs")
-    			.addModifiers(Modifier.PUBLIC, Modifier.STATIC)
-    			.returns(listOfGuis)
-    			.addStatement("returns $N", guis)
-    			.build();
-    	
-    	MethodSpec main = MethodSpec.methodBuilder("main")
-    			.addModifiers(Modifier.PUBLIC, Modifier.STATIC)
-    			.returns(void.class)
-    			.addParameter(stringArray, "args")
-    			.addStatement("launch(args)")
-    			.build();
-    	
-    	MethodSpec start = MethodSpec.methodBuilder("start")
-    			.addModifiers(Modifier.PUBLIC)
-    			.returns(void.class)
-    			.addParameter(Stage.class, "arg0")
-    			.addException(Exception.class)
-    			.addStatement("startNewBranch(new $T(), new $T(null, 0, 0, null, $S))",
-    					stateClass, branch, "")
-    			.build();
-    	
-    	TypeSpec simSE = TypeSpec.classBuilder("SimSE")
-    			.superclass(Application.class)
-    			.addModifiers(Modifier.PUBLIC)
-    			.addField(branches)
-    			.addField(guis)
-    			.addField(timelinesBrowser)
-    			.addField(engineField)
-    			.addMethod(startNewBranch)
-    			.addMethod(getBranches)
-    			.addMethod(getNumOpenBranches)
-    			.addMethod(getGUIs)
-    			.addMethod(main)
-    			.addMethod(start)
-    			.build();
-		
-		JavaFile javaFile = JavaFile.builder("simse", simSE)
-			    .build();
+//    	File spriteFile = new File(options.getCodeGenerationDestinationDirectory(), "sprites");
 
 	    try {
 	    	FileWriter writer = new FileWriter(ssFile);
-	    	
-			javaFile.writeTo(writer);
+  	      FileReader reader = new FileReader("resources\\SimSE.txt");
+  	      Scanner s = new Scanner(reader);
+  	      
+  	      while (s.hasNextLine()) {
+  	      	  writer.write(s.nextLine() + "\n");
+  	      }
 			writer.close();
 	    } catch (IOException e) {
 	      JOptionPane.showMessageDialog(null, ("Error writing file "
@@ -364,6 +384,24 @@ public class CodeGenerator {
 	    boolean guiGenSuccess = guiGen.generate();
 	    expToolGen.generate();
 	    idGen.generate();
+	    ruleCateGen.generate();
+	    ruleTypeGen.generate();
+	    characterIdleBackGen.generate();
+	    characterIdleFrontGen.generate();
+	    characterIdleLeftGen.generate();
+	    characterIdleRightGen.generate();
+	    characterWalkForwardGen.generate();
+	    characterWalkLeftGen.generate();
+	    characterWalkRightGen.generate();
+	    characterWalkBackGen.generate();
+	    creatablePathGen.generate();
+	    displayableCharacterGen.generate();
+	    pathDataGen.generate();
+	    simSECharacterGen.generate();
+	    simSESpriteGen.generate();
+	    spriteAnimGen.generate();
+	    stylesGenerator.generate();
+	    this.createImageFiles();
 	    if (logicGenSuccess && guiGenSuccess) {
 	      JOptionPane.showMessageDialog(null, "Simulation generated!",
 	          "Generation Successful", JOptionPane.INFORMATION_MESSAGE);

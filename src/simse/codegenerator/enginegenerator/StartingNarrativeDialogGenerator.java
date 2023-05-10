@@ -52,18 +52,15 @@ public class StartingNarrativeDialogGenerator implements CodeGeneratorConstants 
 		ClassName stage = ClassName.get("javafx.stage", "Stage");
 		TypeName mouseHandler = ParameterizedTypeName.get(eventHandler, mouseEvent);
 
-		char[] startNarrChars = createdObjs.getStartingNarrative().replaceAll("\n", "\\\\n").replaceAll("\"", "\\\\\"")
+		char[] startNarrChars = createdObjs.getStartingNarrative().replaceAll("\"", "\\\"")
 				.toCharArray();
 		String dialogText = "";
 		for (int i = 0; i < startNarrChars.length; i++) {
-			if (startNarrChars[i] == '\n') {
-				dialogText += "\" + \'\\n\' + \"";
-			} else {
-				dialogText += startNarrChars[i];
-			}
+			dialogText += startNarrChars[i];
 		}
 
 		MethodSpec narrativeConstructor = MethodSpec.constructorBuilder()
+				.addModifiers(Modifier.PUBLIC)
 				.addStatement("this.initModality($T.APPLICATION_MODAL)", modality)
 				.addStatement("this.setTitle($S)", "Welcome!")
 				.addCode("$L", "\n")
@@ -127,7 +124,6 @@ public class StartingNarrativeDialogGenerator implements CodeGeneratorConstants 
 				snFile.delete(); // delete old version of file
 			}
 			FileWriter writer = new FileWriter(snFile);
-			System.out.println(javaFile.toString());
 			javaFile.writeTo(writer);
 			writer.close();
 		} catch (IOException e) {

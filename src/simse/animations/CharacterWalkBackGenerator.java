@@ -13,10 +13,10 @@ public class CharacterWalkBackGenerator {
 		this.dir = dir;
 	}
 
-	private void generate() throws IOException {
+	public void generate() {
 		// TODO Auto-generated method stub
 	    File characterWalkBackFile = new File(dir,
-	            ("animations\\CharacterWalkBack.java"));
+	            ("simse\\animation\\CharacterWalkBack.java"));
 	    
 	        if (characterWalkBackFile.exists()) {
 	        	characterWalkBackFile.delete(); // delete old version of file
@@ -24,7 +24,7 @@ public class CharacterWalkBackGenerator {
 		
 	    try {
 		
-		FileReader reader = new FileReader("C:\\Users\\localmgr\\git\\simse-redesign\\simse-redesign\\res\\static\\animations\\CharacterWalkBack.txt");
+		FileReader reader = new FileReader("res\\static\\animations\\CharacterWalkBack.txt");
 		FileWriter writer = new FileWriter(characterWalkBackFile);
 	
 		String fileContents = "";

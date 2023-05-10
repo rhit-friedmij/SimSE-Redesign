@@ -1,38 +1,45 @@
 package simse.gui;
 
+import java.util.HashMap;
+
 import javafx.scene.control.ScrollPane;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
+import simse.adts.objects.Employee;
 import simse.gui.util.JavaFXHelpers;
 import simse.state.State;
 
-public class TrackPanel extends Pane implements SimSEPanel {
+public class TrackPanel extends Pane implements SimSEPanel, Cloneable {
 	
 	VBox track;
 	ScrollPane scroll;
-	static TrackPanel instance = null;
+	private static HashMap<State, TrackPanel> instances = new HashMap<>();
+	private int lastTick;
 	
 	private TrackPanel() {
 		
 		VBox pane = new VBox();
 		HBox top = new HBox();
-		top.getChildren().add(JavaFXHelpers.createImageView("src/simse/gui/icons/track.png"));
-		top.getChildren().add(new Text("Track"));
-		top.setMaxHeight(50);
+		ImageView logo = JavaFXHelpers.createImageView("src/simse/gui/icons/track.png");
+		top.getChildren().add(logo);
+		top.setPrefHeight(10);
 		top.setPrefWidth(500);
-		top.setBackground(JavaFXHelpers.createBackgroundColor(Color.rgb(128, 128, 128)));
+		pane.setPrefHeight(300);
+		top.setBackground(JavaFXHelpers.createBackgroundColor(Color.rgb(74, 21, 75)));
 		
 		scroll = new ScrollPane();
 		track = new VBox();
+		track.setSpacing(6);
 		track.heightProperty().addListener(observable -> scroll.setVvalue(1D));
 		track.setBackground(JavaFXHelpers.createBackgroundColor(Color.rgb(217, 217, 217)));
 		scroll.setBackground(JavaFXHelpers.createBackgroundColor(Color.rgb(217, 217, 217)));
 		scroll.setContent(track);
-		scroll.setMaxHeight(100);
+		scroll.setPrefHeight(110);
 		scroll.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
 		scroll.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
 		scroll.setVvalue(1.0);
@@ -41,19 +48,54 @@ public class TrackPanel extends Pane implements SimSEPanel {
 		pane.getChildren().add(scroll);
 		
 		
-
+		this.setPrefHeight(400);
 		this.getChildren().add(pane);
+		lastTick = 0;
 	}
 	
-	public static TrackPanel getInstance() {
-		if (instance == null) {
-			instance = new TrackPanel();
+	public static TrackPanel getInstance(State s) {
+		return instances.get(s);
+	}
+	
+	public static void createInstance(State s) {
+		instances.put(s, new TrackPanel());
+	}
+	
+	public static void createInstance(State newState, State oldState) {
+		TrackPanel oldInstance = instances.get(oldState);
+		instances.put(newState, (TrackPanel) oldInstance);
+	}
+	
+	public void addText(State curState, String message, Object sender) {
+		int curTick = curState.getClock().getTime();
+		if (curTick > lastTick) {
+			TrackPanel curPanel = getInstance(curState);
+			TrackMessage tm = new TrackMessage(sender, message, curTick);
+			curPanel.addMessage(tm);
+			TrackPanel newPanel = (TrackPanel) curPanel.clone();
+			instances.put(curState, newPanel);
+			lastTick = curTick;
+		} else {
+			TrackPanel curPanel = getInstance(curState);
+			TrackMessage tm = new TrackMessage(sender, message, curTick);
+			curPanel.addMessage(tm);
 		}
-		return instance;
 	}
 	
-	public void addText(String message, String name) {
-		track.getChildren().add(new TrackMessage(name, message));
+	private void addMessage(TrackMessage tm) {
+		track.getChildren().add(tm);
+	}
+	
+	@Override
+	public Object clone() {
+		TrackPanel clone = new TrackPanel();
+		for (int i=0; i<track.getChildren().size(); i++) {
+			Object child = track.getChildren().get(i);
+			if (child instanceof TrackMessage) {
+				clone.addMessage((TrackMessage) ((TrackMessage) child).clone());
+			}
+		}
+		return clone;
 	}
 
 	@Override

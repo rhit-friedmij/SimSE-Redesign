@@ -11,15 +11,13 @@ import simse.modelbuilder.ModelOptions;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
-
 import javax.lang.model.element.Modifier;
-import javax.swing.JOptionPane;
-
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.CodeBlock;
+import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.MethodSpec;
+import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.TypeSpec;
 
 public class CompositeGraphGenerator implements CodeGeneratorConstants {
@@ -42,6 +40,8 @@ public class CompositeGraphGenerator implements CodeGeneratorConstants {
       ClassName jFreeChart = ClassName.get("org.jfree.chart", "JFreeChart");
       ClassName numberAxis = ClassName.get("org.jfree.chart.axis", "NumberAxis");
       ClassName chartViewer = ClassName.get("org.jfree.chart.fx", "ChartViewer");
+      ClassName mouseEvent = ClassName.get("javafx.scene.input", "MouseEvent");
+      ClassName mouseButton = ClassName.get("javafx.scene.input", "MouseButton");
       ClassName chartMouseEventFX = ClassName.get("org.jfree.chart.fx.interaction", "ChartMouseEventFX");
       ClassName chartMouseListenerFX = ClassName.get("org.jfree.chart.fx.interaction", "ChartMouseListenerFX");
       ClassName combinedDomainXYPlot = ClassName.get("org.jfree.chart.plot", "CombinedDomainXYPlot");
@@ -54,7 +54,6 @@ public class CompositeGraphGenerator implements CodeGeneratorConstants {
       ClassName scene = ClassName.get("javafx.scene", "Scene");
       ClassName menuItem = ClassName.get("javafx.scene.control", "MenuItem");
       ClassName separatorMenuItem = ClassName.get("javafx.scene.control", "SeparatorMenuItem");
-      ClassName textInput = ClassName.get("javafx.scene.control", "TextInputDialog");
       ClassName objectGraph = ClassName.get("simse.explanatorytool", "ObjectGraph");
       ClassName actionGraph = ClassName.get("simse.explanatorytool", "ActionGraph");
       ClassName branch = ClassName.get("simse.explanatorytool", "Branch");
@@ -68,10 +67,11 @@ public class CompositeGraphGenerator implements CodeGeneratorConstants {
   	  ClassName clock = ClassName.get("simse.state", "Clock");
   	  ClassName logger = ClassName.get("simse.state.logger", "Logger");
   	  ClassName simse = ClassName.get("simse", "SimSE");
-
-     
-      
+  	  ClassName stage = ClassName.get("javafx.stage", "Stage");
+  	  ClassName range = ClassName.get("org.jfree.data", "Range");
+  	  
       MethodSpec constructor = MethodSpec.constructorBuilder()
+    		  .addModifiers(Modifier.PUBLIC)
     		  .addParameter(objectGraph, "objGraph")
     		  .addParameter(actionGraph, "actGraph")
     		  .addParameter(branch, "branch")
@@ -107,49 +107,53 @@ public class CompositeGraphGenerator implements CodeGeneratorConstants {
     		  .addStatement("show()")
     		  .build();
       
-
+      	ClassName math = ClassName.get("java.lang", "Math");
+      	
+      	CodeBlock rightClick = null;
     
-    	String rightClickBlock = "";
     	if (options.getAllowBranchingOption()) {
-	    	rightClickBlock += "if (me.getButton() != MouseEvent.BUTTON1) { // not left-click\n";
-	    	rightClickBlock += "XYPlot plot = chart.getXYPlot();\n";
-	    	rightClickBlock += "Range domainRange = plot.getDataRange(plot.getDomainAxis());\n";
-	    	rightClickBlock += "if (domainRange != null) { // chart is not blank\\n";
-	    	rightClickBlock += "javafx.geometry.Point2D pt = chartViewer.localToScreen(event.getScreenX(), event.getScreenY());\n";
-	    	rightClickBlock += "ChartRenderingInfo info = this.chartViewer.getRenderingInfo();\n";
-	    	rightClickBlock += "java.awt.geom.Rectangle2D dataArea = info.getPlotInfo().getDataArea();\n";
-	    	rightClickBlock += "NumberAxis domainAxis = (NumberAxis) plot.getDomainAxis();\n";
-	    	rightClickBlock += "RectangleEdge domainAxisEdge = plot.getDomainAxisEdge();\n";
-	    	rightClickBlock += "double chartX = domainAxis.java2DToValue(pt.getX(), dataArea, domainAxisEdge);\n";
-	    	rightClickBlock += "lastRightClickedX = (int) Math.rint(chartX);\n";
-	    	rightClickBlock += "if (domainRange != null && lastRightClickedX >= domainRange.getLowerBound() && lastRightClickedX <= domainRange.getUpperBound()) { // clicked within domain range\n";
-	    	rightClickBlock += "if ((chartViewer).getContextMenu().getItems().indexOf(\r\n" + 
-	    			"							newBranchItem) == -1) { // no new branch item on\r\n" + 
-	    			"													// menu currently\n";
-	    	rightClickBlock += "chartViewer.getContextMenu().getItems().add(separator);\n";
-	    	rightClickBlock += "chartViewer.getContextMenu().getItems().add(newBranchItem);\n";
-	    	rightClickBlock += "}\n";
-	    	rightClickBlock += "else { // clicked outside of domain range\n";
-	    	rightClickBlock += "if (chartViewer.getContextMenu().getItems().indexOf(newBranchItem) >= 0) { // new branch item currently\r\n" + 
-	    			"													// on menu";
-	    	rightClickBlock += "chartViewer.getContextMenu().getItems().remove(newBranchItem);\n";
-	    	rightClickBlock += "if (chartViewer.getContextMenu().getItems().indexOf(\r\n" + 
-	    			"								separator) >= 0) { // has separator";
-	    	rightClickBlock += "chartViewer.getContextMenu().getItems().remove(separator);";
-	    	rightClickBlock += "}\n";
-	    	rightClickBlock += "}\n";
-	    	rightClickBlock += "}\n";
-	    	rightClickBlock += "}\n";
-	    	rightClickBlock += "}\n";
+    		rightClick = CodeBlock.builder()
+    				.beginControlFlow("if (event.getButton() != $T.PRIMARY)", mouseButton)
+    				.addStatement("$T plot = chart.getXYPlot()", xyPlot)
+    				.addStatement("$T domainRange = plot.getDataRange(plot.getDomainAxis())", range)
+    				.beginControlFlow("if (domainRange != null)")
+    				.addStatement("javafx.geometry.Point2D pt = chartViewer.localToScreen(event.getScreenX(), event.getScreenY())")
+    				.addStatement("$T info = this.chartViewer.getRenderingInfo()", chartRenderingInfo)
+    				.addStatement("java.awt.geom.Rectangle2D dataArea = info.getPlotInfo().getDataArea()")
+    				.addStatement("$T domainAxis = ($T) plot.getDomainAxis()", numberAxis, numberAxis)
+    				.addStatement("$T domainAxisEdge = plot.getDomainAxisEdge()", rectangleEdge)
+    				.addStatement("double chartX = domainAxis.java2DToValue(pt.getX(), dataArea, domainAxisEdge)")
+    				.addStatement("lastRightClickedX = ($T) $T.rint(chartX)", int.class, math)
+    				.beginControlFlow("if (domainRange != null && lastRightClickedX >= domainRange.getLowerBound() && lastRightClickedX <= domainRange.getUpperBound())")
+    				.beginControlFlow("if ((chartViewer).getContextMenu().getItems().indexOf(newBranchItem) == -1)")
+    				.addStatement("chartViewer.getContextMenu().getItems().add(separator)")
+    				.addStatement("chartViewer.getContextMenu().getItems().add(newBranchItem)")
+    				.endControlFlow()
+    				.beginControlFlow("else")
+    				.beginControlFlow("if (chartViewer.getContextMenu().getItems().indexOf(newBranchItem) >= 0)")
+    				.addStatement("chartViewer.getContextMenu().getItems().remove(newBranchItem)")
+    				.beginControlFlow("if (chartViewer.getContextMenu().getItems().indexOf(separator) >= 0)")
+    				.addStatement("chartViewer.getContextMenu().getItems().remove(separator)")
+    				.endControlFlow()
+    				.endControlFlow()
+    				.endControlFlow()
+    				.endControlFlow()
+    				.endControlFlow()
+    				.build();
+    	} 
+    	else  {
+    		rightClick = CodeBlock.builder().build();
     	}
 
 	MethodSpec update = MethodSpec.methodBuilder("update")
+			.addModifiers(Modifier.PUBLIC)
 			.returns(void.class)
 			.addStatement(CodeBlock.builder().add("actGraph.update()").build())
 			.addStatement(CodeBlock.builder().add("objGraph.update()").build())
 			.build();
 	
 	MethodSpec handle = MethodSpec.methodBuilder("handle")
+			.addModifiers(Modifier.PUBLIC)
 			.addParameter(actionEvent, "event")
 			.addStatement("$T source = event.getSource()", object)
 			.beginControlFlow("if (source == newBranchItem)")
@@ -170,44 +174,46 @@ public class CompositeGraphGenerator implements CodeGeneratorConstants {
 			.endControlFlow()
 			.build();
 	
-	TypeSpec anonHandleClass = TypeSpec.anonymousClassBuilder("")
-  		  .addField(String.class, "newBranchName")
+	TypeSpec anonHandleClass = TypeSpec.anonymousClassBuilder("", eventHandlerClass, actionEvent)
+			.addSuperinterface(ParameterizedTypeName.get(eventHandlerClass, actionEvent))
+			.addField(String.class, "newBranchName", Modifier.PRIVATE)
             .addMethod(handle)
             .build();
 	
 	MethodSpec chartMouseClicked = MethodSpec.methodBuilder("chartMouseClicked")
+			.addModifiers(Modifier.PUBLIC)
 			.addParameter(chartMouseEventFX, "me")
-			.addStatement("MouseEvent event = me.getTrigger()")
-			.addCode(rightClickBlock)
+			.addStatement("$T event = me.getTrigger()", mouseEvent)
+			.addCode(rightClick)
 			.beginControlFlow("else ")
 			.addStatement("actGraph.chartMouseClicked(me)")
 			.endControlFlow()
+			.endControlFlow()
 			.build();
 	
-	TypeSpec eventHandler = TypeSpec.classBuilder("menuEvent")
-  .addModifiers(Modifier.PRIVATE)
-  .addStaticBlock(CodeBlock.builder()
-  .addStatement("private $T<$T> menuEvent = new $T<$T>() $L",
-                eventHandlerClass,
-                actionEvent,
-                eventHandlerClass,
-                actionEvent,
-                anonHandleClass).build())
-  .build();
+	MethodSpec chartMouseMoved = MethodSpec.methodBuilder("chartMouseMoved")
+			.addModifiers(Modifier.PUBLIC)
+			.addParameter(chartMouseEventFX, "me")
+			.build();
 	
 	TypeSpec compositeGraph = TypeSpec.classBuilder("CompositeGraph")
-			.addField(actionGraph, "actGraph")
-			.addField(objectGraph, "objGraph")
-			.addField(jFreeChart, "chart")
-			.addField(chartViewer, "chartViewer")
-			.addField(int.class, "lastRightClickedX")
-			.addField(menuItem, "newBranchItem")
-			.addField(separatorMenuItem, "separator")
-			.addField(branch, "branch")
-			.addType(eventHandler)
+			.addModifiers(Modifier.PUBLIC)
+			.superclass(stage)
+			.addSuperinterface(chartMouseListenerFX)
+			.addField(actionGraph, "actGraph", Modifier.PRIVATE)
+			.addField(objectGraph, "objGraph", Modifier.PRIVATE)
+			.addField(jFreeChart, "chart", Modifier.PRIVATE)
+			.addField(chartViewer, "chartViewer", Modifier.PRIVATE)
+			.addField(int.class, "lastRightClickedX", Modifier.PRIVATE)
+			.addField(menuItem, "newBranchItem", Modifier.PRIVATE)
+			.addField(separatorMenuItem, "separator", Modifier.PRIVATE)
+			.addField(branch, "branch",Modifier.PRIVATE)
+			.addField(FieldSpec.builder(ParameterizedTypeName.get(eventHandlerClass, actionEvent), "menuEvent", Modifier.PRIVATE)
+					.initializer("$L", anonHandleClass).build())
 			.addMethod(constructor)
 			.addMethod(update)
 			.addMethod(chartMouseClicked)
+			.addMethod(chartMouseMoved)
 			.build();
 			
 

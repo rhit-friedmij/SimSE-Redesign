@@ -20,8 +20,10 @@ import simse.modelbuilder.actionbuilder.ActionTypeParticipantTrigger;
 import simse.modelbuilder.actionbuilder.ActionTypeTrigger;
 import simse.modelbuilder.actionbuilder.AttributeGuard;
 import simse.modelbuilder.actionbuilder.DefinedActionTypes;
+import simse.modelbuilder.actionbuilder.TimedActionTypeDestroyer;
 import simse.modelbuilder.actionbuilder.UserActionTypeDestroyer;
 import simse.modelbuilder.actionbuilder.UserActionTypeTrigger;
+import simse.modelbuilder.objectbuilder.Attribute;
 import simse.modelbuilder.objectbuilder.AttributeTypes;
 import simse.modelbuilder.objectbuilder.DefinedObjectTypes;
 import simse.modelbuilder.objectbuilder.SimSEObjectType;
@@ -113,7 +115,7 @@ public class MenuInputManagerGenerator implements CodeGeneratorConstants {
 				.addStatement("trigChecker = t")
 				.addStatement("destChecker = d")
 				.addStatement("ruleExec = r")
-				.addStatement("mello = $T.getInstance()", melloPanel)
+				.addStatement("mello = $T.getInstance($N)", melloPanel, "state")
 				.build();
 
 		MethodSpec itemSelected = MethodSpec.methodBuilder("menuItemSelected")
@@ -137,7 +139,7 @@ public class MenuInputManagerGenerator implements CodeGeneratorConstants {
 				.endControlFlow()
 				.addComment("update all employees' menus:")
 				.addStatement("$T allEmps = state.getEmployeeStateRepository().getAll()", allEmps)
-				.beginControlFlow("for (int i = 0; i < allEmps.size(); i++) {")
+				.beginControlFlow("for (int i = 0; i < allEmps.size(); i++)")
 				.addStatement("allEmps.elementAt(i).clearMenu()")
 				.endControlFlow()
 				.addComment("update trigger checker:")
@@ -169,7 +171,6 @@ public class MenuInputManagerGenerator implements CodeGeneratorConstants {
 				mimFile.delete(); // delete old version of file
 			}
 			FileWriter writer = new FileWriter(mimFile);
-			System.out.println(javaFile.toString());
 			javaFile.writeTo(writer);
 			writer.close();
 		} catch (IOException e) {
@@ -323,7 +324,7 @@ public class MenuInputManagerGenerator implements CodeGeneratorConstants {
 
 					lambda.addStatement("b" + j + ".remove" + tempPart.getName() + "(emp)");
 					if ((outerDest.getDestroyerText() != null) && (outerDest.getDestroyerText().length() > 0)) {
-						lambda.addStatement("emp.setOverheadText($S)", outerDest.getDestroyerText());
+						lambda.addStatement("emp.setOverheadText($S, $N)", outerDest.getDestroyerText(), "state");
 					}
 					
 					int bound = 0;
@@ -339,12 +340,12 @@ public class MenuInputManagerGenerator implements CodeGeneratorConstants {
 					lambda.beginControlFlow("if (d$L instanceof $T)", j, employee);
 					
 					if ((outerDest.getDestroyerText() != null) && (outerDest.getDestroyerText().length() > 0)) {
-						lambda.addStatement("(($T) d$L).setOverheadText($S)", employee, j, outerDest.getDestroyerText());
+						lambda.addStatement("(($T) d$L).setOverheadText($S, $N)", employee, j, outerDest.getDestroyerText(), "state");
 					}
 					lambda.nextControlFlow("else if (d$L instanceof $T)", j, customer);
 					
 					if ((outerDest.getDestroyerText() != null) && (outerDest.getDestroyerText().length() > 0)) {
-						lambda.addStatement("(($T) d$L).setOverheadText($S)", customer, j, outerDest.getDestroyerText());
+						lambda.addStatement("(($T) d$L).setOverheadText($S, $N)", customer, j, outerDest.getDestroyerText(), "state");
 					}
 					lambda.endControlFlow();
 					lambda.endControlFlow();
@@ -389,25 +390,25 @@ public class MenuInputManagerGenerator implements CodeGeneratorConstants {
 							lambda.addStatement("$T t$L = ($T)(t111$L.getAll" + scoringPartVarName + "().elementAt(0))"
 									, scoringPartConstObjName, j, scoringPartConstObjName, j);
 							lambda.beginControlFlow("if (t$L != null)", j);
-							ClassName scoreType = null;
+							Class scoreType = null;
 							if (scoringAttConst.getAttribute().getType() == AttributeTypes.INTEGER) {
-								scoreType = ClassName.get(int.class);
+								scoreType = int.class;
 							} else if (scoringAttConst.getAttribute().getType() == AttributeTypes.DOUBLE) {
-								scoreType = ClassName.get(double.class);
+								scoreType = double.class;
 							} else if (scoringAttConst.getAttribute().getType() == AttributeTypes.STRING) {
-								scoreType = ClassName.get(String.class);
+								scoreType = String.class;
 							} else if (scoringAttConst.getAttribute().getType() == AttributeTypes.BOOLEAN) {
-								scoreType = ClassName.get(boolean.class);
+								scoreType = boolean.class;
 							}
 							lambda.addStatement("$T v$L = t$L.get" + scoringAttConst.getAttribute().getName() + "()", scoreType, j, j);
 							lambda.addStatement("state.getClock().stop()");
 							lambda.addStatement("state.setScore(v$L)", j);
-							lambda.addStatement("(($T)gui).update()", simseGui);
+							lambda.addStatement("(($T)parent).update()", simseGui);
 							lambda.addStatement("$T d = new $T($T.INFORMATION)", alert, alert, alertType);
 							lambda.addStatement("d.setContentText(($S + v$L))", "Your score is ", j);
 							lambda.addStatement("d.setTitle($S)", "Game over!");
 							lambda.addStatement("d.setHeaderText(null)");
-							lambda.addStatement("d.showAndWait()");
+							lambda.addStatement("d.show()");
 							lambda.endControlFlow();
 							lambda.endControlFlow(); // game ending if condition
 						}
@@ -541,15 +542,12 @@ public class MenuInputManagerGenerator implements CodeGeneratorConstants {
 							ifCondition += " && (a.get"
 									+ CodeGeneratorUtils.getUpperCaseLeading(attConst.getAttribute().getName())
 									+ "() ";
-							if (attConst.getGuard().equals(AttributeGuard.EQUALS)) {
-								ifCondition += "== ";
+							if (attConst.getGuard().equals(AttributeGuard.EQUALS) && attConst.getAttribute().getType() == AttributeTypes.STRING) {
+								ifCondition += ".equals(\"" + attConst.getValue().toString() + "\")";
+							} else if (attConst.getGuard().equals(AttributeGuard.EQUALS)) {
+								ifCondition += "== " + attConst.getValue().toString();
 							} else {
-								ifCondition += attConst.getGuard() + " ";
-							}
-							if (attConst.getAttribute().getType() == AttributeTypes.STRING) {
-								ifCondition += "\"" + attConst.getValue().toString() + "\")";
-							} else {
-								ifCondition += attConst.getValue().toString();
+								ifCondition += attConst.getGuard() + " " + attConst.getValue().toString();
 							}
 							ifCondition += ")";
 						}
@@ -596,6 +594,10 @@ public class MenuInputManagerGenerator implements CodeGeneratorConstants {
 			for (int j = 0; j < triggers.size(); j++) {
 				ActionTypeParticipantTrigger trig = triggers.elementAt(j);
 				ActionTypeParticipant part = trig.getParticipant();
+				if(actType.equals("Fire"))
+				{
+					effectCode3.addStatement("selectedEmp.getCharacterModel().stopActions()");
+				}
 				effectCode3.addStatement("d.add(" + part.getName().toLowerCase() + "s" + j + ")");
 			}
 			effectCode3.addStatement("$T f = new $T()", actName, actName);
@@ -653,14 +655,61 @@ public class MenuInputManagerGenerator implements CodeGeneratorConstants {
 				ActionTypeParticipantTrigger trig = triggers.elementAt(j);
 				ActionTypeParticipant tempPart = trig.getParticipant();
 				if (tempPart.getSimSEObjectTypeType() == SimSEObjectTypeTypes.EMPLOYEE) {
-					effectCode1.addStatement("if ((c.getAll$Ls().contains(selectedEmp) == false) "
+					effectCode1.beginControlFlow("if ((c.getAll$Ls().contains(selectedEmp) == false) "
 							+ "&& (b.contains(c) == false))", tempPart.getName());
 					effectCode1.addStatement("b.add(c)");
+					effectCode1.endControlFlow();
 				}
 			}
 
 			effectCode1.endControlFlow();
 			effectCode1.addStatement("new $T(parent, b, selectedEmp, state, $S, ruleExec)", chooseActionToJoinDialog, outerTrig.getMenuText());
+			// TODO: Figure out how to add Employees but only when it's a join conditional and a continuous action so not
+			// game-ending or instant things like firing or changing pay rates
+			// Go back through triggers?
+			if (!act.hasGameEndingTrigger() && !act.hasGameEndingDestroyer()) {
+				boolean instantAct = false;
+				if (act.hasDestroyerOfType(ActionTypeDestroyer.TIMED)) {
+					Vector<ActionTypeDestroyer> dests = act.getAllDestroyers();
+					for (int j = 0; j < dests.size(); j++) {
+						ActionTypeDestroyer currDest = dests.elementAt(j);
+						if (currDest instanceof TimedActionTypeDestroyer) {
+							if (((TimedActionTypeDestroyer) currDest).getTime() < 2) {
+								instantAct = true;
+								break;
+							}
+						}
+					}
+				}
+				if (!instantAct) {
+					for (int j = 0; j < triggers.size(); j++) {
+						ActionTypeParticipantTrigger trig = triggers.elementAt(j);
+						ActionTypeParticipant tempPart = trig.getParticipant();
+						Vector<SimSEObjectType> objTypes = tempPart.getAllSimSEObjectTypes();
+						int objMetaType = tempPart.getSimSEObjectTypeType();
+						
+						if (objMetaType == SimSEObjectTypeTypes.EMPLOYEE) { 
+							for (int k = 0; k < objTypes.size(); k++) {
+								SimSEObjectType sObjType = objTypes.get(k);
+								String currObjTypeName = sObjType.getName();
+								String uCaseObjTypeName = CodeGeneratorUtils.getUpperCaseLeading(currObjTypeName);
+								ClassName currObjType = ClassName.get("simse.adts.objects", uCaseObjTypeName);
+								if (k == 0) {
+									effectCode1.beginControlFlow("if (selectedEmp instanceof $T)", currObjType);
+								} else {
+									effectCode1.nextControlFlow("else if (selectedEmp instanceof $T)", currObjType);
+								}
+								
+								Attribute keyAttribute = sObjType.getKey();
+								String keyName = keyAttribute.getName();
+								if (k == objTypes.size() - 1) {
+									effectCode1.endControlFlow();
+								}
+							}
+						}
+					}
+				}
+			}
 			effectCode.add(effectCode1.build());
 		}
 		
@@ -673,7 +722,11 @@ public class MenuInputManagerGenerator implements CodeGeneratorConstants {
 	    	ClassName actName = ClassName.get("simse.adts.actions", actTypeName);
 	    	TypeName vectorOfActTypes = ParameterizedTypeName.get(vector, actName);
 			
-			effectCode.nextControlFlow("else if (itemText.equals($S))", outerDest.getMenuText());
+			if (userTrigs.size() == 0) {
+				effectCode.beginControlFlow("if (itemText.equals($S))", outerDest.getMenuText());
+			} else {
+				effectCode.nextControlFlow("else if (itemText.equals($S))", outerDest.getMenuText());
+			}
 			effectCode.addStatement("$T allActions = state.getActionStateRepository().get"
 					+ actTypeName + "StateRepository().getAllActions()", vectorOfActTypes);
 			effectCode.addStatement("int a = 0");
@@ -683,7 +736,7 @@ public class MenuInputManagerGenerator implements CodeGeneratorConstants {
 			effectCode.addStatement("a++");
 			effectCode.endControlFlow();
 			effectCode.endControlFlow();
-			effectCode.beginControlFlow("if (a == 1) {");
+			effectCode.beginControlFlow("if (a == 1)");
 			effectCode.beginControlFlow("for (int i = 0; i < allActions.size(); i++)");
 			effectCode.addStatement("$T b = allActions.elementAt(i)", actName);
 			
@@ -700,7 +753,32 @@ public class MenuInputManagerGenerator implements CodeGeneratorConstants {
 				if (objMetaType == SimSEObjectTypeTypes.EMPLOYEE) { 
 					// participant is of employee type
 					// TODO: Figure out how to get the key attribute for each employee type, this should be objType not MetaType
-					effectCode.addStatement("mello.removeEmployeeFromTask($S, (($T)selectedEmp).getName())", actType, metaType);
+					// ActionTypeParticipant has Vector<SimSEObjectType>
+					// SimSEObjectType has getKeyAttribute
+					// Attribute has getName
+					// Need to figure out which SimSEObjectType is the current participant
+					
+					Vector<SimSEObjectType> objTypes = tempPart.getAllSimSEObjectTypes();
+					String objTypeName = "";
+					for (int i = 0; i < objTypes.size(); i++) {
+						SimSEObjectType sObjType = objTypes.get(i);
+						String currObjTypeName = sObjType.getName();
+						String uCaseObjTypeName = CodeGeneratorUtils.getUpperCaseLeading(currObjTypeName);
+						ClassName currObjType = ClassName.get("simse.adts.objects", uCaseObjTypeName);
+						if (i == 0) {
+							effectCode.beginControlFlow("if (selectedEmp instanceof $T)", currObjType);
+						} else {
+							effectCode.nextControlFlow("else if (selectedEmp instanceof $T)", currObjType);
+						}
+						
+						Attribute keyAttribute = sObjType.getKey();
+						String keyName = keyAttribute.getName();
+						effectCode.addStatement("mello.removeEmployeeFromTask(b, selectedEmp)");
+						if (i == objTypes.size() - 1) {
+							effectCode.endControlFlow();
+						}
+					}
+					
 					effectCode.beginControlFlow("if (b.getAll" + objName + "s().contains(selectedEmp))");
 
 					// execute all destroyer rules that have executeOnJoins == true:
@@ -714,7 +792,7 @@ public class MenuInputManagerGenerator implements CodeGeneratorConstants {
 
 					effectCode.addStatement("b.remove$L(selectedEmp)", objName);
 					if ((outerDest.getDestroyerText() != null) && (outerDest.getDestroyerText().length() > 0)) {
-						effectCode.addStatement("selectedEmp.setOverheadText($S)", outerDest.getDestroyerText());
+						effectCode.addStatement("selectedEmp.setOverheadText($S, $N)", outerDest.getDestroyerText(), "state");
 					}
 					
 					int bound = 0;
@@ -732,12 +810,12 @@ public class MenuInputManagerGenerator implements CodeGeneratorConstants {
 					effectCode.beginControlFlow("if (d instanceof $T)", employee);
 					
 					if ((outerDest.getDestroyerText() != null) && (outerDest.getDestroyerText().length() > 0)) {
-						effectCode.addStatement("(($T) d).setOverheadText($S)", employee, outerDest.getDestroyerText());
+						effectCode.addStatement("(($T) d).setOverheadText($S, $N)", employee, outerDest.getDestroyerText(), "state");
 					}
 					
-					effectCode.addStatement("else if (d instanceof $T)", customer);
+					effectCode.nextControlFlow("else if (d instanceof $T)", customer);
 					if ((outerDest.getDestroyerText() != null) && (outerDest.getDestroyerText().length() > 0)) {
-						effectCode.addStatement("(($T) d).setOverheadText($S)", customer, outerDest.getDestroyerText());
+						effectCode.addStatement("(($T) d).setOverheadText($S, $N)", customer, outerDest.getDestroyerText(), "state");
 					}
 					effectCode.endControlFlow();
 					effectCode.endControlFlow();
@@ -782,25 +860,25 @@ public class MenuInputManagerGenerator implements CodeGeneratorConstants {
 									, scoringPartConstObjName, scoringPartConstObjName);
 							effectCode.beginControlFlow("if (t != null)");
 							
-							ClassName scoreType = null;
+							Class scoreType = null;
 							if (scoringAttConst.getAttribute().getType() == AttributeTypes.INTEGER) {
-								scoreType = ClassName.get(int.class);
+								scoreType = int.class;
 							} else if (scoringAttConst.getAttribute().getType() == AttributeTypes.DOUBLE) {
-								scoreType = ClassName.get(double.class);
+								scoreType = double.class;
 							} else if (scoringAttConst.getAttribute().getType() == AttributeTypes.STRING) {
-								scoreType = ClassName.get(String.class);
+								scoreType = String.class;
 							} else if (scoringAttConst.getAttribute().getType() == AttributeTypes.BOOLEAN) {
-								scoreType = ClassName.get(boolean.class);
+								scoreType = boolean.class;
 							}
 							effectCode.addStatement("$T v = t.get" + scoringAttConst.getAttribute().getName() + "()", scoreType);
 							effectCode.addStatement("state.getClock().stop()");
 							effectCode.addStatement("state.setScore(v)");
-							effectCode.addStatement("(($T)gui).update()", simseGui);
+							effectCode.addStatement("(($T)parent).update()", simseGui);
 							effectCode.addStatement("$T d = new $T($T.INFORMATION)", alert, alert, alertType);
 							effectCode.addStatement("d.setContentText(($S + v))", "Your score is ");
 							effectCode.addStatement("d.setTitle($S)", "Game over!");
 							effectCode.addStatement("d.setHeaderText(null)");
-							effectCode.addStatement("d.showAndWait()");
+							effectCode.addStatement("d.show()");
 							effectCode.endControlFlow();
 							effectCode.endControlFlow(); // game ending if condition
 						}
@@ -809,7 +887,7 @@ public class MenuInputManagerGenerator implements CodeGeneratorConstants {
 					effectCode.endControlFlow();
 				}
 			}
-			
+			effectCode.endControlFlow();
 			effectCode.nextControlFlow("else");
 			effectCode.addStatement("$T b = new $T()", vectorOfActTypes, vectorOfActTypes);
 			effectCode.beginControlFlow("for (int i = 0; i < allActions.size(); i++)");
@@ -829,6 +907,9 @@ public class MenuInputManagerGenerator implements CodeGeneratorConstants {
 			effectCode.endControlFlow();
 			effectCode.addStatement("new $T(parent, b, state, selectedEmp, ruleExec, itemText)", chooseActionToDestroyDialog);
 			effectCode.endControlFlow();
+			
+		}
+		if (userTrigs.size() != 0 || userDests.size() != 0) {
 			effectCode.endControlFlow();
 		}
 		

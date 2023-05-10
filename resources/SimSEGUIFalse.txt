@@ -41,9 +41,11 @@ public class SimSEGUI extends Stage implements EventHandler<Event> {
 	private TabPanel tabPanel;
 	private InformationPanel infoPanel;
 	private EmployeesPanel employeesPanel;
+	private ArtifactsPanel artifactsPanel;
+	private ProjectsPanel projectsPanel;
+	private EmployeeStateRepository esp;
 	private TrackPanel trackPanel;
 	private MelloPanel melloPanel;
-	private ObjectGraphPanel objGraphPanel;
 	private VBox objGraphWrapper;
 	private Pane panel1 = new Pane();
 	private Pane panel2 = new Pane();
@@ -99,7 +101,11 @@ public class SimSEGUI extends Stage implements EventHandler<Event> {
 					engine.stopTimer();
 				}
 				close();
-				SimSE.main(new String[] {});
+				State newState = new State();
+				Logic newLogic = new Logic(newState);
+				Engine newEngine = new Engine(newLogic, newState);
+				newEngine.giveGUI(SimSEGUI.this);
+				SimSEGUI.this.reset(newEngine, newState, newLogic);
 			}
     	}
     };
@@ -117,13 +123,14 @@ public class SimSEGUI extends Stage implements EventHandler<Event> {
 		engine = e;
 
 		expTool = new ExplanatoryTool(state.getLogger().getLog(), branch, timelinesBrowser);
-
+		esp = EmployeeStateRepository.getInstance(state);
 		infoPanel = new InformationPanel(this, state, engine);
 		tabPanel = new TabPanel(this, state, logic, engine, infoPanel, expTool);
-		employeesPanel = new EmployeesPanel(this, state, logic);
-		objGraphPanel = new ObjectGraphPanel(this);
-		trackPanel = TrackPanel.getInstance();
-		melloPanel = MelloPanel.getInstance();
+		employeesPanel = new EmployeesPanel(this, state, logic, esp.getAll());
+		artifactsPanel = new ArtifactsPanel(this, state, logic);
+		projectsPanel = new ProjectsPanel(this, state, logic);
+		trackPanel = TrackPanel.getInstance(state);
+		melloPanel = MelloPanel.getInstance(state);
 
 		// Set window title:
 		String title = "SimSE";
@@ -154,17 +161,20 @@ public class SimSEGUI extends Stage implements EventHandler<Event> {
 		// Create main panel:
         BorderPane bPane = new BorderPane();
 		bPane.setTop(tabPanel);
-		world = new World(state, logic, this);
+		world = new World(state, logic, this, esp.getAll());
 		bPane.setCenter(world);
 		HBox panelContainer = new HBox(panel1, panel2);
 		panel1.getChildren().add(infoPanel);
+		panel2.getChildren().add(trackPanel);
 		panelContainer.setPrefWidth(bPane.getWidth());
+		panelContainer.setPrefHeight(150);
 		bPane.setBottom(panelContainer);
 		panel3.getChildren().add(employeesPanel);
 		panel3.setPrefHeight(450);
 		bPane.setRight(panel3);
+		tabPanel.update();
 		
-		bPane.setPrefSize(1024, 710);
+		bPane.setPrefSize(1500, 800);
 		VBox panes = new VBox();
 		panes.getChildren().addAll(menuBar, bPane);
 		Scene mainPane = new Scene(panes);
@@ -174,11 +184,6 @@ public class SimSEGUI extends Stage implements EventHandler<Event> {
 		mainPane.getStylesheets().add("style.css");
 		this.addEventHandler(WindowEvent.WINDOW_CLOSE_REQUEST, this);
 		this.setScene(mainPane);
-//		this.setSize(bPane.getLayout().preferredLayoutSize(this));
-		// Make it show up in the center of the screen:
-//		setLocationRelativeTo(null);
-		
-//		this.show();
 	}
 
 	public Engine getEngine() {
@@ -222,9 +227,11 @@ public class SimSEGUI extends Stage implements EventHandler<Event> {
 		infoPanel.update();
 		world.update();
 		employeesPanel.update();
+		artifactsPanel.update();
+		projectsPanel.update();
 		expTool.update();
 		branch.update(state);
-		objGraphPanel.update();
+		updateTrack();
 		if (analyzeMenu.isDisabled() && state.getClock().isStopped()) {
 			analyzeMenu.setDisabled(false);
 		}
@@ -244,7 +251,6 @@ public class SimSEGUI extends Stage implements EventHandler<Event> {
 			close();
 		} else if (event.getEventType() ==  ActionEvent.ACTION) {
 			Object source = event.getSource(); // get which component the action came from
-			System.out.println("Got action event from " + source.toString());
 			if (source == analyzeSimItem) {
 				if (expTool.isIconified()) {
 					expTool.setIconified(false);
@@ -253,6 +259,15 @@ public class SimSEGUI extends Stage implements EventHandler<Event> {
 			}
 		}
 		
+	}
+	
+	private void updateTrack() {
+		trackPanel = TrackPanel.getInstance(state);
+		List<Panels> present = getPresentPanels();
+		if (present.contains(Panels.TRACK)) {
+			removePanel(Panels.TRACK);
+			addBottomPanel(Panels.TRACK);
+		}
 	}
 
 	public List<Panels> getPresentPanels() {
@@ -288,11 +303,6 @@ public class SimSEGUI extends Stage implements EventHandler<Event> {
 				panel1.getChildren().add(melloPanel);
 				break;
 				
-			case GRAPH:
-				objGraphPanel.update();
-				panel1.getChildren().add(objGraphPanel);
-				break;
-				
 			default:
 				break;
 			}
@@ -309,11 +319,6 @@ public class SimSEGUI extends Stage implements EventHandler<Event> {
 				
 			case MELLO:
 				panel2.getChildren().add(melloPanel);
-				break;
-				
-			case GRAPH:
-				objGraphPanel.update();
-				panel2.getChildren().add(objGraphPanel);
 				break;
 				
 			default:
@@ -340,6 +345,14 @@ public class SimSEGUI extends Stage implements EventHandler<Event> {
 			
 			case EMPLOYEES:
 				panel3.getChildren().add(employeesPanel);
+				break;
+				
+			case ARTIFACTS:
+				panel3.getChildren().add(artifactsPanel);
+				break;
+				
+			case PROJECTS:
+				panel3.getChildren().add(projectsPanel);
 				break;
 				
 			default:
@@ -379,6 +392,18 @@ public class SimSEGUI extends Stage implements EventHandler<Event> {
 			}
 			break;
 			
+		case ARTIFACTS:
+			if (!p3Empty&& panel3.getChildren().get(0) instanceof ArtifactsPanel) {
+				panel3.getChildren().clear();
+			}
+			break;
+			
+		case PROJECTS:
+			if (!p3Empty&& panel3.getChildren().get(0) instanceof ProjectsPanel) {
+				panel3.getChildren().clear();
+			}
+			break;
+			
 		case TRACK:
 			if (!p1Empty && panel1.getChildren().get(0) instanceof TrackPanel) {
 				panel1.getChildren().clear();
@@ -391,14 +416,6 @@ public class SimSEGUI extends Stage implements EventHandler<Event> {
 			if (!p1Empty && panel1.getChildren().get(0) instanceof MelloPanel) {
 				panel1.getChildren().clear();
 			} else if (!p2Empty && panel2.getChildren().get(0) instanceof MelloPanel) {
-				panel2.getChildren().clear();
-			}
-			break;
-			
-		case GRAPH:
-			if (!p1Empty && panel1.getChildren().get(0) instanceof ObjectGraphPane) {
-				panel1.getChildren().clear();
-			} else if (!p2Empty && panel2.getChildren().get(0) instanceof ObjectGraphPane) {
 				panel2.getChildren().clear();
 			}
 			break;

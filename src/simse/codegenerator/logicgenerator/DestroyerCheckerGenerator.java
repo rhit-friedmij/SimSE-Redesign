@@ -78,7 +78,7 @@ public class DestroyerCheckerGenerator implements CodeGeneratorConstants {
 				.addStatement("ruleExec = r")
 				.addStatement("trigCheck = t")
 				.addStatement("ranNumGen = new $T()", random)
-				.addStatement("mello = $T.getInstance()", melloPanel)
+				.addStatement("mello = $T.getInstance($N)", melloPanel, "state")
 				.build();
 		
 		 MethodSpec update = MethodSpec.methodBuilder("update")
@@ -116,7 +116,6 @@ public class DestroyerCheckerGenerator implements CodeGeneratorConstants {
 				destFile.delete(); // delete old version of file
 			}
 			FileWriter writer = new FileWriter(destFile);
-			System.out.println(javaFile.toString());
 		    javaFile.writeTo(writer);
 		    writer.close();
 		} catch (IOException e) {
@@ -158,12 +157,12 @@ public class DestroyerCheckerGenerator implements CodeGeneratorConstants {
 				conditions.beginControlFlow("if(c instanceof $T)", employee);
 				
 				if ((tempDest.getDestroyerText() != null) && (tempDest.getDestroyerText().length() > 0)) {
-					conditions.addStatement("(($T)c).setOverheadText(\"" + tempDest.getDestroyerText() + "\")", employee);
+					conditions.addStatement("(($T)c).setOverheadText(\"" + tempDest.getDestroyerText() + "\", state)", employee);
 				}
 				
 				conditions.nextControlFlow("else if(c instanceof $T)", customer);
 				if ((tempDest.getDestroyerText() != null) && (tempDest.getDestroyerText().length() > 0)) {
-					conditions.addStatement("(($T)c).setOverheadText(\"" + tempDest.getDestroyerText() + "\")", customer);
+					conditions.addStatement("(($T)c).setOverheadText(\"" + tempDest.getDestroyerText() + "\", state)", customer);
 				}
 				conditions.endControlFlow(); // ObjectType
 				conditions.endControlFlow(); // For loop
@@ -178,11 +177,11 @@ public class DestroyerCheckerGenerator implements CodeGeneratorConstants {
 						+ "StateRepository().remove(" + tempActName + ")");
 				conditions.addStatement("trigCheck.update(true, gui)");
 				conditions.addStatement("update(false, gui)");
-				conditions.addStatement("mello.completeTask($S)", actType);
+				conditions.addStatement("mello.completeTask(tempAct.getId())");
 
 				// game-ending:
 				if (tempDest.isGameEndingDestroyer()) {
-					conditions.add("// stop game and give score:");
+					conditions.add("// stop game and give score:\n");
 					conditions.addStatement("$T t111 = (" + actTypeName + ")tempAct", actName);
 					// find the scoring attribute:
 					ActionTypeParticipantDestroyer scoringPartDest = null;
@@ -215,15 +214,15 @@ public class DestroyerCheckerGenerator implements CodeGeneratorConstants {
 								+ "s().size() > 0)");
 						conditions.addStatement("$T t = ($T)(t111.getAll" + scoringPartDest.getParticipant().getName()
 								+ "s().elementAt(0))", scoringPartConstObjName, scoringPartConstObjName);
-						ClassName scoreType = null;
+						Class scoreType = null;
 						if (scoringAttConst.getAttribute().getType() == AttributeTypes.INTEGER) {
-							scoreType = ClassName.get(int.class);
+							scoreType = int.class;
 						} else if (scoringAttConst.getAttribute().getType() == AttributeTypes.DOUBLE) {
-							scoreType = ClassName.get(double.class);
+							scoreType = double.class;
 						} else if (scoringAttConst.getAttribute().getType() == AttributeTypes.STRING) {
-							scoreType = ClassName.get(String.class);
+							scoreType = String.class;
 						} else if (scoringAttConst.getAttribute().getType() == AttributeTypes.BOOLEAN) {
-							scoreType = ClassName.get(boolean.class);
+							scoreType = boolean.class;
 						}
 						conditions.addStatement("$T v = t.get" + scoringAttConst.getAttribute().getName() + "()", scoreType);
 						conditions.addStatement("state.getClock().stop()");
@@ -233,7 +232,7 @@ public class DestroyerCheckerGenerator implements CodeGeneratorConstants {
 						conditions.addStatement("d.setContentText(($S + v))", "Your score is ");
 						conditions.addStatement("d.setTitle($S)", "Game over!");
 						conditions.addStatement("d.setHeaderText(null)");
-						conditions.addStatement("d.showAndWait()");
+						conditions.addStatement("d.show()");
 						conditions.endControlFlow(); // game ending if condition
 					}
 				}
@@ -320,7 +319,7 @@ public class DestroyerCheckerGenerator implements CodeGeneratorConstants {
 					conditions.endControlFlow(); // for loop
 				}
 				if (tempDest instanceof RandomActionTypeDestroyer) {
-					conditions.beginControlFlow("if ((destroy) && ((ranNumGen.nextDouble() * 100.0) < \"\r\n" + 
+					conditions.beginControlFlow("if ((destroy) && ((ranNumGen.nextDouble() * 100.0) < " + 
 							+ ((RandomActionTypeDestroyer) (tempDest)).getFrequency() + "))");
 				} else { 
 					// user, action or autonomous
@@ -333,7 +332,7 @@ public class DestroyerCheckerGenerator implements CodeGeneratorConstants {
 				conditions.beginControlFlow("if (c instanceof $T)", employee);
 				if ((tempDest instanceof AutonomousActionTypeDestroyer) || (tempDest instanceof RandomActionTypeDestroyer)) {
 					if ((tempDest.getDestroyerText() != null) && (tempDest.getDestroyerText().length() > 0)) {
-						conditions.addStatement("(($T)c).setOverheadText(\"" + tempDest.getDestroyerText() + "\")", employee);
+						conditions.addStatement("(($T)c).setOverheadText(\"" + tempDest.getDestroyerText() + "\", state)", employee);
 					}
 
 					// For each user destroyer for this action, remove the menu item:
@@ -348,7 +347,7 @@ public class DestroyerCheckerGenerator implements CodeGeneratorConstants {
 
 					conditions.nextControlFlow("else if(c instanceof $T)", customer);
 					if ((tempDest.getDestroyerText() != null) && (tempDest.getDestroyerText().length() > 0)) {
-						conditions.addStatement("(($T)c).setOverheadText(\"" + tempDest.getDestroyerText() + "\")", customer);
+						conditions.addStatement("(($T)c).setOverheadText(\"" + tempDest.getDestroyerText() + "\", state)", customer);
 					}
 					conditions.endControlFlow();
 					conditions.endControlFlow();
@@ -364,11 +363,11 @@ public class DestroyerCheckerGenerator implements CodeGeneratorConstants {
 							+ "StateRepository().remove(" + tempActName + ")");
 					conditions.addStatement("trigCheck.update(true, gui)");
 					conditions.addStatement("update(false, gui)");
-					conditions.addStatement("mello.completeTask($S)", actType);
+					conditions.addStatement("mello.completeTask(tempAct.getId())");
 
 					// game-ending:
 					if (tempDest.isGameEndingDestroyer()) {
-						conditions.add("// stop game and give score:");
+						conditions.add("// stop game and give score:\n");
 						conditions.addStatement("$T t111 = (" + actTypeName + ")tempAct", actName);
 						
 						// find the scoring attribute:
@@ -420,7 +419,7 @@ public class DestroyerCheckerGenerator implements CodeGeneratorConstants {
 							conditions.addStatement("d.setContentText(($S + v))", "Your score is ");
 							conditions.addStatement("d.setTitle($S)", "Game over!");
 							conditions.addStatement("d.setHeaderText(null)");
-							conditions.addStatement("d.showAndWait()");
+							conditions.addStatement("d.show()");
 							conditions.endControlFlow(); // t != null
 							conditions.endControlFlow(); // game ending if condition
 						}

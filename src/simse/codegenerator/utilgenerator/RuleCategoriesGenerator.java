@@ -55,22 +55,28 @@ public class RuleCategoriesGenerator implements CodeGeneratorConstants {
       
       Vector<ActionType> actions = actTypes.getAllActionTypes();
       
-      String actionBlock = "";
+      String actionBlock = "{";
       
       for(int i = 0; i < actions.size(); i++) {
-    	  if(i == 0 || i == actions.size() - 1) {
-    		  actionBlock += "Action." + actions.get(i).getName();
-    	  }
-    	  else {
-    		  actionBlock += ", " + actions.get(i).getName();
+    	  ActionType act = actions.get(i);
+    	  if (act.isVisibleInExplanatoryTool()) {
+	    	  if(actions.size() == 1 || i == actions.size() - 1) {
+	    		  actionBlock += "Action." + act.getName().toUpperCase();
+	    	  }
+	    	  else {
+	    		  actionBlock += "Action." + act.getName().toUpperCase() + ", ";
+	    	  }
     	  }
       }
+      
+      actionBlock += "}";
       
       CodeBlock actionArray = CodeBlock.builder()
     		  .add(actionBlock)
     		  .build();
       
       MethodSpec getAllDestRulesForAction = MethodSpec.methodBuilder("getAllDestRulesForAction")
+    		  .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
     		  .returns(stringArray)
     		  .addParameter(String.class, "actionName")
     		  .addStatement("$T rules = getDestRulesForAction(actionName)", stringArray)
@@ -84,6 +90,7 @@ public class RuleCategoriesGenerator implements CodeGeneratorConstants {
     		  .build();
       
       MethodSpec getAllTrigRulesForAction = MethodSpec.methodBuilder("getAllTrigRulesForAction")
+    		  .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
     		  .returns(stringArray)
     		  .addParameter(String.class, "actionName")
     		  .addStatement("$T rules = getTrigRulesForAction(actionName)", stringArray)
@@ -97,6 +104,7 @@ public class RuleCategoriesGenerator implements CodeGeneratorConstants {
     		  .build();
       
       MethodSpec getAllRuleMappings = MethodSpec.methodBuilder("getAllRuleMappings")
+    		  .addModifiers(Modifier.PUBLIC)
     		  .returns(String.class)
     		  .addModifiers(Modifier.STATIC)
     		  .addParameter(String.class, "actionName")
@@ -105,10 +113,11 @@ public class RuleCategoriesGenerator implements CodeGeneratorConstants {
     		  .beginControlFlow("if (text == \"\")")
     		  .addStatement("text = getBackendRuleMappings(actionName, ruleName)")
     		  .endControlFlow()
-    		  .addStatement("retur text")
+    		  .addStatement("return text")
     		  .build();
       
       MethodSpec getBackendDestRulesForAction = MethodSpec.methodBuilder("getBackendDestRulesForAction")
+    		  .addModifiers(Modifier.PUBLIC)
     		  .returns(stringArray)
     		  .addModifiers(Modifier.STATIC)
     		  .addParameter(String.class, "actionName")
@@ -120,6 +129,7 @@ public class RuleCategoriesGenerator implements CodeGeneratorConstants {
     		  .build();
       
       MethodSpec getBackendTrigRulesForAction = MethodSpec.methodBuilder("getBackendTrigRulesForAction")
+    		  .addModifiers(Modifier.PUBLIC)
     		  .returns(stringArray)
     		  .addModifiers(Modifier.STATIC)
     		  .addParameter(String.class, "actionName")
@@ -131,6 +141,7 @@ public class RuleCategoriesGenerator implements CodeGeneratorConstants {
     		  .build();
       
       MethodSpec getDestRulesForAction = MethodSpec.methodBuilder("getDestRulesForAction")
+    		  .addModifiers(Modifier.PUBLIC)
     		  .returns(stringArray)
     		  .addModifiers(Modifier.STATIC)
     		  .addParameter(String.class, "actionName")
@@ -142,6 +153,7 @@ public class RuleCategoriesGenerator implements CodeGeneratorConstants {
     		  .build();
       
       MethodSpec getTrigRulesForAction = MethodSpec.methodBuilder("getTrigRulesForAction")
+    		  .addModifiers(Modifier.PUBLIC)
     		  .returns(stringArray)
     		  .addModifiers(Modifier.STATIC)
     		  .addParameter(String.class, "actionName")
@@ -153,6 +165,7 @@ public class RuleCategoriesGenerator implements CodeGeneratorConstants {
     		  .build();
       
       MethodSpec getIntRulesForAction = MethodSpec.methodBuilder("getIntRulesForAction")
+    		  .addModifiers(Modifier.PUBLIC)
     		  .returns(stringArray)
     		  .addModifiers(Modifier.STATIC)
     		  .addParameter(String.class, "actionName")
@@ -164,6 +177,7 @@ public class RuleCategoriesGenerator implements CodeGeneratorConstants {
     		  .build();
       
       MethodSpec getBackendRuleMappings = MethodSpec.methodBuilder("getBackendRuleMappings")
+    		  .addModifiers(Modifier.PUBLIC)
     		  .returns(String.class)
     		  .addModifiers(Modifier.STATIC)
     		  .addParameter(String.class, "actionName")
@@ -176,6 +190,7 @@ public class RuleCategoriesGenerator implements CodeGeneratorConstants {
     		  .build();
       
       MethodSpec getRuleMapping = MethodSpec.methodBuilder("getRuleMapping")
+    		  .addModifiers(Modifier.PUBLIC)
     		  .returns(String.class)
     		  .addModifiers(Modifier.STATIC)
     		  .addParameter(String.class, "ruleName")
@@ -187,6 +202,7 @@ public class RuleCategoriesGenerator implements CodeGeneratorConstants {
     		  .build();
       
       MethodSpec makeRuleMappingTable = MethodSpec.methodBuilder("makeRuleMappingTable")
+    		  .addModifiers(Modifier.PUBLIC)
     		  .returns(doubleStringHashTable)
     		  .addModifiers(Modifier.STATIC)
     		  .addParameter(stringArray, "rules")
@@ -206,11 +222,16 @@ public class RuleCategoriesGenerator implements CodeGeneratorConstants {
       for (ActionType act : actions) {
         if (act.isVisibleInExplanatoryTool()) {
         	Vector<Rule> rules = act.getAllRules();
-        	ruleDescriptionBlock += "ruleMapping.put(" + act.getName() + "\", RuleDescriptions." + act.getName() + "_" + act.getAnnotation() + ")";
+        	for(Rule rule : rules) {
+        		if (rule.isVisibleInExplanatoryTool()) {
+        			ruleDescriptionBlock += "ruleMapping.put(\"" + rule.getName() + "\", RuleDescriptions." + act.getName().toUpperCase() + "_" + rule.getName().toUpperCase() + ");\n";
+        		}
+        	}
         }
       }
       
       MethodSpec initalizeRuleMapping = MethodSpec.methodBuilder("initializeRuleMapping")
+    		  .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
     		  .addStatement("ruleMapping = new $T<>()", hashTable)
     		  .addCode(ruleDescriptionBlock)
     		  .build();
@@ -223,20 +244,22 @@ public class RuleCategoriesGenerator implements CodeGeneratorConstants {
         	String ruleBlock = "";
         	for(int i = 0; i < rules.size(); i++) {
         		Rule rule = rules.get(i);
-        		if(i == 0 || i == rules.size() - 1) {
-        			ruleBlock += rule.getName();
-        		} else {
-        			ruleBlock += rule.getName() + ", ";
-        		}
+        		if (rule.isVisibleInExplanatoryTool()) {
+	        		if(rules.size() == 1 || i == rules.size() - 1) {
+	        			ruleBlock += "\"" + rule.getName() + "\"";
+	        		} else {
+	        			ruleBlock += "\"" + rule.getName() + "\"" + ", ";
+	        		}
+        		}	
         	}
-        	intRuleDescriptionBlock += ruleBlock + "},";
-        	
+        	intRuleDescriptionBlock += ruleBlock + "},\n";
         }
       }
       intRuleDescriptionBlock += "};\n";
       
-      MethodSpec initializeIntRules = MethodSpec.methodBuilder("initializeRuleMapping")
-    		  .addStatement("destRules = new $T<>()", hashTable)
+      MethodSpec initializeIntRules = MethodSpec.methodBuilder("initializeIntRules")
+    		  .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
+    		  .addStatement("intRules = new $T<>()", hashTable)
     		  .addCode(intRuleDescriptionBlock)
     		  .beginControlFlow("if (actions.length == actionRules.length)")
     		  .beginControlFlow("for (int i = 0; i < actions.length; i++)")
@@ -253,19 +276,22 @@ public class RuleCategoriesGenerator implements CodeGeneratorConstants {
         	String ruleBlock = "";
         	for(int i = 0; i < rules.size(); i++) {
         		Rule rule = rules.get(i);
-        		if(i == 0 || i == rules.size() - 1) {
-        			ruleBlock += rule.getName();
-        		} else {
-        			ruleBlock += rule.getName() + ", ";
+        		if (rule.isVisibleInExplanatoryTool()) {
+	        		if(rules.size() == 1 || i == rules.size() - 1) {
+	        			ruleBlock += "\"" + rule.getName() + "\"";
+	        		} else {
+	        			ruleBlock += "\"" + rule.getName() + "\"" + ", ";
+	        		}
         		}
         	}
-        	trigRuleDescriptionBlock += ruleBlock + "},";
+        	trigRuleDescriptionBlock += ruleBlock + "},\n";
         	
         }
       }
       trigRuleDescriptionBlock += "};\n";
       
       MethodSpec initializeTrigRules = MethodSpec.methodBuilder("initializeTrigRules")
+    		  .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
     		  .addStatement("trigRules = new $T<>()", hashTable)
     		  .addCode(trigRuleDescriptionBlock)
     		  .beginControlFlow("if (actions.length == actionRules.length)")
@@ -283,19 +309,22 @@ public class RuleCategoriesGenerator implements CodeGeneratorConstants {
         	String ruleBlock = "";
         	for(int i = 0; i < rules.size(); i++) {
         		Rule rule = rules.get(i);
-        		if(i == 0 || i == rules.size() - 1) {
-        			ruleBlock += rule.getName();
-        		} else {
-        			ruleBlock += rule.getName() + ", ";
+        		if (rule.isVisibleInExplanatoryTool()) {
+	        		if(rules.size() == 1 || i == rules.size() - 1) {
+	        			ruleBlock += "\"" + rule.getName() + "\"";
+	        		} else {
+	        			ruleBlock += "\"" + rule.getName() + "\"" + ", ";
+	        		}
         		}
         	}
-        	destRuleDescriptionBlock += ruleBlock + "},";
+        	destRuleDescriptionBlock += ruleBlock + "},\n";
         	
         }
       }
       destRuleDescriptionBlock += "};\n";
       
       MethodSpec initializeDestRules = MethodSpec.methodBuilder("initializeDestRules")
+    		  .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
     		  .addStatement("destRules = new $T<>()", hashTable)
     		  .addCode(destRuleDescriptionBlock)
     		  .beginControlFlow("if (actions.length == actionRules.length)")
@@ -305,55 +334,56 @@ public class RuleCategoriesGenerator implements CodeGeneratorConstants {
     		  .endControlFlow()
     		  .build();
       
-      String backendRuleBlock = "String[][] actionRules = {";
+      String backendRuleBlock = "";
       for (ActionType act : actions) {
-        if (act.isVisibleInExplanatoryTool()) {
-        	Vector<Rule> rules = act.getAllRules();
-        	Vector<Rule> destroyerRules = act.getAllDestroyerRules();
-        	Vector<Rule> triggerRules = act.getAllTriggerRules();
+    	  if (act.isVisibleInExplanatoryTool()) {
+        	Vector<ActionTypeDestroyer> destroyerRules = act.getAllDestroyers();
+        	Vector<ActionTypeTrigger> triggerRules = act.getAllTriggers();
         	backendRuleBlock += "backendRuleMapping.put(Action." + act.getName().toUpperCase()
         			+ ", makeRuleMappingTable(";
         	backendRuleBlock += "new String[]{";
         	
-        	//Generate regular rules
-        	String ruleBlock = "";
-        	for(int i = 0; i < rules.size(); i++) {
-        		Rule rule = rules.get(i);
-        		if(i == 0 || i == rules.size() - 1) {
-        			ruleBlock += rule.getName();
-        		} else {
-        			ruleBlock += rule.getName() + ", ";
-        		}
-        	}
-        	backendRuleBlock += ruleBlock + "},";
-        	backendRuleBlock += "new String[]{";
+        	//Generate trigger/destroyer names
+        	String ruleBlock = "";        	
         	
         	//Generate trigger rules
         	String triggerRulesBlock = "";
         	for(int i = 0; i < triggerRules.size(); i++) {
-        		Rule triggerRule = triggerRules.get(i);
-    			triggerRulesBlock += "TriggerDescriptions." + triggerRule.getName().toUpperCase() + "_" + triggerRule.getAnnotation() + ",";			
+        		ActionTypeTrigger triggerRule = triggerRules.get(i);
+        		ruleBlock += "\"" + triggerRule.getName() + "\"";
+        		if(triggerRules.size() != 1 || i != triggerRules.size() - 1 || destroyerRules.size() != 0) {
+        			ruleBlock += ", ";
+        		}
+        		triggerRulesBlock += "TriggerDescriptions." + act.getName().toUpperCase() + "_" + triggerRule.getName().toUpperCase();			
+        		if(i != triggerRules.size() - 1 || destroyerRules.size() != 0) {
+        			triggerRulesBlock += ", ";		
+        		} 
+    			
         	}
-        	backendRuleBlock += triggerRulesBlock;
         	
         	//Generate destroyer rules
         	String destroyerRulesBlock = "";
         	for(int i = 0; i < destroyerRules.size(); i++) {
-        		Rule destroyerRule = triggerRules.get(i);
-        		if(i == 0 || i == destroyerRules.size() - 1) {
-        			destroyerRulesBlock += "TriggerDescriptions." + destroyerRule.getName().toUpperCase() + "_" + destroyerRule.getAnnotation();
-        		} else {
-        			destroyerRulesBlock += "TriggerDescriptions." + destroyerRule.getName().toUpperCase() + "_" + destroyerRule.getAnnotation() + ",";
+        		ActionTypeDestroyer destroyerRule = destroyerRules.get(i);
+        		ruleBlock += "\"" + destroyerRule.getName() + "\"";
+        		if(destroyerRules.size() != 1 || i != destroyerRules.size() - 1) {
+        			ruleBlock += ", ";
         		}
+        		destroyerRulesBlock += "DestroyerDescriptions." + act.getName().toUpperCase() + "_" + destroyerRule.getName().toUpperCase();
+        		if(i != destroyerRules.size() - 1) {
+        			destroyerRulesBlock += ", ";		
+        		} 
         					
         	}
-        	backendRuleBlock += destroyerRulesBlock + "}));";
-        	
-        }
+        	backendRuleBlock += ruleBlock + "},\n";
+        	backendRuleBlock += "new String[]{";
+        	backendRuleBlock += triggerRulesBlock;
+        	backendRuleBlock += destroyerRulesBlock + "}));\n";
+    	  }
       }
-      backendRuleBlock += "};\n";
       
-      MethodSpec initializeBackendRuleMapping = MethodSpec.methodBuilder("initializeRuleMapping")
+      MethodSpec initializeBackendRuleMapping = MethodSpec.methodBuilder("initializeBackendRuleMapping")
+    		  .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
     		  .addStatement("backendRuleMapping = new $T<>()", hashTable)
     		  .addCode(backendRuleBlock)
     		  .build();
@@ -366,21 +396,27 @@ public class RuleCategoriesGenerator implements CodeGeneratorConstants {
         	String ruleBlock = "";
         	for(int i = 0; i < rules.size(); i++) {
         		ActionTypeTrigger rule = rules.get(i);
-        		if(i == 0 || i == rules.size() - 1) {
-        			ruleBlock += rule.getName();
+        		if(rules.size() == 1 || i == rules.size() - 1) {
+        			ruleBlock += "\"" + rule.getName() + "\"";
         		} else {
-        			ruleBlock += rule.getName() + ", ";
+        			ruleBlock += "\"" + rule.getName() + "\"" + ", ";
         		}
         	}
-        	backendTrigRuleDescriptionBlock += ruleBlock + "},";
+        	backendTrigRuleDescriptionBlock += ruleBlock + "},\n";
         	
         }
       }
       backendTrigRuleDescriptionBlock += "};\n";
       
-      MethodSpec initializeBackendTrigRules = MethodSpec.methodBuilder("initializeRuleMapping")
+      MethodSpec initializeBackendTrigRules = MethodSpec.methodBuilder("initializeBackendTrigRules")
+    		  .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
     		  .addStatement("trigBackendRules = new $T<>()", hashTable)
     		  .addCode(backendTrigRuleDescriptionBlock)
+    		  .beginControlFlow("if (actions.length == actionRules.length)")
+    		  .beginControlFlow("for (int i = 0; i < actions.length; i++)")
+    		  .addStatement("trigBackendRules.put(actions[i], actionRules[i])")
+    		  .endControlFlow()
+    		  .endControlFlow()
     		  .build();
       
       String backendDestRuleDescriptionBlock = "String[][] actionRules = {";
@@ -391,24 +427,31 @@ public class RuleCategoriesGenerator implements CodeGeneratorConstants {
         	String ruleBlock = "";
         	for(int i = 0; i < rules.size(); i++) {
         		ActionTypeDestroyer rule = rules.get(i);
-        		if(i == 0 || i == rules.size() - 1) {
-        			ruleBlock += rule.getName();
+        		if(rules.size() == 1 || i == rules.size() - 1) {
+        			ruleBlock += "\"" + rule.getName() + "\"";
         		} else {
-        			ruleBlock += rule.getName() + ", ";
+        			ruleBlock += "\"" + rule.getName() + "\"" + ", ";
         		}
         	}
-        	backendDestRuleDescriptionBlock += ruleBlock + "},";
+        	backendDestRuleDescriptionBlock += ruleBlock + "},\n";
         	
         }
       }
       backendDestRuleDescriptionBlock += "};\n";
       
-      MethodSpec initializeBackendDestRules = MethodSpec.methodBuilder("initializeRuleMapping")
+      MethodSpec initializeBackendDestRules = MethodSpec.methodBuilder("initializeBackendDestRules")
+    		  .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
     		  .addStatement("destBackendRules = new $T<>()", hashTable)
     		  .addCode(backendDestRuleDescriptionBlock)
+    		  .beginControlFlow("if (actions.length == actionRules.length)")
+    		  .beginControlFlow("for (int i = 0; i < actions.length; i++)")
+    		  .addStatement("destBackendRules.put(actions[i], actionRules[i])")
+    		  .endControlFlow()
+    		  .endControlFlow()
     		  .build();
       
       MethodSpec initializeRuleCategories = MethodSpec.methodBuilder("initializeRuleCategories")
+    		  .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
     		  .addStatement("$N()", initalizeRuleMapping)
     		  .addStatement("$N()", initializeIntRules)
     		  .addStatement("$N()", initializeTrigRules)
@@ -421,13 +464,14 @@ public class RuleCategoriesGenerator implements CodeGeneratorConstants {
       
       TypeSpec ruleCategories = TypeSpec.classBuilder("RuleCategories")
     		  .addModifiers(Modifier.PUBLIC)
-    		  .addField(doubleStringHashTable, "ruleMapping")
-    		  .addField(stringStringArrayHashTable, "intRules")
-    		  .addField(stringStringArrayHashTable, "trigRules")
-    		  .addField(stringStringArrayHashTable, "trigBackendRules")
-    		  .addField(stringStringArrayHashTable, "destBackendRules")
-    		  .addField(stringdoubleStringHashTable, "backendRuleMapping")
-    		  .addField(FieldSpec.builder(stringArray, "actions", Modifier.STATIC).initializer(actionArray).build())
+    		  .addField(doubleStringHashTable, "ruleMapping", Modifier.STATIC, Modifier.PRIVATE)
+    		  .addField(stringStringArrayHashTable, "intRules", Modifier.STATIC, Modifier.PRIVATE)
+    		  .addField(stringStringArrayHashTable, "destRules", Modifier.STATIC, Modifier.PRIVATE)
+    		  .addField(stringStringArrayHashTable, "trigRules", Modifier.STATIC, Modifier.PRIVATE)
+    		  .addField(stringStringArrayHashTable, "trigBackendRules", Modifier.STATIC, Modifier.PRIVATE)
+    		  .addField(stringStringArrayHashTable, "destBackendRules", Modifier.STATIC, Modifier.PRIVATE)
+    		  .addField(stringdoubleStringHashTable, "backendRuleMapping", Modifier.STATIC, Modifier.PRIVATE)
+    		  .addField(FieldSpec.builder(stringArray, "actions", Modifier.STATIC, Modifier.PRIVATE).initializer(actionArray).build())
     		  .addMethod(initializeRuleCategories)
     		  .addMethod(initalizeRuleMapping)
     		  .addMethod(initializeIntRules)
@@ -449,11 +493,18 @@ public class RuleCategoriesGenerator implements CodeGeneratorConstants {
     		  .addMethod(getAllDestRulesForAction)
     		  .build();
       
-      JavaFile javaFile = JavaFile.builder("simse.util", ruleCategories).build();
+      JavaFile javaFile = JavaFile.builder("", ruleCategories).build();
       
       try {
     	FileWriter writer = new FileWriter(ruleCategoriesFile);
-		javaFile.writeTo(writer);
+  	  	String toAppend = "/* File generated by: simse.codegenerator.util.RuleCategories */\n"
+  	  	  		+ "package simse.util;\n"
+  	  	  		+ "\n"
+  	  	  		+ "import simse.adts.actions.*;\n";
+    	
+		writer.write(toAppend + javaFile.toString());
+		
+		writer.close();
 	} catch (IOException e) {
 		// TODO Auto-generated catch block
 		e.printStackTrace();

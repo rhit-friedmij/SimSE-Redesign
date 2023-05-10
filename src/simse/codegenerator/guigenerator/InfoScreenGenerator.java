@@ -15,6 +15,8 @@ import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
+
+import simse.codegenerator.CodeGeneratorUtils;
 import simse.modelbuilder.objectbuilder.Attribute;
 import simse.modelbuilder.objectbuilder.AttributeTypes;
 import simse.modelbuilder.objectbuilder.DefinedObjectTypes;
@@ -33,6 +35,9 @@ public class InfoScreenGenerator {
 	  public void generate() {
 		  generateArtifactInfoScreen();
 		  generateEmployeeInfoScreen();
+		  generateProjectInfoScreen();
+		  generateCustomerInfoScreen();
+		  generateToolInfoScreen();
 	  }
 
 	  private void generateArtifactInfoScreen() {
@@ -65,15 +70,7 @@ public class InfoScreenGenerator {
 	      TypeName mouseHandler = ParameterizedTypeName.get(eventhandler, mouseevent);
 	      TypeName viewOfStrings = ParameterizedTypeName.get(listview, string);
 	      
-	      Vector<Attribute> aAts = this.getSharedVisibleAttributes(SimSEObjectTypeTypes.ARTIFACT);
-	      String atts = "";
-	      atts.concat("attributes = new ListView<String>();\n");
-	      for (int i=0; i<aAts.size(); i++) {
-	    	  atts.concat("attributes.getItems().add(\""+aAts.get(i).getName() + ": \"" + getTypeAsToString(aAts.get(i))+"(artifact.get"+aAts.get(i).getName()+"()));\n");
-	      }
-	      atts.concat("attributes.setMaxHeight(attributes.getItems().size()*25)");
-	      
-	      MethodSpec constructor = MethodSpec.constructorBuilder()
+	      MethodSpec.Builder constructorBuilder = MethodSpec.constructorBuilder()
 	    		  .addModifiers(Modifier.PUBLIC)
 	    		  .addParameter(state, "s")
 	    		  .addParameter(simsegui, "gui")
@@ -85,43 +82,66 @@ public class InfoScreenGenerator {
 	    		  .addStatement("this.$N = $N", "artifact", "artifact")
 	    		  .addStatement("this.$N = new $T()", "actions", contextmenu)
 	    		  .addStatement("this.$N = new $T()", "mainPane", vbox)
-	    		  .addStatement("String $NName = artifact.getName()", "artifact")
+	    		  .addStatement("String $NName = artifact.getKeyAsString()", "artifact")
 	    		  .addStatement("this.setTitle(artifactName)")
-	    		  .addStatement("")
 	    		  .addStatement("$T imagePane = new $T()", stackpane, stackpane)
 	    		  .addStatement("imagePane.setMinSize(110, 110)")
-	    		  .addStatement("$T img = $T.createImageView(\"src/simse/gui/icons/\" + $N.getName() + \".gif\")", imageview, javafxhelpers, "artifact")
-	    		  .beginControlFlow("if (img == null)")
-	    		  .addStatement("img = JavaFXHelpers.createImageView(\"src/simse/gui/icons/3.gif\")")
-	    		  .endControlFlow()
+	    		  .addStatement("String imageUrl = TabPanel.getImage(this.artifact)")
+	    		  .addStatement("$T img = $T.createImageView(imageUrl)", imageview, javafxhelpers)
 	    		  .addStatement("img.setScaleX(2)")
 	    		  .addStatement("img.setScaleY(2)")
 	    		  .addStatement("imagePane.getChildren().add(img)")
-	    		  .addStatement("")
-	    		  .addCode(atts)
-	    		  .addStatement("")
+	    		  .addStatement("$N = new $T<$T>()", "attributes", listview, string);
+	      
+	      	Vector<SimSEObjectType> objs = objTypes.getAllObjectTypes();
+	      
+			Vector<SimSEObjectType> types = new Vector<>();
+			for (SimSEObjectType type : objs) {
+				if (type.getType() == SimSEObjectTypeTypes.ARTIFACT) {
+					types.add(type);
+				}
+			}
+			
+	      for (int i = 0; i < types.size(); i++) {
+		      String atts = "";
+		      if (i == 0) {
+		    	  atts = atts.concat("if (artifact instanceof " + CodeGeneratorUtils.getUpperCaseLeading(types.get(i).getName()) + "){\n");
+		      } else {
+		    	  atts = atts.concat("else if (artifact instanceof " + CodeGeneratorUtils.getUpperCaseLeading(types.get(i).getName()) + "){\n");
+		      }
+		      for (Attribute att : types.get(i).getAllVisibleAttributes()) {
+		    	  atts = atts.concat("attributes.getItems().add(\""+att.getName() + ": \" + " + getTypeAsToString(att)+
+		    			  "(((" + CodeGeneratorUtils.getUpperCaseLeading(types.get(i).getName()) + ")artifact).get"+att.getName()+"()));\n");
+		      }
+		      
+		      atts = atts.concat("}\n");
+		      constructorBuilder.addCode(atts);
+	      }
+
+	    		  
+	    		  
+	    MethodSpec constructor = constructorBuilder.addStatement("$N.setPrefHeight($N.getItems().size()*25)", "attributes", "attributes")
+	    		  .addStatement("$N.setMaxHeight(200)", "attributes")
 	    		  .addStatement("String objTypeFull = $N.getClass().toString()", "artifact")
-	    		  .addStatement("String[] objTypeArr = objTypeFull.split(\"\\.\")")
+	    		  .addStatement("String[] objTypeArr = objTypeFull.split(\"\\\\.\")")
 	    		  .addStatement("String objType = objTypeArr[objTypeArr.length - 1]")
 	    		  .addStatement("String objTypeType = \"$T\"", artifact)
 	    		  .addStatement("String title = artifactName + \" Attributes\"")
 	    		  .addStatement("ObjectGraphPane objGraph = new ObjectGraphPane(title, $N.getLog(), objTypeType, objType, artifactName, $N.getBranch(), $N)", "gui", "gui", "gui")
-	    		  .addStatement("")
-	    		  .addStatement("$T name = new $T($N.getName())", label, label, "artifact")
+	    		  .addStatement("$T name = new $T($N.getKeyAsString())", label, label, "artifact")
 	    		  .addStatement("name.set$T(new Font(30))", font)
 	    		  .addStatement("$N.getChildren().add(name)", "mainPane")
 	    		  .addStatement("$N.getChildren().add(imagePane)", "mainPane")
-	    		  .addStatement("$N.getChildren().add($N)", "mainPane", "actionsButton")
 	    		  .addStatement("$N.getChildren().add($N)", "mainPane", "attributes")
 	    		  .addStatement("$N.getChildren().add(objGraph)", "mainPane")
 	    		  .addStatement("$N.setAlignment($T.CENTER)", "mainPane", pos)
-	    		  .addStatement("")
 	    		  .addStatement("$T scene = new $T(mainPane, 500, 700)", scene, scene)
 	    		  .addStatement("this.setScene(scene)")
 	    		  .build();
 	      
 	      MethodSpec handle = MethodSpec.methodBuilder("handle")
 	    		  .addAnnotation(Override.class)
+	    		  .addModifiers(Modifier.PUBLIC)
 	    		  .returns(void.class)
 	    		  .addParameter(mouseevent, "e")
 	    		  .addStatement("$N.show(mainPane, e.getScreenX(), e.getScreenY())", "actions")
@@ -137,16 +157,17 @@ public class InfoScreenGenerator {
 	    		  .addField(logic, "logic")
 	    		  .addField(state, "state")
 	    		  .addField(artifact, "artifact")
-	    		  .addField(button, "actionsButton")
 	    		  .addField(viewOfStrings, "attributes")
 	    		  .addMethod(constructor)
 	    		  .addMethod(handle)
 	    		  .build();
 	      
-	      JavaFile file = JavaFile.builder("simse.gui", ais)
+	      JavaFile file = JavaFile.builder("", ais)
 					 .build();
+	      String toAppend = "package simse.gui;\n"
+					+ "import simse.adts.objects.*;\n";
 	      
-	      file.writeTo(writer);
+	      writer.write(toAppend + file.toString());
 	      
 	      writer.close();
 	    } catch (IOException e) {
@@ -190,15 +211,7 @@ public class InfoScreenGenerator {
 		      TypeName viewOfStrings = ParameterizedTypeName.get(listview, string);
 		      TypeName actionHandler = ParameterizedTypeName.get(eventhandler, actionevent);
 		      
-		      Vector<Attribute> eAts = this.getSharedVisibleAttributes(SimSEObjectTypeTypes.EMPLOYEE);
-		      String atts = "";
-		      atts.concat("attributes = new ListView<String>();\n");
-		      for (int i=0; i<eAts.size(); i++) {
-		    	  atts.concat("attributes.getItems().add(\""+eAts.get(i).getName() + ": \"" + getTypeAsToString(eAts.get(i))+"(employee.get"+eAts.get(i).getName()+"()));\n");
-		      }
-		      atts.concat("attributes.setMaxHeight(attributes.getItems().size()*24)");
-		      
-		      MethodSpec constructor = MethodSpec.constructorBuilder()
+		      MethodSpec.Builder constructorBuilder = MethodSpec.constructorBuilder()
 		    		  .addModifiers(Modifier.PUBLIC)
 		    		  .addParameter(state, "s")
 		    		  .addParameter(simsegui, "gui")
@@ -210,12 +223,10 @@ public class InfoScreenGenerator {
 		    		  .addStatement("this.$N = new $T()", "mainPane", vbox)
 		    		  .addStatement("this.$N = new $T()", "actions", contextmenu)
 		    		  .addStatement("this.employee = employee")
-		    		  .addStatement("")
-		    		  .addStatement("String engineerName = employee.getName()")
-		    		  .addStatement("this.setTitle(engineerName)")
-		    		  .addStatement("")
+		    		  .addStatement("String employeeName = employee.getKeyAsString()")
+		    		  .addStatement("this.setTitle(employeeName)")
 		    		  .addStatement("Vector<String> menuItems = employee.getMenu()")
-		    		  .beginControlFlow("for (int i=0; i < menuItems.size(); i++")
+		    		  .beginControlFlow("for (int i=0; i < menuItems.size(); i++)")
 		    		  .addStatement("String item = menuItems.elementAt(i)")
 		    		  .addStatement("$T tempItem = new $T(item)", menuitem, menuitem)
 		    		  .addStatement("tempItem.setOnAction(menuItemEvent)")
@@ -223,28 +234,56 @@ public class InfoScreenGenerator {
 		    		  .endControlFlow()
 		    		  .addStatement("$T imagePane = new $T()", stackpane, stackpane)
 		    		  .addStatement("imagePane.setMinSize(110, 110)")
-		    		  .addStatement("$T img = $T.createImageView(\"src/simse/gui/icons/\" + employee.getName() + \".gif\")", imageview, javafxhelpers)
-		    		  .beginControlFlow("if (img == null)")
-		    		  .addStatement("img = JavaFXHelpers.createImageView(\"src/simse/gui/icons/alex.gif\")")
+		    		  .addStatement("String imageUrl = TabPanel.getImage(this.employee)")
+		    		  .addStatement("$T img = employee.getCharacterModel().getDisplayedCharacter(true)", imageview)
+		    		  .beginControlFlow("if(employee.getCharacterModel().getCharacterNum() < 8)")
+		    		  .addStatement("img.setScaleX(4.5)")
+		    		  .addStatement("img.setScaleY(4.5)")
+		    		  .nextControlFlow("else ")
+		    		  .addStatement("img.setScaleX(3)")
+		    		  .addStatement("img.setScaleY(3)")
 		    		  .endControlFlow()
-		    		  .addStatement("img.setScaleX(2)")
-		    		  .addStatement("img.setScaleY(2)")
 		    		  .addStatement("imagePane.getChildren().add(img)")
-		    		  .addStatement("")
-		    		  .addStatement("")
 		    		  .addStatement("$N = new $T(\"Assign $T to Tasks\")", "actionsButton", button, employee)
 		    		  .addStatement("$N.addEventHandler($T.MOUSE_CLICKED, this)", "actionsButton", mouseevent)
-		    		  .addStatement("")
-		    		  .addCode(atts)
-		    		  .addStatement("")
+		    		  .addStatement("$N = new $T<$T>()", "attributes", listview, string);
+		    	      
+		  	      	Vector<SimSEObjectType> objs = objTypes.getAllObjectTypes();
+		  	      
+		  			Vector<SimSEObjectType> types = new Vector<>();
+		  			for (SimSEObjectType type : objs) {
+		  				if (type.getType() == SimSEObjectTypeTypes.EMPLOYEE) {
+		  					types.add(type);
+		  				}
+		  			}
+		  			
+		  	      for (int i = 0; i < types.size(); i++) {
+		  		      String atts = "";
+		  		      if (i == 0) {
+		  		    	  atts = atts.concat("if (employee instanceof " + CodeGeneratorUtils.getUpperCaseLeading(types.get(i).getName()) + "){\n");
+		  		      } else {
+		  		    	  atts = atts.concat("else if (employee instanceof " + CodeGeneratorUtils.getUpperCaseLeading(types.get(i).getName()) + "){\n");
+		  		      }
+		  		      for (Attribute att : types.get(i).getAllVisibleAttributes()) {
+		  		    	  atts = atts.concat("attributes.getItems().add(\""+att.getName() + ": \" + " + getTypeAsToString(att)+
+		  		    			  "(((" + CodeGeneratorUtils.getUpperCaseLeading(types.get(i).getName()) + ")employee).get"+att.getName()+"()));\n");
+		  		      }
+		  		      
+		  		      atts = atts.concat("}\n");
+		  		      constructorBuilder.addCode(atts);
+		  	      }
+
+		  	    		  
+		  	    		  
+		  	    MethodSpec constructor = constructorBuilder.addStatement("$N.setPrefHeight($N.getItems().size()*25)", "attributes", "attributes")
+			    		  .addStatement("$N.setMaxHeight(200)", "attributes")
 		    		  .addStatement("String objTypeFull = employee.getClass().toString()")
-		    		  .addStatement("String[] objTypeArr = objTypeFull.split(\"\\.\")")
+		    		  .addStatement("String[] objTypeArr = objTypeFull.split(\"\\\\.\")")
 		    		  .addStatement("String objType = objTypeArr[objTypeArr.length - 1]")
 		    		  .addStatement("String objTypeType = \"$T\"", employee)
-		    		  .addStatement("String title = engineerName + \" Attributes\"")
-		    		  .addStatement("ObjectGraphPane objGraph = new ObjectGraphPane(title, $N.getLog(), objTypeType, objType, engineerName, $N.getBranch(), $N)", "gui", "gui", "gui")
-		    		  .addStatement("")
-		    		  .addStatement("$T name = new $T(employee.getName())", label, label)
+		    		  .addStatement("String title = employeeName + \" Attributes\"")
+		    		  .addStatement("ObjectGraphPane objGraph = new ObjectGraphPane(title, $N.getLog(), objTypeType, objType, employeeName, $N.getBranch(), $N)", "gui", "gui", "gui")
+		    		  .addStatement("$T name = new $T(employee.getKeyAsString())", label, label)
 		    		  .addStatement("name.set$T(new Font(30))", font)
 		    		  .addStatement("$N.getChildren().add(name)", "mainPane")
 		    		  .addStatement("$N.getChildren().add(imagePane)", "mainPane")
@@ -252,7 +291,6 @@ public class InfoScreenGenerator {
 		    		  .addStatement("$N.getChildren().add($N)", "mainPane", "attributes")
 		    		  .addStatement("$N.getChildren().add(objGraph)", "mainPane")
 		    		  .addStatement("$N.setAlignment($T.CENTER)", "mainPane", pos)
-		    		  .addStatement("")
 		    		  .addStatement("$T scene = new $T(mainPane, 500, 700)", scene, scene)
 		    		  .addStatement("this.setScene(scene)")
 		    		  .build();
@@ -268,6 +306,7 @@ public class InfoScreenGenerator {
 		      
 		      MethodSpec handle = MethodSpec.methodBuilder("handle")
 		    		  .addAnnotation(Override.class)
+		    		  .addModifiers(Modifier.PUBLIC)
 		    		  .returns(void.class)
 		    		  .addParameter(mouseevent, "e")
 		    		  .addStatement("$N.show(mainPane, e.getScreenX(), e.getScreenY())", "actions")
@@ -286,7 +325,7 @@ public class InfoScreenGenerator {
 		    				  .build())
 		    		  .build();
 		      
-		      TypeSpec eis = TypeSpec.classBuilder("ArtifactInfoScreen")
+		      TypeSpec eis = TypeSpec.classBuilder("EmployeeInfoScreen")
 		    		  .addModifiers(Modifier.PUBLIC)
 		    		  .superclass(stage)
 		    		  .addSuperinterface(mouseHandler)
@@ -306,10 +345,12 @@ public class InfoScreenGenerator {
 		    		  .addMethod(handle)
 		    		  .build();
 		      
-		      JavaFile file = JavaFile.builder("simse.gui", eis)
+		      JavaFile file = JavaFile.builder("", eis)
 						 .build();
 		      
-		      file.writeTo(writer);
+		      String fileString = "package simse.gui;\n\nimport java.util.Vector;\nimport simse.adts.objects.*;\n"+file.toString();
+		      
+		      writer.write(fileString);
 		      
 		      writer.close();
 		    } catch (IOException e) {
@@ -319,40 +360,406 @@ public class InfoScreenGenerator {
 		    }
 	  }
 	  
-	  private Vector<Attribute> getSharedVisibleAttributes(int dType) {
-		  Vector<SimSEObjectType> typeTypes = new Vector<>();
-		  Vector<SimSEObjectType> types = objTypes.getAllObjectTypes();
-		  for (SimSEObjectType type: types) {
-		        if (type.getType() == dType) {
-		            typeTypes.add(type);
-		        }
+	  private void generateProjectInfoScreen() {
+		    File pisFile = new File(directory, ("simse\\gui\\ProjectInfoScreen.java"));
+		    if (pisFile.exists()) {
+		    	pisFile.delete(); // delete old version of file
 		    }
-		  Vector<Attribute> compareAttributes = new Vector<>();
-		  if (typeTypes.size() > 0) {
-		        SimSEObjectType compareType = typeTypes.get(0);
-		        compareAttributes = compareType.getAllVisibleAttributes();
-		        for (SimSEObjectType obj: typeTypes) {
-		            if (compareAttributes.size() == 0) {
-		                break;
-		            }
-		            Vector<Attribute> toRemove = new Vector<>();
-		            for (Attribute compare1: compareAttributes) {
-		                boolean isShared = false;
-		                for (Attribute compare2: obj.getAllVisibleAttributes()) {
-		                    if (isShared) break;
-		                    if (compare1.attributeEquals(compare2)) isShared = true;
-		                }
-		                
-		                if (!isShared) toRemove.add(compare1);
-		            }
-		            
-		            for (Attribute remove: toRemove) {
-		                compareAttributes.remove(remove);
-		            }
-		        }
+		    try {
+		      FileWriter writer = new FileWriter(pisFile);
+		      
+		      ClassName eventhandler = ClassName.get("javafx.event", "EventHandler");
+		      ClassName pos = ClassName.get("javafx.geometry", "Pos");
+		      ClassName scene = ClassName.get("javafx.scene", "Scene");
+		      ClassName button = ClassName.get("javafx.scene.control", "Button");
+		      ClassName contextmenu = ClassName.get("javafx.scene.control", "ContextMenu");
+		      ClassName label = ClassName.get("javafx.scene.control", "Label");
+		      ClassName listview = ClassName.get("javafx.scene.control", "ListView");
+		      ClassName imageview = ClassName.get("javafx.scene.image", "ImageView");
+		      ClassName mouseevent = ClassName.get("javafx.scene.input", "MouseEvent");
+		      ClassName stackpane = ClassName.get("javafx.scene.layout", "StackPane");
+		      ClassName vbox = ClassName.get("javafx.scene.layout", "VBox");
+		      ClassName font = ClassName.get("javafx.scene.text", "Font");
+		      ClassName stage = ClassName.get("javafx.stage", "Stage");
+		      ClassName project = ClassName.get("simse.adts.objects", "Project");
+		      ClassName javafxhelpers = ClassName.get("simse.gui.util", "JavaFXHelpers");
+		      ClassName logic = ClassName.get("simse.logic", "Logic");
+		      ClassName state = ClassName.get("simse.state", "State");
+		      ClassName simsegui = ClassName.get("simse.gui", "SimSEGUI");
+		      ClassName string = ClassName.get(String.class);
+		      TypeName mouseHandler = ParameterizedTypeName.get(eventhandler, mouseevent);
+		      TypeName viewOfStrings = ParameterizedTypeName.get(listview, string);
+		      
+		      MethodSpec.Builder constructorBuilder = MethodSpec.constructorBuilder()
+		    		  .addModifiers(Modifier.PUBLIC)
+		    		  .addParameter(state, "s")
+		    		  .addParameter(simsegui, "gui")
+		    		  .addParameter(project, "project")
+		    		  .addStatement("this.$N = s", "state")
+		    		  .addStatement("this.$N = $N", "gui", "gui")
+		    		  .addStatement("this.$N = $N", "project", "project")
+		    		  .addStatement("this.$N = new $T()", "actions", contextmenu)
+		    		  .addStatement("this.$N = new $T()", "mainPane", vbox)
+		    		  .addStatement("String $NName = project.getKeyAsString()", "project")
+		    		  .addStatement("this.setTitle(projectName)")
+		    		  .addStatement("$T imagePane = new $T()", stackpane, stackpane)
+		    		  .addStatement("imagePane.setMinSize(110, 110)")
+		    		  .addStatement("String imageUrl = TabPanel.getImage(this.project)")
+		    		  .addStatement("$T img = $T.createImageView(imageUrl)", imageview, javafxhelpers)
+		    		  .addStatement("img.setScaleX(2)")
+		    		  .addStatement("img.setScaleY(2)")
+		    		  .addStatement("imagePane.getChildren().add(img)")
+		    		  .addStatement("$N = new $T<$T>()", "attributes", listview, string);
+		      
+		      	Vector<SimSEObjectType> objs = objTypes.getAllObjectTypes();
+		      
+				Vector<SimSEObjectType> types = new Vector<>();
+				for (SimSEObjectType type : objs) {
+					if (type.getType() == SimSEObjectTypeTypes.PROJECT) {
+						types.add(type);
+					}
+				}
+				
+		      for (int i = 0; i < types.size(); i++) {
+			      String atts = "";
+			      if (i == 0) {
+			    	  atts = atts.concat("if (project instanceof " + CodeGeneratorUtils.getUpperCaseLeading(types.get(i).getName()) + "){\n");
+			      } else {
+			    	  atts = atts.concat("else if (project instanceof " + CodeGeneratorUtils.getUpperCaseLeading(types.get(i).getName()) + "){\n");
+			      }
+			      for (Attribute att : types.get(i).getAllVisibleAttributes()) {
+			    	  atts = atts.concat("attributes.getItems().add(\""+att.getName() + ": \" + " + getTypeAsToString(att)+
+			    			  "(((" + CodeGeneratorUtils.getUpperCaseLeading(types.get(i).getName()) + ")project).get"+att.getName()+"()));\n");
+			      }
+			      
+			      atts = atts.concat("}\n");
+			      constructorBuilder.addCode(atts);
+		      }
+
+		    		  
+		    		  
+		    MethodSpec constructor = constructorBuilder.addStatement("$N.setPrefHeight($N.getItems().size()*25)", "attributes", "attributes")
+		    		  .addStatement("$N.setMaxHeight(200)", "attributes")
+		    		  .addStatement("String objTypeFull = $N.getClass().toString()", "project")
+		    		  .addStatement("String[] objTypeArr = objTypeFull.split(\"\\\\.\")")
+		    		  .addStatement("String objType = objTypeArr[objTypeArr.length - 1]")
+		    		  .addStatement("String objTypeType = \"$T\"", project)
+		    		  .addStatement("String title = projectName + \" Attributes\"")
+		    		  .addStatement("ObjectGraphPane objGraph = new ObjectGraphPane(title, $N.getLog(), objTypeType, objType, projectName, $N.getBranch(), $N)", "gui", "gui", "gui")
+		    		  .addStatement("$T name = new $T($N.getKeyAsString())", label, label, "project")
+		    		  .addStatement("name.set$T(new Font(30))", font)
+		    		  .addStatement("$N.getChildren().add(name)", "mainPane")
+		    		  .addStatement("$N.getChildren().add(imagePane)", "mainPane")
+		    		  .addStatement("$N.getChildren().add($N)", "mainPane", "attributes")
+		    		  .addStatement("$N.getChildren().add(objGraph)", "mainPane")
+		    		  .addStatement("$N.setAlignment($T.CENTER)", "mainPane", pos)
+		    		  .addStatement("$T scene = new $T(mainPane, 500, 700)", scene, scene)
+		    		  .addStatement("this.setScene(scene)")
+		    		  .build();
+		      
+		      MethodSpec handle = MethodSpec.methodBuilder("handle")
+		    		  .addAnnotation(Override.class)
+		    		  .addModifiers(Modifier.PUBLIC)
+		    		  .returns(void.class)
+		    		  .addParameter(mouseevent, "e")
+		    		  .addStatement("$N.show(mainPane, e.getScreenX(), e.getScreenY())", "actions")
+		    		  .build();
+		      
+		      TypeSpec pis = TypeSpec.classBuilder("ProjectInfoScreen")
+		    		  .addModifiers(Modifier.PUBLIC)
+		    		  .superclass(stage)
+		    		  .addSuperinterface(mouseHandler)
+		    		  .addField(contextmenu, "actions")
+		    		  .addField(vbox, "mainPane")
+		    		  .addField(simsegui, "gui")
+		    		  .addField(state, "state")
+		    		  .addField(project, "project")
+		    		  .addField(viewOfStrings, "attributes")
+		    		  .addMethod(constructor)
+		    		  .addMethod(handle)
+		    		  .build();
+		      
+		      JavaFile file = JavaFile.builder("", pis)
+						 .build();
+		      String toAppend = "package simse.gui;\n"
+						+ "import simse.adts.objects.*;\n";
+		      
+		      writer.write(toAppend + file.toString());
+		      
+		      writer.close();
+		    } catch (IOException e) {
+		      JOptionPane.showMessageDialog(null, ("Error writing file "
+		          + pisFile.getPath() + ": " + e.toString()), "File IO Error",
+		          JOptionPane.WARNING_MESSAGE);
+		    }
 		  }
-		        
-		  return compareAttributes;
+	  
+	  private void generateCustomerInfoScreen() {
+		    File cisFile = new File(directory, ("simse\\gui\\CustomerInfoScreen.java"));
+		    if (cisFile.exists()) {
+		    	cisFile.delete(); // delete old version of file
+		    }
+		    try {
+		      FileWriter writer = new FileWriter(cisFile);
+		      
+		      ClassName eventhandler = ClassName.get("javafx.event", "EventHandler");
+		      ClassName pos = ClassName.get("javafx.geometry", "Pos");
+		      ClassName scene = ClassName.get("javafx.scene", "Scene");
+		      ClassName button = ClassName.get("javafx.scene.control", "Button");
+		      ClassName contextmenu = ClassName.get("javafx.scene.control", "ContextMenu");
+		      ClassName label = ClassName.get("javafx.scene.control", "Label");
+		      ClassName listview = ClassName.get("javafx.scene.control", "ListView");
+		      ClassName imageview = ClassName.get("javafx.scene.image", "ImageView");
+		      ClassName mouseevent = ClassName.get("javafx.scene.input", "MouseEvent");
+		      ClassName stackpane = ClassName.get("javafx.scene.layout", "StackPane");
+		      ClassName vbox = ClassName.get("javafx.scene.layout", "VBox");
+		      ClassName font = ClassName.get("javafx.scene.text", "Font");
+		      ClassName stage = ClassName.get("javafx.stage", "Stage");
+		      ClassName customer = ClassName.get("simse.adts.objects", "Customer");
+		      ClassName javafxhelpers = ClassName.get("simse.gui.util", "JavaFXHelpers");
+		      ClassName logic = ClassName.get("simse.logic", "Logic");
+		      ClassName state = ClassName.get("simse.state", "State");
+		      ClassName simsegui = ClassName.get("simse.gui", "SimSEGUI");
+		      ClassName string = ClassName.get(String.class);
+		      TypeName mouseHandler = ParameterizedTypeName.get(eventhandler, mouseevent);
+		      TypeName viewOfStrings = ParameterizedTypeName.get(listview, string);
+		      
+		      MethodSpec.Builder constructorBuilder = MethodSpec.constructorBuilder()
+		    		  .addModifiers(Modifier.PUBLIC)
+		    		  .addParameter(state, "s")
+		    		  .addParameter(simsegui, "gui")
+		    		  .addParameter(customer, "customer")
+		    		  .addStatement("this.$N = s", "state")
+		    		  .addStatement("this.$N = $N", "gui", "gui")
+		    		  .addStatement("this.$N = $N", "customer", "customer")
+		    		  .addStatement("this.$N = new $T()", "actions", contextmenu)
+		    		  .addStatement("this.$N = new $T()", "mainPane", vbox)
+		    		  .addStatement("String $NName = customer.getKeyAsString()", "customer")
+		    		  .addStatement("this.setTitle(customerName)")
+		    		  .addStatement("$T imagePane = new $T()", stackpane, stackpane)
+		    		  .addStatement("imagePane.setMinSize(110, 110)")
+		    		  .addStatement("String imageUrl = TabPanel.getImage(this.customer)")
+		    		  .addStatement("$T img = $T.createImageView(imageUrl)", imageview, javafxhelpers)
+		    		  .addStatement("img.setScaleX(2)")
+		    		  .addStatement("img.setScaleY(2)")
+		    		  .addStatement("imagePane.getChildren().add(img)")
+		    		  .addStatement("$N = new $T<$T>()", "attributes", listview, string);
+		      
+		      	Vector<SimSEObjectType> objs = objTypes.getAllObjectTypes();
+		      
+				Vector<SimSEObjectType> types = new Vector<>();
+				for (SimSEObjectType type : objs) {
+					if (type.getType() == SimSEObjectTypeTypes.CUSTOMER) {
+						types.add(type);
+					}
+				}
+				
+		      for (int i = 0; i < types.size(); i++) {
+			      String atts = "";
+			      if (i == 0) {
+			    	  atts = atts.concat("if (customer instanceof " + CodeGeneratorUtils.getUpperCaseLeading(types.get(i).getName()) + "){\n");
+			      } else {
+			    	  atts = atts.concat("else if (customer instanceof " + CodeGeneratorUtils.getUpperCaseLeading(types.get(i).getName()) + "){\n");
+			      }
+			      for (Attribute att : types.get(i).getAllVisibleAttributes()) {
+			    	  atts = atts.concat("attributes.getItems().add(\""+att.getName() + ": \" + " + getTypeAsToString(att)+
+			    			  "(((" + CodeGeneratorUtils.getUpperCaseLeading(types.get(i).getName()) + ")customer).get"+att.getName()+"()));\n");
+			      }
+			      
+			      atts = atts.concat("}\n");
+			      constructorBuilder.addCode(atts);
+		      }
+
+		    		  
+		    		  
+		    MethodSpec constructor = constructorBuilder.addStatement("$N.setPrefHeight($N.getItems().size()*25)", "attributes", "attributes")
+		    		  .addStatement("$N.setMaxHeight(200)", "attributes")
+		    		  .addStatement("String objTypeFull = $N.getClass().toString()", "customer")
+		    		  .addStatement("String[] objTypeArr = objTypeFull.split(\"\\\\.\")")
+		    		  .addStatement("String objType = objTypeArr[objTypeArr.length - 1]")
+		    		  .addStatement("String objTypeType = \"$T\"", customer)
+		    		  .addStatement("String title = customerName + \" Attributes\"")
+		    		  .addStatement("ObjectGraphPane objGraph = new ObjectGraphPane(title, $N.getLog(), objTypeType, objType, customerName, $N.getBranch(), $N)", "gui", "gui", "gui")
+		    		  .addStatement("$T name = new $T($N.getKeyAsString())", label, label, "customer")
+		    		  .addStatement("name.set$T(new Font(30))", font)
+		    		  .addStatement("$N.getChildren().add(name)", "mainPane")
+		    		  .addStatement("$N.getChildren().add(imagePane)", "mainPane")
+		    		  .addStatement("$N.getChildren().add($N)", "mainPane", "attributes")
+		    		  .addStatement("$N.getChildren().add(objGraph)", "mainPane")
+		    		  .addStatement("$N.setAlignment($T.CENTER)", "mainPane", pos)
+		    		  .addStatement("$T scene = new $T(mainPane, 500, 700)", scene, scene)
+		    		  .addStatement("this.setScene(scene)")
+		    		  .build();
+		      
+		      MethodSpec handle = MethodSpec.methodBuilder("handle")
+		    		  .addAnnotation(Override.class)
+		    		  .addModifiers(Modifier.PUBLIC)
+		    		  .returns(void.class)
+		    		  .addParameter(mouseevent, "e")
+		    		  .addStatement("$N.show(mainPane, e.getScreenX(), e.getScreenY())", "actions")
+		    		  .build();
+		      
+		      TypeSpec cis = TypeSpec.classBuilder("CustomerInfoScreen")
+		    		  .addModifiers(Modifier.PUBLIC)
+		    		  .superclass(stage)
+		    		  .addSuperinterface(mouseHandler)
+		    		  .addField(contextmenu, "actions")
+		    		  .addField(vbox, "mainPane")
+		    		  .addField(simsegui, "gui")
+		    		  .addField(state, "state")
+		    		  .addField(customer, "customer")
+		    		  .addField(viewOfStrings, "attributes")
+		    		  .addMethod(constructor)
+		    		  .addMethod(handle)
+		    		  .build();
+		      
+		      JavaFile file = JavaFile.builder("", cis)
+						 .build();
+		      String toAppend = "package simse.gui;\n"
+						+ "import simse.adts.objects.*;\n";
+		      
+		      writer.write(toAppend + file.toString());
+		      
+		      writer.close();
+		    } catch (IOException e) {
+		      JOptionPane.showMessageDialog(null, ("Error writing file "
+		          + cisFile.getPath() + ": " + e.toString()), "File IO Error",
+		          JOptionPane.WARNING_MESSAGE);
+		    }
+	  }
+	  
+	  private void generateToolInfoScreen() {
+		    File cisFile = new File(directory, ("simse\\gui\\ToolInfoScreen.java"));
+		    if (cisFile.exists()) {
+		    	cisFile.delete(); // delete old version of file
+		    }
+		    try {
+		      FileWriter writer = new FileWriter(cisFile);
+		      
+		      ClassName eventhandler = ClassName.get("javafx.event", "EventHandler");
+		      ClassName pos = ClassName.get("javafx.geometry", "Pos");
+		      ClassName scene = ClassName.get("javafx.scene", "Scene");
+		      ClassName button = ClassName.get("javafx.scene.control", "Button");
+		      ClassName contextmenu = ClassName.get("javafx.scene.control", "ContextMenu");
+		      ClassName label = ClassName.get("javafx.scene.control", "Label");
+		      ClassName listview = ClassName.get("javafx.scene.control", "ListView");
+		      ClassName imageview = ClassName.get("javafx.scene.image", "ImageView");
+		      ClassName mouseevent = ClassName.get("javafx.scene.input", "MouseEvent");
+		      ClassName stackpane = ClassName.get("javafx.scene.layout", "StackPane");
+		      ClassName vbox = ClassName.get("javafx.scene.layout", "VBox");
+		      ClassName font = ClassName.get("javafx.scene.text", "Font");
+		      ClassName stage = ClassName.get("javafx.stage", "Stage");
+		      ClassName tool = ClassName.get("simse.adts.objects", "Tool");
+		      ClassName javafxhelpers = ClassName.get("simse.gui.util", "JavaFXHelpers");
+		      ClassName logic = ClassName.get("simse.logic", "Logic");
+		      ClassName state = ClassName.get("simse.state", "State");
+		      ClassName simsegui = ClassName.get("simse.gui", "SimSEGUI");
+		      ClassName string = ClassName.get(String.class);
+		      TypeName mouseHandler = ParameterizedTypeName.get(eventhandler, mouseevent);
+		      TypeName viewOfStrings = ParameterizedTypeName.get(listview, string);
+		      
+		      MethodSpec.Builder constructorBuilder = MethodSpec.constructorBuilder()
+		    		  .addModifiers(Modifier.PUBLIC)
+		    		  .addParameter(state, "s")
+		    		  .addParameter(simsegui, "gui")
+		    		  .addParameter(tool, "tool")
+		    		  .addStatement("this.$N = s", "state")
+		    		  .addStatement("this.$N = $N", "gui", "gui")
+		    		  .addStatement("this.$N = $N", "tool", "tool")
+		    		  .addStatement("this.$N = new $T()", "actions", contextmenu)
+		    		  .addStatement("this.$N = new $T()", "mainPane", vbox)
+		    		  .addStatement("String $NName = tool.getKeyAsString()", "tool")
+		    		  .addStatement("this.setTitle(toolName)")
+		    		  .addStatement("$T imagePane = new $T()", stackpane, stackpane)
+		    		  .addStatement("imagePane.setMinSize(110, 110)")
+		    		  .addStatement("String imageUrl = TabPanel.getImage(this.tool)")
+		    		  .addStatement("$T img = $T.createImageView(imageUrl)", imageview, javafxhelpers)
+		    		  .addStatement("img.setScaleX(2)")
+		    		  .addStatement("img.setScaleY(2)")
+		    		  .addStatement("imagePane.getChildren().add(img)")
+		    		  .addStatement("$N = new $T<$T>()", "attributes", listview, string);
+		      
+		      	Vector<SimSEObjectType> objs = objTypes.getAllObjectTypes();
+		      
+				Vector<SimSEObjectType> types = new Vector<>();
+				for (SimSEObjectType type : objs) {
+					if (type.getType() == SimSEObjectTypeTypes.TOOL) {
+						types.add(type);
+					}
+				}
+				
+		      for (int i = 0; i < types.size(); i++) {
+			      String atts = "";
+			      if (i == 0) {
+			    	  atts = atts.concat("if (tool instanceof " + CodeGeneratorUtils.getUpperCaseLeading(types.get(i).getName()) + "){\n");
+			      } else {
+			    	  atts = atts.concat("else if (tool instanceof " + CodeGeneratorUtils.getUpperCaseLeading(types.get(i).getName()) + "){\n");
+			      }
+			      for (Attribute att : types.get(i).getAllVisibleAttributes()) {
+			    	  atts = atts.concat("attributes.getItems().add(\""+att.getName() + ": \" + " + getTypeAsToString(att)+
+			    			  "(((" + CodeGeneratorUtils.getUpperCaseLeading(types.get(i).getName()) + ")tool).get"+att.getName()+"()));\n");
+			      }
+			      
+			      atts = atts.concat("}\n");
+			      constructorBuilder.addCode(atts);
+		      }
+
+		    		  
+		    		  
+		    MethodSpec constructor = constructorBuilder.addStatement("$N.setPrefHeight($N.getItems().size()*25)", "attributes", "attributes")
+		    		  .addStatement("$N.setMaxHeight(200)", "attributes")
+		    		  .addStatement("String objTypeFull = $N.getClass().toString()", "tool")
+		    		  .addStatement("String[] objTypeArr = objTypeFull.split(\"\\\\.\")")
+		    		  .addStatement("String objType = objTypeArr[objTypeArr.length - 1]")
+		    		  .addStatement("String objTypeType = \"$T\"", tool)
+		    		  .addStatement("String title = toolName + \" Attributes\"")
+		    		  .addStatement("ObjectGraphPane objGraph = new ObjectGraphPane(title, $N.getLog(), objTypeType, objType, toolName, $N.getBranch(), $N)", "gui", "gui", "gui")
+		    		  .addStatement("$T name = new $T($N.getKeyAsString())", label, label, "tool")
+		    		  .addStatement("name.set$T(new Font(30))", font)
+		    		  .addStatement("$N.getChildren().add(name)", "mainPane")
+		    		  .addStatement("$N.getChildren().add(imagePane)", "mainPane")
+		    		  .addStatement("$N.getChildren().add($N)", "mainPane", "attributes")
+		    		  .addStatement("$N.getChildren().add(objGraph)", "mainPane")
+		    		  .addStatement("$N.setAlignment($T.CENTER)", "mainPane", pos)
+		    		  .addStatement("$T scene = new $T(mainPane, 500, 700)", scene, scene)
+		    		  .addStatement("this.setScene(scene)")
+		    		  .build();
+		      
+		      MethodSpec handle = MethodSpec.methodBuilder("handle")
+		    		  .addAnnotation(Override.class)
+		    		  .addModifiers(Modifier.PUBLIC)
+		    		  .returns(void.class)
+		    		  .addParameter(mouseevent, "e")
+		    		  .addStatement("$N.show(mainPane, e.getScreenX(), e.getScreenY())", "actions")
+		    		  .build();
+		      
+		      TypeSpec cis = TypeSpec.classBuilder("ToolInfoScreen")
+		    		  .addModifiers(Modifier.PUBLIC)
+		    		  .superclass(stage)
+		    		  .addSuperinterface(mouseHandler)
+		    		  .addField(contextmenu, "actions")
+		    		  .addField(vbox, "mainPane")
+		    		  .addField(simsegui, "gui")
+		    		  .addField(state, "state")
+		    		  .addField(tool, "tool")
+		    		  .addField(viewOfStrings, "attributes")
+		    		  .addMethod(constructor)
+		    		  .addMethod(handle)
+		    		  .build();
+		      
+		      JavaFile file = JavaFile.builder("", cis)
+						 .build();
+		      String toAppend = "package simse.gui;\n"
+						+ "import simse.adts.objects.*;\n";
+		      
+		      writer.write(toAppend + file.toString());
+		      
+		      writer.close();
+		    } catch (IOException e) {
+		      JOptionPane.showMessageDialog(null, ("Error writing file "
+		          + cisFile.getPath() + ": " + e.toString()), "File IO Error",
+		          JOptionPane.WARNING_MESSAGE);
+		    }
 	  }
 	  
 	  private String getTypeAsToString(Attribute att) {

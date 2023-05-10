@@ -62,8 +62,8 @@ public class TableModelGenerator implements CodeGeneratorConstants {
 	      Scanner s = new Scanner(reader);
 	      FileWriter writer = new FileWriter(tModFile);
 	      
-	      while (s.hasNext()) {
-	    	  writer.write(s.next());
+	      while (s.hasNextLine()) {
+	      	  writer.write(s.nextLine() + "\n");
 	      }
 	      
 	      writer.close();
@@ -85,7 +85,6 @@ public class TableModelGenerator implements CodeGeneratorConstants {
 	 File etmFile = new File(directory, ("simse\\gui\\EmployeeTableModel.java")); 
 	 
 	 MethodSpec constructor = MethodSpec.constructorBuilder()
-			 .addAnnotation(Override.class)
 			 .addModifiers(Modifier.PUBLIC)
 			 .addParameter(state, "s")
 			 .addStatement("super(s)")
@@ -99,13 +98,24 @@ public class TableModelGenerator implements CodeGeneratorConstants {
 	 
 	 Vector<Attribute> common = getSharedVisibleAttributes(SimSEObjectTypeTypes.EMPLOYEE);
 	 
-	 String getVal = "";
-	 getVal.concat("switch(row) {\n");
+	 String initCol = "";
 	 for (int i=0; i<common.size(); i++) {
-		 getVal.concat("case " + i + ": returnValue = model.get"+common.get(i).getName()+"();\n");
-		 getVal.concat("break;\n");
+		 initCol = initCol.concat("columnNames.add(\""+common.get(i).getName() + "\");\n");
 	 }
-	 getVal.concat("}\n");
+	 
+	 MethodSpec initCols = MethodSpec.methodBuilder("initColNames")
+			 .addAnnotation(Override.class)
+			 .returns(void.class)
+			 .addCode(initCol)
+			 .build();
+	 
+	 String getVal = "";
+	 getVal = getVal.concat("switch(row) {\n");
+	 for (int i=0; i<common.size(); i++) {
+		 getVal = getVal.concat("case " + i + ": returnValue = model.get"+common.get(i).getName()+"();\n");
+		 getVal = getVal.concat("break;\n");
+	 }
+	 getVal = getVal.concat("}\n");
 	 
 	 MethodSpec getValue = MethodSpec.methodBuilder("getValueAt")
 			 .addAnnotation(Override.class)
@@ -119,12 +129,12 @@ public class TableModelGenerator implements CodeGeneratorConstants {
 			 .build();
 	 
 	 String setVal = "";
-	 setVal.concat("switch(row) {\n");
+	 setVal = setVal.concat("switch(row) {\n");
 	 for (int i=0; i<common.size(); i++) {
-		 setVal.concat("case " + i + ": model.set"+common.get(i).getName()+"("+getTypeAsCast(common.get(i))+" value);\n");
-		 setVal.concat("break;\n");
+		 setVal = setVal.concat("case " + i + ": model.set"+common.get(i).getName()+"("+getTypeAsCast(common.get(i))+" value);\n");
+		 setVal = setVal.concat("break;\n");
 	 }
-	 setVal.concat("}\n");
+	 setVal = setVal.concat("}\n");
 	 
 	 MethodSpec setValue = MethodSpec.methodBuilder("setValueAt")
 			 .addAnnotation(Override.class)
@@ -141,6 +151,7 @@ public class TableModelGenerator implements CodeGeneratorConstants {
 			 .addModifiers(Modifier.PUBLIC)
 			 .superclass(tOfE)
 			 .addMethod(constructor)
+			 .addMethod(initCols)
 			 .addMethod(getRepo)
 			 .addMethod(getValue)
 			 .addMethod(setValue)
@@ -172,7 +183,6 @@ public class TableModelGenerator implements CodeGeneratorConstants {
 		 File atmFile = new File(directory, ("simse\\gui\\ArtifactTableModel.java")); 
 		 
 		 MethodSpec constructor = MethodSpec.constructorBuilder()
-				 .addAnnotation(Override.class)
 				 .addModifiers(Modifier.PUBLIC)
 				 .addParameter(state, "s")
 				 .addStatement("super(s)")
@@ -186,13 +196,24 @@ public class TableModelGenerator implements CodeGeneratorConstants {
 		 
 		 Vector<Attribute> common = getSharedVisibleAttributes(SimSEObjectTypeTypes.ARTIFACT);
 		 
-		 String getVal = "";
-		 getVal.concat("switch(row) {\n");
+		 String initCol = "";
 		 for (int i=0; i<common.size(); i++) {
-			 getVal.concat("case " + i + ": returnValue = model.get"+common.get(i).getName()+"();\n");
-			 getVal.concat("break;\n");
+			 initCol = initCol.concat("columnNames.add(\""+common.get(i).getName() + "\");\n");
 		 }
-		 getVal.concat("}\n");
+		 
+		 MethodSpec initCols = MethodSpec.methodBuilder("initColNames")
+				 .addAnnotation(Override.class)
+				 .returns(void.class)
+				 .addCode(initCol)
+				 .build();
+		 
+		 String getVal = "";
+		 getVal = getVal.concat("switch(row) {\n");
+		 for (int i=0; i<common.size(); i++) {
+			 getVal = getVal.concat("case " + i + ": returnValue = model.get"+common.get(i).getName()+"();\n");
+			 getVal = getVal.concat("break;\n");
+		 }
+		 getVal = getVal.concat("}\n");
 		 
 		 MethodSpec getValue = MethodSpec.methodBuilder("getValueAt")
 				 .addAnnotation(Override.class)
@@ -206,12 +227,12 @@ public class TableModelGenerator implements CodeGeneratorConstants {
 				 .build();
 		 
 		 String setVal = "";
-		 setVal.concat("switch(row) {\n");
+		 setVal = setVal.concat("switch(row) {\n");
 		 for (int i=0; i<common.size(); i++) {
-			 setVal.concat("case " + i + ": model.set"+common.get(i).getName()+"("+getTypeAsCast(common.get(i))+" value);\n");
-			 setVal.concat("break;\n");
+			 setVal = setVal.concat("case " + i + ": model.set"+common.get(i).getName()+"("+getTypeAsCast(common.get(i))+" value);\n");
+			 setVal = setVal.concat("break;\n");
 		 }
-		 setVal.concat("}\n");
+		 setVal = setVal.concat("}\n");
 		 
 		 MethodSpec setValue = MethodSpec.methodBuilder("setValueAt")
 				 .addAnnotation(Override.class)
@@ -228,6 +249,7 @@ public class TableModelGenerator implements CodeGeneratorConstants {
 				 .addModifiers(Modifier.PUBLIC)
 				 .superclass(tOfA)
 				 .addMethod(constructor)
+				 .addMethod(initCols)
 				 .addMethod(getRepo)
 				 .addMethod(getValue)
 				 .addMethod(setValue)
@@ -258,10 +280,22 @@ public class TableModelGenerator implements CodeGeneratorConstants {
 		 File ttmFile = new File(directory, ("simse\\gui\\ToolTableModel.java")); 
 		 
 		 MethodSpec constructor = MethodSpec.constructorBuilder()
-				 .addAnnotation(Override.class)
 				 .addModifiers(Modifier.PUBLIC)
 				 .addParameter(state, "s")
 				 .addStatement("super(s)")
+				 .build();
+		 
+		 Vector<Attribute> common = getSharedVisibleAttributes(SimSEObjectTypeTypes.TOOL);
+		 
+		 String initCol = "";
+		 for (int i=0; i<common.size(); i++) {
+			 initCol = initCol.concat("columnNames.add(\""+common.get(i).getName() + "\");\n");
+		 }
+		 
+		 MethodSpec initCols = MethodSpec.methodBuilder("initColNames")
+				 .addAnnotation(Override.class)
+				 .returns(void.class)
+				 .addCode(initCol)
 				 .build();
 		 
 		 MethodSpec getRepo = MethodSpec.methodBuilder("getRepository")
@@ -270,15 +304,13 @@ public class TableModelGenerator implements CodeGeneratorConstants {
 				 .addStatement("return state.getToolStateRepository().getAll()")
 				 .build();
 		 
-		 Vector<Attribute> common = getSharedVisibleAttributes(SimSEObjectTypeTypes.TOOL);
-		 
 		 String getVal = "";
-		 getVal.concat("switch(row) {\n");
+		 getVal = getVal.concat("switch(row) {\n");
 		 for (int i=0; i<common.size(); i++) {
-			 getVal.concat("case " + i + ": returnValue = model.get"+common.get(i).getName()+"();\n");
-			 getVal.concat("break;\n");
+			 getVal = getVal.concat("case " + i + ": returnValue = model.get"+common.get(i).getName()+"();\n");
+			 getVal = getVal.concat("break;\n");
 		 }
-		 getVal.concat("}\n");
+		 getVal = getVal.concat("}\n");
 		 
 		 MethodSpec getValue = MethodSpec.methodBuilder("getValueAt")
 				 .addAnnotation(Override.class)
@@ -292,12 +324,12 @@ public class TableModelGenerator implements CodeGeneratorConstants {
 				 .build();
 		 
 		 String setVal = "";
-		 setVal.concat("switch(row) {\n");
+		 setVal = setVal.concat("switch(row) {\n");
 		 for (int i=0; i<common.size(); i++) {
-			 setVal.concat("case " + i + ": model.set"+common.get(i).getName()+"("+getTypeAsCast(common.get(i))+" value);\n");
-			 setVal.concat("break;\n");
+			 setVal = setVal.concat("case " + i + ": model.set"+common.get(i).getName()+"("+getTypeAsCast(common.get(i))+" value);\n");
+			 setVal = setVal.concat("break;\n");
 		 }
-		 setVal.concat("}\n");
+		 setVal = setVal.concat("}\n");
 		 
 		 MethodSpec setValue = MethodSpec.methodBuilder("setValueAt")
 				 .addAnnotation(Override.class)
@@ -314,6 +346,7 @@ public class TableModelGenerator implements CodeGeneratorConstants {
 				 .addModifiers(Modifier.PUBLIC)
 				 .superclass(tOfT)
 				 .addMethod(constructor)
+				 .addMethod(initCols)
 				 .addMethod(getRepo)
 				 .addMethod(getValue)
 				 .addMethod(setValue)
@@ -344,7 +377,6 @@ public class TableModelGenerator implements CodeGeneratorConstants {
 		 File ctmFile = new File(directory, ("simse\\gui\\CustomerTableModel.java")); 
 		 
 		 MethodSpec constructor = MethodSpec.constructorBuilder()
-				 .addAnnotation(Override.class)
 				 .addModifiers(Modifier.PUBLIC)
 				 .addParameter(state, "s")
 				 .addStatement("super(s)")
@@ -358,13 +390,24 @@ public class TableModelGenerator implements CodeGeneratorConstants {
 		 
 		 Vector<Attribute> common = getSharedVisibleAttributes(SimSEObjectTypeTypes.CUSTOMER);
 		 
-		 String getVal = "";
-		 getVal.concat("switch(row) {\n");
+		 String initCol = "";
 		 for (int i=0; i<common.size(); i++) {
-			 getVal.concat("case " + i + ": returnValue = model.get"+common.get(i).getName()+"();\n");
-			 getVal.concat("break;\n");
+			 initCol = initCol.concat("columnNames.add(\""+common.get(i).getName() + "\");\n");
 		 }
-		 getVal.concat("}\n");
+		 
+		 MethodSpec initCols = MethodSpec.methodBuilder("initColNames")
+				 .addAnnotation(Override.class)
+				 .returns(void.class)
+				 .addCode(initCol)
+				 .build();
+		 
+		 String getVal = "";
+		 getVal = getVal.concat("switch(row) {\n");
+		 for (int i=0; i<common.size(); i++) {
+			 getVal = getVal.concat("case " + i + ": returnValue = model.get"+common.get(i).getName()+"();\n");
+			 getVal = getVal.concat("break;\n");
+		 }
+		 getVal = getVal.concat("}\n");
 		 
 		 MethodSpec getValue = MethodSpec.methodBuilder("getValueAt")
 				 .addAnnotation(Override.class)
@@ -378,12 +421,12 @@ public class TableModelGenerator implements CodeGeneratorConstants {
 				 .build();
 		 
 		 String setVal = "";
-		 setVal.concat("switch(row) {\n");
+		 setVal = setVal.concat("switch(row) {\n");
 		 for (int i=0; i<common.size(); i++) {
-			 setVal.concat("case " + i + ": model.set"+common.get(i).getName()+"("+getTypeAsCast(common.get(i))+" value);\n");
-			 setVal.concat("break;\n");
+			 setVal = setVal.concat("case " + i + ": model.set"+common.get(i).getName()+"("+getTypeAsCast(common.get(i))+" value);\n");
+			 setVal = setVal.concat("break;\n");
 		 }
-		 setVal.concat("}\n");
+		 setVal = setVal.concat("}\n");
 		 
 		 MethodSpec setValue = MethodSpec.methodBuilder("setValueAt")
 				 .addAnnotation(Override.class)
@@ -400,6 +443,7 @@ public class TableModelGenerator implements CodeGeneratorConstants {
 				 .addModifiers(Modifier.PUBLIC)
 				 .superclass(tOfC)
 				 .addMethod(constructor)
+				 .addMethod(initCols)
 				 .addMethod(getRepo)
 				 .addMethod(getValue)
 				 .addMethod(setValue)
@@ -430,7 +474,6 @@ public class TableModelGenerator implements CodeGeneratorConstants {
 		 File ptmFile = new File(directory, ("simse\\gui\\ProjectTableModel.java")); 
 		 
 		 MethodSpec constructor = MethodSpec.constructorBuilder()
-				 .addAnnotation(Override.class)
 				 .addModifiers(Modifier.PUBLIC)
 				 .addParameter(state, "s")
 				 .addStatement("super(s)")
@@ -444,13 +487,24 @@ public class TableModelGenerator implements CodeGeneratorConstants {
 		 
 		 Vector<Attribute> common = getSharedVisibleAttributes(SimSEObjectTypeTypes.PROJECT);
 		 
-		 String getVal = "";
-		 getVal.concat("switch(row) {\n");
+		 String initCol = "";
 		 for (int i=0; i<common.size(); i++) {
-			 getVal.concat("case " + i + ": returnValue = model.get"+common.get(i).getName()+"();\n");
-			 getVal.concat("break;\n");
+			 initCol = initCol.concat("columnNames.add(\""+common.get(i).getName() + "\");\n");
 		 }
-		 getVal.concat("}\n");
+		 
+		 MethodSpec initCols = MethodSpec.methodBuilder("initColNames")
+				 .addAnnotation(Override.class)
+				 .returns(void.class)
+				 .addCode(initCol)
+				 .build();
+		 
+		 String getVal = "";
+		 getVal = getVal.concat("switch(row) {\n");
+		 for (int i=0; i<common.size(); i++) {
+			 getVal = getVal.concat("case " + i + ": returnValue = model.get"+common.get(i).getName()+"();\n");
+			 getVal = getVal.concat("break;\n");
+		 }
+		 getVal = getVal.concat("}\n");
 		 
 		 MethodSpec getValue = MethodSpec.methodBuilder("getValueAt")
 				 .addAnnotation(Override.class)
@@ -464,12 +518,12 @@ public class TableModelGenerator implements CodeGeneratorConstants {
 				 .build();
 		 
 		 String setVal = "";
-		 setVal.concat("switch(row) {\n");
+		 setVal = setVal.concat("switch(row) {\n");
 		 for (int i=0; i<common.size(); i++) {
-			 setVal.concat("case " + i + ": model.set"+common.get(i).getName()+"("+getTypeAsCast(common.get(i))+" value);\n");
-			 setVal.concat("break;\n");
+			 setVal = setVal.concat("case " + i + ": model.set"+common.get(i).getName()+"("+getTypeAsCast(common.get(i))+" value);\n");
+			 setVal = setVal.concat("break;\n");
 		 }
-		 setVal.concat("}\n");
+		 setVal = setVal.concat("}\n");
 		 
 		 MethodSpec setValue = MethodSpec.methodBuilder("setValueAt")
 				 .addAnnotation(Override.class)
@@ -486,6 +540,7 @@ public class TableModelGenerator implements CodeGeneratorConstants {
 				 .addModifiers(Modifier.PUBLIC)
 				 .superclass(tOfP)
 				 .addMethod(constructor)
+				 .addMethod(initCols)
 				 .addMethod(getRepo)
 				 .addMethod(getValue)
 				 .addMethod(setValue)
@@ -528,7 +583,8 @@ public class TableModelGenerator implements CodeGeneratorConstants {
 	                boolean isShared = false;
 	                for (Attribute compare2: obj.getAllVisibleAttributes()) {
 	                    if (isShared) break;
-	                    if (compare1.attributeEquals(compare2)) isShared = true;
+	                    if (compare1.attributeEquals(compare2)||
+	    						compare1.isKey()) isShared = true;
 	                }
 	                
 	                if (!isShared) toRemove.add(compare1);
@@ -538,6 +594,30 @@ public class TableModelGenerator implements CodeGeneratorConstants {
 	                compareAttributes.remove(remove);
 	            }
 	        }
+	        
+			Vector<Attribute> compareKeys = new Vector<Attribute>();
+			compareKeys.add(compareType.getKey());
+			for (SimSEObjectType type : typeTypes) {
+				boolean shared = false;
+				for (Attribute key : compareKeys) {
+					if (key.attributeEquals(type.getKey())) {
+						shared = true;
+						break;
+					}
+				}
+				
+				if (!shared) {
+					compareKeys.add(type.getKey());
+				}
+			}
+			
+			if (compareAttributes.contains(compareType.getKey())) {
+				compareKeys.remove(compareType.getKey());
+			}
+			
+			for (Attribute key: compareKeys) {
+				compareAttributes.add(key);
+			}
 	  }
 	        
 	  return compareAttributes;

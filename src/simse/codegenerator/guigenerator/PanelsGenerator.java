@@ -32,8 +32,8 @@ public class PanelsGenerator {
 	      Scanner s = new Scanner(reader);
 	      FileWriter writer = new FileWriter(panelFile);
 	      
-	      while (s.hasNext()) {
-	    	  writer.write(s.next());
+	      while (s.hasNextLine()) {
+	      	  writer.write(s.nextLine() + "\n");
 	      }
 	      
 	      writer.close();
@@ -55,8 +55,8 @@ public class PanelsGenerator {
 		      Scanner s = new Scanner(reader);
 		      FileWriter writer = new FileWriter(simSEPanelFile);
 		      
-		      while (s.hasNext()) {
-		    	  writer.write(s.next());
+		      while (s.hasNextLine()) {
+		      	  writer.write(s.nextLine() + "\n");
 		      }
 		      
 		      writer.close();
@@ -78,8 +78,8 @@ public class PanelsGenerator {
 		      Scanner s = new Scanner(reader);
 		      FileWriter writer = new FileWriter(panelScreenFile);
 		      
-		      while (s.hasNext()) {
-		    	  writer.write(s.next());
+		      while (s.hasNextLine()) {
+		      	  writer.write(s.nextLine() + "\n");
 		      }
 		      
 		      writer.close();
