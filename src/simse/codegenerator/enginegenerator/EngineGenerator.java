@@ -52,6 +52,23 @@ public class EngineGenerator implements CodeGeneratorConstants {
 		return count - 1;
 	}
 	
+	public Vector<SimSEObject> moveEmployeesToFront(Vector<SimSEObject> objects) {
+	
+		Vector<SimSEObject> newVector = new Vector<>();
+		
+		for(SimSEObject obj : objects) {
+			if(obj.getSimSEObjectType().getType() != SimSEObjectTypeTypes.EMPLOYEE) {
+				newVector.add(obj);
+			}
+		}
+		for(SimSEObject obj : objects) {
+			if(obj.getSimSEObjectType().getType() == SimSEObjectTypeTypes.EMPLOYEE) {
+				newVector.insertElementAt(obj, 0);
+			}
+		}
+		return newVector;
+	}
+	
 	// causes the engine component to be generated
 	public void generate() {
 		// generate starting narrative dialog:
@@ -80,7 +97,7 @@ public class EngineGenerator implements CodeGeneratorConstants {
 		CodeBlock.Builder objsBuilder = CodeBlock.builder();
 		objsBuilder.addStatement("$T<Employee> employees = $T.getInstance(state).getAll()", vector, employeeStateResp);
 		objsBuilder.beginControlFlow("if(employees.size() == 0)");
-		Vector<SimSEObject> objs = createdObjs.getAllObjects();
+		Vector<SimSEObject> objs = this.moveEmployeesToFront(createdObjs.getAllObjects());
 		int employeeCount = this.getEmployeeCount(objs);
 		for (int i = 0; i < objs.size(); i++) {
 			StringBuffer strToWrite = new StringBuffer();
