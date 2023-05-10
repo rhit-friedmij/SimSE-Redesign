@@ -19,10 +19,12 @@ public class TrackMessage extends Pane implements Cloneable{
 	
 	Object sender;
 	String message;
+	int messageTick;
 	
-	public TrackMessage(Object sender, String text) {
+	public TrackMessage(Object sender, String text, int tick) {
 		this.sender = sender;
 		this.message = text;
+		this.messageTick = tick;
 		
 		GridPane pane = new GridPane();
 		
@@ -48,15 +50,24 @@ public class TrackMessage extends Pane implements Cloneable{
 			pane.add(img, 0, 0);
 		}
 		
-		Font nameFont = Font.font("Helvetica", FontWeight.BOLD, 20);
+		Font nameFont = Font.font("Helvetica", FontWeight.BOLD, 16);
+		Font tickFont = Font.font("Helvetica", 16);
 		Font messageFont = Font.font("Helvetica", 11);
 		
-		
+		HBox sendBox = new HBox();
 		
 		Text messageSender = new Text(name);
 		messageSender.setFont(nameFont);
 		
-		trackMessage.getChildren().add(new Text(name));
+		sendBox.getChildren().add(messageSender);
+		
+		String tickString = String.format(" Tick - %d", messageTick);
+		
+		Text messageTime = new Text(tickString);
+		messageTime.setFont(tickFont);
+		
+		sendBox.getChildren().add(messageTime);
+		
 		
 //		pane.add(new Text(key), 1, 0);
 
@@ -66,10 +77,12 @@ public class TrackMessage extends Pane implements Cloneable{
 		
 		Text messageText = new Text(message);
 		messageText.setFont(messageFont);
+		messageText.setWrappingWidth(470);
 		
 		textBox.getChildren().add(messageText);
 //		pane.add(textBox, 1, 1);
 		
+		trackMessage.getChildren().add(sendBox);
 		trackMessage.getChildren().add(textBox);
 		trackMessage.setBackground(JavaFXHelpers.createBackgroundColor(Color.WHITE));
 		
@@ -82,7 +95,7 @@ public class TrackMessage extends Pane implements Cloneable{
 	
 	@Override
 	public Object clone() {
-		return new TrackMessage(this.sender, this.message);
+		return new TrackMessage(this.sender, this.message, this.messageTick);
 	}
 
 }

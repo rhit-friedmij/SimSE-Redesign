@@ -237,6 +237,7 @@ public class SimSEGUI extends Stage implements EventHandler<Event> {
 		expTool.update();
 		branch.update(state);
 		objGraphPanel.update();
+		updateTrack();
 	}
 
 	public void close() {
@@ -261,6 +262,15 @@ public class SimSEGUI extends Stage implements EventHandler<Event> {
 			}
 		}
 		
+	}
+	
+	private void updateTrack() {
+		trackPanel = TrackPanel.getInstance(state);
+		List<Panels> present = getPresentPanels();
+		if (present.contains(Panels.TRACK)) {
+			removePanel(Panels.TRACK);
+			addBottomPanel(Panels.TRACK);
+		}
 	}
 
 	public List<Panels> getPresentPanels() {

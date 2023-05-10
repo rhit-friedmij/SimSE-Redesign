@@ -182,7 +182,6 @@ public class EngineGenerator implements CodeGeneratorConstants {
 						objsBuilder.endControlFlow();
 					}
 					else {
-						
 						objsBuilder.addStatement("state.get" + SimSEObjectTypeTypes.getText(tempObj.getSimSEObjectType().getType())
 						+ "StateRepository().get" + objTypeName + "StateRepository().add(a" + i + ")");
 					}
@@ -199,10 +198,11 @@ public class EngineGenerator implements CodeGeneratorConstants {
 				.addStatement("logic = l")
 				.addStatement("state = s")
 				.addCode("$L", "\n")
-				.addStatement("timer = new $T(new $T($T.millis(50), this))", timeline, keyFrame, duration)
+				.addStatement("timer = new $T(new $T($T.millis(100), this))", timeline, keyFrame, duration)
 				.addStatement("timer.setCycleCount($T.INDEFINITE)", timeline)
 				.addStatement("timer.setDelay($T.millis(100))", duration)
 				.addStatement("timer.play()")
+				.addStatement("$T.getInstance(state).getSoftwareEngineerStateRepository().getAll().clear()", employeeStateRepository)
 				.addCode("$L", "\n")
 				.addCode(objsBuilder.build())
 				.build();
