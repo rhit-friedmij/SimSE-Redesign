@@ -17,7 +17,6 @@ public class State implements Cloneable {
 	private Number score;
 
 	public State() {	
-//		esr = new EmployeeStateRepository();
 		asr = new ArtifactStateRepository();
 		tsr = new ToolStateRepository();
 		psr = new ProjectStateRepository();
@@ -38,7 +37,6 @@ public class State implements Cloneable {
 			if(!EmployeeStateRepository.stateExists(cl)) {
 				EmployeeStateRepository.createInstance(cl, this);
 			}
-//			cl.esr = (EmployeeStateRepository) (esr.clone());
 			cl.asr = (ArtifactStateRepository) (asr.clone());
 			cl.tsr = (ToolStateRepository) (tsr.clone());
 			cl.psr = (ProjectStateRepository) (psr.clone());

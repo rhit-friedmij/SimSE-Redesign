@@ -37,7 +37,6 @@ public abstract class SimSESprite extends ImageView{
 		
         Image image = new Image(inputStream);
         
-//        spriteImage = new ImageView();
         this.setImage(image);
         try {
 			inputStream.close();

@@ -27,7 +27,6 @@ public class TrackPanel extends Pane implements SimSEPanel, Cloneable {
 		HBox top = new HBox();
 		ImageView logo = JavaFXHelpers.createImageView("src/simse/gui/icons/track.png");
 		top.getChildren().add(logo);
-//		top.getChildren().add(new Text("Track"));
 		top.setPrefHeight(10);
 		top.setPrefWidth(500);
 		pane.setPrefHeight(300);

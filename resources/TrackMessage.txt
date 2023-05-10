@@ -73,9 +73,6 @@ public class TrackMessage extends Pane implements Cloneable{
 		messageTime.setFont(tickFont);
 		
 		sendBox.getChildren().add(messageTime);
-		
-		
-//		pane.add(new Text(key), 1, 0);
 
 		HBox textBox = new HBox();
 		textBox.setBackground(JavaFXHelpers.createBackgroundColor(Color.WHITE));
@@ -86,7 +83,6 @@ public class TrackMessage extends Pane implements Cloneable{
 		messageText.setWrappingWidth(470);
 		
 		textBox.getChildren().add(messageText);
-//		pane.add(textBox, 1, 1);
 		
 		trackMessage.getChildren().add(sendBox);
 		trackMessage.getChildren().add(textBox);

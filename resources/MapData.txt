@@ -94,7 +94,6 @@ public class MapData {
 	static final Image chairR = JavaFXHelpers.createImage(dir + "chairR.gif");
 	static final Image computer = JavaFXHelpers.createImage(dir + "computer.gif");
  
-//	static final Image dark = JavaFXHelpers.createImage(dir + "dark.gif");
 	static final Image trashcanE = JavaFXHelpers.createImage(dir + "trashcan_e.gif");
 	static final Image trashcanF = JavaFXHelpers.createImage(dir + "trashcan_f.gif");
 	static final Image papers = JavaFXHelpers.createImage(dir + "papers.gif");

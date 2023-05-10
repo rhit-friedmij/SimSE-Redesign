@@ -184,11 +184,6 @@ public class SimSEGUI extends Stage implements EventHandler<Event> {
 		mainPane.getStylesheets().add("style.css");
 		this.addEventHandler(WindowEvent.WINDOW_CLOSE_REQUEST, this);
 		this.setScene(mainPane);
-//		this.setSize(bPane.getLayout().preferredLayoutSize(this));
-		// Make it show up in the center of the screen:
-//		setLocationRelativeTo(null);
-		
-//		this.show();
 	}
 
 	public Engine getEngine() {
