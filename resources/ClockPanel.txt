@@ -198,6 +198,7 @@ public class ClockPanel extends Pane implements EventHandler<MouseEvent> {
 								Optional<ButtonType> result = alert.showAndWait();
 							} else {
 								engine.setSteps(ticks);
+								engine.setStopAtEvents(stopCBox.isSelected());
 							}
 						} catch (NumberFormatException nfe) {
 							Alert alert = new Alert(AlertType.ERROR);
@@ -209,10 +210,6 @@ public class ClockPanel extends Pane implements EventHandler<MouseEvent> {
 						}
 					}
 				}
-				if (stopCBox.isDisabled()) {
-					engine.setStopAtEvents(stopCBox.isSelected());
-				}
-
 			}
 		}
 	}
