@@ -26,8 +26,8 @@ public class MapData {
 	static final int[] MAP_POS_5E = {1010, 195 - MAPSIZE_SPACER_Y};
 	static final int[] MAP_POS_6S = {52, 414 - MAPSIZE_SPACER_Y};
 	static final int[] MAP_POS_6E = {292, 326 - MAPSIZE_SPACER_Y};
-	static final int[] MAP_POS_7S = {500, 326 - MAPSIZE_SPACER_Y};
-	static final int[] MAP_POS_7E = {500, 326 - MAPSIZE_SPACER_Y};
+	static final int[] MAP_POS_7S = {170, 414 - MAPSIZE_SPACER_Y};
+	static final int[] MAP_POS_7E = {340, 489 - MAPSIZE_SPACER_Y};
 
 	static final int TRANSPARENT = -1;
 	static final int TILE_GRID = 0;

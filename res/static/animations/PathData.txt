@@ -16,8 +16,8 @@ public class PathData {
 	public static final double[][] PATH_5E = {{0, 5}, {-56, 0}, {0, 85}, {-172, 0}};
 	public static final double[][] PATH_6S = {{0, 69}, {240, 0}, {0, -157}};
 	public static final double[][] PATH_6E = {{0, 157}, {-240, 0}, {0, -69}};
-	public static final double[][] PATH_7S = {{0, 200}, {150, 0}};
-	public static final double[][] PATH_7E = {{-150, 0}, {0, -200}};
+	public static final double[][] PATH_7S = {{0, 75}, {170, 0}};
+	public static final double[][] PATH_7E = {{-170, 0}, {0, -75}};
 	
 	public static double[][] getStartingPath(int pathNumber) {
 		switch (pathNumber)

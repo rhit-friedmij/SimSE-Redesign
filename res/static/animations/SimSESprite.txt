@@ -15,6 +15,7 @@ public abstract class SimSESprite extends ImageView{
 
 	Animation spriteAnimation;
 	private int speed;
+	private static int characterNum;
 	
 	public SimSESprite(
 			int spriteSheetColumns,
@@ -44,8 +45,19 @@ public abstract class SimSESprite extends ImageView{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-        if(!remote) {
+        if(characterNum < 8) {
             this.setViewport(new Rectangle2D(offsetX, offsetY, width, height));
+            spriteAnimation = new SpriteAnimation(
+            		this,
+                    Duration.millis(speed),
+                    spriteSheetCount, spriteSheetColumns,
+                    offsetX, offsetY,
+                    width, height
+            );
+            spriteAnimation.setCycleCount(Animation.INDEFINITE);
+        }
+        else {
+        	this.setViewport(new Rectangle2D(0, 0, 40, 40));
             spriteAnimation = new SpriteAnimation(
             		this,
                     Duration.millis(speed),
@@ -59,6 +71,7 @@ public abstract class SimSESprite extends ImageView{
 	}
 	
 	public static String getURL(int num) {
+		characterNum = num;
 		return "src\\simse\\sprites\\character" + num + "cus_walk.png";
 	}
 

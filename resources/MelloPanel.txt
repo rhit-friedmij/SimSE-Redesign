@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Vector;
 
 import javafx.geometry.HPos;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
@@ -33,12 +34,12 @@ public class MelloPanel extends Pane implements SimSEPanel, Cloneable{
 		VBox pane = new VBox();
 		HBox top = new HBox();
 		top.getChildren().add(JavaFXHelpers.createImageView("src/simse/gui/icons/mello.png"));
-		top.setPrefWidth(600);
+		top.setPrefWidth(500);
 		top.setBackground(JavaFXHelpers.createBackgroundColor(Color.rgb(247, 247, 247)));
 		
 		inProgress = new ScrollPane();
 		inProgress.setPrefHeight(91);
-		inProgress.setPrefWidth(150);
+		inProgress.setPrefWidth(240);
 		prog = new VBox();
 		prog.heightProperty().addListener(observable -> inProgress.setVvalue(1D));
 		prog.setBackground(JavaFXHelpers.createBackgroundColor(Color.rgb(217, 217, 217)));
@@ -51,7 +52,7 @@ public class MelloPanel extends Pane implements SimSEPanel, Cloneable{
 		
 		complete = new ScrollPane();
 		complete.setPrefHeight(91);
-		complete.setPrefWidth(150);
+		complete.setPrefWidth(240);
 		comp = new VBox();
 		comp.heightProperty().addListener(observable -> complete.setVvalue(1D));
 		comp.setBackground(JavaFXHelpers.createBackgroundColor(Color.rgb(217, 217, 217)));
@@ -63,8 +64,9 @@ public class MelloPanel extends Pane implements SimSEPanel, Cloneable{
 		complete.setFitToWidth(true);
 		
 		mello = new GridPane();
+		mello.setAlignment(Pos.CENTER);
 		mello.setHgap(5);
-		mello.setBackground(JavaFXHelpers.createBackgroundColor(Color.rgb(96, 164, 214)));
+		mello.setBackground(JavaFXHelpers.createBackgroundColor(Color.rgb(37,130,253)));
 		inProgress.setBackground(JavaFXHelpers.createBackgroundColor(Color.rgb(247,248,249)));
 		complete.setBackground(JavaFXHelpers.createBackgroundColor(Color.rgb(247,248,249)));
 		prog.setBackground(JavaFXHelpers.createBackgroundColor(Color.rgb(247,248,249)));
@@ -76,11 +78,15 @@ public class MelloPanel extends Pane implements SimSEPanel, Cloneable{
 		Label inProgText = new Label("In Progress");
 		Label completeText = new Label("Complete");
 		inProgText.setFont(nameFont);
+		inProgText.setTextFill(Color.rgb(255,245,238));
 		completeText.setFont(nameFont);
+		completeText.setTextFill(Color.rgb(255,245,238));
 		
 		
 		GridPane.setHalignment(inProgText, HPos.CENTER);
 		GridPane.setHalignment(completeText, HPos.CENTER);
+		GridPane.setHalignment(inProgress, HPos.CENTER);
+		GridPane.setHalignment(complete, HPos.CENTER);
 		
 		mello.add(inProgText, 0, 0);
 		mello.add(completeText, 1, 0);
