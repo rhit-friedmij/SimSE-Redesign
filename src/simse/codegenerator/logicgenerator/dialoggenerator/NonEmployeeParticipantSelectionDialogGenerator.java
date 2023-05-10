@@ -170,6 +170,7 @@ public class NonEmployeeParticipantSelectionDialogGenerator implements
 			  .addStatement("this.getDialogPane().getChildren().add(mainPane)")
 			  .addStatement("this.getDialogPane().setPrefSize(400, 400)")
 			  .addStatement("this.getDialogPane().getScene().getWindow().setOnCloseRequest(new ExitListener())")
+			  .addStatement("this.setResizable(true)")
 			  .addStatement("$T ownerLoc = new $T(owner.getX(), owner.getY())", point2DClass, point2DClass)
 			  .addStatement("$T thisLoc = new $T((ownerLoc.getX() + (owner.getWidth() / 2) - "
 			  		+ "(this.getWidth() / 2)), (ownerLoc.getY() + (owner.getHeight() / 2) - "

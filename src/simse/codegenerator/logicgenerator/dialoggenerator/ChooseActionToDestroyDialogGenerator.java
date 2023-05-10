@@ -142,6 +142,7 @@ public class ChooseActionToDestroyDialogGenerator implements CodeGeneratorConsta
 				  .addStatement("this.getDialogPane().getScene().getWindow().setOnCloseRequest(new ExitListener())")
 				  .addStatement("this.setResizable(true)")
 				  .addStatement("this.getDialogPane().setPrefSize(400, middlePane.getChildren().size() * 60 + 100)")
+				  .addStatement("this.setResizable(true)")
 				  .addStatement("showAndWait()")
 				  .addStatement("$T window = this.getDialogPane().getScene().getWindow()", windowClass)
 				  .addStatement("window.fireEvent(new $T(window, $T.WINDOW_CLOSE_REQUEST))", windowEvent, windowEvent)

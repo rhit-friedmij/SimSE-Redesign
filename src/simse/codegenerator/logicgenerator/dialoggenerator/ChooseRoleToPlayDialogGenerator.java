@@ -128,6 +128,7 @@ public class ChooseRoleToPlayDialogGenerator implements CodeGeneratorConstants {
 			  .addStatement("this.getDialogPane().getScene().getWindow().setOnCloseRequest(new ExitListener())")
 			  .addStatement("this.setResizable(true)")
 			  .addStatement("this.getDialogPane().setPrefSize(400, middlePane.getChildren().size() * 60 + 100)")
+			  .addStatement("this.setResizable(true)")
 			  .beginControlFlow("if (partNames.size() == 1) ")
 			  .addStatement("onlyOneRole()")
 			  .nextControlFlow(" else")

@@ -197,8 +197,9 @@ public class EmployeeParticipantSelectionDialogGenerator implements
 			  .addStatement("separator2.setMaxSize(900, 5)")
 			  .addStatement("mainPane.getChildren().addAll(separator2, bottomPane)")
 			  .addStatement("this.getDialogPane().getChildren().add(mainPane)")
-			  .addStatement("this.getDialogPane().setPrefSize(400, middlePane.getChildren().size() * 30 + 100)")
+			  .addStatement("this.getDialogPane().setPrefSize(400, middlePane.getChildren().size() * 40 + 100)")
 			  .addStatement("this.getDialogPane().getScene().getWindow().setOnCloseRequest(new ExitListener())")
+			  .addStatement("this.setResizable(true)")
 			  .addStatement("$T ownerLoc = new $T(owner.getX(), owner.getY())", point2DClass, point2DClass)
 			  .addStatement("$T thisLoc = new $T((ownerLoc.getX() + (owner.getWidth() / 2) - (this.getWidth() / 2)),\n "
 			  		+ "(ownerLoc.getY() + (owner.getHeight() / 2) - (this.getHeight() / 2)))", point2DClass, point2DClass)
