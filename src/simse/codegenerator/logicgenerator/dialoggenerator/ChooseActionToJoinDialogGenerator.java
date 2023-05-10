@@ -79,6 +79,7 @@ public class ChooseActionToJoinDialogGenerator implements
 	  TypeName actionsVectorWildcard = ParameterizedTypeName.get(vector, actionWildcard);
 	  TypeName radioVector = ParameterizedTypeName.get(vector, radioButton);
 	  TypeName stringVector = ParameterizedTypeName.get(vector, stringClass);
+	  ClassName melloPanelClass = ClassName.get("simse.gui", "MelloPanel");
 	  
 	  TypeSpec exitListener = TypeSpec.classBuilder("ExitListener")
     		  .addModifiers(Modifier.PUBLIC)
@@ -121,6 +122,7 @@ public class ChooseActionToJoinDialogGenerator implements
 			  .addStatement("$N = s", "state")
 			  .addStatement("$N = menText", "menuText")
 			  .addStatement("$N = re", "ruleExec")
+			  .addStatement("$N = $T.getInstance(state)", "mello", melloPanelClass)
 			  .addStatement("$N = new $T()", "radioButtons", radioVector)
 			  .addStatement("$N = new $T()", "radioButtonGroup", toggleGroupClass)
 			  .addStatement("setTitle($S)", "Join Action")
@@ -238,6 +240,7 @@ public class ChooseActionToJoinDialogGenerator implements
 			  .addField(buttonClass, "cancelButton", Modifier.PRIVATE)
 			  .addField(String.class, "menuText", Modifier.PRIVATE)
 			  .addField(ruleExecClass, "ruleExec", Modifier.PRIVATE)
+			  .addField(melloPanelClass, "mello", Modifier.PRIVATE)
 			  .addMethod(joinConstructor)
 			  .addMethod(handle)
 			  .addMethod(onlyOneChoice)
@@ -446,7 +449,7 @@ public class ChooseActionToJoinDialogGenerator implements
                   actions += ")\n{\n";
                   actions += "participantNames.add(\""
                       + CodeGeneratorUtils.getUpperCaseLeading(part.getName()) + 
-                      "\");\n}\n";
+                      "\");\nmello.addEmployeeToTask(tempAct, emp);\n}\n";
                 }
                 actions += "}\n";
               }
@@ -552,7 +555,7 @@ public class ChooseActionToJoinDialogGenerator implements
 	                actions += ")\n{\n";
 	                actions += "participantNames.add(\""
 	                    + CodeGeneratorUtils.getUpperCaseLeading(part.getName()) + 
-	                    "\");\n}\n";
+	                    "\");\nmello.addEmployeeToTask(tempAct, emp);\n}\n";
 	              }
 	              actions += "}\n";
 	            }
