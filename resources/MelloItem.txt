@@ -39,7 +39,7 @@ public class MelloItem extends Pane implements Cloneable{
 		box.getChildren().add(textBox);
 		
 		FlowPane imgPane = new FlowPane();
-		imgPane.setPrefWrapLength(130);
+		imgPane.setPrefWrapLength(240);
 		
 		for (Object worker : workers) {
 			ImageView img = null;
