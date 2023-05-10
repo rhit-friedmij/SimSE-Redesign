@@ -113,8 +113,9 @@ public class ProjectOverviewScreen extends Stage implements EventHandler<MouseEv
 		tableModel = new ProjectTableModel(this.state);
 		table = tableModel.createTable();
 		table.addEventHandler(MouseEvent.MOUSE_CLICKED, this);
-		table.setMaxHeight(50);
 		projectPane.setCenter(table);
+		projectPane.setPrefHeight(tableModel.getRowCount()*25 + 150);
+		projectPane.setMaxHeight(325);
 		
 		toolsPane = new BorderPane();
 		toolsLabel = new Label("Tools");
@@ -132,8 +133,9 @@ public class ProjectOverviewScreen extends Stage implements EventHandler<MouseEv
 		tableModel2 = new ToolTableModel(this.state);
 		table2 = tableModel2.createTable();
 		table2.addEventHandler(MouseEvent.MOUSE_CLICKED, this);
-		table2.setMaxHeight(50);
 		toolsPane.setCenter(table2);
+		toolsPane.setPrefHeight(tableModel2.getRowCount()*25 + 150);
+		toolsPane.setMaxHeight(325);
 	}
 	
 	private void updateGraph() {

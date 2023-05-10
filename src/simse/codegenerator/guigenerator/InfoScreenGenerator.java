@@ -120,7 +120,8 @@ public class InfoScreenGenerator {
 
 	    		  
 	    		  
-	    MethodSpec constructor = constructorBuilder.addStatement("$N.setMaxHeight($N.getItems().size()*25)", "attributes", "attributes")
+	    MethodSpec constructor = constructorBuilder.addStatement("$N.setPrefHeight($N.getItems().size()*25)", "attributes", "attributes")
+	    		  .addStatement("$N.setMaxHeight(200)", "attributes")
 	    		  .addStatement("String objTypeFull = $N.getClass().toString()", "artifact")
 	    		  .addStatement("String[] objTypeArr = objTypeFull.split(\"\\\\.\")")
 	    		  .addStatement("String objType = objTypeArr[objTypeArr.length - 1]")
@@ -269,7 +270,8 @@ public class InfoScreenGenerator {
 
 		  	    		  
 		  	    		  
-		  	    MethodSpec constructor = constructorBuilder.addStatement("$N.setMaxHeight($N.getItems().size()*25)", "attributes", "attributes")
+		  	    MethodSpec constructor = constructorBuilder.addStatement("$N.setPrefHeight($N.getItems().size()*25)", "attributes", "attributes")
+			    		  .addStatement("$N.setMaxHeight(200)", "attributes")
 		    		  .addStatement("String objTypeFull = employee.getClass().toString()")
 		    		  .addStatement("String[] objTypeArr = objTypeFull.split(\"\\\\.\")")
 		    		  .addStatement("String objType = objTypeArr[objTypeArr.length - 1]")
@@ -431,7 +433,8 @@ public class InfoScreenGenerator {
 
 		    		  
 		    		  
-		    MethodSpec constructor = constructorBuilder.addStatement("$N.setMaxHeight($N.getItems().size()*25)", "attributes", "attributes")
+		    MethodSpec constructor = constructorBuilder.addStatement("$N.setPrefHeight($N.getItems().size()*25)", "attributes", "attributes")
+		    		  .addStatement("$N.setMaxHeight(200)", "attributes")
 		    		  .addStatement("String objTypeFull = $N.getClass().toString()", "project")
 		    		  .addStatement("String[] objTypeArr = objTypeFull.split(\"\\\\.\")")
 		    		  .addStatement("String objType = objTypeArr[objTypeArr.length - 1]")
@@ -564,7 +567,8 @@ public class InfoScreenGenerator {
 
 		    		  
 		    		  
-		    MethodSpec constructor = constructorBuilder.addStatement("$N.setMaxHeight($N.getItems().size()*25)", "attributes", "attributes")
+		    MethodSpec constructor = constructorBuilder.addStatement("$N.setPrefHeight($N.getItems().size()*25)", "attributes", "attributes")
+		    		  .addStatement("$N.setMaxHeight(200)", "attributes")
 		    		  .addStatement("String objTypeFull = $N.getClass().toString()", "customer")
 		    		  .addStatement("String[] objTypeArr = objTypeFull.split(\"\\\\.\")")
 		    		  .addStatement("String objType = objTypeArr[objTypeArr.length - 1]")
@@ -697,7 +701,8 @@ public class InfoScreenGenerator {
 
 		    		  
 		    		  
-		    MethodSpec constructor = constructorBuilder.addStatement("$N.setMaxHeight($N.getItems().size()*25)", "attributes", "attributes")
+		    MethodSpec constructor = constructorBuilder.addStatement("$N.setPrefHeight($N.getItems().size()*25)", "attributes", "attributes")
+		    		  .addStatement("$N.setMaxHeight(200)", "attributes")
 		    		  .addStatement("String objTypeFull = $N.getClass().toString()", "tool")
 		    		  .addStatement("String[] objTypeArr = objTypeFull.split(\"\\\\.\")")
 		    		  .addStatement("String objType = objTypeArr[objTypeArr.length - 1]")
