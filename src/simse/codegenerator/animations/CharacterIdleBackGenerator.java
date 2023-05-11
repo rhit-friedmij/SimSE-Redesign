@@ -1,4 +1,4 @@
-package simse.animations;
+package simse.codegenerator.animations;
 
 import java.io.File;
 import java.io.FileReader;

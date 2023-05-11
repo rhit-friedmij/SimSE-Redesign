@@ -20,8 +20,7 @@ public class JavaFXHelpersGenerator {
 	    	fxFile.delete(); // delete old version of file
 	    }
 	    try {
-	    	FileReader reader = new FileReader(new File("src/simse/codegenerator/"
-	    			+ "resources/JavaFXHelpers.txt"));
+	    	FileReader reader = new FileReader("res\\static\\gui\\JavaFXHelpers.txt");
 	    	FileWriter writer = new FileWriter(fxFile);
 	    	char[] buf = new char[256];
 	    	int length;

@@ -38,8 +38,6 @@ public class RulesInfoScreenGenerator {
 	    try {
 	      FileWriter writer = new FileWriter(worldFile);
 	      
-	      ClassName vector = ClassName.get("java.util", "Vector");
-	      ClassName fxcollections = ClassName.get("javafx.collections", "FXCollections");
 	      ClassName observablelist = ClassName.get("javafx.collections", "ObservableList");
 	      ClassName actionevent = ClassName.get("javafx.event", "ActionEvent");
 	      ClassName eventhandler = ClassName.get("javafx.event", "EventHandler");
@@ -60,7 +58,6 @@ public class RulesInfoScreenGenerator {
 	      ClassName tilepane = ClassName.get("javafx.scene.layout", "TilePane");
 	      ClassName vbox = ClassName.get("javafx.scene.layout", "VBox");
 	      ClassName stage = ClassName.get("javafx.stage", "Stage");
-	      ClassName action = ClassName.get("simse.adts.actions", "Action");
 	      ClassName state = ClassName.get("simse.state", "State");
 	      ClassName rulecategories = ClassName.get("simse.util", "RuleCategories");
 	      ClassName ruletype = ClassName.get("simse.util", "RuleType");
@@ -295,7 +292,7 @@ public class RulesInfoScreenGenerator {
 	  private String getActionSwitch() {
 		  String switchS = "switch(ruleType) {\n";
 		  switchS = switchS.concat(getCase("ARTIFACT", SimSEObjectTypeTypes.ARTIFACT));
-		  switchS = switchS.concat(getCase("PROJECT", SimSEObjectTypeTypes.PROJECT));
+		  switchS = switchS.concat(getSpecialCase("PROJECT", SimSEObjectTypeTypes.PROJECT,  SimSEObjectTypeTypes.TOOL));
 		  switchS = switchS.concat(getSpecialCase("PEOPLE", SimSEObjectTypeTypes.CUSTOMER, SimSEObjectTypeTypes.EMPLOYEE));
 		  switchS = switchS.concat(getAllTypes());
 		  switchS = switchS.concat("}\n");

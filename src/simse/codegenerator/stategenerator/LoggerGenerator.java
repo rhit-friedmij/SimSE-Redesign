@@ -30,8 +30,7 @@ public class LoggerGenerator implements CodeGeneratorConstants {
       loggerFile.delete(); // delete old version of file
     }
     try {
-    	FileReader reader = new FileReader(new File("src/simse/codegenerator/"
-    			+ "resources/Logger.txt"));
+    	FileReader reader = new FileReader("res\\static\\state\\Logger.txt");
     	FileWriter writer = new FileWriter(loggerFile);
     	char[] buf = new char[256];
     	int length;

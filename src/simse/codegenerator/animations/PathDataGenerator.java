@@ -1,31 +1,31 @@
-package simse.animations;
+package simse.codegenerator.animations;
 
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 
-public class SimSESpriteGenerator {
+public class PathDataGenerator {
 
 	private File dir;
-
-	public SimSESpriteGenerator(File dir) {
+	
+	public PathDataGenerator(File dir) {
 		this.dir = dir;
 	}
 
 	public void generate() {
 		// TODO Auto-generated method stub
-	    File simSESpriteFile = new File(dir,
-	            ("simse\\animation\\SimSESprite.java"));
+	    File pathDataFile = new File(dir,
+	            ("simse\\animation\\PathData.java"));
 	    
-	        if (simSESpriteFile.exists()) {
-	        	simSESpriteFile.delete(); // delete old version of file
+	        if (pathDataFile.exists()) {
+	        	pathDataFile.delete(); // delete old version of file
 	        }
 		
 		try {
 	        
-		FileReader reader = new FileReader("res\\static\\animations\\SimSESprite.txt");
-		FileWriter writer = new FileWriter(simSESpriteFile);
+		FileReader reader = new FileReader("res\\static\\animations\\PathData.txt");
+		FileWriter writer = new FileWriter(pathDataFile);
 	
 		String fileContents = "";
 		int index;

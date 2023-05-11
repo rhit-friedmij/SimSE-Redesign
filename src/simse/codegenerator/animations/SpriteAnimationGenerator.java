@@ -1,31 +1,31 @@
-package simse.animations;
+package simse.codegenerator.animations;
 
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 
-public class StylesGenerator {
+public class SpriteAnimationGenerator {
 
 	private File dir;
 	
-	public StylesGenerator(File dir) {
+	public SpriteAnimationGenerator(File dir) {
 		this.dir = dir;
 	}
 
 	public void generate() {
 		// TODO Auto-generated method stub
-	    File stylesFile = new File(dir,
-	            ("simse\\styles.css"));
+	    File spriteAnimationFile = new File(dir,
+	            ("simse\\animation\\SpriteAnimation.java"));
 	    
-	        if (stylesFile.exists()) {
-	        	stylesFile.delete(); // delete old version of file
+	        if (spriteAnimationFile.exists()) {
+	        	spriteAnimationFile.delete(); // delete old version of file
 	        }
 		
 		try {
 	        
-		FileReader reader = new FileReader("res\\static\\stylesheet\\staticstylesheet.txt");
-		FileWriter writer = new FileWriter(stylesFile);
+		FileReader reader = new FileReader("res\\static\\animations\\SpriteAnimation.txt");
+		FileWriter writer = new FileWriter(spriteAnimationFile);
 	
 		String fileContents = "";
 		int index;

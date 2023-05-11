@@ -1,31 +1,31 @@
-package simse.animations;
+package simse.codegenerator.animations;
 
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 
-public class CharacterWalkRightGenerator {
+public class SimSESpriteGenerator {
 
 	private File dir;
-	
-	public CharacterWalkRightGenerator(File dir) {
+
+	public SimSESpriteGenerator(File dir) {
 		this.dir = dir;
 	}
 
 	public void generate() {
 		// TODO Auto-generated method stub
-	    File characterWalkRightFile = new File(dir,
-	            ("simse\\animation\\CharacterWalkRight.java"));
+	    File simSESpriteFile = new File(dir,
+	            ("simse\\animation\\SimSESprite.java"));
 	    
-	        if (characterWalkRightFile.exists()) {
-	        	characterWalkRightFile.delete(); // delete old version of file
+	        if (simSESpriteFile.exists()) {
+	        	simSESpriteFile.delete(); // delete old version of file
 	        }
 		
 		try {
 	        
-		FileReader reader = new FileReader("res\\static\\animations\\CharacterWalkRight.txt");
-		FileWriter writer = new FileWriter(characterWalkRightFile);
+		FileReader reader = new FileReader("res\\static\\animations\\SimSESprite.txt");
+		FileWriter writer = new FileWriter(simSESpriteFile);
 	
 		String fileContents = "";
 		int index;

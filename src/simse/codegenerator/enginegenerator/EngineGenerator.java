@@ -299,7 +299,7 @@ public class EngineGenerator implements CodeGeneratorConstants {
 				.endControlFlow()
 				.endControlFlow()
 				.nextControlFlow("else")
-				.addStatement("gui.getTabPanel().getClockPanel().resetAdvClockImage()")
+				.addStatement("if (gui != null) gui.getTabPanel().getClockPanel().resetAdvClockImage()")
 				.endControlFlow()
 				.build();
 		

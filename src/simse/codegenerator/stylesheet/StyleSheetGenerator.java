@@ -1,4 +1,4 @@
-package simse.stylesheet;
+package simse.codegenerator.stylesheet;
 
 import java.io.File;
 import java.io.FileNotFoundException;

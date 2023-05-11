@@ -2,25 +2,26 @@
 
 package simse.codegenerator;
 
-import simse.animations.CharacterIdleBackGenerator;
-import simse.animations.CharacterIdleFrontGenerator;
-import simse.animations.CharacterIdleLeftGenerator;
-import simse.animations.CharacterIdleRightGenerator;
-import simse.animations.CharacterWalkBackGenerator;
-import simse.animations.CharacterWalkForwardGenerator;
-import simse.animations.CharacterWalkLeftGenerator;
-import simse.animations.CharacterWalkRightGenerator;
-import simse.animations.CreatablePathGenerator;
-import simse.animations.DisplayableCharacterGenerator;
-import simse.animations.PathDataGenerator;
-import simse.animations.SimSECharacterGenerator;
-import simse.animations.SimSESpriteGenerator;
-import simse.animations.SpriteAnimationGenerator;
+import simse.codegenerator.animations.CharacterIdleBackGenerator;
+import simse.codegenerator.animations.CharacterIdleFrontGenerator;
+import simse.codegenerator.animations.CharacterIdleLeftGenerator;
+import simse.codegenerator.animations.CharacterIdleRightGenerator;
+import simse.codegenerator.animations.CharacterWalkBackGenerator;
+import simse.codegenerator.animations.CharacterWalkForwardGenerator;
+import simse.codegenerator.animations.CharacterWalkLeftGenerator;
+import simse.codegenerator.animations.CharacterWalkRightGenerator;
+import simse.codegenerator.animations.CreatablePathGenerator;
+import simse.codegenerator.animations.DisplayableCharacterGenerator;
+import simse.codegenerator.animations.PathDataGenerator;
+import simse.codegenerator.animations.SimSECharacterGenerator;
+import simse.codegenerator.animations.SimSESpriteGenerator;
+import simse.codegenerator.animations.SpriteAnimationGenerator;
 import simse.codegenerator.enginegenerator.EngineGenerator;
 import simse.codegenerator.explanatorytoolgenerator.ExplanatoryToolGenerator;
 import simse.codegenerator.guigenerator.GUIGenerator;
 import simse.codegenerator.logicgenerator.LogicGenerator;
 import simse.codegenerator.stategenerator.StateGenerator;
+import simse.codegenerator.stylesheet.StyleSheetGenerator;
 import simse.codegenerator.utilgenerator.IDGeneratorGenerator;
 import simse.codegenerator.utilgenerator.RuleCategoriesGenerator;
 import simse.codegenerator.utilgenerator.RuleTypeGenerator;
@@ -29,7 +30,6 @@ import simse.modelbuilder.objectbuilder.DefinedObjectTypes;
 import simse.modelbuilder.actionbuilder.DefinedActionTypes;
 import simse.modelbuilder.startstatebuilder.CreatedObjects;
 import simse.modelbuilder.startstatebuilder.SimSEObject;
-import simse.stylesheet.StyleSheetGenerator;
 import simse.modelbuilder.mapeditor.TileData;
 import simse.modelbuilder.mapeditor.UserData;
 
@@ -132,13 +132,13 @@ public class CodeGenerator {
   public void createImageFiles() {	  
 	  try {
 		Files.copy(
-				  Paths.get("SimSEMap\\SimSESpriteSheet.png"),
+				  Paths.get("res\\static\\SimSEMap\\SimSESpriteSheet.png"),
 				  Paths.get(options.getCodeGenerationDestinationDirectory() + "\\" + "simse\\SimSEMap\\SimSESpriteSheet.png"),
 				  StandardCopyOption.REPLACE_EXISTING);
 	
 		  for(int i = 0; i <= 32; i++) {
 			  Files.copy(
-					  Paths.get("sprites\\character" + i + "cus_walk.png"),
+					  Paths.get("res\\static\\sprites\\character" + i + "cus_walk.png"),
 					  Paths.get(options.getCodeGenerationDestinationDirectory() + "\\" + "simse\\sprites\\character" + i + "cus_walk.png"),
 					  StandardCopyOption.REPLACE_EXISTING);	  
 		  }
@@ -364,7 +364,7 @@ public class CodeGenerator {
 
 	    try {
 	    	FileWriter writer = new FileWriter(ssFile);
-  	      FileReader reader = new FileReader("resources\\SimSE.txt");
+  	      FileReader reader = new FileReader("res\\static\\SimSE.txt");
   	      Scanner s = new Scanner(reader);
   	      
   	      while (s.hasNextLine()) {

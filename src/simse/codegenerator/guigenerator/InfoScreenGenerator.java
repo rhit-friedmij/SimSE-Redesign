@@ -51,7 +51,6 @@ public class InfoScreenGenerator {
 	      ClassName eventhandler = ClassName.get("javafx.event", "EventHandler");
 	      ClassName pos = ClassName.get("javafx.geometry", "Pos");
 	      ClassName scene = ClassName.get("javafx.scene", "Scene");
-	      ClassName button = ClassName.get("javafx.scene.control", "Button");
 	      ClassName contextmenu = ClassName.get("javafx.scene.control", "ContextMenu");
 	      ClassName label = ClassName.get("javafx.scene.control", "Label");
 	      ClassName listview = ClassName.get("javafx.scene.control", "ListView");
@@ -185,7 +184,6 @@ public class InfoScreenGenerator {
 		    try {
 		      FileWriter writer = new FileWriter(eisFile);
 		      
-		      ClassName vector = ClassName.get("java.util", "Vector");
 		      ClassName actionevent = ClassName.get("javafx.event", "ActionEvent");
 		      ClassName eventhandler = ClassName.get("javafx.event", "EventHandler");
 		      ClassName pos = ClassName.get("javafx.geometry", "Pos");
@@ -202,7 +200,6 @@ public class InfoScreenGenerator {
 		      ClassName font = ClassName.get("javafx.scene.text", "Font");
 		      ClassName stage = ClassName.get("javafx.stage", "Stage");
 		      ClassName employee = ClassName.get("simse.adts.objects", "Employee");
-		      ClassName javafxhelpers = ClassName.get("simse.gui.util", "JavaFXHelpers");
 		      ClassName logic = ClassName.get("simse.logic", "Logic");
 		      ClassName state = ClassName.get("simse.state", "State");
 		      ClassName simsegui = ClassName.get("simse.gui", "SimSEGUI");
@@ -371,7 +368,6 @@ public class InfoScreenGenerator {
 		      ClassName eventhandler = ClassName.get("javafx.event", "EventHandler");
 		      ClassName pos = ClassName.get("javafx.geometry", "Pos");
 		      ClassName scene = ClassName.get("javafx.scene", "Scene");
-		      ClassName button = ClassName.get("javafx.scene.control", "Button");
 		      ClassName contextmenu = ClassName.get("javafx.scene.control", "ContextMenu");
 		      ClassName label = ClassName.get("javafx.scene.control", "Label");
 		      ClassName listview = ClassName.get("javafx.scene.control", "ListView");
@@ -383,7 +379,6 @@ public class InfoScreenGenerator {
 		      ClassName stage = ClassName.get("javafx.stage", "Stage");
 		      ClassName project = ClassName.get("simse.adts.objects", "Project");
 		      ClassName javafxhelpers = ClassName.get("simse.gui.util", "JavaFXHelpers");
-		      ClassName logic = ClassName.get("simse.logic", "Logic");
 		      ClassName state = ClassName.get("simse.state", "State");
 		      ClassName simsegui = ClassName.get("simse.gui", "SimSEGUI");
 		      ClassName string = ClassName.get(String.class);
@@ -505,7 +500,6 @@ public class InfoScreenGenerator {
 		      ClassName eventhandler = ClassName.get("javafx.event", "EventHandler");
 		      ClassName pos = ClassName.get("javafx.geometry", "Pos");
 		      ClassName scene = ClassName.get("javafx.scene", "Scene");
-		      ClassName button = ClassName.get("javafx.scene.control", "Button");
 		      ClassName contextmenu = ClassName.get("javafx.scene.control", "ContextMenu");
 		      ClassName label = ClassName.get("javafx.scene.control", "Label");
 		      ClassName listview = ClassName.get("javafx.scene.control", "ListView");
@@ -517,7 +511,6 @@ public class InfoScreenGenerator {
 		      ClassName stage = ClassName.get("javafx.stage", "Stage");
 		      ClassName customer = ClassName.get("simse.adts.objects", "Customer");
 		      ClassName javafxhelpers = ClassName.get("simse.gui.util", "JavaFXHelpers");
-		      ClassName logic = ClassName.get("simse.logic", "Logic");
 		      ClassName state = ClassName.get("simse.state", "State");
 		      ClassName simsegui = ClassName.get("simse.gui", "SimSEGUI");
 		      ClassName string = ClassName.get(String.class);
@@ -639,7 +632,6 @@ public class InfoScreenGenerator {
 		      ClassName eventhandler = ClassName.get("javafx.event", "EventHandler");
 		      ClassName pos = ClassName.get("javafx.geometry", "Pos");
 		      ClassName scene = ClassName.get("javafx.scene", "Scene");
-		      ClassName button = ClassName.get("javafx.scene.control", "Button");
 		      ClassName contextmenu = ClassName.get("javafx.scene.control", "ContextMenu");
 		      ClassName label = ClassName.get("javafx.scene.control", "Label");
 		      ClassName listview = ClassName.get("javafx.scene.control", "ListView");
@@ -651,7 +643,6 @@ public class InfoScreenGenerator {
 		      ClassName stage = ClassName.get("javafx.stage", "Stage");
 		      ClassName tool = ClassName.get("simse.adts.objects", "Tool");
 		      ClassName javafxhelpers = ClassName.get("simse.gui.util", "JavaFXHelpers");
-		      ClassName logic = ClassName.get("simse.logic", "Logic");
 		      ClassName state = ClassName.get("simse.state", "State");
 		      ClassName simsegui = ClassName.get("simse.gui", "SimSEGUI");
 		      ClassName string = ClassName.get(String.class);

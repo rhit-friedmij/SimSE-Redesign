@@ -48,8 +48,7 @@ public class StateGenerator implements CodeGeneratorConstants {
       stateFile.delete(); // delete old version of file
     }
     try {
-    	FileReader reader = new FileReader(new File("src/simse/codegenerator/"
-    			+ "resources/State.txt"));
+    	FileReader reader = new FileReader("res\\static\\state\\State.txt");
     	FileWriter writer = new FileWriter(stateFile);
     	char[] buf = new char[256];
     	int length;
