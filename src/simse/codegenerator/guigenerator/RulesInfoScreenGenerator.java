@@ -292,7 +292,7 @@ public class RulesInfoScreenGenerator {
 	  private String getActionSwitch() {
 		  String switchS = "switch(ruleType) {\n";
 		  switchS = switchS.concat(getCase("ARTIFACT", SimSEObjectTypeTypes.ARTIFACT));
-		  switchS = switchS.concat(getCase("PROJECT", SimSEObjectTypeTypes.PROJECT));
+		  switchS = switchS.concat(getSpecialCase("PROJECT", SimSEObjectTypeTypes.PROJECT,  SimSEObjectTypeTypes.TOOL));
 		  switchS = switchS.concat(getSpecialCase("PEOPLE", SimSEObjectTypeTypes.CUSTOMER, SimSEObjectTypeTypes.EMPLOYEE));
 		  switchS = switchS.concat(getAllTypes());
 		  switchS = switchS.concat("}\n");
