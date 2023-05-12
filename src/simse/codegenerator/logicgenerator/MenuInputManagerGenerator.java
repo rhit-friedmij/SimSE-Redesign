@@ -664,52 +664,6 @@ public class MenuInputManagerGenerator implements CodeGeneratorConstants {
 
 			effectCode1.endControlFlow();
 			effectCode1.addStatement("new $T(parent, b, selectedEmp, state, $S, ruleExec)", chooseActionToJoinDialog, outerTrig.getMenuText());
-			// TODO: Figure out how to add Employees but only when it's a join conditional and a continuous action so not
-			// game-ending or instant things like firing or changing pay rates
-			// Go back through triggers?
-			if (!act.hasGameEndingTrigger() && !act.hasGameEndingDestroyer()) {
-				boolean instantAct = false;
-				if (act.hasDestroyerOfType(ActionTypeDestroyer.TIMED)) {
-					Vector<ActionTypeDestroyer> dests = act.getAllDestroyers();
-					for (int j = 0; j < dests.size(); j++) {
-						ActionTypeDestroyer currDest = dests.elementAt(j);
-						if (currDest instanceof TimedActionTypeDestroyer) {
-							if (((TimedActionTypeDestroyer) currDest).getTime() < 2) {
-								instantAct = true;
-								break;
-							}
-						}
-					}
-				}
-				if (!instantAct) {
-					for (int j = 0; j < triggers.size(); j++) {
-						ActionTypeParticipantTrigger trig = triggers.elementAt(j);
-						ActionTypeParticipant tempPart = trig.getParticipant();
-						Vector<SimSEObjectType> objTypes = tempPart.getAllSimSEObjectTypes();
-						int objMetaType = tempPart.getSimSEObjectTypeType();
-						
-						if (objMetaType == SimSEObjectTypeTypes.EMPLOYEE) { 
-							for (int k = 0; k < objTypes.size(); k++) {
-								SimSEObjectType sObjType = objTypes.get(k);
-								String currObjTypeName = sObjType.getName();
-								String uCaseObjTypeName = CodeGeneratorUtils.getUpperCaseLeading(currObjTypeName);
-								ClassName currObjType = ClassName.get("simse.adts.objects", uCaseObjTypeName);
-								if (k == 0) {
-									effectCode1.beginControlFlow("if (selectedEmp instanceof $T)", currObjType);
-								} else {
-									effectCode1.nextControlFlow("else if (selectedEmp instanceof $T)", currObjType);
-								}
-								
-								Attribute keyAttribute = sObjType.getKey();
-								String keyName = keyAttribute.getName();
-								if (k == objTypes.size() - 1) {
-									effectCode1.endControlFlow();
-								}
-							}
-						}
-					}
-				}
-			}
 			effectCode.add(effectCode1.build());
 		}
 		
@@ -752,7 +706,7 @@ public class MenuInputManagerGenerator implements CodeGeneratorConstants {
 				
 				if (objMetaType == SimSEObjectTypeTypes.EMPLOYEE) { 
 					// participant is of employee type
-					// TODO: Figure out how to get the key attribute for each employee type, this should be objType not MetaType
+					// DONE: Figure out how to get the key attribute for each employee type, this should be objType not MetaType
 					// ActionTypeParticipant has Vector<SimSEObjectType>
 					// SimSEObjectType has getKeyAttribute
 					// Attribute has getName
@@ -771,8 +725,6 @@ public class MenuInputManagerGenerator implements CodeGeneratorConstants {
 							effectCode.nextControlFlow("else if (selectedEmp instanceof $T)", currObjType);
 						}
 						
-						Attribute keyAttribute = sObjType.getKey();
-						String keyName = keyAttribute.getName();
 						effectCode.addStatement("mello.removeEmployeeFromTask(b, selectedEmp)");
 						if (i == objTypes.size() - 1) {
 							effectCode.endControlFlow();
